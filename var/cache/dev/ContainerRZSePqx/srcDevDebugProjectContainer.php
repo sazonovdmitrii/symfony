@@ -1,6 +1,6 @@
 <?php
 
-namespace ContainerBBvdk25;
+namespace ContainerRZSePqx;
 
 use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -484,9 +484,6 @@ class srcDevDebugProjectContainer extends Container
             return ($this->privates['data_collector.request'] ?? $this->privates['data_collector.request'] = new \Symfony\Component\HttpKernel\DataCollector\RequestDataCollector());
         }, 1 => 'onKernelResponse'), 0);
         $instance->addListener('kernel.request', array(0 => function () {
-            return ($this->privates['debug.debug_handlers_listener'] ?? $this->getDebug_DebugHandlersListenerService());
-        }, 1 => 'configure'), 2048);
-        $instance->addListener('console.command', array(0 => function () {
             return ($this->privates['debug.debug_handlers_listener'] ?? $this->getDebug_DebugHandlersListenerService());
         }, 1 => 'configure'), 2048);
         $instance->addListener('kernel.request', array(0 => function () {
@@ -1446,6 +1443,10 @@ class srcDevDebugProjectContainer extends Container
                     'path' => ($this->targetDirs[3].'/vendor/symfony/web-server-bundle'),
                     'namespace' => 'Symfony\\Bundle\\WebServerBundle',
                 ),
+                'LpCmsBundle' => array(
+                    'path' => ($this->targetDirs[3].'/src/Lp/CmsBundle'),
+                    'namespace' => 'App\\Lp\\CmsBundle',
+                ),
             ); break;
             case 'kernel.secret': $value = $this->getEnv('APP_SECRET'); break;
             case 'session.save_path': $value = ($this->targetDirs[0].'/sessions'); break;
@@ -1490,6 +1491,7 @@ class srcDevDebugProjectContainer extends Container
                 'DebugBundle' => 'Symfony\\Bundle\\DebugBundle\\DebugBundle',
                 'MakerBundle' => 'Symfony\\Bundle\\MakerBundle\\MakerBundle',
                 'WebServerBundle' => 'Symfony\\Bundle\\WebServerBundle\\WebServerBundle',
+                'LpCmsBundle' => 'App\\Lp\\CmsBundle\\LpCmsBundle',
             ),
             'kernel.charset' => 'UTF-8',
             'kernel.container_class' => 'srcDevDebugProjectContainer',

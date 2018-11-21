@@ -1,6 +1,6 @@
 <?php
 
-namespace ContainerL8Tz3yW;
+namespace Container4DoZ284;
 
 use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -1446,6 +1446,10 @@ class srcDevDebugProjectContainer extends Container
                     'path' => ($this->targetDirs[3].'/vendor/symfony/web-server-bundle'),
                     'namespace' => 'Symfony\\Bundle\\WebServerBundle',
                 ),
+                'LpCmsBundle' => array(
+                    'path' => ($this->targetDirs[3].'/src/Lp/CmsBundle'),
+                    'namespace' => 'App\\Lp\\CmsBundle',
+                ),
             ); break;
             case 'kernel.secret': $value = $this->getEnv('APP_SECRET'); break;
             case 'session.save_path': $value = ($this->targetDirs[0].'/sessions'); break;
@@ -1490,6 +1494,7 @@ class srcDevDebugProjectContainer extends Container
                 'DebugBundle' => 'Symfony\\Bundle\\DebugBundle\\DebugBundle',
                 'MakerBundle' => 'Symfony\\Bundle\\MakerBundle\\MakerBundle',
                 'WebServerBundle' => 'Symfony\\Bundle\\WebServerBundle\\WebServerBundle',
+                'LpCmsBundle' => 'App\\Lp\\CmsBundle\\LpCmsBundle',
             ),
             'kernel.charset' => 'UTF-8',
             'kernel.container_class' => 'srcDevDebugProjectContainer',

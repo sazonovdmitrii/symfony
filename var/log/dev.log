@@ -52,3 +52,6 @@
 [2018-11-21 16:09:40] request.INFO: Matched route "root". {"route":"root","route_parameters":{"_route":"root","_controller":"App\\Controller\\RootController::index"},"request_uri":"http://127.0.0.1:8081/root","method":"GET"} []
 [2018-11-21 16:09:40] security.INFO: Populated the TokenStorage with an anonymous Token. [] []
 [2018-11-21 16:09:43] request.INFO: Matched route "_wdt". {"route":"_wdt","route_parameters":{"_route":"_wdt","_controller":"web_profiler.controller.profiler::toolbarAction","token":"e5ceb7"},"request_uri":"http://127.0.0.1:8081/_wdt/e5ceb7","method":"GET"} []
+[2018-11-21 17:10:24] request.INFO: Matched route "root". {"route":"root","route_parameters":{"_route":"root","_controller":"App\\Controller\\RootController::index"},"request_uri":"http://127.0.0.1:8081/root","method":"GET"} []
+[2018-11-21 17:10:24] security.INFO: Populated the TokenStorage with an anonymous Token. [] []
+[2018-11-21 17:10:27] request.INFO: Matched route "_wdt". {"route":"_wdt","route_parameters":{"_route":"_wdt","_controller":"web_profiler.controller.profiler::toolbarAction","token":"f7cdfc"},"request_uri":"http://127.0.0.1:8081/_wdt/f7cdfc","method":"GET"} []

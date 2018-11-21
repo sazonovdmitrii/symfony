@@ -49,6 +49,7 @@ return array(
     '.service_locator.yQVjGlt' => true,
     '.service_locator.ychIlgF' => true,
     '.service_locator.ychIlgF.App\\Controller\\RootController' => true,
+    'App\\Lp\\CmsBundle\\LpCmsBundle' => true,
     'App\\Repository\\AccountRepository' => true,
     'Doctrine\\Common\\Annotations\\Reader' => true,
     'Doctrine\\Common\\Persistence\\ManagerRegistry' => true,
