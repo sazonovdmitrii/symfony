@@ -31,6 +31,7 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
         ),
         'T' => 
         array (
+            'Twig\\Extensions\\' => 16,
             'Twig\\' => 5,
         ),
         'S' => 
@@ -100,6 +101,10 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
         array (
             'Monolog\\' => 8,
         ),
+        'J' => 
+        array (
+            'JavierEguiluz\\Bundle\\EasyAdminBundle\\' => 37,
+        ),
         'F' => 
         array (
             'Fig\\Link\\' => 9,
@@ -109,6 +114,7 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
         array (
             'Egulias\\EmailValidator\\' => 23,
             'EasyCorp\\EasyLog\\' => 17,
+            'EasyCorp\\Bundle\\EasyAdminBundle\\' => 32,
         ),
         'D' => 
         array (
@@ -117,10 +123,12 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
             'Doctrine\\Instantiator\\' => 22,
             'Doctrine\\DBAL\\Migrations\\' => 25,
             'Doctrine\\Common\\Inflector\\' => 26,
+            'Doctrine\\Common\\DataFixtures\\' => 29,
             'Doctrine\\Common\\Cache\\' => 22,
             'Doctrine\\Common\\Annotations\\' => 28,
             'Doctrine\\Common\\' => 16,
             'Doctrine\\Bundle\\MigrationsBundle\\' => 33,
+            'Doctrine\\Bundle\\FixturesBundle\\' => 31,
             'Doctrine\\Bundle\\DoctrineCacheBundle\\' => 36,
             'Doctrine\\Bundle\\DoctrineBundle\\' => 31,
         ),
@@ -149,6 +157,10 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
         'Webmozart\\Assert\\' => 
         array (
             0 => __DIR__ . '/..' . '/webmozart/assert/src',
+        ),
+        'Twig\\Extensions\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/twig/extensions/src',
         ),
         'Twig\\' => 
         array (
@@ -386,6 +398,10 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
         ),
+        'JavierEguiluz\\Bundle\\EasyAdminBundle\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/easycorp/easyadmin-bundle/legacy',
+        ),
         'Fig\\Link\\' => 
         array (
             0 => __DIR__ . '/..' . '/fig/link-util/src',
@@ -401,6 +417,10 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
         'EasyCorp\\EasyLog\\' => 
         array (
             0 => __DIR__ . '/..' . '/easycorp/easy-log-handler/src',
+        ),
+        'EasyCorp\\Bundle\\EasyAdminBundle\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/easycorp/easyadmin-bundle/src',
         ),
         'Doctrine\\ORM\\' => 
         array (
@@ -422,6 +442,10 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
         array (
             0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Common/Inflector',
         ),
+        'Doctrine\\Common\\DataFixtures\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/data-fixtures/lib/Doctrine/Common/DataFixtures',
+        ),
         'Doctrine\\Common\\Cache\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache',
@@ -440,6 +464,10 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
         'Doctrine\\Bundle\\MigrationsBundle\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/doctrine-migrations-bundle',
+        ),
+        'Doctrine\\Bundle\\FixturesBundle\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/doctrine-fixtures-bundle',
         ),
         'Doctrine\\Bundle\\DoctrineCacheBundle\\' => 
         array (
@@ -462,6 +490,10 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
     public static $prefixesPsr0 = array (
         'T' => 
         array (
+            'Twig_Extensions_' => 
+            array (
+                0 => __DIR__ . '/..' . '/twig/extensions/lib',
+            ),
             'Twig_' => 
             array (
                 0 => __DIR__ . '/..' . '/twig/twig/lib',
@@ -472,6 +504,10 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
             'ProxyManager\\' => 
             array (
                 0 => __DIR__ . '/..' . '/ocramius/proxy-manager/src',
+            ),
+            'Pagerfanta\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/pagerfanta/pagerfanta/src',
             ),
         ),
         'D' => 

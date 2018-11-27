@@ -308,20 +308,21 @@ class PostgreSqlSchemaManager extends AbstractSchemaManager
      */
     protected function _getPortableSequenceDefinition($sequence)
     {
-        if ($sequence['schemaname'] !== 'public') {
+        if ($sequence['schemaname'] != 'public') {
             $sequenceName = $sequence['schemaname'] . "." . $sequence['relname'];
         } else {
             $sequenceName = $sequence['relname'];
         }
 
-        if ( ! isset($sequence['increment_by'], $sequence['min_value'])) {
-            /** @var string[] $data */
-            $data      = $this->_conn->fetchAssoc('SELECT min_value, increment_by FROM ' . $this->_platform->quoteIdentifier($sequenceName));
+        $version = floatval($this->_conn->getWrappedConnection()->getServerVersion());
 
-            $sequence += $data;
+        if ($version >= 10) {
+            $data = $this->_conn->fetchAll('SELECT min_value, increment_by FROM pg_sequences WHERE schemaname = \'public\' AND sequencename = '.$this->_conn->quote($sequenceName));
+        } else {
+            $data = $this->_conn->fetchAll('SELECT min_value, increment_by FROM ' . $this->_platform->quoteIdentifier($sequenceName));
         }
 
-        return new Sequence($sequenceName, (int) $sequence['increment_by'], (int) $sequence['min_value']);
+        return new Sequence($sequenceName, $data[0]['increment_by'], $data[0]['min_value']);
     }
 
     /**

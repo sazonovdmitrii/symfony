@@ -3,10 +3,15 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="stylesheet" href="{{ asset('bundles/easyadmin/stylesheet/easyadmin-all.min.css') }}">
         {% block stylesheets %}{% endblock %}
     </head>
-    <body>
-        {% block body %}{% endblock %}
+    <body class="easyadmin">
+        <div class="wrapper">
+            <section id="main" class="content">
+                {% block body %}{% endblock %}
+            </section>
+        </div>
         {% block javascripts %}{% endblock %}
     </body>
 </html>

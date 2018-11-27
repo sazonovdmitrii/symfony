@@ -26,6 +26,16 @@ class Account
      */
     private $email;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $min_value;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $increment_by;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -51,6 +61,30 @@ class Account
     public function setEmail(?string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getMinValue(): ?int
+    {
+        return $this->min_value;
+    }
+
+    public function setMinValue(?int $min_value): self
+    {
+        $this->min_value = $min_value;
+
+        return $this;
+    }
+
+    public function getIncrementBy(): ?int
+    {
+        return $this->increment_by;
+    }
+
+    public function setIncrementBy(?int $increment_by): self
+    {
+        $this->increment_by = $increment_by;
 
         return $this;
     }

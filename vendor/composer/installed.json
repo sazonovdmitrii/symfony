@@ -301,6 +301,68 @@
         ]
     },
     {
+        "name": "doctrine/data-fixtures",
+        "version": "v1.3.1",
+        "version_normalized": "1.3.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/doctrine/data-fixtures.git",
+            "reference": "3a1e2c3c600e615a2dffe56d4ca0875cc5233e0a"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/doctrine/data-fixtures/zipball/3a1e2c3c600e615a2dffe56d4ca0875cc5233e0a",
+            "reference": "3a1e2c3c600e615a2dffe56d4ca0875cc5233e0a",
+            "shasum": ""
+        },
+        "require": {
+            "doctrine/common": "~2.2",
+            "php": "^7.1"
+        },
+        "conflict": {
+            "doctrine/phpcr-odm": "<1.3.0"
+        },
+        "require-dev": {
+            "doctrine/dbal": "^2.5.4",
+            "doctrine/orm": "^2.5.4",
+            "phpunit/phpunit": "^7.0"
+        },
+        "suggest": {
+            "alcaeus/mongo-php-adapter": "For using MongoDB ODM with PHP 7",
+            "doctrine/mongodb-odm": "For loading MongoDB ODM fixtures",
+            "doctrine/orm": "For loading ORM fixtures",
+            "doctrine/phpcr-odm": "For loading PHPCR ODM fixtures"
+        },
+        "time": "2018-03-20T09:06:36+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.3.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Doctrine\\Common\\DataFixtures\\": "lib/Doctrine/Common/DataFixtures"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Jonathan Wage",
+                "email": "jonwage@gmail.com"
+            }
+        ],
+        "description": "Data Fixtures for all Doctrine Object Managers",
+        "homepage": "http://www.doctrine-project.org",
+        "keywords": [
+            "database"
+        ]
+    },
+    {
         "name": "doctrine/dbal",
         "version": "v2.8.0",
         "version_normalized": "2.8.0.0",
@@ -559,6 +621,70 @@
         "keywords": [
             "cache",
             "caching"
+        ]
+    },
+    {
+        "name": "doctrine/doctrine-fixtures-bundle",
+        "version": "3.0.4",
+        "version_normalized": "3.0.4.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/doctrine/DoctrineFixturesBundle.git",
+            "reference": "0438f8dd0a21bc5325c6be3ae0a09131815e10d4"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/doctrine/DoctrineFixturesBundle/zipball/0438f8dd0a21bc5325c6be3ae0a09131815e10d4",
+            "reference": "0438f8dd0a21bc5325c6be3ae0a09131815e10d4",
+            "shasum": ""
+        },
+        "require": {
+            "doctrine/data-fixtures": "~1.0",
+            "doctrine/doctrine-bundle": "~1.0",
+            "php": ">=5.5.9|^7.0",
+            "symfony/doctrine-bridge": "~2.7|~3.0|~4.0",
+            "symfony/framework-bundle": "^3.3|^4.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^4.8.36 || ^5.7.27 || ^7.4",
+            "symfony/phpunit-bridge": "^3.4 || ^4.0"
+        },
+        "time": "2018-11-26T19:40:34+00:00",
+        "type": "symfony-bundle",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Doctrine\\Bundle\\FixturesBundle\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
+            },
+            {
+                "name": "Doctrine Project",
+                "homepage": "http://www.doctrine-project.org"
+            },
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            }
+        ],
+        "description": "Symfony DoctrineFixturesBundle",
+        "homepage": "http://www.doctrine-project.org",
+        "keywords": [
+            "Fixture",
+            "persistence"
         ]
     },
     {
@@ -1251,6 +1377,91 @@
         ]
     },
     {
+        "name": "easycorp/easyadmin-bundle",
+        "version": "v1.17.14",
+        "version_normalized": "1.17.14.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/EasyCorp/EasyAdminBundle.git",
+            "reference": "f0ba63304b07d72443aab9973e00ca6faee43adf"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/f0ba63304b07d72443aab9973e00ca6faee43adf",
+            "reference": "f0ba63304b07d72443aab9973e00ca6faee43adf",
+            "shasum": ""
+        },
+        "require": {
+            "doctrine/cache": "~1.5",
+            "doctrine/doctrine-bundle": "~1.2",
+            "doctrine/orm": "~2.3",
+            "doctrine/persistence": "^1.0",
+            "pagerfanta/pagerfanta": "~1.0,>=1.0.1|~2.0",
+            "php": ">=5.3.0",
+            "symfony/asset": "~2.3|~3.0|^4.0",
+            "symfony/config": "~2.3|~3.0|^4.0",
+            "symfony/dependency-injection": "~2.3|~3.0|^4.0",
+            "symfony/doctrine-bridge": "~2.3|~3.0|^4.0",
+            "symfony/event-dispatcher": "~2.3|~3.0|^4.0",
+            "symfony/finder": "~2.3|~3.0|^4.0",
+            "symfony/form": "~2.3|~3.0|^4.0",
+            "symfony/framework-bundle": "~2.3|~3.0|^4.0",
+            "symfony/http-foundation": "~2.3|~3.0|^4.0",
+            "symfony/http-kernel": "~2.3|~3.0|^4.0",
+            "symfony/polyfill-mbstring": "^1.0",
+            "symfony/property-access": "~2.3|~3.0|^4.0",
+            "symfony/security-bundle": "~2.3|~3.0|^4.0",
+            "symfony/translation": "~2.3|~3.0|^4.0",
+            "symfony/twig-bridge": "^2.3.4|~3.0|^4.0",
+            "symfony/twig-bundle": "~2.3|~3.0|^4.0",
+            "symfony/validator": "~2.3|~3.0|^4.0",
+            "twig/extensions": "~1.0",
+            "twig/twig": "~1.26|~2.0"
+        },
+        "require-dev": {
+            "doctrine/doctrine-fixtures-bundle": "~2.2",
+            "psr/log": "~1.0",
+            "symfony/browser-kit": "~2.3|~3.0|^4.0",
+            "symfony/console": "~2.3|~3.0|^4.0",
+            "symfony/css-selector": "~2.3|~3.0|^4.0",
+            "symfony/dom-crawler": "~2.3|~3.0|^4.0",
+            "symfony/phpunit-bridge": "^3.2|^4.0",
+            "symfony/var-dumper": "~2.3|~3.0|^4.0",
+            "symfony/yaml": "~2.3|~3.0|^4.0"
+        },
+        "time": "2018-08-10T13:50:37+00:00",
+        "type": "symfony-bundle",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.17.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "EasyCorp\\Bundle\\EasyAdminBundle\\": "src/",
+                "JavierEguiluz\\Bundle\\EasyAdminBundle\\": "legacy/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Project Contributors",
+                "homepage": "http://github.com/EasyCorp/easyadmin/blob/master/CONTRIBUTORS.md"
+            }
+        ],
+        "description": "Admin generator for Symfony applications",
+        "homepage": "https://github.com/EasyCorp/EasyAdminBundle",
+        "keywords": [
+            "admin",
+            "backend",
+            "generator"
+        ]
+    },
+    {
         "name": "egulias/email-validator",
         "version": "2.1.6",
         "version_normalized": "2.1.6.0",
@@ -1732,6 +1943,77 @@
             "proxy",
             "proxy pattern",
             "service proxies"
+        ]
+    },
+    {
+        "name": "pagerfanta/pagerfanta",
+        "version": "v2.0.1",
+        "version_normalized": "2.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/whiteoctober/Pagerfanta.git",
+            "reference": "15770d9d7f6e8e07af568aed104a51f869591e73"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/whiteoctober/Pagerfanta/zipball/15770d9d7f6e8e07af568aed104a51f869591e73",
+            "reference": "15770d9d7f6e8e07af568aed104a51f869591e73",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=7.0"
+        },
+        "require-dev": {
+            "doctrine/orm": "~2.3",
+            "doctrine/phpcr-odm": "1.*",
+            "jackalope/jackalope-doctrine-dbal": "1.*",
+            "jmikola/geojson": "~1.0",
+            "mandango/mandango": "~1.0@dev",
+            "mandango/mondator": "~1.0@dev",
+            "phpunit/phpunit": "^5.7|^6",
+            "propel/propel": "~2.0@dev",
+            "propel/propel1": "~1.6",
+            "ruflin/elastica": "~1.3",
+            "solarium/solarium": "~3.1"
+        },
+        "suggest": {
+            "doctrine/mongodb-odm": "To use the DoctrineODMMongoDBAdapter.",
+            "doctrine/orm": "To use the DoctrineORMAdapter.",
+            "doctrine/phpcr-odm": "To use the DoctrineODMPhpcrAdapter. >= 1.1.0",
+            "mandango/mandango": "To use the MandangoAdapter.",
+            "propel/propel": "To use the Propel2Adapter",
+            "propel/propel1": "To use the PropelAdapter",
+            "solarium/solarium": "To use the SolariumAdapter."
+        },
+        "time": "2018-05-17T09:23:52+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Pagerfanta\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Pablo Díez",
+                "email": "pablodip@gmail.com"
+            }
+        ],
+        "description": "Pagination for PHP 5.3",
+        "keywords": [
+            "page",
+            "pagination",
+            "paginator",
+            "paging"
         ]
     },
     {
@@ -4832,17 +5114,17 @@
     },
     {
         "name": "symfony/security-bundle",
-        "version": "v4.1.7",
-        "version_normalized": "4.1.7.0",
+        "version": "v4.1.8",
+        "version_normalized": "4.1.8.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/security-bundle.git",
-            "reference": "1163903123399ee72c128f5bdb64f0e07c839b81"
+            "reference": "f1dcbeb847e32f8570d0567454bb72301b8ae303"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/security-bundle/zipball/1163903123399ee72c128f5bdb64f0e07c839b81",
-            "reference": "1163903123399ee72c128f5bdb64f0e07c839b81",
+            "url": "https://api.github.com/repos/symfony/security-bundle/zipball/f1dcbeb847e32f8570d0567454bb72301b8ae303",
+            "reference": "f1dcbeb847e32f8570d0567454bb72301b8ae303",
             "shasum": ""
         },
         "require": {
@@ -4879,7 +5161,7 @@
             "symfony/yaml": "~3.4|~4.0",
             "twig/twig": "~1.34|~2.4"
         },
-        "time": "2018-10-28T18:38:52+00:00",
+        "time": "2018-11-11T19:51:29+00:00",
         "type": "symfony-bundle",
         "extra": {
             "branch-alias": {
@@ -5839,6 +6121,63 @@
         ],
         "description": "Symfony Yaml Component",
         "homepage": "https://symfony.com"
+    },
+    {
+        "name": "twig/extensions",
+        "version": "v1.5.3",
+        "version_normalized": "1.5.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/twigphp/Twig-extensions.git",
+            "reference": "e187386bea539a2cc2726689d6b4d468672a8ab4"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/twigphp/Twig-extensions/zipball/e187386bea539a2cc2726689d6b4d468672a8ab4",
+            "reference": "e187386bea539a2cc2726689d6b4d468672a8ab4",
+            "shasum": ""
+        },
+        "require": {
+            "twig/twig": "^1.27|^2.0"
+        },
+        "require-dev": {
+            "symfony/phpunit-bridge": "^3.4",
+            "symfony/translation": "^2.7|^3.4"
+        },
+        "suggest": {
+            "symfony/translation": "Allow the time_diff output to be translated"
+        },
+        "time": "2018-11-16T03:34:09+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.5-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Twig_Extensions_": "lib/"
+            },
+            "psr-4": {
+                "Twig\\Extensions\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            }
+        ],
+        "description": "Common additional features for Twig that do not directly belong in core",
+        "keywords": [
+            "i18n",
+            "text"
+        ]
     },
     {
         "name": "twig/twig",
