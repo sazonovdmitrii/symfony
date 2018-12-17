@@ -1,0 +1,5 @@
+urls:
+    path:     /{slug}
+    controller: App\Lp\UrlsBundle\Controller\UrlController::match
+    requirements:
+        slug:  ".*"

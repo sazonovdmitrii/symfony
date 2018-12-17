@@ -1,0 +1,3 @@
+cms:
+    path:     /{slug}
+    controller: App\Lp\CmsBundle\Controller\CmsController::match
