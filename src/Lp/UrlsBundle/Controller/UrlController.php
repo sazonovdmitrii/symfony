@@ -11,6 +11,8 @@ class UrlController extends AbstractController
      */
     public function match($slug)
     {
+        var_dump($this->getDoctrine()->getManager('lp_perl')->getConnection()->getDatabase());
+        die();
         $url = $this->getDoctrine()
             ->getRepository(Urls::class)
             ->createQueryBuilder('urls')

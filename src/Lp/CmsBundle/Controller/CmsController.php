@@ -9,7 +9,7 @@ class CmsController extends AbstractController
     /**
      * @Route("/{slug}", name="cms")
      */
-    public function match($slug)
+    public function match()
     {
         return $this->render('root/index.html.twig', [
             'controller_name' => 'CmsController',

@@ -17,6 +17,48 @@ class UrlFixture extends Fixture
      }
     public function load(ObjectManager $manager)
     {
+
+//        $this->setReference()
+//        echo "<pre>";
+//        print_r($this->referenceRepository->getReferenceNames());
+//        print_r(get_class_methods($manager));
+//        die();
+        var_dump($this->referenceRepository->getManager('lp_perl')->getConnection()->getDatabase());
+        die();
+        print_r(get_class_methods($this));
+        print_r(get_class_methods($manager));
+        die();
+//        $test = $this->controller->getDoctrine();
+//        var_dump(get_class($this->controller));
+//        die();
+//        echo "<pre>";
+//        var_dump($manager->getRepository('Urls', 'lp_perl'));
+//        die();
+
+//        $connection = $manager->getConnection('lp_perl');
+//        echo "<pre>";
+//        var_dump($connection->getDatabase());
+//        var_dump(get_class($manager));
+//        print_r(get_class_methods($manager));
+//        print_r(get_class_methods($connection));
+//        die();
+//        $statement = $connection->prepare("SELECT id FROM virtual_urls LIMIT 50");
+////        $statement->bindValue('id', 123);
+//        $statement->execute();
+//        $results = $statement->fetchAll();
+//        print_r($results);
+//        die();
+//        $controller = new Controller();
+//        var_dump(get_class($controller));
+//        die();
+//        var_dump($this->doctrine);
+//        die();
+//        $this->load('manager'); die();
+//        Doctrine\
+//        $this->getReference('doctrine');
+//        die();
+//        var_dump(get_class($manager->getDoctrine()->getManager('customer')));
+//        die();
         $user = new Urls();
         $user->setType('catalog');
         $user->setUrl('parfumeriya-dlja-zhenshhin');

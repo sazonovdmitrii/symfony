@@ -1,11 +1,8 @@
 app_logout:
     path: /logout
 
-#cms:
-#    resource: "Lp/CmsBundle/Resources/config/routing.yaml"
-
-#catalog:
-#    resource: "Lp/CatalogBundle/Resources/config/routing.yaml"
+cms:
+    resource: "Lp/CmsBundle/Resources/config/routing.yaml"
 
 easy_admin_bundle:
     resource: '@EasyAdminBundle/Controller/AdminController.php'
@@ -15,6 +12,3 @@ easy_admin_bundle:
 urls:
     resource: "Lp/UrlsBundle/Resources/config/routing.yaml"
 
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index

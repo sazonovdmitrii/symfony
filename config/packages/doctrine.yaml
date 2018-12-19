@@ -7,23 +7,39 @@ parameters:
 
 doctrine:
     dbal:
-        # configure these for your database server
-        driver: 'pdo_pgsql'
-        server_version: '5.7'
-        charset: utf8
-        default_table_options:
-            charset: utf8mb4
-            collate: utf8mb4_unicode_ci
-
-        url: '%env(resolve:DATABASE_URL)%'
+        default_connection: default
+        connections:
+            default:
+                url: '%env(resolve:DATABASE_URL)%'
+                driver: 'pdo_pgsql'
+                server_version: '5.7'
+                default_table_options:
+                    charset: utf8mb4
+                    collate: utf8mb4_unicode_ci
+            lp_perl:
+                url: '%env(DATABASE_LP_PERL_URL)%'
+                driver: pdo_mysql
+                server_version: '5.7'
     orm:
-        auto_generate_proxy_classes: true
-        naming_strategy: doctrine.orm.naming_strategy.underscore
-        auto_mapping: true
-        mappings:
-            App:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
-                alias: App
+        default_entity_manager: default
+        entity_managers:
+            default:
+                connection: default
+                mappings:
+                    App:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity'
+                        prefix: 'App\Entity'
+                        alias: App
+            lp_perl:
+                connection: lp_perl
+                mappings:
+                    LpPerlEntity:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/LpPerlEntity'
+                        prefix: 'App\LpPerlEntity'
+                        alias: LpPerlEntity
+
+
