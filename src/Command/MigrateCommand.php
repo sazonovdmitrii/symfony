@@ -2,6 +2,7 @@
 // src/Command/CreateUserCommand.php
 namespace App\Command;
 
+use App\Entity\Urls;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -10,7 +11,8 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 class MigrateCommand extends ContainerAwareCommand
 {
     protected static $defaultName = 'lp:migrate';
-
+    protected $_lpDoctrine;
+    protected $_defaultDoctrine;
     protected function configure()
     {
         $this
@@ -20,32 +22,48 @@ class MigrateCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        ini_set('memory_limit', '5G');
         $doctrine = $this->getContainer()->get('doctrine');
-        $lpDoctrine = $doctrine->getManager('lp_perl');
-        $defaultDoctrine = $doctrine->getManager();
+        $this->_lpDoctrine = $doctrine->getManager('lp_perl');
+        $this->_defaultDoctrine = $doctrine->getManager();
 
+        $this->urls($output);
+    }
 
-        $stmt = $lpDoctrine->getConnection()->prepare("SELECT * FROM urls LIMIT 50");
-        $stmt->execute();
+    protected function urls(OutputInterface $output)
+    {
+        $output->writeln(['Migrating Urls...']);
 
-        echo "<pre>";
-        print_r($stmt->fetchAll());
-        die();
+        $doctrine = $this->_defaultDoctrine->getConnection();
 
+        $urls = $this->_lpDoctrine->getConnection()->prepare("SELECT * FROM virtual_urls");
+        $urls->execute();
 
+        $doctrine->query('DELETE FROM urls');
+        $doctrine->beginTransaction();
 
+        foreach($urls->fetchAll() as $lpUrl) {
+            $url = str_replace('/ru/', '', $lpUrl['url']);
+            $doctrine->exec(
+                "
+                    INSERT INTO urls (
+                        id, 
+                        url, 
+                        eid, 
+                        type, 
+                        created
+                    ) VALUES(
+                        " . $lpUrl['id'] . ", 
+                        '" . $url . "', 
+                        " . $lpUrl['eid'] . ",
+                        '" . $lpUrl['type'] . "',
+                        '" . $lpUrl['created'] . "'
+                    )
+                "
+            );
+        }
+        $doctrine->commit();
 
-
-        var_dump($defaultDoctrine->getConnection()->getDatabase());
-        var_dump($lpDoctrine->getConnection()->getDatabase());
-//        var_dump(get_class($doctrine));
-//        die();
-//        $em = $this->container->get('doctrine')->getManager();
-//        $this->ge
-//        echo "<pre>";
-//        print_r($this->getApplication());
-//        print_r(get_class_methods($this));
-//        die();
-////        var_dump($this->getDoctrine());
+        $output->writeln(['Url migration have done!']);
     }
 }
