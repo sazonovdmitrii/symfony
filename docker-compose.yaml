@@ -21,6 +21,7 @@ services:
             - ./logs/symfony:/var/www/symfony/var/logs
         links:
             - postgres
+            - db_lp:mysql
     nginx:
         build: nginx
         ports:
@@ -31,3 +32,15 @@ services:
             - php
         volumes:
             - ./logs/nginx/:/var/log/nginx:cached
+    db_lp:
+        image: mariadb:latest
+        restart: on-failure
+        ports:
+          - "3310:3306"
+        volumes:
+          - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+          - ./db:/var/lib/mysql
+        environment:
+          - MYSQL_ROOT_PASSWORD=root
+          - MYSQL_DATABASE=lp
+          - MYSQL_USER=root

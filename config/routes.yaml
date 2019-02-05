@@ -1,6 +1,12 @@
 app_logout:
     path: /logout
 
+basket:
+    resource: "Lp/BasketBundle/Resources/config/routing.yaml"
+
+profile:
+    resource: "Lp/ProfileBundle/Resources/config/routing.yaml"
+
 cms:
     resource: "Lp/CmsBundle/Resources/config/routing.yaml"
 
@@ -11,4 +17,8 @@ easy_admin_bundle:
 
 urls:
     resource: "Lp/UrlsBundle/Resources/config/routing.yaml"
+
+
+
+
 

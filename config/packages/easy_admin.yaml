@@ -1,6 +1,37 @@
 easy_admin:
     site_name: 'Laparfumerie'
     entities:
-        - App\Entity\Account
+        Urls:
+            class: App\Entity\Urls
+            list:
+                fields: ['id', 'url', 'type', 'created']
+        Users:
+            class: App\Entity\Users
+            list:
+                fields: ['id', 'email', 'roles']
+
+        Catalog:
+            class: App\Entity\Catalog
+            list:
+                fields: ['id', 'name', 'visible']
+
+#        Items:
+#            class: App\Entity\ProductItem
+#            list:
+#                fields: ['id', 'name', 'visible']
+
+        Product:
+            class: App\Entity\Product
+            list:
+                fields: ['id', 'name', 'visible']
+            form:
+                fields:
+                    - { type: 'tab' , label: 'General' }
+                    - visible
+                    - name
+                    - { type: 'tab', label: 'Categories' }
+                    - catalogs
+#                    - { type: 'tab', label: 'Product Items' }
+#                    - productItems
     design:
         brand_color: 'black'

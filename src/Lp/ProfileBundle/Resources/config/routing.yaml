@@ -1,0 +1,3 @@
+index:
+    path: /
+    controller: App\Lp\CmsBundle\Controller\CmsController::match
