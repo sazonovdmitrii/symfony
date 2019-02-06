@@ -4,3 +4,6 @@ var/cache
 /var/cache
 /db/*
 /db
+logs/*
+var/log/*
+composer.lock
