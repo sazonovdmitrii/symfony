@@ -7,7 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class ProfileController extends AbstractController
 {
     /**
-     * @Route("/{slug}", name="cms")
+     * @Route("/{slug}", name="profile")
      */
     public function index()
     {

@@ -1,3 +1,3 @@
-index:
-    path: /
-    controller: App\Lp\CmsBundle\Controller\CmsController::match
+basket:
+    path: /basket
+    controller: App\Lp\BasketBundle\Controller\BasketController::index

@@ -1,9 +1,9 @@
 <?php
 // src/Acme/TestBundle/AcmeTestBundle.php
-namespace App\Lp\CmsBundle;
+namespace App\Lp\BasketBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class LpCmsBundle extends Bundle
+class LpBasketBundle extends Bundle
 {
 }

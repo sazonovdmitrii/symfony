@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
@@ -8,13 +10,21 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20181217054555 extends AbstractMigration
+final class Version20190201063348 extends AbstractMigration
 {
+    public function getDescription() : string
+    {
+        return '';
+    }
+
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
-        $this->addSql('CREATE TABLE account (id INT NOT NULL, name VARCHAR(255) DEFAULT NULL, email VARCHAR(15) DEFAULT NULL, increment_by INT DEFAULT NULL, PRIMARY KEY(id))');
+
+        $this->addSql('CREATE SEQUENCE CatalogProduct_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE TABLE CatalogProduct (id INT NOT NULL, product_id INT NOT NULL, catalog_id INT NOT NULL, PRIMARY KEY(id))');
+//        $this->addSql('ALTER TABLE urls ALTER created SET NOT NULL');
     }
 
     public function down(Schema $schema) : void
@@ -22,6 +32,9 @@ final class Version20181217054555 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('DROP TABLE account');
+        $this->addSql('CREATE SCHEMA public');
+        $this->addSql('DROP SEQUENCE CatalogProduct_id_seq CASCADE');
+        $this->addSql('DROP TABLE CatalogProduct');
+//        $this->addSql('ALTER TABLE Urls ALTER created DROP NOT NULL');
     }
 }

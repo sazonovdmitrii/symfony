@@ -27,8 +27,11 @@ class UrlController extends AbstractController
                     'slug'  => $slug
                 ]
             );
+            return $response;
+        } else {
+            return $this->forward(
+                'App\Lp\CmsBundle\Controller\CmsController::match'
+            );
         }
-
-        return $response;
     }
 }

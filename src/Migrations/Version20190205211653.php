@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
@@ -8,13 +10,18 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20181217054555 extends AbstractMigration
+final class Version20190205211653 extends AbstractMigration
 {
+    public function getDescription() : string
+    {
+        return '';
+    }
+
     public function up(Schema $schema) : void
     {
+        $this->addSql('ALTER TABLE ProductItem DROP product_id');
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
-        $this->addSql('CREATE TABLE account (id INT NOT NULL, name VARCHAR(255) DEFAULT NULL, email VARCHAR(15) DEFAULT NULL, increment_by INT DEFAULT NULL, PRIMARY KEY(id))');
+
     }
 
     public function down(Schema $schema) : void
@@ -22,6 +29,6 @@ final class Version20181217054555 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('DROP TABLE account');
+        $this->addSql('CREATE SCHEMA public');
     }
 }

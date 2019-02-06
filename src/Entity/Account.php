@@ -29,11 +29,6 @@ class Account
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $min_value;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
     private $increment_by;
 
     public function getId(): ?int
@@ -61,18 +56,6 @@ class Account
     public function setEmail(?string $email): self
     {
         $this->email = $email;
-
-        return $this;
-    }
-
-    public function getMinValue(): ?int
-    {
-        return $this->min_value;
-    }
-
-    public function setMinValue(?int $min_value): self
-    {
-        $this->min_value = $min_value;
 
         return $this;
     }

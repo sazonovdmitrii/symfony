@@ -23,11 +23,11 @@ class UrlFixture extends Fixture
 //        print_r($this->referenceRepository->getReferenceNames());
 //        print_r(get_class_methods($manager));
 //        die();
-        var_dump($this->referenceRepository->getManager('lp_perl')->getConnection()->getDatabase());
+        /*var_dump($this->referenceRepository->getManager('lp_perl')->getConnection()->getDatabase());
         die();
         print_r(get_class_methods($this));
         print_r(get_class_methods($manager));
-        die();
+        die();*/
 //        $test = $this->controller->getDoctrine();
 //        var_dump(get_class($this->controller));
 //        die();

@@ -1,9 +1,9 @@
 <?php
 // src/Acme/TestBundle/AcmeTestBundle.php
-namespace App\Lp\CmsBundle;
+namespace App\Lp\ProfileBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class LpCmsBundle extends Bundle
+class LpProfileBundle extends Bundle
 {
 }

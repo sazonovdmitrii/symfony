@@ -13,6 +13,8 @@ class MigrateCommand extends ContainerAwareCommand
     protected static $defaultName = 'lp:migrate';
     protected $_lpDoctrine;
     protected $_defaultDoctrine;
+    protected $output;
+
     protected function configure()
     {
         $this
@@ -26,13 +28,16 @@ class MigrateCommand extends ContainerAwareCommand
         $doctrine = $this->getContainer()->get('doctrine');
         $this->_lpDoctrine = $doctrine->getManager('lp_perl');
         $this->_defaultDoctrine = $doctrine->getManager();
+        $this->output = $output;
+    
+        $this->urls();
 
-        $this->urls($output);
+        $this->products();
     }
 
-    protected function urls(OutputInterface $output)
+    protected function urls()
     {
-        $output->writeln(['Migrating Urls...']);
+        $this->output->writeln(['Migrating Urls...']);
 
         $doctrine = $this->_defaultDoctrine->getConnection();
 
@@ -64,6 +69,43 @@ class MigrateCommand extends ContainerAwareCommand
         }
         $doctrine->commit();
 
-        $output->writeln(['Url migration have done!']);
+        $this->output->writeln(['Url migration have done!']);
+    }
+
+    protected function products()
+    {
+        $this->output->writeln(['Migrating Products...']);
+
+        $doctrine = $this->_defaultDoctrine->getConnection();
+
+        $urls = $this->_lpDoctrine->getConnection()->prepare("SELECT * FROM virtual_urls");
+        $urls->execute();
+
+        $doctrine->query('DELETE FROM urls');
+        $doctrine->beginTransaction();
+
+        foreach($urls->fetchAll() as $lpUrl) {
+            $url = str_replace('/ru/', '', $lpUrl['url']);
+            $doctrine->exec(
+                "
+                    INSERT INTO urls (
+                        id, 
+                        url, 
+                        eid, 
+                        type, 
+                        created
+                    ) VALUES(
+                        " . $lpUrl['id'] . ", 
+                        '" . $url . "', 
+                        " . $lpUrl['eid'] . ",
+                        '" . $lpUrl['type'] . "',
+                        '" . $lpUrl['created'] . "'
+                    )
+                "
+            );
+        }
+        $doctrine->commit();
+
+        $this->output->writeln(['Products migration have done!']);
     }
 }
