@@ -15,10 +15,10 @@ easy_admin:
             list:
                 fields: ['id', 'name', 'visible']
 
-#        Items:
-#            class: App\Entity\ProductItem
-#            list:
-#                fields: ['id', 'name', 'visible']
+        Items:
+            class: App\Entity\ProductItem
+            list:
+                fields: ['id', 'name', 'visible']
 
         Product:
             class: App\Entity\Product
@@ -31,7 +31,7 @@ easy_admin:
                     - name
                     - { type: 'tab', label: 'Categories' }
                     - catalogs
-#                    - { type: 'tab', label: 'Product Items' }
-#                    - productItems
+                    - { type: 'tab', label: 'Product Items' }
+                    - productItems
     design:
         brand_color: 'black'
