@@ -1,0 +1,6 @@
+var/cache/*
+var/cache
+/var/cache/*
+/var/cache
+/db/*
+/db
