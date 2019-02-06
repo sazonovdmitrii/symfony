@@ -22,6 +22,9 @@ framework:
     session:
         storage_id: session.storage.mock_file
 
+twig:
+    strict_variables: '%kernel.debug%'
+
 doctrine:
     dbal:
         driver: pdo_sqlite
@@ -65,8 +68,6 @@ security:
 easy_admin:
     site_name: 'ACME Backend'
     design:
-        form_theme:   'horizontal'
-        color_scheme: 'light'
         brand_color:  '#123456'
     list:
         title: 'Global Title for List'

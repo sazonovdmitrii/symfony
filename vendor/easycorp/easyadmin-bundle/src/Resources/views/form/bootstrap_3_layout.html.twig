@@ -265,7 +265,7 @@
         {{- form_label(form) -}}
         {{- form_widget(form) -}}
 
-        {% if _field_type in ['datetime', 'datetime_immutable', 'date', 'date_immutable', 'time', 'time_immutable', 'birthday'] and easyadmin.field.nullable|default(false) %}
+        {% if _field_type in ['datetime', 'datetime_immutable', 'date', 'date_immutable', 'dateinterval', 'time', 'time_immutable', 'birthday'] and easyadmin.field.nullable|default(false) %}
             <div class="nullable-control">
                 <label>
                     <input type="checkbox" {% if data is null %}checked="checked"{% endif %}>
@@ -297,9 +297,9 @@
                 collection.prev('.collection-empty').remove();
 
                 var newItem = collection.attr('data-prototype')
-                    .replace(/\>__name__label__\</g, '>' + numItems + '<')
-                    .replace(/_{{ name }}___name__/g, '_{{ name }}_' + numItems)
-                    .replace(/{{ name }}\]\[__name__\]/g, '{{ name }}][' + numItems + ']')
+                    .replace(/\>{{ prototype.vars.name }}label__\</g, '>' + numItems + '<')
+                    .replace(/_{{ name }}_{{ prototype.vars.name }}/g, '_{{ name }}_' + numItems)
+                    .replace(/{{ name }}\]\[{{ prototype.vars.name }}\]/g, '{{ name }}][' + numItems + ']')
                 ;
 
                 // Increment the counter and store it in the collection
@@ -412,7 +412,7 @@
         <div class="row">
             {% if form.delete is defined %}
             <div class="col-sm-3 col-md-2">
-                {{ form_row(form.delete, { label: 'action.delete' }) }}
+                {{ form_row(form.delete, { label: 'form.label.delete' }) }}
             </div>
             {% endif %}
             <div class="{{ form.delete is defined ? 'col-sm-9 col-md-10' : 'col-sm-12' }}">
@@ -433,19 +433,25 @@
     <div class="easyadmin-vich-image">
         {{ form_widget(form.file) }}
         {% if form.delete is defined %}
-            {{ form_row(form.delete, { label: 'action.delete' }) }}
+            {{ form_row(form.delete, { label: 'form.label.delete' }) }}
         {% endif %}
 
-        {% if download_uri|default('') is not empty %}
-            {% set _lightbox_id = 'easyadmin-lightbox-' ~ id %}
+        {% if image_uri|default('') is not empty %}
+            {% if download_uri|default('') is empty %}
+                <div class="easyadmin-thumbnail">
+                    <img style="cursor: initial" src="{{ asset(image_uri) }}">
+                </div>
+            {% else %}
+                {% set _lightbox_id = 'easyadmin-lightbox-' ~ id %}
 
-            <a href="#" class="easyadmin-thumbnail" data-featherlight="#{{ _lightbox_id }}" data-featherlight-close-on-click="anywhere">
-                <img src="{{ asset(download_uri) }}">
-            </a>
+                <a href="#" class="easyadmin-thumbnail" data-featherlight="#{{ _lightbox_id }}" data-featherlight-close-on-click="anywhere">
+                    <img src="{{ asset(download_uri) }}">
+                </a>
 
-            <div id="{{ _lightbox_id }}" class="easyadmin-lightbox">
-                <img src="{{ asset(download_uri) }}">
-            </div>
+                <div id="{{ _lightbox_id }}" class="easyadmin-lightbox">
+                    <img src="{{ asset(download_uri) }}">
+                </div>
+            {% endif %}
         {% endif %}
     </div>
 {% endspaceless %}
@@ -556,7 +562,7 @@
 
                 <div class="box-body {% if group_config.collapsible|default(false) %}collapse {% if group_config.expanded|default(false) %}in{% endif %}{% endif %}" id="box-body-{{ group_name }}">
                     {% if group_config.help|default(false) %}
-                        <p class="help-block">{{ group_config.help|trans(domain = _translation_domain)|nl2br|raw }}</p>
+                        <p class="help-block">{{ group_config.help|trans(domain = _translation_domain)|raw }}</p>
                     {% endif %}
 
                     <div class="row">
@@ -616,7 +622,7 @@
         {% endif %}
 
         {% if easyadmin.field.help|default(false) %}
-            <p class="help-block">{{ easyadmin.field.help|trans(domain = _translation_domain)|nl2br|raw }}</p>
+            <p class="help-block">{{ easyadmin.field.help|trans(domain = _translation_domain)|raw }}</p>
         {% endif %}
     </div>
 {% endblock easyadmin_section_row %}

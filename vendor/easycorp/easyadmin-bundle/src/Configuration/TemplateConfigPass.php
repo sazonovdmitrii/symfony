@@ -38,6 +38,7 @@ class TemplateConfigPass implements ConfigPassInterface
         'field_bigint' => '@EasyAdmin/default/field_bigint.html.twig',
         'field_boolean' => '@EasyAdmin/default/field_boolean.html.twig',
         'field_date' => '@EasyAdmin/default/field_date.html.twig',
+        'field_dateinterval' => '@EasyAdmin/default/field_dateinterval.html.twig',
         'field_datetime' => '@EasyAdmin/default/field_datetime.html.twig',
         'field_datetimetz' => '@EasyAdmin/default/field_datetimetz.html.twig',
         'field_decimal' => '@EasyAdmin/default/field_decimal.html.twig',
@@ -51,6 +52,7 @@ class TemplateConfigPass implements ConfigPassInterface
         'field_json_array' => '@EasyAdmin/default/field_json_array.html.twig',
         'field_integer' => '@EasyAdmin/default/field_integer.html.twig',
         'field_object' => '@EasyAdmin/default/field_object.html.twig',
+        'field_percent' => '@EasyAdmin/default/field_percent.html.twig',
         'field_raw' => '@EasyAdmin/default/field_raw.html.twig',
         'field_simple_array' => '@EasyAdmin/default/field_simple_array.html.twig',
         'field_smallint' => '@EasyAdmin/default/field_smallint.html.twig',
@@ -143,7 +145,7 @@ class TemplateConfigPass implements ConfigPassInterface
                             'easy_admin/'.$entityName.'/'.$templatePath,
                             'easy_admin/'.$templatePath,
                             $templatePath,
-                        ));
+                        ), true);
                     } else {
                         // At this point, we don't know the exact data type associated with each field.
                         // The template is initialized to null and it will be resolved at runtime in the Configurator class
@@ -239,7 +241,7 @@ class TemplateConfigPass implements ConfigPassInterface
         return $backendConfig;
     }
 
-    private function findFirstExistingTemplate(array $templatePaths)
+    private function findFirstExistingTemplate(array $templatePaths, $isFieldTemplateFragment = false)
     {
         foreach ($templatePaths as $templatePath) {
             // template name normalization code taken from \Twig_Loader_Filesystem::normalizeName()
@@ -275,6 +277,15 @@ class TemplateConfigPass implements ConfigPassInterface
             }
 
             if (null !== $templatePath && isset($this->existingTemplates[$namespace][$templatePath])) {
+                if ('easy_admin/' === substr($templatePath, 0, 11)) {
+                    $templateRelativePath = substr($templatePath, 11);
+                    if ($isFieldTemplateFragment) {
+                        @trigger_error(sprintf('Using the "convention mode" to define the template fragment used to render fields in list/search/show views is deprecated since EasyAdmin 1.x and it will be removed in 2.0. Instead of using "template: \'%s\'" in your backend config, move the template for example to "app/Resources/views/admin/%s" (or "templates/admin/%s" if you use the modern Symfony dir structure) and use "template: \'admin/%s\'" in your config (instead of "admin/" you can put your templates in any other location and use any valid Twig template path as explained in the docs).', $templateRelativePath, $templateRelativePath, $templateRelativePath, $templateRelativePath), E_USER_DEPRECATED);
+                    } elseif (!$isFieldTemplateFragment) {
+                        @trigger_error(sprintf('Using the "convention mode" to override templates is deprecated since EasyAdmin 1.x and it will be removed in 2.0. Instead, use Symfony\'s template overriding mechanism and move the "%s" template to "app/Resources/EasyAdminBundle/views/default/%s" (or "templates/bundles/EasyAdminBundle/default/%s" if you use the modern Symfony dir structure). Alternatively, you can define the custom template using the "design.templates" global option or the "templates" option of your entities as explained in the docs.', $templatePath, $templateRelativePath, $templateRelativePath), E_USER_DEPRECATED);
+                    }
+                }
+
                 return $templatePath;
             }
         }

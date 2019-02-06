@@ -301,7 +301,6 @@ class Symfony_DI_PhpDumper_Errored_Definition extends Container
         $this->services['foo_with_inline'] = $instance = new \Foo();
 
         $a = new \Bar();
-
         $a->pub = 'pub';
         $a->setBaz(($this->services['baz'] ?? $this->getBazService()));
 
@@ -403,7 +402,7 @@ class Symfony_DI_PhpDumper_Errored_Definition extends Container
     {
         return $this->services['tagged_iterator'] = new \Bar(new RewindableGenerator(function () {
             yield 0 => ($this->services['foo'] ?? $this->getFooService());
-            yield 1 => ($this->privates['tagged_iterator_foo'] ?? $this->privates['tagged_iterator_foo'] = new \Bar());
+            yield 1 => ($this->privates['tagged_iterator_foo'] ?? ($this->privates['tagged_iterator_foo'] = new \Bar()));
         }, 2));
     }
 
@@ -476,7 +475,7 @@ class Symfony_DI_PhpDumper_Errored_Definition extends Container
     /**
      * Computes a dynamic parameter.
      *
-     * @param string The name of the dynamic parameter to load
+     * @param string $name The name of the dynamic parameter to load
      *
      * @return mixed The value of the dynamic parameter
      *

@@ -96,7 +96,7 @@ abstract class AbstractObjectNormalizer extends AbstractNormalizer
 
             $attributeValue = $this->getAttributeValue($object, $attribute, $format, $context);
             if ($maxDepthReached) {
-                $attributeValue = \call_user_func($this->maxDepthHandler, $attributeValue, $object, $attribute, $format, $context);
+                $attributeValue = ($this->maxDepthHandler)($attributeValue, $object, $attribute, $format, $context);
             }
 
             if (isset($this->callbacks[$attribute])) {
@@ -345,7 +345,7 @@ abstract class AbstractObjectNormalizer extends AbstractNormalizer
                 return (float) $data;
             }
 
-            if (\call_user_func('is_'.$builtinType, $data)) {
+            if (('is_'.$builtinType)($data)) {
                 return $data;
             }
         }
@@ -355,6 +355,18 @@ abstract class AbstractObjectNormalizer extends AbstractNormalizer
         }
 
         throw new NotNormalizableValueException(sprintf('The type of the "%s" attribute for class "%s" must be one of "%s" ("%s" given).', $attribute, $currentClass, implode('", "', array_keys($expectedTypes)), \gettype($data)));
+    }
+
+    /**
+     * @internal
+     */
+    protected function denormalizeParameter(\ReflectionClass $class, \ReflectionParameter $parameter, $parameterName, $parameterData, array $context, $format = null)
+    {
+        if (null === $this->propertyTypeExtractor || null === $types = $this->propertyTypeExtractor->getTypes($class->getName(), $parameterName)) {
+            return parent::denormalizeParameter($class, $parameter, $parameterName, $parameterData, $context, $format);
+        }
+
+        return $this->validateAndDenormalize($class->getName(), $parameterName, $parameterData, $format, $context);
     }
 
     /**

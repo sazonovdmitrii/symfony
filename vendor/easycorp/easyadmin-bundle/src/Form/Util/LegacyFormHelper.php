@@ -33,6 +33,7 @@ final class LegacyFormHelper
         'datetime_immutable' => 'Symfony\\Component\\Form\\Extension\\Core\\Type\\DateTimeType',
         'date' => 'Symfony\\Component\\Form\\Extension\\Core\\Type\\DateType',
         'date_immutable' => 'Symfony\\Component\\Form\\Extension\\Core\\Type\\DateType',
+        'dateinterval' => 'Symfony\\Component\\Form\\Extension\\Core\\Type\\DateIntervalType',
         'email' => 'Symfony\\Component\\Form\\Extension\\Core\\Type\\EmailType',
         'entity' => 'Symfony\\Bridge\\Doctrine\\Form\\Type\\EntityType',
         'file' => 'Symfony\\Component\\Form\\Extension\\Core\\Type\\FileType',
@@ -65,6 +66,7 @@ final class LegacyFormHelper
         'easyadmin_section' => 'EasyCorp\\Bundle\\EasyAdminBundle\\Form\\Type\\EasyAdminSectionType',
         // Popular third-party bundles types
         'ckeditor' => 'Ivory\\CKEditorBundle\\Form\\Type\\CKEditorType',
+        'fos_ckeditor' => 'FOS\\CKEditorBundle\\Form\\Type\\CKEditorType',
         'vich_file' => 'Vich\\UploaderBundle\\Form\\Type\\VichFileType',
         'vich_image' => 'Vich\\UploaderBundle\\Form\\Type\\VichImageType',
     );

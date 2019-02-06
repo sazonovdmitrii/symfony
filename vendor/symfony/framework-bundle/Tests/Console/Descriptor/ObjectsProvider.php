@@ -163,6 +163,7 @@ class ObjectsProvider
             'callable_5' => array('Symfony\\Bundle\\FrameworkBundle\\Tests\\Console\\Descriptor\\ExtendedCallableClass', 'parent::staticMethod'),
             'callable_6' => function () { return 'Closure'; },
             'callable_7' => new CallableClass(),
+            'callable_from_callable' => \Closure::fromCallable(new CallableClass()),
         );
     }
 }

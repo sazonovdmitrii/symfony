@@ -1,0 +1,9 @@
+# TEST
+# the 'horizontal' shortcut of 'form_theme' is deprecated
+
+# CONFIGURATION
+easy_admin:
+    design:
+        form_theme: 'horizontal'
+    entities:
+        - AppTestBundle\Entity\UnitTests\Category

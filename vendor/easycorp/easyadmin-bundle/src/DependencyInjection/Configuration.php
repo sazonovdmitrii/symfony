@@ -195,6 +195,11 @@ class Configuration implements ConfigurationInterface
                             ->info('The sprintf-compatible format applied to numeric values.')
                             ->example('%.2d (see http://php.net/sprintf)')
                         ->end()
+                        ->scalarNode('dateinterval')
+                            ->defaultValue('%%y Year(s) %%m Month(s) %%d Day(s)')
+                            ->info('The PHP dateinterval-compatible format applied to "dateinterval" field types.')
+                            ->example('%%y Year(s) %%m Month(s) %%d Day(s) (see http://php.net/manual/en/dateinterval.format.php)')
+                        ->end()
                     ->end()
                 ->end()
 
@@ -234,6 +239,13 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('theme')
                             ->defaultValue('default')
                             ->info('The theme used to render the backend pages. For now this value can only be "default".')
+                            ->beforeNormalization()
+                                ->always(function ($v) {
+                                    @trigger_error('The "design.theme" option is deprecated since EasyAdmin 1.x version and it will be removed in 2.0.', E_USER_DEPRECATED);
+
+                                    return $v;
+                                })
+                            ->end()
                             ->validate()
                                 ->ifNotInArray(array('default'))
                                 ->thenInvalid('The theme name can only be "default".')
@@ -245,12 +257,9 @@ class Configuration implements ConfigurationInterface
                             ->info('The color scheme applied to the backend design (values: "dark" or "light").')
                             ->defaultValue('dark')
                             ->treatNullLike('dark')
-                            ->validate()
-                                ->ifTrue(function ($v) {
-                                    return 'light' === $v;
-                                })
-                                ->then(function ($v) {
-                                    @trigger_error('The "light" color scheme is deprecated since EasyAdmin 1.x version and it will be removed in 2.0. Use "dark" as the value of the "color_scheme" option.');
+                            ->beforeNormalization()
+                                ->always(function ($v) {
+                                    @trigger_error('The "design.color_scheme" option is deprecated since EasyAdmin 1.x version and it will be removed in 2.0.', E_USER_DEPRECATED);
 
                                     return $v;
                                 })
@@ -280,6 +289,16 @@ class Configuration implements ConfigurationInterface
                             ->defaultValue(array('@EasyAdmin/form/bootstrap_3_horizontal_layout.html.twig'))
                             ->treatNullLike(array('@EasyAdmin/form/bootstrap_3_horizontal_layout.html.twig'))
                             ->info('The form theme applied to backend forms. Allowed values: "horizontal", "vertical", any valid form theme path or an array of theme paths.')
+                            ->beforeNormalization()
+                                ->ifTrue(function ($v) {
+                                    return in_array($v, array('@EasyAdmin/form/bootstrap_3_horizontal_layout.html.twig', '@EasyAdmin/form/bootstrap_3_layout.html.twig'), true);
+                                })
+                                ->then(function ($v) {
+                                    @trigger_error(sprintf('The "%s" form theme is deprecated since EasyAdmin 1.x version and it will be removed in 2.0. Remove "%s" from the "design.form_theme" config option.', $v, $v), E_USER_DEPRECATED);
+
+                                    return $v;
+                                })
+                            ->end()
                             ->validate()
                                 ->ifString()->then(function ($v) {
                                     return array($v);
@@ -288,9 +307,13 @@ class Configuration implements ConfigurationInterface
                             ->validate()
                                 ->ifArray()->then(function ($values) {
                                     foreach ($values as $k => $v) {
+                                        $deprecationMessage = sprintf('The "%s" form theme shortcut is deprecated since EasyAdmin 1.x version and it will be removed in 2.0. Remove "%s" from the "design.form_theme" config option.', $v, $v);
+
                                         if ('horizontal' === $v) {
+                                            @trigger_error($deprecationMessage, E_USER_DEPRECATED);
                                             $values[$k] = '@EasyAdmin/form/bootstrap_3_horizontal_layout.html.twig';
                                         } elseif ('vertical' === $v) {
+                                            @trigger_error($deprecationMessage, E_USER_DEPRECATED);
                                             $values[$k] = '@EasyAdmin/form/bootstrap_3_layout.html.twig';
                                         }
                                     }

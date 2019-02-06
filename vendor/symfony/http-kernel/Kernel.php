@@ -63,11 +63,11 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
     private $requestStackSize = 0;
     private $resetServices = false;
 
-    const VERSION = '4.1.7';
-    const VERSION_ID = 40107;
+    const VERSION = '4.1.10';
+    const VERSION_ID = 40110;
     const MAJOR_VERSION = 4;
     const MINOR_VERSION = 1;
-    const RELEASE_VERSION = 7;
+    const RELEASE_VERSION = 10;
     const EXTRA_VERSION = '';
 
     const END_OF_MAINTENANCE = '01/2019';
@@ -708,7 +708,10 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
             $fs->dumpFile($dir.$file, $code);
             @chmod($dir.$file, 0666 & ~umask());
         }
-        @unlink(\dirname($dir.$file).'.legacy');
+        $legacyFile = \dirname($dir.$file).'.legacy';
+        if (file_exists($legacyFile)) {
+            @unlink($legacyFile);
+        }
 
         $cache->write($rootCode, $container->getResources());
     }

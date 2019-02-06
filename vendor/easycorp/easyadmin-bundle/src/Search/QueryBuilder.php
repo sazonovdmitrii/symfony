@@ -13,6 +13,7 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Search;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder as DoctrineQueryBuilder;
 
 /**
@@ -43,13 +44,15 @@ class QueryBuilder
     {
         /* @var EntityManager */
         $em = $this->doctrine->getManagerForClass($entityConfig['class']);
+        /* @var ClassMetadata */
+        $classMetadata = $em->getClassMetadata($entityConfig['class']);
         /* @var DoctrineQueryBuilder */
         $queryBuilder = $em->createQueryBuilder()
             ->select('entity')
             ->from($entityConfig['class'], 'entity')
         ;
 
-        $isSortedByDoctrineAssociation = false !== strpos($sortField, '.');
+        $isSortedByDoctrineAssociation = $this->isDoctrineAssociation($classMetadata, $sortField);
         if ($isSortedByDoctrineAssociation) {
             $sortFieldParts = explode('.', $sortField);
             $queryBuilder->leftJoin('entity.'.$sortFieldParts[0], $sortFieldParts[0]);
@@ -82,6 +85,8 @@ class QueryBuilder
     {
         /* @var EntityManager */
         $em = $this->doctrine->getManagerForClass($entityConfig['class']);
+        /* @var ClassMetadata */
+        $classMetadata = $em->getClassMetadata($entityConfig['class']);
         /* @var DoctrineQueryBuilder */
         $queryBuilder = $em->createQueryBuilder()
             ->select('entity')
@@ -98,15 +103,22 @@ class QueryBuilder
         $entitiesAlreadyJoined = array();
         foreach ($entityConfig['search']['fields'] as $fieldName => $metadata) {
             $entityName = 'entity';
-            if (false !== strpos($fieldName, '.')) {
-                list($associatedEntityName, $associatedFieldName) = explode('.', $fieldName);
-                if (!in_array($associatedEntityName, $entitiesAlreadyJoined)) {
-                    $queryBuilder->leftJoin('entity.'.$associatedEntityName, $associatedEntityName);
-                    $entitiesAlreadyJoined[] = $associatedEntityName;
-                }
+            if ($this->isDoctrineAssociation($classMetadata, $fieldName)) {
+                // support arbitrarily nested associations (e.g. foo.bar.baz.qux)
+                $associationComponents = explode('.', $fieldName);
+                for ($i = 0; $i < count($associationComponents) - 1; ++$i) {
+                    $associatedEntityName = $associationComponents[$i];
+                    $associatedFieldName = $associationComponents[$i + 1];
 
-                $entityName = $associatedEntityName;
-                $fieldName = $associatedFieldName;
+                    if (!in_array($associatedEntityName, $entitiesAlreadyJoined)) {
+                        $parentEntityName = 0 === $i ? 'entity' : $associationComponents[$i - 1];
+                        $queryBuilder->leftJoin($parentEntityName.'.'.$associatedEntityName, $associatedEntityName);
+                        $entitiesAlreadyJoined[] = $associatedEntityName;
+                    }
+
+                    $entityName = $associatedEntityName;
+                    $fieldName = $associatedFieldName;
+                }
             }
 
             $isSmallIntegerField = 'smallint' === $metadata['dataType'];
@@ -144,7 +156,7 @@ class QueryBuilder
             $queryBuilder->andWhere($dqlFilter);
         }
 
-        $isSortedByDoctrineAssociation = false !== strpos($sortField, '.');
+        $isSortedByDoctrineAssociation = $this->isDoctrineAssociation($classMetadata, $sortField);
         if ($isSortedByDoctrineAssociation) {
             list($associatedEntityName, $associatedFieldName) = explode('.', $sortField);
             if (!in_array($associatedEntityName, $entitiesAlreadyJoined)) {
@@ -158,6 +170,27 @@ class QueryBuilder
         }
 
         return $queryBuilder;
+    }
+
+    /**
+     * Checking if the field name contains a '.' is not enough to decide if it's a
+     * Doctrine association. This also happens when using embedded classes, so the
+     * embeddedClasses property from Doctrine class metadata must be checked too.
+     *
+     * @param ClassMetadata $classMetadata
+     * @param string|null   $fieldName
+     *
+     * @return bool
+     */
+    protected function isDoctrineAssociation(ClassMetadata $classMetadata, $fieldName)
+    {
+        if (null === $fieldName) {
+            return false;
+        }
+
+        $fieldNameParts = explode('.', $fieldName);
+
+        return false !== strpos($fieldName, '.') && !array_key_exists($fieldNameParts[0], $classMetadata->embeddedClasses);
     }
 }
 

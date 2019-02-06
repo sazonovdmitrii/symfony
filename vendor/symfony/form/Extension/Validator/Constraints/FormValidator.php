@@ -48,7 +48,7 @@ class FormValidator extends ConstraintValidator
 
             // Validate the data against its own constraints
             if ($form->isRoot() && (\is_object($data) || \is_array($data))) {
-                if (\is_array($groups) && \count($groups) > 0 || $groups instanceof GroupSequence && \count($groups->groups) > 0) {
+                if (($groups && \is_array($groups)) || ($groups instanceof GroupSequence && $groups->groups)) {
                     $validator->atPath('data')->validate($form->getData(), null, $groups);
                 }
             }
@@ -180,7 +180,7 @@ class FormValidator extends ConstraintValidator
     private static function resolveValidationGroups($groups, FormInterface $form)
     {
         if (!\is_string($groups) && \is_callable($groups)) {
-            $groups = \call_user_func($groups, $form);
+            $groups = $groups($form);
         }
 
         if ($groups instanceof GroupSequence) {

@@ -216,7 +216,7 @@ class AdminController extends Controller
             $this->dispatch(EasyAdminEvents::PRE_UPDATE, array('entity' => $entity));
 
             $this->executeDynamicMethod('preUpdate<EntityName>Entity', array($entity, true));
-            $this->executeDynamicMethod('update<EntityName>Entity', array($entity));
+            $this->executeDynamicMethod('update<EntityName>Entity', array($entity, $editForm));
 
             $this->dispatch(EasyAdminEvents::POST_UPDATE, array('entity' => $entity));
 
@@ -290,7 +290,7 @@ class AdminController extends Controller
             $this->dispatch(EasyAdminEvents::PRE_PERSIST, array('entity' => $entity));
 
             $this->executeDynamicMethod('prePersist<EntityName>Entity', array($entity, true));
-            $this->executeDynamicMethod('persist<EntityName>Entity', array($entity));
+            $this->executeDynamicMethod('persist<EntityName>Entity', array($entity, $newForm));
 
             $this->dispatch(EasyAdminEvents::POST_PERSIST, array('entity' => $entity));
 
@@ -339,7 +339,7 @@ class AdminController extends Controller
             $this->executeDynamicMethod('preRemove<EntityName>Entity', array($entity, true));
 
             try {
-                $this->executeDynamicMethod('remove<EntityName>Entity', array($entity));
+                $this->executeDynamicMethod('remove<EntityName>Entity', array($entity, $form));
             } catch (ForeignKeyConstraintViolationException $e) {
                 throw new EntityRemoveException(array('entity_name' => $this->entity['name'], 'message' => $e->getMessage()));
             }
@@ -364,21 +364,23 @@ class AdminController extends Controller
         $query = trim($this->request->query->get('query'));
         // if the search query is empty, redirect to the 'list' action
         if ('' === $query) {
-            $queryParameters = array_replace($this->request->query->all(), array('action' => 'list', 'query' => null));
-            $queryParameters = array_filter($queryParameters);
+            $queryParameters = array_replace($this->request->query->all(), array('action' => 'list'));
+            unset($queryParameters['query']);
 
             return $this->redirect($this->get('router')->generate('easyadmin', $queryParameters));
         }
 
         $searchableFields = $this->entity['search']['fields'];
+        $defaultSortField = isset($this->entity['search']['sort']['field']) ? $this->entity['search']['sort']['field'] : null;
+        $defaultSortDirection = isset($this->entity['search']['sort']['direction']) ? $this->entity['search']['sort']['direction'] : null;
         $paginator = $this->findBy(
             $this->entity['class'],
             $query,
             $searchableFields,
             $this->request->query->get('page', 1),
             $this->entity['list']['max_results'],
-            isset($this->entity['search']['sort']['field']) ? $this->entity['search']['sort']['field'] : $this->request->query->get('sortField'),
-            isset($this->entity['search']['sort']['direction']) ? $this->entity['search']['sort']['direction'] : $this->request->query->get('sortDirection'),
+            $this->request->query->get('sortField', $defaultSortField),
+            $this->request->query->get('sortDirection', $defaultSortDirection),
             $this->entity['search']['dql_filter']
         );
         $fields = $this->entity['list']['fields'];
@@ -415,9 +417,9 @@ class AdminController extends Controller
             throw new \RuntimeException(sprintf('The "%s" property of the "%s" entity is not writable.', $property, $entityConfig['name']));
         }
 
-        $this->dispatch(EasyAdminEvents::PRE_UPDATE, array('entity' => $entity, 'newValue' => $value));
-
         $this->get('easy_admin.property_accessor')->setValue($entity, $property, $value);
+
+        $this->dispatch(EasyAdminEvents::PRE_UPDATE, array('entity' => $entity, 'newValue' => $value));
         $this->executeDynamicMethod('preUpdate<EntityName>Entity', array($entity, true));
 
         $this->em->persist($entity);
@@ -491,6 +493,7 @@ class AdminController extends Controller
      */
     protected function updateEntity($entity)
     {
+        $this->em->persist($entity);
         $this->em->flush();
     }
 
@@ -583,6 +586,10 @@ class AdminController extends Controller
      */
     protected function findBy($entityClass, $searchQuery, array $searchableFields, $page = 1, $maxPerPage = 15, $sortField = null, $sortDirection = null, $dqlFilter = null)
     {
+        if (empty($sortDirection) || !in_array(strtoupper($sortDirection), array('ASC', 'DESC'))) {
+            $sortDirection = 'DESC';
+        }
+
         $queryBuilder = $this->executeDynamicMethod('create<EntityName>SearchQueryBuilder', array($entityClass, $searchQuery, $searchableFields, $sortField, $sortDirection, $dqlFilter));
 
         $this->dispatch(EasyAdminEvents::POST_SEARCH_QUERY_BUILDER, array(
@@ -840,13 +847,15 @@ class AdminController extends Controller
 
         // 2. from new|edit action, redirect to edit if possible
         if (in_array($refererAction, array('new', 'edit')) && $this->isActionAllowed('edit')) {
+            $easyAdminAttributes = $this->request->attributes->get('easyadmin');
+
             return $this->redirectToRoute('easyadmin', array(
                 'action' => 'edit',
                 'entity' => $this->entity['name'],
                 'menuIndex' => $this->request->query->get('menuIndex'),
                 'submenuIndex' => $this->request->query->get('submenuIndex'),
                 'id' => ('new' === $refererAction)
-                    ? PropertyAccess::createPropertyAccessor()->getValue($this->request->attributes->get('easyadmin')['item'], $this->entity['primary_key_field_name'])
+                    ? PropertyAccess::createPropertyAccessor()->getValue($easyAdminAttributes['item'], $this->entity['primary_key_field_name'])
                     : $this->request->query->get('id'),
             ));
         }

@@ -75,7 +75,7 @@ class Application
     private $dispatcher;
     private $terminal;
     private $defaultCommand;
-    private $singleCommand;
+    private $singleCommand = false;
     private $initialized;
 
     /**
@@ -793,6 +793,13 @@ class Application
                 // exception related properties
                 $trace = $e->getTrace();
 
+                array_unshift($trace, array(
+                    'function' => '',
+                    'file' => $e->getFile() ?: 'n/a',
+                    'line' => $e->getLine() ?: 'n/a',
+                    'args' => array(),
+                ));
+
                 for ($i = 0, $count = \count($trace); $i < $count; ++$i) {
                     $class = isset($trace[$i]['class']) ? $trace[$i]['class'] : '';
                     $type = isset($trace[$i]['type']) ? $trace[$i]['type'] : '';
@@ -1081,6 +1088,14 @@ class Application
         }
 
         return $this;
+    }
+
+    /**
+     * @internal
+     */
+    public function isSingleCommand()
+    {
+        return $this->singleCommand;
     }
 
     private function splitStringByWidth($string, $width)
