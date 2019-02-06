@@ -1,10 +1,11 @@
 <?php
 namespace App\Lp\BasketBundle\Controller;
 
+use App\Lp\Framework\LpController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-class BasketController extends AbstractController
+class BasketController extends LpController
 {
     /**
      * @Route("/{slug}", name="basket")

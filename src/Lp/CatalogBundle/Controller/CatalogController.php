@@ -1,10 +1,11 @@
 <?php
 namespace App\Lp\CatalogBundle\Controller;
 
+use App\Lp\Framework\LpController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-class CatalogController extends AbstractController
+class CatalogController extends LpController
 {
     /**
      * @Route("/{slug}", name="catalog")

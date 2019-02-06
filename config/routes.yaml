@@ -1,14 +1,14 @@
 app_logout:
     path: /logout
 
+cms:
+    resource: "Lp/CmsBundle/Resources/config/routing.yaml"
+
 basket:
     resource: "Lp/BasketBundle/Resources/config/routing.yaml"
 
 profile:
     resource: "Lp/ProfileBundle/Resources/config/routing.yaml"
-
-cms:
-    resource: "Lp/CmsBundle/Resources/config/routing.yaml"
 
 easy_admin_bundle:
     resource: '@EasyAdminBundle/Controller/AdminController.php'

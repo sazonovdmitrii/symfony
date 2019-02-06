@@ -1,18 +1,18 @@
 <?php
 namespace App\Lp\UrlsBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Lp\Framework\LpController;
+use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use App\Entity\Urls;
-class UrlController extends AbstractController
+
+class UrlController extends LpController
 {
     /**
      * @Route(":slug", name="urls")
      */
     public function match($slug)
     {
-//        var_dump($this->getDoctrine()->getManager('lp_perl')->getConnection()->getDatabase());
-//        die();
         $url = $this->getDoctrine()
             ->getRepository(Urls::class)
             ->createQueryBuilder('urls')
@@ -21,12 +21,22 @@ class UrlController extends AbstractController
             ->getQuery()
             ->getOneOrNullResult();
         if($url) {
+            $request = $this
+                ->addContextParameters(
+                    [
+                        'slug' => $slug,
+                        'entity_id' => $url->getEid()
+                    ]
+                );
+
             $dispatcherEntity = ucfirst($url->getType());
+
             $response = $this->forward(
                 'App\Lp\CatalogBundle\Controller\\' . $dispatcherEntity . 'Controller::match', [
-                    'slug'  => $slug
+                    'request' => $request
                 ]
             );
+
             return $response;
         } else {
             return $this->forward(

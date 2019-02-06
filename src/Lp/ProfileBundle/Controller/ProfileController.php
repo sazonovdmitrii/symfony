@@ -1,10 +1,11 @@
 <?php
 namespace App\Lp\ProfileBundle\Controller;
 
+use App\Lp\Framework\LpController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-class ProfileController extends AbstractController
+class ProfileController extends LpController
 {
     /**
      * @Route("/{slug}", name="profile")

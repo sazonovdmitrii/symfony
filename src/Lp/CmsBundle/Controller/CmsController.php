@@ -1,10 +1,11 @@
 <?php
 namespace App\Lp\CmsBundle\Controller;
 
+use App\Lp\Framework\LpController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-class CmsController extends AbstractController
+class CmsController extends LpController
 {
     /**
      * @Route("/{slug}", name="cms")
