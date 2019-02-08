@@ -1,3 +1,7 @@
 basket:
     path: /basket
     controller: App\Lp\BasketBundle\Controller\BasketController::index
+
+basket_add:
+    path: /basket/add
+    controller: App\Lp\BasketBundle\Controller\BasketController::add

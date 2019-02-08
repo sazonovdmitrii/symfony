@@ -2,13 +2,13 @@
 
 namespace App\Lp\Framework;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class LpController extends AbstractController
 {
     /**
-     * @param $name
-     * @param $value
-     * @return $this
+     * @param $parameters
+     * @return mixed
      */
     public function addContextParameters($parameters)
     {
@@ -32,5 +32,21 @@ class LpController extends AbstractController
     private function _getRequest()
     {
         return $this->container->get('request_stack')->getCurrentRequest();
+    }
+
+    /**
+     * @param $className
+     * @return \Doctrine\Common\Persistence\ObjectRepository
+     */
+    public function getModel($className)
+    {
+        return $this
+            ->getDoctrine()
+            ->getRepository($className);
+    }
+
+    public function error($message)
+    {
+        throw new NotFoundHttpException($message);
     }
 }
