@@ -33,5 +33,13 @@ easy_admin:
                     - catalogs
                     - { type: 'tab', label: 'Product Items' }
                     - productItems
+        Order:
+            class: App\Entity\Order
+            list:
+                fields: ['id', 'name', 'visible']
+        PaymentMethod:
+            class: App\Entity\PaymentMethod
+            list:
+                fields: ['id', 'name']
     design:
         brand_color: 'black'

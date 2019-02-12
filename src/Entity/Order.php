@@ -26,6 +26,11 @@ class Order
      */
     private $user_id;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\PaymentMethod", inversedBy="orders")
+     */
+    private $payment_method_id;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -51,6 +56,18 @@ class Order
     public function setUserId(?int $user_id): self
     {
         $this->user_id = $user_id;
+
+        return $this;
+    }
+
+    public function getPaymentMethodId(): ?PaymentMethod
+    {
+        return $this->payment_method_id;
+    }
+
+    public function setPaymentMethodId(?PaymentMethod $payment_method_id): self
+    {
+        $this->payment_method_id = $payment_method_id;
 
         return $this;
     }
