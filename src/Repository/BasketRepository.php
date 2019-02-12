@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Basket;
+use App\Entity\BasketItem;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -23,15 +24,21 @@ class BasketRepository extends ServiceEntityRepository
      * @param int $productId
      * @return $this
      */
-    public function add(int $productId)
+
+    public function add($productItem)
     {
+        $basketItem = new BasketItem();
+        $basketItem->setProductItemId($productItem);
+        $this->_em->persist($basketItem);
+        $this->_em->flush();
+
         $basket = new Basket();
-        $basket->product_id = $productId;
+        $basket->addBasketItem($basketItem);
         $this->_em->persist($basket);
         $this->_em->flush();
+        
         return $this;
     }
-
     // /**
     //  * @return Basket[] Returns an array of Basket objects
     //  */
