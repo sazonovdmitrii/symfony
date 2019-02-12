@@ -38,6 +38,11 @@ class Order
      */
     private $orderItems;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Delivery", inversedBy="orders")
+     */
+    private $delivery_id;
+
     public function __construct()
     {
         $this->orderItems = new ArrayCollection();
@@ -111,6 +116,18 @@ class Order
                 $orderItem->setOrderId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDeliveryId(): ?Delivery
+    {
+        return $this->delivery_id;
+    }
+
+    public function setDeliveryId(?Delivery $delivery_id): self
+    {
+        $this->delivery_id = $delivery_id;
 
         return $this;
     }

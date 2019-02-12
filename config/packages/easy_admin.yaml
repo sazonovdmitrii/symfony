@@ -37,6 +37,10 @@ easy_admin:
             class: App\Entity\Order
             list:
                 fields: ['id', 'name', 'visible']
+        Delivery:
+              class: App\Entity\Delivery
+              list:
+                  fields: ['id', 'name', 'visible']
         PaymentMethod:
             class: App\Entity\PaymentMethod
             list:
