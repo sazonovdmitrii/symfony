@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -30,6 +32,16 @@ class Basket
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updated;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\BasketItem", mappedBy="basket_id")
+     */
+    private $basketItems;
+
+    public function __construct()
+    {
+        $this->basketItems = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -68,6 +80,37 @@ class Basket
     public function setUpdated(?\DateTimeInterface $updated): self
     {
         $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|BasketItem[]
+     */
+    public function getBasketItems(): Collection
+    {
+        return $this->basketItems;
+    }
+
+    public function addBasketItem(BasketItem $basketItem): self
+    {
+        if (!$this->basketItems->contains($basketItem)) {
+            $this->basketItems[] = $basketItem;
+            $basketItem->setBasketId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBasketItem(BasketItem $basketItem): self
+    {
+        if ($this->basketItems->contains($basketItem)) {
+            $this->basketItems->removeElement($basketItem);
+            // set the owning side to null (unless already changed)
+            if ($basketItem->getBasketId() === $this) {
+                $basketItem->setBasketId(null);
+            }
+        }
 
         return $this;
     }

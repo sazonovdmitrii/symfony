@@ -38,9 +38,15 @@ class ProductItem
      */
     private $product_id;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\BasketItem", mappedBy="product_item_id")
+     */
+    private $basketItems;
+
     public function __construct()
     {
         $this->product_id = new ArrayCollection();
+        $this->basketItems = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -113,5 +119,36 @@ class ProductItem
     public function __toString()
     {
         return $this->name;
+    }
+
+    /**
+     * @return Collection|BasketItem[]
+     */
+    public function getBasketItems(): Collection
+    {
+        return $this->basketItems;
+    }
+
+    public function addBasketItem(BasketItem $basketItem): self
+    {
+        if (!$this->basketItems->contains($basketItem)) {
+            $this->basketItems[] = $basketItem;
+            $basketItem->setProductItemId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBasketItem(BasketItem $basketItem): self
+    {
+        if ($this->basketItems->contains($basketItem)) {
+            $this->basketItems->removeElement($basketItem);
+            // set the owning side to null (unless already changed)
+            if ($basketItem->getProductItemId() === $this) {
+                $basketItem->setProductItemId(null);
+            }
+        }
+
+        return $this;
     }
 }
