@@ -21,10 +21,9 @@ class BasketRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param int $productId
+     * @param $productItem
      * @return $this
      */
-
     public function add($productItem)
     {
         $basketItem = new BasketItem();
@@ -36,8 +35,11 @@ class BasketRepository extends ServiceEntityRepository
         $basket->addBasketItem($basketItem);
         $this->_em->persist($basket);
         $this->_em->flush();
-        
-        return $this;
+
+        return [
+            'id' => $basket->getId(),
+            'items' => $basket->getBasketItems()
+        ];
     }
     // /**
     //  * @return Basket[] Returns an array of Basket objects

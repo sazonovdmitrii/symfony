@@ -7,6 +7,9 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Entity\ProductItem;
 use App\Entity\Basket;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Lp\Framework\Lp;
+
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class BasketController extends LpController
 {
@@ -31,6 +34,7 @@ class BasketController extends LpController
 
             $basket = $this->getModel(Basket::class)->add($productItem);
             if($basket) {
+                $request->getSession()->set('basket', $basket);
                 return new JsonResponse($basket);
             }
         }
