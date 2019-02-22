@@ -32,14 +32,14 @@ doctrine:
                         dir: '%kernel.project_dir%/src/Entity'
                         prefix: 'App\Entity'
                         alias: App
-            lp_perl:
-                connection: lp_perl
-                mappings:
-                    LpPerlEntity:
-                        is_bundle: false
-                        type: annotation
-                        dir: '%kernel.project_dir%/src/LpPerlEntity'
-                        prefix: 'App\LpPerlEntity'
-                        alias: LpPerlEntity
+#            lp_perl:
+#                connection: lp_perl
+#                mappings:
+#                    LpPerlEntity:
+#                        is_bundle: false
+#                        type: annotation
+#                        dir: '%kernel.project_dir%/src/LpPerlEntity'
+#                        prefix: 'App\LpPerlEntity'
+#                        alias: LpPerlEntity
 
 
