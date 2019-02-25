@@ -25,9 +25,9 @@ final class Version20190130180754 extends AbstractMigration
         $this->addSql('ALTER SEQUENCE Urls_id_seq INCREMENT BY 1');
         $this->addSql('ALTER SEQUENCE Users_id_seq INCREMENT BY 1');
         $this->addSql('CREATE SEQUENCE Catalog_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE Account_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+//        $this->addSql('CREATE SEQUENCE Account_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE Catalog (id INT NOT NULL, pid INT DEFAULT NULL, visible BOOLEAN NOT NULL, created TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('ALTER TABLE account ADD increment_by INT DEFAULT NULL');
+//        $this->addSql('ALTER TABLE account ADD increment_by INT DEFAULT NULL');
         $this->addSql('ALTER TABLE urls ALTER type TYPE TEXT');
         $this->addSql('ALTER TABLE urls ALTER type DROP DEFAULT');
         $this->addSql('ALTER TABLE urls ALTER created DROP DEFAULT');
@@ -44,7 +44,7 @@ final class Version20190130180754 extends AbstractMigration
         $this->addSql('ALTER SEQUENCE users_id_seq INCREMENT BY 0');
         $this->addSql('ALTER SEQUENCE urls_id_seq INCREMENT BY 0');
         $this->addSql('DROP SEQUENCE Catalog_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE Account_id_seq CASCADE');
+//        $this->addSql('DROP SEQUENCE Account_id_seq CASCADE');
         $this->addSql('DROP TABLE Catalog');
         $this->addSql('ALTER INDEX uniq_d5428aede7927c74 RENAME TO uniq_1483a5e9e7927c74');
         $this->addSql('ALTER TABLE Urls ALTER type TYPE TEXT');
@@ -52,6 +52,6 @@ final class Version20190130180754 extends AbstractMigration
         $this->addSql('ALTER TABLE Urls ALTER created SET DEFAULT \'now()\'');
         $this->addSql('ALTER TABLE Urls ALTER created DROP NOT NULL');
         $this->addSql('COMMENT ON COLUMN Urls.type IS \'(DC2Type:array)\'');
-        $this->addSql('ALTER TABLE Account DROP increment_by');
+//        $this->addSql('ALTER TABLE Account DROP increment_by');
     }
 }
