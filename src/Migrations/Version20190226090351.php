@@ -35,7 +35,6 @@ final class Version20190226090351 extends AbstractMigration
         $this->addSql('ALTER TABLE Orders ADD CONSTRAINT FK_E283F8D86F4F78C5 FOREIGN KEY (delivery_id_id) REFERENCES Delivery (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE Orders ADD CONSTRAINT FK_E283F8D89D86650F FOREIGN KEY (user_id_id) REFERENCES Users (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE Orders ADD CONSTRAINT FK_E283F8D848E1E977 FOREIGN KEY (address_id_id) REFERENCES Address (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('DROP TABLE "Order"');
     }
 
     public function down(Schema $schema) : void
