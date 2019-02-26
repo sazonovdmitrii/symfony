@@ -22,9 +22,7 @@ final class Version20190226090351 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('ALTER TABLE orderitem DROP CONSTRAINT fk_33e85e19fcdaeaaa');
         $this->addSql('DROP SEQUENCE order_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE orderitem_id_seq CASCADE');
         $this->addSql('CREATE SEQUENCE Address_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE Orders_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE Address (id INT NOT NULL, name VARCHAR(255) NOT NULL, created TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
@@ -38,7 +36,6 @@ final class Version20190226090351 extends AbstractMigration
         $this->addSql('ALTER TABLE Orders ADD CONSTRAINT FK_E283F8D89D86650F FOREIGN KEY (user_id_id) REFERENCES Users (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE Orders ADD CONSTRAINT FK_E283F8D848E1E977 FOREIGN KEY (address_id_id) REFERENCES Address (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('DROP TABLE "Order"');
-        $this->addSql('DROP TABLE orderitem');
     }
 
     public function down(Schema $schema) : void
@@ -51,15 +48,11 @@ final class Version20190226090351 extends AbstractMigration
         $this->addSql('DROP SEQUENCE Address_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE Orders_id_seq CASCADE');
         $this->addSql('CREATE SEQUENCE order_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE orderitem_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE "Order" (id INT NOT NULL, payment_method_id_id INT DEFAULT NULL, delivery_id_id INT DEFAULT NULL, created TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, user_id INT DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX idx_34e8bc9ca0ce293e ON "Order" (payment_method_id_id)');
         $this->addSql('CREATE INDEX idx_34e8bc9c6f4f78c5 ON "Order" (delivery_id_id)');
-        $this->addSql('CREATE TABLE orderitem (id INT NOT NULL, order_id_id INT DEFAULT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE INDEX idx_33e85e19fcdaeaaa ON orderitem (order_id_id)');
         $this->addSql('ALTER TABLE "Order" ADD CONSTRAINT fk_34e8bc9ca0ce293e FOREIGN KEY (payment_method_id_id) REFERENCES paymentmethod (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE "Order" ADD CONSTRAINT fk_34e8bc9c6f4f78c5 FOREIGN KEY (delivery_id_id) REFERENCES delivery (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE orderitem ADD CONSTRAINT fk_33e85e19fcdaeaaa FOREIGN KEY (order_id_id) REFERENCES "Order" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('DROP TABLE Address');
         $this->addSql('DROP TABLE Orders');
     }
