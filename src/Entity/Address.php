@@ -7,9 +7,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\DeliveryRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\AddressRepository")
  */
-class Delivery
+class Address
 {
     /**
      * @ORM\Id()
@@ -24,12 +24,12 @@ class Delivery
     private $name;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="datetime")
      */
-    private $visible;
+    private $created;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Orders", mappedBy="delivery_id")
+     * @ORM\OneToMany(targetEntity="App\Entity\Orders", mappedBy="address_id")
      */
     private $orders;
 
@@ -55,14 +55,14 @@ class Delivery
         return $this;
     }
 
-    public function getVisible(): ?bool
+    public function getCreated(): ?\DateTimeInterface
     {
-        return $this->visible;
+        return $this->created;
     }
 
-    public function setVisible(bool $visible): self
+    public function setCreated(\DateTimeInterface $created): self
     {
-        $this->visible = $visible;
+        $this->created = $created;
 
         return $this;
     }
@@ -79,7 +79,7 @@ class Delivery
     {
         if (!$this->orders->contains($order)) {
             $this->orders[] = $order;
-            $order->setDeliveryId($this);
+            $order->setAddressId($this);
         }
 
         return $this;
@@ -90,8 +90,8 @@ class Delivery
         if ($this->orders->contains($order)) {
             $this->orders->removeElement($order);
             // set the owning side to null (unless already changed)
-            if ($order->getDeliveryId() === $this) {
-                $order->setDeliveryId(null);
+            if ($order->getAddressId() === $this) {
+                $order->setAddressId(null);
             }
         }
 

@@ -34,7 +34,7 @@ easy_admin:
                     - { type: 'tab', label: 'Product Items' }
                     - productItems
         Order:
-            class: App\Entity\Order
+            class: App\Entity\Orders
             list:
                 fields: ['id', 'name', 'visible']
         Delivery:

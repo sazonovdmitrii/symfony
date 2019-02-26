@@ -32,9 +32,14 @@ class Urls
     private $eid;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", options={"default"="CURRENT_TIMESTAMP"})
      */
     private $created;
+
+    public function __construct()
+    {
+        $this->created = new \DateTime();
+    }
 
     public function getId(): ?int
     {

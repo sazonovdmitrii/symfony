@@ -29,7 +29,7 @@ class PaymentMethod
     private $code;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Order", mappedBy="payment_method_id")
+     * @ORM\OneToMany(targetEntity="App\Entity\Orders", mappedBy="payment_method_id")
      */
     private $orders;
 
@@ -68,14 +68,14 @@ class PaymentMethod
     }
 
     /**
-     * @return Collection|Order[]
+     * @return Collection|Orders[]
      */
     public function getOrders(): Collection
     {
         return $this->orders;
     }
 
-    public function addOrder(Order $order): self
+    public function addOrder(Orders $order): self
     {
         if (!$this->orders->contains($order)) {
             $this->orders[] = $order;
@@ -85,7 +85,7 @@ class PaymentMethod
         return $this;
     }
 
-    public function removeOrder(Order $order): self
+    public function removeOrder(Orders $order): self
     {
         if ($this->orders->contains($order)) {
             $this->orders->removeElement($order);
