@@ -22,6 +22,7 @@ services:
         links:
             - postgres
             - db_lp:mysql
+            - memcached
     nginx:
         build: nginx
         ports:
@@ -44,3 +45,8 @@ services:
           - MYSQL_ROOT_PASSWORD=root
           - MYSQL_DATABASE=lp
           - MYSQL_USER=root
+
+    memcached:
+        image: memcached:1.4
+        ports:
+          - "11212:11211"
