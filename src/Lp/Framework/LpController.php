@@ -3,9 +3,19 @@
 namespace App\Lp\Framework;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Cache\Adapter\MemcachedAdapter;
 
 class LpController extends AbstractController
 {
+    protected $_cacheAdapter;
+
+    public function __construct()
+    {
+        $this->_cacheAdapter = MemcachedAdapter::createConnection(
+            'memcached://memcached:11211'
+        );
+    }
+
     /**
      * @param $parameters
      * @return mixed
@@ -48,5 +58,10 @@ class LpController extends AbstractController
     public function error($message)
     {
         throw new NotFoundHttpException($message);
+    }
+
+    public function cache()
+    {
+        return $this->_cacheAdapter;
     }
 }

@@ -4,7 +4,6 @@ namespace App\Lp\CmsBundle\Controller;
 use App\Lp\Framework\LpController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\Cache\Adapter\MemcachedAdapter;
 
 class CmsController extends LpController
 {
@@ -13,9 +12,9 @@ class CmsController extends LpController
      */
     public function match()
     {
-//        $client = MemcachedAdapter::createConnection(
-//            'memcached://memcached:11211'
-//        );
+//        var_dump($this->cache()->add('test', 'hey'));
+//        var_dump($this->cache()->get('test'));
+//        die();
         return $this->render('root/index.html.twig', [
             'controller_name' => 'CmsController',
         ]);
