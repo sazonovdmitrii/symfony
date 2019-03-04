@@ -29,6 +29,8 @@ easy_admin:
                     - { type: 'tab' , label: 'General' }
                     - visible
                     - name
+                    - created
+                    - updated
                     - { type: 'tab', label: 'Categories' }
                     - catalogs
                     - { type: 'tab', label: 'Product Items' }
