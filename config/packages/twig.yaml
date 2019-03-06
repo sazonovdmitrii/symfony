@@ -3,4 +3,4 @@ twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
     globals:
-        basket: '@App\Service\Basket'
+        basket: '@App\Service\Twig\Basket'

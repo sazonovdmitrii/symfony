@@ -1,8 +1,8 @@
 <?php
-namespace App\Service;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+namespace App\Service\Twig;
+use App\Service\LpService;
 
-class Basket extends AbstractController
+class Basket extends LpService
 {
     /**
      * @return int|void
