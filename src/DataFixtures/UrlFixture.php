@@ -69,7 +69,7 @@ class UrlFixture extends Fixture
 
         $user = new Urls();
         $user->setType('product');
-        $user->setUrl('/cosmetics-sredstva-dlja-volos-dopolnitelnyi-uhod-maski/-green-pharma-maska-dlya-dolgogo-sohraneniya-cveta-okrashennyh-volos-3568.htm');
+        $user->setUrl('cosmetics-sredstva-dlja-volos-dopolnitelnyi-uhod-maski/-green-pharma-maska-dlya-dolgogo-sohraneniya-cveta-okrashennyh-volos-3568.htm');
         $user->setEid('43360');
 
         $manager->persist($user);
