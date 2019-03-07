@@ -18,7 +18,15 @@ easy_admin:
         Items:
             class: App\Entity\ProductItem
             list:
-                fields: ['id', 'name', 'visible']
+                fields:
+                    - id
+                    - name
+                    - visible
+            form:
+                fields:
+                    - created
+                    - updated
+                    - { property: 'imageFile', type: 'file' }
 
         Product:
             class: App\Entity\Product
