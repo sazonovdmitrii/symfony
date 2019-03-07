@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20190307112106 extends AbstractMigration
+final class Version20190307155343 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -23,6 +23,7 @@ final class Version20190307112106 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('ALTER TABLE productitem ADD image VARCHAR(255) DEFAULT NULL');
+        $this->addSql('ALTER TABLE productitem ADD updatedAt TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL');
     }
 
     public function down(Schema $schema) : void
@@ -32,5 +33,6 @@ final class Version20190307112106 extends AbstractMigration
 
         $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE ProductItem DROP image');
+        $this->addSql('ALTER TABLE ProductItem DROP updatedAt');
     }
 }

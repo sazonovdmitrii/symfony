@@ -22,11 +22,15 @@ easy_admin:
                     - id
                     - name
                     - visible
+                    - { property: 'image', type: 'image', base_path: '%app.path.product_images%' }
             form:
                 fields:
                     - created
                     - updated
-                    - { property: 'imageFile', type: 'file' }
+                    - { property: 'imageFile', type: 'vich_image' }
+            show:
+                fields:
+                    - { property: 'image', type: 'image', base_path: '%app.path.product_images%' }
 
         Product:
             class: App\Entity\Product
