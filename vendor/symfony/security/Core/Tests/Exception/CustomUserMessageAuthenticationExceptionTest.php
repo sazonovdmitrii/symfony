@@ -12,16 +12,31 @@
 namespace Symfony\Component\Security\Core\Tests\Exception;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 
 class CustomUserMessageAuthenticationExceptionTest extends TestCase
 {
     public function testConstructWithSAfeMessage()
     {
-        $e = new CustomUserMessageAuthenticationException('SAFE MESSAGE', array('foo' => true));
+        $e = new CustomUserMessageAuthenticationException('SAFE MESSAGE', ['foo' => true]);
 
         $this->assertEquals('SAFE MESSAGE', $e->getMessageKey());
-        $this->assertEquals(array('foo' => true), $e->getMessageData());
+        $this->assertEquals(['foo' => true], $e->getMessageData());
         $this->assertEquals('SAFE MESSAGE', $e->getMessage());
+    }
+
+    public function testSharedSerializedData()
+    {
+        $token = new AnonymousToken('foo', 'bar');
+
+        $exception = new CustomUserMessageAuthenticationException();
+        $exception->setToken($token);
+        $exception->setSafeMessage('message', ['token' => $token]);
+
+        $processed = unserialize(serialize($exception));
+        $this->assertEquals($token, $processed->getToken());
+        $this->assertEquals($token, $processed->getMessageData()['token']);
+        $this->assertSame($processed->getToken(), $processed->getMessageData()['token']);
     }
 }

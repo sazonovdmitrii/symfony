@@ -31,7 +31,7 @@ class HeaderUtils
      * Example:
      *
      *     HeaderUtils::split("da, en-gb;q=0.8", ",;")
-     *     // => array(array('da'), array('en-gb', 'q=0.8'))
+     *     // => ['da'], ['en-gb', 'q=0.8']]
      *
      * @param string $header     HTTP header value
      * @param string $separators List of characters to split on, ordered by
@@ -75,12 +75,12 @@ class HeaderUtils
      *
      * Example:
      *
-     *     HeaderUtils::combine(array(array("foo", "abc"), array("bar")))
-     *     // => array("foo" => "abc", "bar" => true)
+     *     HeaderUtils::combine([["foo", "abc"], ["bar"]])
+     *     // => ["foo" => "abc", "bar" => true]
      */
     public static function combine(array $parts): array
     {
-        $assoc = array();
+        $assoc = [];
         foreach ($parts as $part) {
             $name = strtolower($part[0]);
             $value = $part[1] ?? true;
@@ -99,12 +99,12 @@ class HeaderUtils
      *
      * Example:
      *
-     *     HeaderUtils::toString(array("foo" => "abc", "bar" => true, "baz" => "a b c"), ",")
+     *     HeaderUtils::toString(["foo" => "abc", "bar" => true, "baz" => "a b c"], ",")
      *     // => 'foo=abc, bar, baz="a b c"'
      */
     public static function toString(array $assoc, string $separator): string
     {
-        $parts = array();
+        $parts = [];
         foreach ($assoc as $name => $value) {
             if (true === $value) {
                 $parts[] = $name;
@@ -149,7 +149,7 @@ class HeaderUtils
         $partSeparators = substr($separators, 1);
 
         $i = 0;
-        $partMatches = array();
+        $partMatches = [];
         foreach ($matches as $match) {
             if (isset($match['separator']) && $match['separator'] === $separator) {
                 ++$i;
@@ -158,7 +158,7 @@ class HeaderUtils
             }
         }
 
-        $parts = array();
+        $parts = [];
         if ($partSeparators) {
             foreach ($partMatches as $matches) {
                 $parts[] = self::groupParts($matches, $partSeparators);

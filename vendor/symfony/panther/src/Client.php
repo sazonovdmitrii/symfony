@@ -16,11 +16,11 @@ namespace Symfony\Component\Panther;
 use Facebook\WebDriver\Exception\NoSuchElementException;
 use Facebook\WebDriver\Exception\TimeOutException;
 use Facebook\WebDriver\JavaScriptExecutor;
-use Facebook\WebDriver\Remote\RemoteWebElement;
 use Facebook\WebDriver\WebDriver;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverCapabilities;
 use Facebook\WebDriver\WebDriverExpectedCondition;
+use Facebook\WebDriver\WebDriverHasInputDevices;
 use Symfony\Component\BrowserKit\Client as BaseClient;
 use Symfony\Component\BrowserKit\Request;
 use Symfony\Component\BrowserKit\Response;
@@ -33,13 +33,15 @@ use Symfony\Component\Panther\DomCrawler\Link as PantherLink;
 use Symfony\Component\Panther\ProcessManager\BrowserManagerInterface;
 use Symfony\Component\Panther\ProcessManager\ChromeManager;
 use Symfony\Component\Panther\ProcessManager\SeleniumManager;
+use Symfony\Component\Panther\WebDriver\WebDriverMouse;
 
 /**
  * @author Kévin Dunglas <dunglas@gmail.com>
+ * @author Dany Maillard <danymaillard93b@gmail.com>
  *
  * @method Crawler getCrawler()
  */
-final class Client extends BaseClient implements WebDriver, JavaScriptExecutor
+final class Client extends BaseClient implements WebDriver, JavaScriptExecutor, WebDriverHasInputDevices
 {
     use ExceptionThrower;
 
@@ -151,6 +153,10 @@ final class Client extends BaseClient implements WebDriver, JavaScriptExecutor
     public function submit(Form $form, array $values = [])
     {
         if ($form instanceof PantherForm) {
+            foreach ($values as $field => $value) {
+                $form->get($field)->setValue($value);
+            }
+
             $button = $form->getButton();
             null === $button ? $form->getElement()->submit() : $button->click();
 
@@ -251,13 +257,15 @@ final class Client extends BaseClient implements WebDriver, JavaScriptExecutor
      * @throws NoSuchElementException
      * @throws TimeOutException
      *
-     * @return RemoteWebElement
+     * @return Crawler
      */
     public function waitFor(string $cssSelector, int $timeoutInSecond = 30, int $intervalInMillisecond = 250)
     {
-        return $this->wait($timeoutInSecond, $intervalInMillisecond)->until(
+        $this->wait($timeoutInSecond, $intervalInMillisecond)->until(
             WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::cssSelector($cssSelector))
         );
+
+        return $this->crawler = $this->createCrawler();
     }
 
     public function getWebDriver(): WebDriver
@@ -407,5 +415,23 @@ final class Client extends BaseClient implements WebDriver, JavaScriptExecutor
         }
 
         return $this->webDriver->executeAsyncScript($script, $arguments);
+    }
+
+    public function getKeyboard()
+    {
+        if (!$this->webDriver instanceof WebDriverHasInputDevices) {
+            throw new \RuntimeException(sprintf('"%s" does not implement "%s".', \get_class($this->webDriver), WebDriverHasInputDevices::class));
+        }
+
+        return $this->webDriver->getKeyboard();
+    }
+
+    public function getMouse(): WebDriverMouse
+    {
+        if (!$this->webDriver instanceof WebDriverHasInputDevices) {
+            throw new \RuntimeException(sprintf('"%s" does not implement "%s".', \get_class($this->webDriver), WebDriverHasInputDevices::class));
+        }
+
+        return new WebDriverMouse($this->webDriver->getMouse(), $this);
     }
 }

@@ -73,8 +73,8 @@ final class MakeMigration extends AbstractMaker implements ApplicationAwareMaker
 
         $options['command'] = 'doctrine:migrations:diff';
         $generateMigrationCommand = $this->application->find('doctrine:migrations:diff');
-        $commandOutput = new BufferedOutput($io->getVerbosity());
 
+        $commandOutput = new BufferedOutput($io->getVerbosity());
         try {
             $generateMigrationCommand->run(new ArgvInput($options), $commandOutput);
 

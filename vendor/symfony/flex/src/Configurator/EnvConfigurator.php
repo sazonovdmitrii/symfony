@@ -11,6 +11,7 @@
 
 namespace Symfony\Flex\Configurator;
 
+use Symfony\Flex\Lock;
 use Symfony\Flex\Recipe;
 
 /**
@@ -18,31 +19,31 @@ use Symfony\Flex\Recipe;
  */
 class EnvConfigurator extends AbstractConfigurator
 {
-    public function configure(Recipe $recipe, $vars)
+    public function configure(Recipe $recipe, $vars, Lock $lock, array $options = [])
     {
         $this->write('Added environment variable defaults');
 
-        $this->configureEnvDist($recipe, $vars);
-        if (!file_exists(getcwd().'/.env.test')) {
-            $this->configurePhpUnit($recipe, $vars);
+        $this->configureEnvDist($recipe, $vars, $options['force'] ?? false);
+        if (!file_exists($this->options->get('root-dir').'/.env.test')) {
+            $this->configurePhpUnit($recipe, $vars, $options['force'] ?? false);
         }
     }
 
-    public function unconfigure(Recipe $recipe, $vars)
+    public function unconfigure(Recipe $recipe, $vars, Lock $lock)
     {
         $this->unconfigureEnvFiles($recipe, $vars);
         $this->unconfigurePhpUnit($recipe, $vars);
     }
 
-    private function configureEnvDist(Recipe $recipe, $vars)
+    private function configureEnvDist(Recipe $recipe, $vars, bool $update)
     {
         foreach (['.env.dist', '.env'] as $file) {
-            $env = getcwd().'/'.$file;
+            $env = $this->options->get('root-dir').'/'.$file;
             if (!is_file($env)) {
                 continue;
             }
 
-            if ($this->isFileMarked($recipe, $env)) {
+            if (!$update && $this->isFileMarked($recipe, $env)) {
                 continue;
             }
 
@@ -62,19 +63,22 @@ class EnvConfigurator extends AbstractConfigurator
                 $data .= "$key=$value\n";
             }
             $data = $this->markData($recipe, $data);
-            file_put_contents($env, $data, FILE_APPEND);
+
+            if (!$this->updateData($env, $data)) {
+                file_put_contents($env, $data, FILE_APPEND);
+            }
         }
     }
 
-    private function configurePhpUnit(Recipe $recipe, $vars)
+    private function configurePhpUnit(Recipe $recipe, $vars, bool $update)
     {
         foreach (['phpunit.xml.dist', 'phpunit.xml'] as $file) {
-            $phpunit = getcwd().'/'.$file;
+            $phpunit = $this->options->get('root-dir').'/'.$file;
             if (!is_file($phpunit)) {
                 continue;
             }
 
-            if ($this->isFileXmlMarked($recipe, $phpunit)) {
+            if (!$update && $this->isFileXmlMarked($recipe, $phpunit)) {
                 continue;
             }
 
@@ -103,14 +107,17 @@ class EnvConfigurator extends AbstractConfigurator
                 }
             }
             $data = $this->markXmlData($recipe, $data);
-            file_put_contents($phpunit, preg_replace('{^(\s+</php>)}m', $data.'$1', file_get_contents($phpunit)));
+
+            if (!$this->updateData($phpunit, $data)) {
+                file_put_contents($phpunit, preg_replace('{^(\s+</php>)}m', $data.'$1', file_get_contents($phpunit)));
+            }
         }
     }
 
     private function unconfigureEnvFiles(Recipe $recipe, $vars)
     {
         foreach (['.env', '.env.dist'] as $file) {
-            $env = getcwd().'/'.$file;
+            $env = $this->options->get('root-dir').'/'.$file;
             if (!file_exists($env)) {
                 continue;
             }
@@ -128,7 +135,7 @@ class EnvConfigurator extends AbstractConfigurator
     private function unconfigurePhpUnit(Recipe $recipe, $vars)
     {
         foreach (['phpunit.xml.dist', 'phpunit.xml'] as $file) {
-            $phpunit = getcwd().'/'.$file;
+            $phpunit = $this->options->get('root-dir').'/'.$file;
             if (!is_file($phpunit)) {
                 continue;
             }

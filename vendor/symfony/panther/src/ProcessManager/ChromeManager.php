@@ -32,9 +32,9 @@ final class ChromeManager implements BrowserManagerInterface
 
     public function __construct(?string $chromeDriverBinary = null, ?array $arguments = null, array $options = [])
     {
-        $this->process = new Process([$chromeDriverBinary ?: $this->findChromeDriverBinary()], null, null, null, null);
-        $this->arguments = $arguments ?? $this->getDefaultArguments();
         $this->options = array_merge($this->getDefaultOptions(), $options);
+        $this->process = new Process([$chromeDriverBinary ?: $this->findChromeDriverBinary(), '--port='.$this->options['port']], null, null, null, null);
+        $this->arguments = $arguments ?? $this->getDefaultArguments();
     }
 
     /**
@@ -54,6 +54,9 @@ final class ChromeManager implements BrowserManagerInterface
             $chromeOptions = new ChromeOptions();
             $chromeOptions->addArguments($this->arguments);
             $capabilities->setCapability(ChromeOptions::CAPABILITY, $chromeOptions);
+            if (isset($_SERVER['PANTHER_CHROME_BINARY'])) {
+                $chromeOptions->setBinary($_SERVER['PANTHER_CHROME_BINARY']);
+            }
         }
 
         return RemoteWebDriver::create($url, $capabilities);
@@ -83,7 +86,7 @@ final class ChromeManager implements BrowserManagerInterface
     private function getDefaultArguments(): array
     {
         // Enable the headless mode unless PANTHER_NO_HEADLESS is defined
-        $args = ($_SERVER['PANTHER_NO_HEADLESS'] ?? false) ? [] : ['--headless', 'window-size=1200,1100', '--disable-gpu'];
+        $args = ($_SERVER['PANTHER_NO_HEADLESS'] ?? false) ? ['--auto-open-devtools-for-tabs'] : ['--headless', '--window-size=1200,1100', '--disable-gpu'];
 
         // Disable Chrome's sandbox if PANTHER_NO_SANDBOX is defined or if running in Travis
         if ($_SERVER['PANTHER_NO_SANDBOX'] ?? $_SERVER['HAS_JOSH_K_SEAL_OF_APPROVAL'] ?? false) {

@@ -28,10 +28,10 @@ class Logger extends BaseLogger implements DebugLoggerInterface
     public function getLogs(/* Request $request = null */)
     {
         if ($logger = $this->getDebugLogger()) {
-            return \call_user_func_array(array($logger, 'getLogs'), \func_get_args());
+            return \call_user_func_array([$logger, 'getLogs'], \func_get_args());
         }
 
-        return array();
+        return [];
     }
 
     /**
@@ -40,7 +40,7 @@ class Logger extends BaseLogger implements DebugLoggerInterface
     public function countErrors(/* Request $request = null */)
     {
         if ($logger = $this->getDebugLogger()) {
-            return \call_user_func_array(array($logger, 'countErrors'), \func_get_args());
+            return \call_user_func_array([$logger, 'countErrors'], \func_get_args());
         }
 
         return 0;

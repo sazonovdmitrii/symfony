@@ -33,7 +33,7 @@ class PdoCache extends AbstractCache implements PruneableInterface
      *  * db_time_col: The column where to store the timestamp [default: item_time]
      *  * db_username: The username when lazy-connect [default: '']
      *  * db_password: The password when lazy-connect [default: '']
-     *  * db_connection_options: An array of driver-specific connection options [default: array()]
+     *  * db_connection_options: An array of driver-specific connection options [default: []]
      *
      * @param \PDO|Connection|string $connOrDsn a \PDO or Connection instance or DSN string or null
      *
@@ -41,7 +41,7 @@ class PdoCache extends AbstractCache implements PruneableInterface
      * @throws InvalidArgumentException When PDO error mode is not PDO::ERRMODE_EXCEPTION
      * @throws InvalidArgumentException When namespace contains invalid characters
      */
-    public function __construct($connOrDsn, string $namespace = '', int $defaultLifetime = 0, array $options = array())
+    public function __construct($connOrDsn, string $namespace = '', int $defaultLifetime = 0, array $options = [])
     {
         $this->init($connOrDsn, $namespace, $defaultLifetime, $options);
     }

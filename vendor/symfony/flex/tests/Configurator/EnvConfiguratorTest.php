@@ -11,12 +11,11 @@
 
 namespace Symfony\Flex\Tests\Configurator;
 
-require_once __DIR__.'/TmpDirMock.php';
-
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Flex\Configurator\EnvConfigurator;
+use Symfony\Flex\Lock;
 use Symfony\Flex\Options;
 use Symfony\Flex\Recipe;
 
@@ -27,17 +26,18 @@ class EnvConfiguratorTest extends TestCase
         $configurator = new EnvConfigurator(
             $this->getMockBuilder(Composer::class)->getMock(),
             $this->getMockBuilder(IOInterface::class)->getMock(),
-            new Options()
+            new Options(['root-dir' => FLEX_TEST_DIR])
         );
+        $lock = $this->getMockBuilder(Lock::class)->disableOriginalConstructor()->getMock();
 
         $recipe = $this->getMockBuilder(Recipe::class)->disableOriginalConstructor()->getMock();
         $recipe->expects($this->any())->method('getName')->will($this->returnValue('FooBundle'));
 
-        $env = sys_get_temp_dir().'/.env.dist';
+        $env = FLEX_TEST_DIR.'/.env.dist';
         @unlink($env);
         touch($env);
 
-        $phpunit = sys_get_temp_dir().'/phpunit.xml';
+        $phpunit = FLEX_TEST_DIR.'/phpunit.xml';
         $phpunitDist = $phpunit.'.dist';
         @unlink($phpunit);
         @unlink($phpunitDist);
@@ -54,7 +54,7 @@ class EnvConfiguratorTest extends TestCase
             '#2' => 'Comment 3',
             '#TRUSTED_SECRET' => 's3cretf0rt3st"<>',
             'APP_SECRET' => 's3cretf0rt3st"<>',
-        ]);
+        ], $lock);
 
         $envContents = <<<EOF
 
@@ -120,7 +120,7 @@ EOF;
             '#2' => 'Comment 3',
             '#TRUSTED_SECRET' => 's3cretf0rt3st',
             'APP_SECRET' => 's3cretf0rt3st',
-        ]);
+        ], $lock);
 
         $this->assertStringEqualsFile($env, $envContents);
         $this->assertStringEqualsFile($phpunitDist, $xmlContents);
@@ -133,7 +133,7 @@ EOF;
             '#2' => 'Comment 3',
             '#TRUSTED_SECRET' => 's3cretf0rt3st',
             'APP_SECRET' => 's3cretf0rt3st',
-        ]);
+        ], $lock);
 
         $this->assertStringEqualsFile(
             $env,
@@ -146,7 +146,8 @@ EOF
         $this->assertFileEquals(__DIR__.'/../Fixtures/phpunit.xml.dist', $phpunitDist);
         $this->assertFileEquals(__DIR__.'/../Fixtures/phpunit.xml.dist', $phpunit);
 
-        @unlink($phpunit, $env);
+        @unlink($env);
+        @unlink($phpunit);
     }
 
     public function testConfigureGeneratedSecret()
@@ -154,16 +155,17 @@ EOF
         $configurator = new EnvConfigurator(
             $this->getMockBuilder(Composer::class)->getMock(),
             $this->getMockBuilder(IOInterface::class)->getMock(),
-            new Options()
+            new Options(['root-dir' => FLEX_TEST_DIR])
         );
+        $lock = $this->getMockBuilder(Lock::class)->disableOriginalConstructor()->getMock();
 
         $recipe = $this->getMockBuilder(Recipe::class)->disableOriginalConstructor()->getMock();
         $recipe->expects($this->any())->method('getName')->will($this->returnValue('FooBundle'));
 
-        $env = sys_get_temp_dir().'/.env.dist';
+        $env = FLEX_TEST_DIR.'/.env.dist';
         @unlink($env);
         touch($env);
-        $phpunit = sys_get_temp_dir().'/phpunit.xml';
+        $phpunit = FLEX_TEST_DIR.'/phpunit.xml';
         $phpunitDist = $phpunit.'.dist';
         @unlink($phpunit);
         @unlink($phpunitDist);
@@ -176,7 +178,7 @@ EOF
             '#TRUSTED_SECRET_2' => '%generate(secret, 32)%',
             '#TRUSTED_SECRET_3' => '%generate(secret,     32)%',
             'APP_SECRET' => '%generate(secret)%',
-        ]);
+        ], $lock);
 
         $envContents = file_get_contents($env);
         $this->assertRegExp('/#TRUSTED_SECRET_1=[a-z0-9]{64}/', $envContents);
@@ -193,5 +195,147 @@ EOF
             $this->assertRegExp('/<!-- env name="TRUSTED_SECRET_3" value="[a-z0-9]{64}" -->/', $fileContents);
             $this->assertRegExp('/<env name="APP_SECRET" value="[a-z0-9]{32}"\/>/', $fileContents);
         }
+    }
+
+    public function testConfigureForce()
+    {
+        $configurator = new EnvConfigurator(
+            $this->getMockBuilder(Composer::class)->getMock(),
+            $this->getMockBuilder(IOInterface::class)->getMock(),
+            new Options(['root-dir' => FLEX_TEST_DIR])
+        );
+
+        $recipe = $this->getMockBuilder(Recipe::class)->disableOriginalConstructor()->getMock();
+        $recipe->expects($this->any())->method('getName')->will($this->returnValue('FooBundle'));
+
+        $env = FLEX_TEST_DIR.'/.env.dist';
+        $phpunit = FLEX_TEST_DIR.'/phpunit.xml';
+        $phpunitDist = $phpunit.'.dist';
+        @unlink($env);
+        @unlink($phpunit);
+        @unlink($phpunitDist);
+        touch($env);
+        file_put_contents($env, "# preexisting content\n");
+        copy(__DIR__.'/../Fixtures/phpunit.xml.dist', $phpunitDist);
+        copy(__DIR__.'/../Fixtures/phpunit.xml.dist', $phpunit);
+
+        $envContentsConfigure = <<<EOT
+# preexisting content
+
+###> FooBundle ###
+FOO=bar
+###< FooBundle ###
+
+# new content
+
+EOT;
+        $envContentsForce = <<<EOT
+# preexisting content
+
+###> FooBundle ###
+FOO=bar
+OOF=rab
+###< FooBundle ###
+
+# new content
+
+EOT;
+
+        $xmlContentsConfigure = <<<EOT
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- https://phpunit.de/manual/current/en/appendixes.configuration.html -->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/6.1/phpunit.xsd"
+         backupGlobals="false"
+         colors="true"
+         bootstrap="vendor/autoload.php"
+>
+    <php>
+        <ini name="error_reporting" value="-1" />
+        <env name="KERNEL_CLASS" value="App\Kernel" />
+
+        <!-- ###+ FooBundle ### -->
+        <env name="FOO" value="bar"/>
+        <!-- ###- FooBundle ### -->
+
+        <env name="NEW" value="content"/>
+    </php>
+
+    <testsuites>
+        <testsuite name="Project Test Suite">
+            <directory>tests/</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
+
+EOT;
+        $xmlContentsForce = <<<EOT
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- https://phpunit.de/manual/current/en/appendixes.configuration.html -->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/6.1/phpunit.xsd"
+         backupGlobals="false"
+         colors="true"
+         bootstrap="vendor/autoload.php"
+>
+    <php>
+        <ini name="error_reporting" value="-1" />
+        <env name="KERNEL_CLASS" value="App\Kernel" />
+
+        <!-- ###+ FooBundle ### -->
+        <env name="FOO" value="bar"/>
+        <env name="OOF" value="rab"/>
+        <!-- ###- FooBundle ### -->
+
+        <env name="NEW" value="content"/>
+    </php>
+
+    <testsuites>
+        <testsuite name="Project Test Suite">
+            <directory>tests/</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
+
+EOT;
+
+        $lock = $this->getMockBuilder(Lock::class)->disableOriginalConstructor()->getMock();
+
+        $configurator->configure($recipe, [
+            'FOO' => 'bar',
+        ], $lock);
+
+        file_put_contents($env, "\n# new content\n", \FILE_APPEND);
+        file_put_contents($phpunit, str_replace(
+            '    </php>',
+            "\n        <env name=\"NEW\" value=\"content\"/>\n    </php>",
+            file_get_contents($phpunit)
+        ));
+        file_put_contents($phpunitDist, str_replace(
+            '    </php>',
+            "\n        <env name=\"NEW\" value=\"content\"/>\n    </php>",
+            file_get_contents($phpunitDist)
+        ));
+
+        $this->assertStringEqualsFile($env, $envContentsConfigure);
+        $this->assertStringEqualsFile($phpunit, $xmlContentsConfigure);
+        $this->assertStringEqualsFile($phpunitDist, $xmlContentsConfigure);
+
+        $configurator->configure($recipe, [
+            'FOO' => 'bar',
+            'OOF' => 'rab',
+        ], $lock, [
+            'force' => true,
+        ]);
+
+        $this->assertStringEqualsFile($env, $envContentsForce);
+        $this->assertStringEqualsFile($phpunit, $xmlContentsForce);
+        $this->assertStringEqualsFile($phpunitDist, $xmlContentsForce);
+
+        @unlink($env);
+        @unlink($phpunit);
+        @unlink($phpunitDist);
     }
 }

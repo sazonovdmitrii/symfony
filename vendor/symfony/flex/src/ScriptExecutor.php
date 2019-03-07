@@ -86,7 +86,7 @@ class ScriptExecutor
             case 'script':
                 return $cmd;
             default:
-                throw new \InvalidArgumentException(sprintf('Command type "%s" is not valid.', $type));
+                throw new \InvalidArgumentException(sprintf('Invalid symfony/flex auto-script in composer.json: "%s" is not a valid type of command.', $type));
         }
     }
 
@@ -99,7 +99,7 @@ class ScriptExecutor
             return null;
         }
 
-        $console = escapeshellarg($this->options->get('bin-dir').'/console');
+        $console = ProcessExecutor::escape($this->options->get('root-dir').'/'.$this->options->get('bin-dir').'/console');
         if ($this->io->isDecorated()) {
             $console .= ' --ansi';
         }
@@ -127,8 +127,8 @@ class ScriptExecutor
             $arguments[] = '--php-ini='.$ini;
         }
 
-        $phpArgs = implode(' ', array_map('escapeshellarg', $arguments));
+        $phpArgs = implode(' ', array_map([ProcessExecutor::class, 'escape'], $arguments));
 
-        return escapeshellarg($php).($phpArgs ? ' '.$phpArgs : '').' '.$cmd;
+        return ProcessExecutor::escape($php).($phpArgs ? ' '.$phpArgs : '').' '.$cmd;
     }
 }
