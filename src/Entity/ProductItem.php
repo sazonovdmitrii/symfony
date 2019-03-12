@@ -5,9 +5,11 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\ExpressionLanguage\Tests\Node\Obj;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Entity\File as EmbeddedFile;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Doctrine\ORM\EntityManagerInterface;
 
 
 /**
@@ -16,10 +18,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 class ProductItem
 {
-
-
-
-
     /**
      * @ORM\Column(type="string", length=255)
      * @var string
@@ -38,19 +36,35 @@ class ProductItem
      */
     private $updatedAt;
 
-    // ...
 
-    public function setImageFile(File $image = null)
+    public function setImageFile($image = null)
     {
-        $this->imageFile = $image;
+        foreach($image as $uploadedFile)
+        {
+            $file = new Images();
+            $path = sha1(uniqid(mt_rand(), true)).'.'.$uploadedFile->guessExtension();
+            $file->setUrl($path);
+            $file->setEntityId($this->getId());
+            $file->setTitle($uploadedFile->getClientOriginalName());
+            $uploadedFile->move(__DIR__ . '/../../public/uploads/images/products', $path);
+            $this->addImages($file);
+//            $manager = $this->getDoctrine();
+//echo "<pre>";
+//print_r(get_class_methods($file));
+//die();
 
-        // VERY IMPORTANT:
-        // It is required that at least one field changes if you are using Doctrine,
-        // otherwise the event listeners won't be called and the file is lost
-        if ($image) {
-            // if 'updatedAt' is not defined in your entity, use another property
-            $this->updated = new \DateTime('now');
+//            $this->getFiles()->add($file);
+//            $file->setDocument($this);
+            unset($uploadedFile);
         }
+    }
+
+    /**
+     * @ORM\PreFlush()
+     */
+    public function upload()
+    {
+
     }
 
     public function getImageFile()
@@ -102,9 +116,15 @@ class ProductItem
      */
     private $basketItems;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Images", mappedBy="entity_id")
+     */
+    private $images;
+
     public function __construct()
     {
         $this->product_id = new ArrayCollection();
+        $this->images = new ArrayCollection();
         $this->basketItems = new ArrayCollection();
     }
 
@@ -205,6 +225,38 @@ class ProductItem
             // set the owning side to null (unless already changed)
             if ($basketItem->getProductItemId() === $this) {
                 $basketItem->setProductItemId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Images[]
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImages(Images $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+            $image->setEntityId($this->id);
+            $image->setType('product');
+        }
+
+        return $this;
+    }
+
+    public function removeImages(Images $image): self
+    {
+        if ($this->images->contains($image)) {
+            $this->images->removeElement($image);
+            // set the owning side to null (unless already changed)
+            if ($image->getEntityId() === $this->id && $image->getType() == 'product') {
+                $image->setEntityId(null);
             }
         }
 
