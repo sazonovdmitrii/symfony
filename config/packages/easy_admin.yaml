@@ -27,7 +27,7 @@ easy_admin:
                 fields:
                     - created
                     - updated
-                    - { property: 'imageFile', type: 'vich_image' }
+                    - { property: 'imageFile', type: 'App\Form\Type\MultipleImage', type_options: { multiple: true }  }
             show:
                 fields:
                     - { property: 'image', type: 'image', base_path: '%app.path.product_images%' }

@@ -27,7 +27,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * @author Maxime Steinhausser <maxime.steinhausser@gmail.com>
  */
-class Image extends AbstractType
+class MultipleImage extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -72,6 +72,10 @@ class Image extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
+//        echo "<pre>";
+//        var_dump($options['multiple']);
+//        print_r(array_keys($options));
+//        die();
         if ($options['multiple']) {
             $view->vars['full_name'] .= '[]';
             $view->vars['attr']['multiple'] = 'multiple';
