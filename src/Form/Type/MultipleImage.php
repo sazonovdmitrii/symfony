@@ -72,10 +72,6 @@ class MultipleImage extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-//        echo "<pre>";
-//        var_dump($options['multiple']);
-//        print_r(array_keys($options));
-//        die();
         if ($options['multiple']) {
             $view->vars['full_name'] .= '[]';
             $view->vars['attr']['multiple'] = 'multiple';

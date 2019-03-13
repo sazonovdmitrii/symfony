@@ -98,6 +98,7 @@ class ProductItem
 
     public function getImageFile()
     {
+        return $this->images;
         return $this->imageFile;
     }
 

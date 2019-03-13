@@ -25,9 +25,8 @@ easy_admin:
                     - { property: 'image', type: 'image', base_path: '%app.path.product_images%' }
             form:
                 fields:
-                    - created
-                    - updated
-                    - { property: 'imageFile', type: 'App\Form\Type\MultipleImage', type_options: { multiple: true }  }
+                    - name
+                    - { property: 'imageFile', type: 'App\Form\Type\MultipleImage', type_options: { multiple: true, block_name: 'custom_title' } }
             show:
                 fields:
                     - { property: 'image', type: 'image', base_path: '%app.path.product_images%' }
@@ -61,3 +60,6 @@ easy_admin:
                 fields: ['id', 'name']
     design:
         brand_color: 'black'
+        form_theme:
+            - '@EasyAdmin/form/bootstrap_3_horizontal_layout.html.twig'
+            - 'admin/form/images.html.twig'
