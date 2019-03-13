@@ -1,0 +1,27 @@
+@include new('scroll-to-top') {
+    display: none;
+    position: fixed;
+    bottom: 7px;
+    right: 7px;
+    height: 28px;
+    width: 28px;
+    line-height: 28px;
+    font-size: 14px;
+    color: $WHITE;
+    background-color: $COLORCONTRAST;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease-out;
+    z-index: 9999;
+    &::before {
+        content: '';
+        @include center();
+        background-image: url($svg-path+'up-arrow.svg');
+        background-size: contain;
+        width: 14px;
+        height: 14px;
+    }
+    &:hover {
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    }
+}

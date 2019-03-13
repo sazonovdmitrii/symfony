@@ -1,0 +1,315 @@
+// --------------------------------------------------------------------------
+// Typography
+// --------------------------------------------------------------------------
+// Author:      Zone
+// Email:       danyegorov@yandex.ru
+// URL:         http://zonedigital.com
+// Copyright:   Copyright (c) 2016, zonedigital.com. All rights reserved.
+// Version:     1.5
+// --------------------------------------------------------------------------
+// If you need to support IE8 or less use a rem mixin, for example:
+// http://www.stubbornella.org/content/2013/07/01/easy-peasy-rem-conversion-with-sass/
+
+// Typography
+// --------------------------------------------------------------------------
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    color: #222;
+    /* Using rems set root size within html */
+    /* use optionally to scale */
+    /* set to ten for 10:1 ratio */
+    font-size: 16px;
+}
+
+body {
+    width: 100%;
+    color: $color-grey;
+    @include TextProRegular;
+    /* For a successful cascade */
+    /* set a unitless line height within body */
+    line-height: 1.3;
+    font-size: 14px;
+}
+
+@include new('page-header') {
+    @include no-column();
+    text-align: center;
+    border: none;
+    padding: 0;
+
+    @include has('title') {
+        @include TextProExtraThin;
+        font-size: calculateRem(55px);
+        line-height: 1;
+        border-bottom: 1px solid #ccc;
+        display: inline-block;
+        margin-bottom: 30px;
+        color: #000;
+    }
+}
+
+@include new('page-header-menu') {
+    @extend %clearfix;
+
+    display: block;
+    margin-bottom: 30px;
+
+    @include has('item') {
+        display: inline-block;
+        margin-left: 15px;
+
+        &:first-child {
+            margin-left: 0;
+        }
+    }
+
+    @include has('item-link') {
+        padding: 5px 10px;
+        display: block;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+@mixin head {
+    font-size: calculateRem(24px);
+    line-height: 30px;
+    @include TextProBold;
+}
+
+@include new('typography') {
+    @include has('h1') {
+        @include head;
+    }
+
+    @include has('h2') {
+        font-size: calculateRem(18px);
+        @include TextProBold;
+        line-height: 26px;
+    }
+
+    @include has('subheader') {
+        @include TextProMedium;
+        font-size: calculateRem(16px);
+    }
+
+    @include has('catheader') {
+        @include TextProBold;
+        font-size: calculateRem(18px);
+        line-height: calculateRem(24px);
+        color: #333;
+    }
+
+    @include has('bulletpoint') {
+        @include TextCondProRegular;
+        font-size: calculateRem(16pt);
+        line-height: 35px;
+    }
+    @include has('callout') {
+        @include TextCondProMedium;
+        font-size: calculateRem(16px);
+    }
+    @include has('link-colored') {
+        @include TextProMedium;
+
+        color: $color-red;
+        font-size: calculateRem(16px);
+    }
+    @include has('comments') {
+        @include TextCondProMedium;
+        font-size: calculateRem(16pt);
+        line-height: 25px;
+    }
+}
+
+// Generic headline
+.headline {
+    font-size: calculateRem(32px);
+    margin: 12px 0 24px;
+}
+
+// headline for main content block
+.article__headline {
+    font-size: calculateRem(26px);
+    margin-bottom: 12px;
+}
+
+// sub heading for main content block
+.article__subheading {
+    font-size: calculateRem(21px);
+}
+
+p + .article__headline,
+p + .article__subheading {
+    margin-top: 20px;
+}
+
+// Rich Text Editor
+// --------------------------------------------------------------------------
+
+.rte {
+    a {
+        text-decoration: underline;
+    }
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @include TextProBold;
+    }
+    h2 {
+        font-size: calculateRem(17px);
+        margin: 15px 0;
+    }
+    h3 {
+        font-size: calculateRem(16px);
+        margin: 10px 0;
+    }
+    h4 {
+        font-size: calculateRem(15px);
+        margin: 5px 0;
+    }
+    h5 {
+        font-size: calculateRem(14px);
+        margin: 5px 0;
+    }
+    h6 {
+        font-size: calculateRem(13px);
+        margin: 5px 0;
+    }
+    p {
+        margin: 1em 0;
+    }
+    strong,
+    b {
+        @include TextProBold;
+    }
+    sup {
+        top: -0.5em;
+    }
+    sub,
+    sup {
+        font-size: 75%;
+        line-height: 0;
+        position: relative;
+    }
+    progress,
+    sub,
+    sup {
+        vertical-align: baseline;
+    }
+    sub {
+        bottom: -0.25em;
+    }
+    blockquote {
+        display: block;
+        margin: 1em 40px;
+    }
+    s,
+    strike,
+    del {
+        text-decoration: line-through;
+    }
+    u,
+    ins {
+        text-decoration: underline;
+    }
+    ul,
+    ol {
+        margin: 10px 0;
+        padding-left: 20px;
+    }
+    ul {
+        list-style: disc;
+    }
+    ol {
+        list-style: decimal;
+    }
+    i,
+    em {
+        font-style: italic;
+    }
+    table {
+        border-collapse: collapse;
+    }
+    table,
+    th,
+    td {
+        border: 1px solid black;
+    }
+}
+.h5 {
+    @include TextProMedium;
+
+    font-size: 14 * $PADDINGS/15;
+    padding: 17 * $PADDINGS/15 0 0;
+    font-weight: normal;
+}
+
+// Alert
+// --------------------------------------------------------------------------
+
+.alert {
+    padding: $spacing;
+    background: $color-grey;
+    color: white;
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: $spacing;
+}
+
+a[data-handle='control-left'],
+a[data-handle='control-right'] {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 40px;
+    width: 40px;
+    margin-top: -20px;
+    text-align: center;
+    padding: 5px;
+    box-sizing: border-box;
+    font-size: 30px;
+    text-shadow: 0px 0px 3px #000;
+    &:hover {
+    }
+}
+
+a[data-handle='control-right'] {
+    left: auto;
+    right: 0;
+}
+
+%scrollbar {
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    &::-webkit-scrollbar-track {
+        background-color: $color-buttongrey;
+    }
+
+    &::-webkit-scrollbar {
+        width: calculateRem(5px);
+        background-color: $color-dark;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        background-color: #555;
+    }
+}
+
+// Pseudolinks
+
+*[data-handle='pseudolinks'] {
+    cursor: pointer;
+}

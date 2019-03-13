@@ -1,0 +1,20 @@
+// --------------------------------------------------------------------------
+// Widget
+// --------------------------------------------------------------------------
+// Author:      Zone
+// Email:       danyegorov@yandex.ru
+// URL:         http://zonedigital.com
+// Copyright:   Copyright (c) 2016, zonedigital.com. All rights reserved.
+// Version:     1.5
+// --------------------------------------------------------------------------
+
+// Wrapper
+// --------------------------------------------------------------------------
+
+.script-loading-examples {
+    @extend %basic-box;
+    text-align: center;
+    border-radius: 6px;
+    border: 1px solid grey;
+    margin: 18px 0;
+}

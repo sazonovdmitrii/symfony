@@ -1,0 +1,9 @@
+import './my-icons-collection/flaticon.css';
+import './pfdintextcondpro/medium/index.css';
+import './pfdintextcondpro/regular/index.css';
+import './pfdintextcondpro/light/index.css';
+import './pfdintextpro/light/index.css';
+import './pfdintextpro/regular/index.css';
+import './pfdintextpro/medium/index.css';
+import './pfdintextpro/bold/index.css';
+import './pfdintextpro/extrathin/index.css';

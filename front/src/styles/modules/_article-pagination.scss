@@ -1,0 +1,70 @@
+@include new('article-pagination') {
+    display: flex;
+    flex-direction: column;
+
+    @include breakpoint($screen-md) {
+        flex-direction: row;
+    }
+
+    @include has('inner') {
+        display: block;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        overflow: hidden;
+        position: relative;
+        transition: background 0.2s ease-out;
+        margin-bottom: 10px;
+
+        &::before {
+            content: '';
+            display: block;
+            border: 1px solid #ccc;
+            height: 110%;
+            width: 33px;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        &:hover {
+            background-color: darken(#fff, 10%);
+        }
+
+        @include when('prev') {
+            padding: 10px 15px 10px 50px;
+
+            &::before {
+                background: url($img-path+'right-arrow.png') no-repeat center;
+                transform: translateY(-50%) rotate(180deg);
+                left: -1px;
+            }
+        }
+
+        @include when('next') {
+            padding: 10px 50px 10px 15px;
+
+            @include breakpoint($screen-md) {
+                margin-left: auto;
+            }
+
+            &::before {
+                background: url($img-path+'right-arrow.png') no-repeat center;
+                right: -1px;
+            }
+        }
+        @include breakpoint($screen-md) {
+            flex-basis: 47%;
+            max-width: 47%;
+            margin-bottom: 0;
+        }
+    }
+
+    @include has('text') {
+        @include TextProMedium;
+    }
+
+    @include has('title') {
+        font-size: 14px;
+        @include TextProLight;
+    }
+}

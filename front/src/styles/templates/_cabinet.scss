@@ -1,0 +1,136 @@
+@include new('cabinet') {
+    @include has('header') {
+        margin-bottom: 15px;
+    }
+
+    @include has('info') {
+        &-block {
+            text-align: left;
+        }
+
+        &-text {
+            margin-top: 10px;
+        }
+    }
+
+    @include has('order') {
+        width: 100%;
+        border-bottom: solid 2px #ccc;
+
+        &-data {
+            border-bottom: solid 2px #ccc;
+
+            &-button {
+                padding: 5px 30px 2px 9px;
+                position: relative;
+            }
+        }
+
+        &-list {
+            display: none;
+
+            .show_this & {
+                display: table-footer-group;
+            }
+        }
+    }
+}
+
+@include new('cabinet-content') {
+    @extend %clearfix;
+
+    @include no-column;
+
+    @include when('center') {
+        text-align: center;
+    }
+
+    @include has('column') {
+        @include no-column;
+
+        @include breakpoint($screen-md) {
+            @include column(6, 12);
+
+            margin: 0;
+            padding: 0 15px;
+        }
+
+        @include when('center') {
+            margin: 0 auto;
+            display: block;
+            float: none;
+            padding: 0;
+        }
+    }
+
+    @include has('data') {
+        @extend %clearfix;
+
+        margin-bottom: 20px;
+        line-height: 22px;
+        position: relative;
+        width: 100%;
+        height: 40px;
+
+        &-check {
+            width: 100%;
+            margin: 0;
+            text-align: left;
+            float: left;
+        }
+
+        &-inner {
+            max-width: 200px;
+            width: 100%;
+            float: right;
+
+            @include breakpoint($screen-md) {
+                max-width: 270px;
+            }
+        }
+
+        &-title {
+            position: absolute;
+            background-color: #ffffff;
+            left: 15px;
+            top: -10px;
+            padding: 0 5px;
+            display: inline-block;
+            color: #bb1100;
+            height: 18px;
+            white-space: nowrap;
+        }
+
+        &-column {
+            @include column(4, 12);
+        }
+    }
+
+    @include has('select') {
+        padding: 0 10px;
+        height: 40px;
+        border-radius: 0px;
+        width: 100%;
+        max-width: 310px;
+        float: right;
+        text-align: left;
+        background-color: #f3f3f3;
+        border: 0px;
+        text-transform: uppercase;
+        background: url($img-path+'down-arrow-red.png') #f3f3f3 90% center no-repeat;
+        background-size: auto 25%;
+        cursor: pointer;
+    }
+
+    @include has('buttons') {
+        @include breakpoint($screen-md) {
+            float: left;
+            text-align: left;
+            margin-left: 15px;
+        }
+
+        button + button {
+            margin-left: 15px;
+        }
+    }
+}

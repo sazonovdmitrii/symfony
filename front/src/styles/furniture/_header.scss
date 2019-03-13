@@ -1,0 +1,225 @@
+// --------------------------------------------------------------------------
+// Header
+// --------------------------------------------------------------------------
+// Author:      Zone
+// Email:       danyegorov@yandex.ru
+// URL:         http://zonedigital.com
+// Copyright:   Copyright (c) 2016, zonedigital.com. All rights reserved.
+// Version:     1.5
+// --------------------------------------------------------------------------
+
+// Accessibility controls
+// --------------------------------------------------------------------------
+
+.skip {
+    display: block;
+    float: left;
+    padding: 12px;
+    margin-left: -999em;
+
+    &:focus {
+        margin-left: 0;
+    }
+}
+
+// Header
+// --------------------------------------------------------------------------
+
+@include new('header-fixed') {
+    height: 100px;
+    width: 100%;
+
+    @include no-column;
+
+    @include breakpoint($screen-md) {
+        height: auto;
+    }
+
+    @include has('inner') {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        background-color: $WHITE;
+
+        @include row(12);
+
+        padding: 0 5px;
+        border-bottom: 1px solid #eee;
+
+        @include breakpoint($screen-md) {
+            position: relative;
+            border-bottom: none;
+        }
+    }
+}
+
+@include new('header') {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: $WHITE;
+    z-index: 1;
+    width: 100%;
+    margin: 0 auto;
+
+    @include breakpoint($screen-md) {
+        position: relative;
+        border-bottom: none;
+    }
+
+    @include has('row') {
+        @include row(12);
+    }
+
+    @include has('phone') {
+        @include column(4, 12);
+
+        text-align: left;
+        display: none;
+
+        @include breakpoint($screen-md) {
+            display: block;
+        }
+    }
+
+    @include has('button') {
+        @include TextCondProRegular;
+
+        float: left;
+        display: flex;
+        height: 50px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        text-transform: none;
+        margin-top: 8px;
+
+        img {
+            height: 35px;
+        }
+
+        @include when('back') {
+            img {
+                margin-right: 5px;
+            }
+        }
+
+        @include when('help') {
+            float: right;
+
+            img {
+                margin-left: 5px;
+            }
+        }
+    }
+
+    @include has('openmobile') {
+        border: none;
+        display: inline-block;
+        height: 32px;
+        width: 32px;
+        background: none;
+        margin-top: 10px;
+        transition: transform 0.35s;
+
+        & img {
+            width: 100%;
+        }
+
+        &.open-mobile-menu {
+            transform: rotate(90deg);
+        }
+    }
+
+    @include has('phonelink') {
+        @include TextCondProRegular;
+
+        color: $color-dark;
+        text-decoration: none;
+        padding-left: calculateRem(3px);
+        font-size: 1rem;
+        display: block;
+
+        @include breakpoint($screen-md) {
+            display: inline-block;
+            line-height: 20px;
+            height: 20px;
+            margin: 20px 0;
+            padding-top: 3px;
+            box-sizing: border-box;
+        }
+    }
+
+    @include has('phoneicon') {
+        padding-right: calculateRem(3px);
+        margin: 0;
+        display: none;
+
+        &:after,
+        &:before {
+            margin: 0;
+            font-size: calculateRem(14pt);
+            vertical-align: sub;
+            color: $color-dark;
+            font-weight: bold;
+        }
+
+        @include breakpoint($DESCKTOP) {
+            display: inline-block;
+        }
+    }
+
+    @include has('mobilemenu') {
+        @include column(2, 12);
+
+        @include breakpoint($screen-md) {
+            display: none;
+        }
+    }
+
+    @include has('logo') {
+        @include column(8, 12);
+
+        text-align: center;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        @include breakpoint($screen-md) {
+            @include column(4, 12);
+
+            text-align: center;
+            display: inline-block;
+        }
+    }
+
+    @include has('logolink') {
+        width: auto;
+        display: block;
+
+        @include when('img') {
+            display: inline-block;
+            vertical-align: middle;
+            height: 38px;
+
+            @include breakpoint($screen-md) {
+                margin: 8px 0;
+                height: 44px;
+            }
+        }
+    }
+
+    @include has('icons') {
+        @include column(2, 12);
+
+        text-align: center;
+
+        @include breakpoint($screen-md) {
+            @include column(4, 12);
+        }
+    }
+}

@@ -1,0 +1,67 @@
+// --------------------------------------------------------------------------
+// Placeholders
+// --------------------------------------------------------------------------
+// Author:      Zone
+// Email:       danyegorov@yandex.ru
+// URL:         http://thisiszone.com
+// Copyright:   Copyright (c) 2015, thisiszone.com. All rights reserved.
+// Version:     1.5
+// --------------------------------------------------------------------------
+
+// Polyfills
+// --------------------------------------------------------------------------
+
+%clearfix {
+    *zoom: 1;
+
+    &:before,
+    &:after {
+        content: '';
+        display: table;
+
+        line-height: 0;
+    }
+
+    &:after {
+        clear: both;
+    }
+}
+
+%inline-block {
+    display: -moz-inline-stack;
+    display: inline-block;
+    vertical-align: top;
+    zoom: 1;
+    *display: inline;
+}
+
+// Visibilty
+// --------------------------------------------------------------------------
+
+%hidden {
+    position: absolute;
+    left: -999em;
+}
+
+%visible {
+    position: static;
+    left: 0;
+}
+
+%hide-text {
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    border: 0;
+    color: transparent;
+    display: block;
+    font: 0/0 a;
+    text-shadow: none;
+}
+
+// Styles
+// --------------------------------------------------------------------------
+
+%basic-box {
+    padding: 12px 0;
+}

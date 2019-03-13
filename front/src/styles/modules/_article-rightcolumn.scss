@@ -1,0 +1,21 @@
+@include new('article-rightcolumn') {
+    @include column(12, 12);
+
+    color: #000;
+
+    @include breakpoint($screen-md) {
+        @include column(3, 12);
+
+        padding-left: 10px;
+    }
+
+    @include has('title') {
+        @include TextProBold;
+
+        font-size: calculateRem(30px);
+        margin-bottom: 20px;
+    }
+
+    @include has('articles-list') {
+    }
+}

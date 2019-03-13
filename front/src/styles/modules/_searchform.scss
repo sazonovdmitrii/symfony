@@ -1,0 +1,83 @@
+// --------------------------------------------------------------------------
+// SEARCHFORM
+// --------------------------------------------------------------------------
+// Author:      Danyl Yehorov
+// Email:       office@gainsbrook.ch
+// URL:         http://gainsbrook.ch/
+// Copyright:
+// Version:     1.0
+// --------------------------------------------------------------------------
+
+@include new('searchform') {
+    border: 0;
+    position: relative;
+    text-align: right;
+
+    @include has('input') {
+        @include TextProRegular;
+
+        box-sizing: border-box;
+        line-height: $MENULINFONTSIZE;
+        padding: calculateRem($PADDINGS / 3);
+        background: $TEXTBACKGORUND;
+        width: 100%;
+        border: 1px solid $COLORLINES;
+        border-radius: calculateRem(5px);
+        font-size: calculateRem(14px);
+        outline: none;
+
+        &::placeholder {
+            @include TextProRegular;
+
+            font-size: calculateRem(14px);
+        }
+
+        @include breakpoint($screen-md) {
+            width: 160px;
+            height: $PADDINGS;
+            box-sizing: content-box;
+        }
+
+        @include when('articles') {
+            padding: 15px 15px;
+            background-color: #fff;
+            width: 260px;
+            border: 1px solid #ccc;
+        }
+    }
+
+    @include has('button') {
+        @include TextProRegular;
+
+        padding: 11px 50px;
+        background-color: #eee;
+        outline: none;
+        border: 0;
+        margin-left: 10px;
+        cursor: pointer;
+        font-style: italic;
+        transition: background 0.3s ease-out;
+
+        &:hover {
+            background-color: darken(#eee, 10%);
+        }
+    }
+
+    @include has('icon') {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: calculateRem(9px);
+        border: none;
+        background: none;
+        display: inline;
+
+        &:after,
+        &:before {
+            margin: 0;
+            font-size: calculateRem(18px);
+            color: $color-grey;
+            vertical-align: bottom;
+        }
+    }
+}

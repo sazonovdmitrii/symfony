@@ -1,0 +1,52 @@
+// --------------------------------------------------------------------------
+// HOME
+// --------------------------------------------------------------------------
+// Author:      Buchenko Serafima
+// Email:       office@gainsbrook.ch
+// URL:         http://gainsbrook.ch/
+// Copyright:
+// Version:     1.0
+// --------------------------------------------------------------------------
+
+.banner {
+    &-block {
+        height: $HEADBANNER;
+        float: left;
+        margin-top: $PADDINGS;
+    }
+    &-info {
+        width: 24.6%;
+    }
+    &-img {
+        width: 74.8%;
+        margin-left: 0.6%;
+    }
+}
+
+@include new('homeslider') {
+    @include row(12);
+    display: block;
+    float: left;
+    width: 100%;
+    @include has('link') {
+        display: inline-block;
+        @include when('picture') {
+            display: inline-block;
+            width: 100%;
+        }
+    }
+}
+
+.sale-item__bubble {
+    display: none;
+    @include breakpoint($screen-md) {
+        display: block;
+    }
+}
+
+.brands__letter-list {
+    width: 100%;
+    @include breakpoint($screen-md) {
+        width: 20%;
+    }
+}

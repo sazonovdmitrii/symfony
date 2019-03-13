@@ -1,0 +1,65 @@
+@include new('menu-brand') {
+    display: none;
+    background: #fff;
+    border-bottom: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    position: absolute;
+    top: 38px;
+    width: 100%;
+    z-index: 22;
+
+    .is-open & {
+        display: block;
+    }
+
+    @include when('border') {
+        @include breakpoint($screen-md) {
+            &:before {
+                content: '';
+                border-top: 1px solid #eee;
+                display: block;
+                width: 100%;
+            }
+        }
+    }
+
+    @include breakpoint($screen-md) {
+        display: block;
+        position: static;
+        margin-right: 10px;
+        border: none;
+        width: auto;
+    }
+
+    @include has('item') {
+        display: block;
+        border-bottom: 1px solid #ccc;
+        @include breakpoint($screen-md) {
+            margin: 10px 0;
+            border-bottom: none;
+        }
+    }
+
+    @include has('link') {
+        padding: 10px 15px;
+        font-size: 0.8125rem;
+        box-sizing: border-box;
+        display: block;
+        line-height: 16px;
+        @include breakpoint($screen-md) {
+            padding: 5px 8px;
+            background-color: #f4f4f4;
+            display: inline-block;
+            line-height: 1.4;
+            transition: background 0.3s ease-out;
+            &:hover {
+                background-color: darken(#f4f4f4, 10%);
+            }
+        }
+
+        @include when('current') {
+            background-color: #ccc;
+        }
+    }
+}

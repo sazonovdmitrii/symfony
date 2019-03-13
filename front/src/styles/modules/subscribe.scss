@@ -1,0 +1,88 @@
+@include new('subscribe') {
+    padding: 0;
+    margin: 0;
+    vertical-align: baseline;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+
+    @include has('form') {
+        display: inline-block;
+        width: 100%;
+
+        @media (min-width: $DESCKTOP-moby) {
+            width: 45%;
+        }
+    }
+
+    @include has('notification') {
+        display: none;
+        background-color: $WHITE;
+        width: 100%;
+        @include TextProMedium;
+        font-size: calculateRem(18px);
+        color: $color-dark;
+        text-align: center;
+        position: absolute;
+        top: -6px;
+        padding: 8px 15px;
+        height: 200%;
+
+        &.open {
+            display: block;
+        }
+    }
+    @include has('label') {
+        margin: 0;
+        padding: 0;
+        font-size: calculateRem(18px);
+        color: $color-dark;
+        @include TextProMedium;
+        padding: 0.3 * $PADDINGS $PADDINGS 2 * $PADDINGS/3 0;
+        width: 100%;
+        display: inline-block;
+        text-align: center;
+
+        @media (min-width: $DESCKTOP-moby) {
+            width: 45%;
+            padding-bottom: 0;
+        }
+
+        @media (max-width: $DESCKTOP) and (min-width: $DESCKTOP-moby) {
+            text-align: left;
+        }
+    }
+
+    @include has('input') {
+        height: 2 * $PADDINGS;
+        line-height: 2 * $PADDINGS;
+        border: 1px solid $DARKBORDER;
+        box-shadow: none;
+        padding: 0 0 0 $PADDINGS;
+        width: 75%;
+        float: left;
+
+        @media (max-width: $DESCKTOP-moby) {
+            float: inherit;
+            display: inline-block;
+            vertical-align: top;
+        }
+    }
+
+    @include has('button') {
+        height: 2 * $PADDINGS;
+        line-height: 2 * $PADDINGS;
+        border: 1px solid $DARKBORDER;
+        border-left: none;
+        box-shadow: none;
+        width: 20%;
+        float: left;
+        background: url($img-path+'email-b.png') no-repeat center;
+
+        @media (max-width: $DESCKTOP-moby) {
+            float: inherit;
+            margin-left: -$PADDINGS/3;
+        }
+    }
+}

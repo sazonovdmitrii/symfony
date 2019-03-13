@@ -1,0 +1,15 @@
+// --------------------------------------------------------------------------
+// Lists
+// --------------------------------------------------------------------------
+// Author:      Zone
+// Email:       danyegorov@yandex.ru
+// URL:         http://zonedigital.com
+// Copyright:   Copyright (c) 2016, zonedigital.com. All rights reserved.
+// Version:     1.5
+// --------------------------------------------------------------------------
+// A good use for this is to manage z-index
+// e.g. .my-el {z-index: index($elements, modal)}
+// ~ z-index: 3
+
+//Used to manage z-index
+$elements: base-element, before, after, modal;

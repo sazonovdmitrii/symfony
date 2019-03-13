@@ -1,0 +1,44 @@
+@mixin TextProExtraThin {
+    font-family: 'PFDinTextPro', sans-serif;
+    font-weight: 100;
+}
+
+@mixin TextProThin {
+    font-family: 'PFDinTextPro', sans-serif;
+    font-weight: 200;
+}
+
+@mixin TextProLight {
+    font-family: 'PFDinTextPro', sans-serif;
+    font-weight: 300;
+}
+
+@mixin TextProRegular {
+    font-family: 'PFDinTextPro', sans-serif;
+    font-weight: 400;
+}
+
+@mixin TextProMedium {
+    font-family: 'PFDinTextPro', sans-serif;
+    font-weight: 500;
+}
+
+@mixin TextProBold {
+    font-family: 'PFDinTextPro', sans-serif;
+    font-weight: 700;
+}
+
+@mixin TextCondProLight {
+    font-family: 'PFDinTextCondPro', sans-serif;
+    font-weight: 300;
+}
+
+@mixin TextCondProRegular {
+    font-family: 'PFDinTextCondPro', sans-serif;
+    font-weight: 400;
+}
+
+@mixin TextCondProMedium {
+    font-family: 'PFDinTextCondPro', sans-serif;
+    font-weight: 500;
+}

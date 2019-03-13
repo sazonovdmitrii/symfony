@@ -1,0 +1,42 @@
+@custom-media --viewport-phone (width >= 480px);
+@custom-media --viewport-ipad (width >= 640px);
+@custom-media --viewport-tablet (width >= 768px);
+@custom-media --viewport-desktop (width >= 960px);
+@custom-media --viewport-wide (width >= 1200px);
+
+:root {
+    --font-serif: 'PFDinTextPro', sans-serif;
+    --font-cond-serif: 'PFDinTextCondPro', sans-serif;
+    --font-size-base: 16px;
+    --font-size-small: 14px;
+    --font-size-medium: 15px;
+    --font-size-large: 18px;
+
+    --headings-line-height: 1.2;
+    --text-line-height: 1.3;
+
+    --container-width: 1140px;
+
+    --color-font: #212529;
+    --color-black: #000;
+    --color-white: #fff;
+    --color-blue: #4475c1;
+    --color-green: #93c44e;
+    --color-grey: #ccc;
+    --color-darkgrey: #333;
+    --color-yellow: #f2d409;
+    --color-red: #db0119;
+
+    /* smain colors */
+    --color-border: var(--color-grey);
+
+    --color-primary: var(--color-red);
+    --color-secondary: #e5e5e5;
+
+    --color-success: var(--color-green);
+    --color-info: var(--color-blue);
+    --color-warning: #ffa000;
+    --color-error: var(--color-red);
+
+    --color-link: #505050;
+}

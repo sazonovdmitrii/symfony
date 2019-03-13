@@ -1,0 +1,124 @@
+@include new('cabinet') {
+    @include has('header') {
+        margin-bottom: 15px;
+    }
+
+    @include has('info') {
+        &-block {
+            text-align: left;
+        }
+
+        &-text {
+            margin-top: 10px;
+        }
+    }
+
+    @include has('order') {
+        width: 100%;
+        border-bottom: solid 2px #ccc;
+
+        &-data {
+            border-bottom: solid 2px #ccc;
+
+            &-button {
+                padding: 5px 30px 2px 9px;
+                position: relative;
+            }
+        }
+
+        &-list {
+            display: none;
+
+            .show_this & {
+                display: table-footer-group;
+            }
+        }
+    }
+
+    /********  security  ********/
+    @include has('security') {
+        &-button {
+            max-width: 290px;
+            padding-top: 15px;
+        }
+    }
+
+    /********  order  ********/
+    @include has('order') {
+        &-h1 {
+            font-size: 20px;
+            color: #000;
+        }
+    }
+}
+
+@include new('cabinet-content') {
+    @extend %clearfix;
+    @include no-column();
+    position: relative;
+
+    @include breakpoint($screen-md) {
+        @include column(9, 12);
+    }
+
+    @include when('pull') {
+        @include breakpoint($screen-md) {
+            @include column(4, 12);
+            @include pull(5);
+        }
+    }
+
+    @include when('center') {
+        @include column(8, 12);
+        @include push(2);
+    }
+
+    @include has('column') {
+        @include no-column();
+
+        @include breakpoint($screen-md) {
+            @include column(6, 12);
+        }
+    }
+
+    @include has('data') {
+        @extend %clearfix;
+        margin-bottom: 20px;
+        line-height: 22px;
+        position: relative;
+        width: 100%;
+        height: 40px;
+
+        &-check {
+            width: 100%;
+            margin: 0;
+            text-align: left;
+            float: left;
+        }
+
+        &-inner {
+            max-width: 200px;
+            width: 100%;
+            float: right;
+            @include breakpoint($screen-md) {
+                max-width: 270px;
+            }
+        }
+
+        &-title {
+            position: absolute;
+            background-color: #ffffff;
+            left: 15px;
+            top: -10px;
+            padding: 0 5px;
+            display: inline-block;
+            color: #bb1100;
+            height: 18px;
+            white-space: nowrap;
+        }
+
+        &-column {
+            @include column(4, 12);
+        }
+    }
+}

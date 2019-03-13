@@ -1,0 +1,37 @@
+/*
+    Flaticon icon font: Flaticon
+    Creation date: 27/06/2016 19:24
+    */
+
+@font-face {
+    font-family: 'Flaticon';
+    src: url('./Flaticon.woff2') format('woff2'), url('./Flaticon.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^='flaticon-']:before,
+[class*=' flaticon-']:before,
+[class^='flaticon-']:after,
+[class*=' flaticon-']:after {
+    font-family: Flaticon;
+    font-size: 20px;
+    font-style: normal;
+    margin-left: 20px;
+}
+
+.flaticon-avatar:before {
+    content: '\f100';
+}
+.flaticon-chat:before {
+    content: '\f101';
+}
+.flaticon-magnifying-glass:before {
+    content: '\f102';
+}
+.flaticon-shopping-bag:before {
+    content: '\f103';
+}
+.flaticon-technology:before {
+    content: '\f104';
+}

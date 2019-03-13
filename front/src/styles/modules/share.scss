@@ -1,0 +1,44 @@
+@include new('share') {
+    display: block;
+
+    @include has('label') {
+        margin: 0;
+        padding: 0;
+        font-size: calculateRem(18px);
+        color: $color-dark;
+        @include TextProMedium;
+        float: left;
+        text-align: center;
+        display: initial;
+        vertical-align: top;
+        padding-top: $PADDINGS/3;
+        line-height: 1;
+
+        @media (min-width: $DESCKTOP) {
+            width: 45%;
+        }
+
+        @media (max-width: $DESCKTOP-moby) {
+            text-align: center;
+            width: 100%;
+            padding-bottom: 10px;
+        }
+    }
+
+    @include has('list') {
+        float: right;
+        height: 32 * $HEADERHEAD/65;
+        display: initial;
+        width: 55%;
+
+        @media (max-width: $DESCKTOP-moby) {
+            text-align: center;
+            width: 100%;
+        }
+    }
+
+    @include has('item') {
+        display: inline-block;
+        margin-left: 3.6%;
+    }
+}

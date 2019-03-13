@@ -27,10 +27,13 @@ services:
         build: nginx
         ports:
             - '8081:80'
+            - '1337:1337'
         links:
             - php
+            - node
         volumes_from:
             - php
+            - node
         volumes:
             - ./logs/nginx/:/var/log/nginx:cached
     db_lp:
@@ -45,8 +48,18 @@ services:
           - MYSQL_ROOT_PASSWORD=root
           - MYSQL_DATABASE=lp
           - MYSQL_USER=root
-
     memcached:
         image: memcached:1.4
         ports:
           - "11212:11211"
+    node:
+        image: "node:lts"
+        user: "node"
+        working_dir: /home/node/app
+        environment:
+            - NODE_ENV=development
+        volumes:
+            - ./front:/home/node/app
+        command: "sh node.sh"
+        expose:
+            - "3000"

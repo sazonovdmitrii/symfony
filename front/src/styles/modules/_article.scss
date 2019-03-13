@@ -1,0 +1,109 @@
+@include new('article-item') {
+    @include column(6, 12);
+
+    margin-bottom: 25px;
+
+    @include breakpoint($DESCKTOP) {
+        @include column(3, 12);
+
+        &:nth-child(4n + 1) {
+            clear: both;
+        }
+    }
+
+    @include has('link') {
+        display: block;
+        transition: opacity 0.3s ease-out;
+
+        &:hover {
+            opacity: 0.5;
+        }
+    }
+
+    @include has('image-wrapper') {
+        position: relative;
+
+        @include when('placehold') {
+            height: 236px;
+            width: 236px;
+            background-color: #f3f3f3;
+
+            &::before {
+                content: '';
+                background: url($svg-path+'placehold.svg') no-repeat center;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: cover;
+                height: 40px;
+                width: 35px;
+
+                @include center;
+            }
+        }
+    }
+
+    @include has('image') {
+        max-width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    @include has('icon') {
+        background: #000 url($svg-path+'video.svg') no-repeat center / 60%;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 30px;
+        height: 30px;
+    }
+
+    @include has('text') {
+        position: relative;
+        text-align: left;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-bottom: 31px solid #fff;
+        }
+    }
+
+    @include has('title') {
+        @include TextProBold;
+
+        margin-top: 13px;
+        line-height: 1.5;
+        font-size: calculateRem(15px);
+        text-transform: uppercase;
+
+        @include breakpoint($screen-sm) {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        @include breakpoint($screen-md) {
+            overflow: visible;
+            white-space: normal;
+        }
+    }
+
+    @include has('meta') {
+        @include TextProLight;
+
+        margin-top: 0.25em;
+        line-height: 1.5;
+        font-size: calculateRem(12px);
+    }
+
+    @include has('category') {
+        text-transform: uppercase;
+    }
+
+    @include has('author') {
+        text-transform: uppercase;
+    }
+}

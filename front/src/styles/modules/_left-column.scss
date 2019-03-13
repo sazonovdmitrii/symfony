@@ -1,0 +1,232 @@
+@include new('leftcolumn') {
+    display: none;
+    position: absolute;
+    list-style: none;
+    padding: 0;
+    top: 37px;
+    width: 100%;
+    background: $WHITE;
+    list-style: none;
+    z-index: 10;
+    border-bottom: 1px solid $COLORLINES;
+    border-left: 1px solid $COLORLINES;
+    border-right: 1px solid $COLORLINES;
+
+    .is-open & {
+        display: block;
+    }
+
+    @include breakpoint($screen-md) {
+        position: relative;
+        overflow: hidden;
+        display: block;
+        border: none;
+        z-index: 1;
+        float: none;
+        top: 0px;
+    }
+
+    @include has('mobilesfiltes') {
+        display: inline-block;
+        border: 1px solid $COLORLINES;
+        width: 38px;
+        height: 38px;
+        float: left;
+        margin-left: 2px;
+        overflow: hidden;
+        background: none;
+        text-align: left;
+        padding: 10px;
+        box-sizing: border-box;
+        @include when('sale') {
+            float: right;
+        }
+
+        img {
+            width: 18px;
+        }
+
+        @include breakpoint($screen-md) {
+            display: none;
+        }
+    }
+
+    @include has('mobileshow') {
+        display: inline-block;
+        border: 1px solid $COLORLINES;
+        width: 100%;
+        background: none;
+        float: left;
+        text-align: left;
+        padding: 10px 10px;
+        box-sizing: border-box;
+
+        @include when('filters') {
+            width: calc(100% - 40px);
+        }
+
+        .is-open & {
+            border-bottom: none;
+        }
+
+        img {
+            height: 16px;
+            float: right;
+            transition: transform 0.35s;
+
+            .is-open & {
+                transform: rotate(-90deg);
+            }
+        }
+
+        @include breakpoint($screen-md) {
+            display: none;
+        }
+    }
+
+    @include has('title') {
+        display: none;
+        border-bottom: solid 1px #ddd;
+        @include TextProBold;
+        font-size: calculateRem(16px);
+        line-height: 18px;
+        color: $color-dark;
+        margin-bottom: 4px;
+        padding-bottom: 7px;
+
+        @include breakpoint($screen-md) {
+            display: block;
+        }
+    }
+
+    @include has('item') {
+        @include breakpoint($screen-md) {
+            padding: 2px 0;
+            line-height: 1;
+            border-bottom: none;
+            margin: 0;
+        }
+
+        @include when('last') {
+            display: none;
+            font-size: calculateRem(13px);
+            text-align: right;
+            padding: 0;
+            padding-top: 3px;
+
+            a {
+                color: #6b6b6b;
+            }
+
+            @include breakpoint($screen-md) {
+                display: block;
+            }
+        }
+    }
+
+    @include has('link') {
+        padding: 10px 15px;
+        border-bottom: 1px solid #ccc;
+        @include TextProRegular;
+        font-size: calculateRem(13px);
+        text-decoration: none;
+        text-align: left;
+        color: #333;
+        box-sizing: border-box;
+        display: block;
+        line-height: 16px;
+
+        text-indent: -10px;
+        transition: all 0.5s;
+
+        @include breakpoint($screen-md) {
+            padding: 4px 0px 4px 20px;
+            margin: 0;
+            border-bottom: none;
+        }
+
+        &:hover {
+            background-color: #f3f3f3;
+            &:before {
+                left: -5px;
+            }
+        }
+
+        @include when('current') {
+            @include TextProMedium;
+            color: #000;
+            display: none;
+            &:hover {
+                background-color: #fff;
+                &:before {
+                    left: 0;
+                }
+            }
+
+            @include breakpoint($screen-md) {
+                display: block;
+            }
+        }
+
+        &:before {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: greyscale;
+            font-style: normal;
+            font-variant: normal;
+            font-weight: 400;
+            letter-spacing: normal;
+            line-height: 1;
+            text-decoration: none;
+            text-transform: none;
+            content: '›';
+            font-size: 14px;
+            margin-right: 5px;
+            position: relative;
+            top: -1px;
+            transition: all 0.5s;
+            left: 0px;
+        }
+    }
+
+    @include has('subitem') {
+        @extend .leftcolumn__item;
+    }
+
+    @include has('sublink') {
+        padding: 10px 15px;
+        font-size: calculateRem(13px);
+        text-decoration: none;
+        text-align: left;
+        color: #333;
+
+        display: block;
+        line-height: 14px;
+
+        @include TextProRegular;
+
+        &:hover {
+            background-color: #f3f3f3;
+        }
+
+        @include when('current') {
+            @include TextProMedium;
+            color: #000;
+            &:hover {
+                background-color: #fff;
+            }
+        }
+
+        @include breakpoint($screen-md) {
+            padding: 4px 0px 4px 20px;
+            margin: 0;
+        }
+    }
+
+    @include has('submenu') {
+        display: block;
+        list-style: none;
+        @include breakpoint($screen-md) {
+            padding: 2px 0 0 5px;
+        }
+    }
+}

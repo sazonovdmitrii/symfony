@@ -1,0 +1,32 @@
+@include new('tags') {
+    @include no-column();
+    display: block;
+}
+
+@include new('tags-item') {
+    display: inline-block;
+    margin-bottom: 10px;
+    margin-right: 10px;
+
+    @include has('link') {
+        display: block;
+        padding: 6px 10px;
+        background-color: #eee;
+        transition: background 0.3s ease-out;
+        line-height: 1;
+        &:hover {
+            background-color: $COLORDARKRED;
+            color: #fff;
+        }
+
+        @include when('all') {
+            padding: 0;
+            background: none;
+            text-decoration: underline;
+            &:hover {
+                color: #000;
+                background: none;
+            }
+        }
+    }
+}

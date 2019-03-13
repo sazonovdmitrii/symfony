@@ -1,0 +1,87 @@
+$column-width: $grid-width-columns;
+$gutter-width: $grid-width-gutter;
+$columns: $grid-num-columns;
+
+// Utility function — you should never need to modify this
+@function gridsystem-width($columns: $columns) {
+    @return 0;
+    // @return $column-width * $columns + $gutter-width * $columns;
+}
+
+// Set $total-width to 100% for a fluid layout
+$total-width: 100%;
+
+$min-width: 1000;
+$correction: 0.5 / $min-width * 100 * 1%;
+
+@function make-col($size: 12) {
+    @return percentage($size / 12);
+}
+
+@mixin row($columns: $columns) {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -15px;
+}
+
+@mixin column($x, $columns: $columns) {
+    flex: 0 0 make-col($x);
+    max-width: make-col($x);
+    padding: 0 15px;
+}
+
+@mixin column-alpha($x, $columns: $columns) {
+    display: inline;
+    float: left;
+    width: $total-width * (($gutter-width + $column-width) * $x - $gutter-width / 2) /
+        gridsystem-width($columns);
+    margin-right: $total-width * $gutter-width * 0.5 / gridsystem-width($columns);
+    margin-left: 0;
+    *width: $total-width * (($gutter-width + $column-width) * $x - $gutter-width / 2) /
+        gridsystem-width($columns) - $correction;
+    *margin: 0 $total-width * $gutter-width * 0.5 / gridsystem-width($columns) - $correction 0 0;
+}
+
+@mixin column-omega($x, $columns: $columns) {
+    display: inline;
+    float: left;
+    width: $total-width * (($gutter-width + $column-width) * $x - $gutter-width / 2) /
+        gridsystem-width($columns);
+    margin-right: 0;
+    margin-left: $total-width * $gutter-width * 0.5 / gridsystem-width($columns);
+    *width: $total-width * (($gutter-width + $column-width) * $x - $gutter-width / 2) /
+        gridsystem-width($columns) - $correction;
+    *margin: 0 0 0 $total-width * $gutter-width * 0.5 / gridsystem-width($columns) - $correction;
+}
+
+@mixin push($offset: 1) {
+    margin-left: $total-width * ($gutter-width + $column-width) * $offset / gridsystem-width($columns) +
+        $total-width * $gutter-width * 0.5 / gridsystem-width($columns);
+    *margin-left: $total-width * ($gutter-width + $column-width) * $offset / gridsystem-width($columns) +
+        $total-width * $gutter-width * 0.5 / gridsystem-width($columns) - $correction;
+}
+
+@mixin pull($offset: 1) {
+    margin-right: $total-width * ($gutter-width + $column-width) * $offset / gridsystem-width($columns) +
+        $total-width * $gutter-width * 0.5 / gridsystem-width($columns);
+    *margin-right: $total-width * ($gutter-width + $column-width) * $offset / gridsystem-width($columns) +
+        $total-width * $gutter-width * 0.5 / gridsystem-width($columns) - $correction;
+}
+
+@mixin no-column {
+    display: block;
+    margin: 0 auto;
+    float: none;
+    width: 100%;
+}
+
+@mixin columns-indent($cols, $push, $pull) {
+    @include column($cols);
+    @include push($push);
+    @include pull($pull);
+}
+
+%flow-in-grid {
+    display: inline;
+    float: left;
+}

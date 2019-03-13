@@ -1,0 +1,39 @@
+.wrapper {
+    margin-top: 45px;
+}
+
+.section {
+    border-top: 1px solid var(--color-grey);
+    padding: 30px 0 15px;
+
+    &.thin {
+        padding: 15px 0;
+    }
+
+    & small {
+        text-align: center;
+        display: block;
+        font-size: 0.9rem;
+    }
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -15px;
+}
+
+.col5 {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding: 0 15px;
+}
+
+.payments {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 0;
+    color: var(--color-black);
+}

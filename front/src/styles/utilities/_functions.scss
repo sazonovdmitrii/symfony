@@ -1,0 +1,58 @@
+// --------------------------------------------------------------------------
+// Functions
+// --------------------------------------------------------------------------
+// Author:      Zone
+// Email:       danyegorov@yandex.ru
+// URL:         http://thisiszone.com
+// Copyright:   Copyright (c) 2015, thisiszone.com. All rights reserved.
+// Version:     1.5
+// --------------------------------------------------------------------------
+// http://viljamis.com/blog/2013/prototyping-responsive-typography/
+// --------------------------------------------------------------------------
+
+$browser-context: 16; // Default
+
+/**
+ * Simple function to convert pixel values to ems
+ * Usage example:
+ *   my-selector: em(16px);
+ *
+ */
+@function em($pixels, $context: $browser-context) {
+    @return #{$pixels/$context}em;
+}
+
+/**
+ * Simple function to convert a unitless integer to pixels
+ * Usage example:
+ *   my-selector: px(16);
+ *
+ */
+@function px($number) {
+    @return #{$number}px;
+}
+
+/**
+ * Simple function to remove the unit of measurement
+ * Usage example:
+ *   strip-unit(16px);
+ *
+ * @param  {string}   $value  integer with unit of measurement
+ * @return {integer}          integer without any unit of measurement
+ */
+@function strip-unit($value) {
+    @return $value / ($value * 0 + 1);
+}
+
+/**
+ * Simple function to convert a number to rems
+ * Usage example:
+ *   calculateRem(32px);
+ *
+ * @param  {string}   $value  integer with unit of measurement
+ * @return {string}          	integer with unit of measurement
+ */
+@function calculateRem($size) {
+    $remSize: $size / 16px;
+    @return #{$remSize}rem;
+}

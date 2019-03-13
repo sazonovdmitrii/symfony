@@ -1,0 +1,33 @@
+@include new('featured-brands') {
+    @include has('row') {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        margin: 0 -15px;
+        padding: 0;
+    }
+
+    @include has('item') {
+        width: 50%;
+        padding: 0 15px;
+        margin-bottom: 16px;
+        text-align: center;
+
+        @include breakpoint($DESCKTOP) {
+            width: 20%;
+        }
+    }
+
+    @include has('image') {
+        margin-bottom: 5px;
+    }
+
+    @include has('title') {
+        font-size: 14px;
+    }
+
+    @include has('link') {
+        display: block;
+        text-decoration: underline;
+    }
+}

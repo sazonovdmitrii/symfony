@@ -1,0 +1,71 @@
+@include new('social') {
+    @include has('title') {
+        font-size: calculateRem(20px);
+        text-align: center;
+        margin: 15px 0 25px;
+    }
+}
+
+@include new('social-list') {
+    @extend %clearfix;
+    display: inline-block;
+
+    @include has('item') {
+        float: left;
+        margin-bottom: 15px;
+        margin-left: 40px;
+        &:first-child {
+            margin-left: 0;
+        }
+        @include breakpoint($screen-md) {
+            margin-bottom: 0;
+        }
+    }
+    @include has('link') {
+        display: block;
+        transition: opacity 0.3s ease-out;
+        &:hover {
+            opacity: 0.5;
+        }
+        &:after {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: greyscale;
+            font-style: normal;
+            font-variant: normal;
+            font-weight: 400;
+            letter-spacing: normal;
+            line-height: 1;
+            text-decoration: none;
+            text-transform: none;
+            content: '›';
+            font-size: 14px;
+            margin-right: 5px;
+            position: relative;
+            top: -1px;
+            left: 5px;
+        }
+    }
+
+    @include has('icon') {
+        background-image: url($img-path+'spritesheet.png');
+        background-repeat: no-repeat;
+        width: 40px;
+        height: 40px;
+        margin: 0 auto 10px;
+        @include when('fb') {
+            background-position: -40px 0;
+        }
+        @include when('inst') {
+            background-position: -40px -40px;
+        }
+        @include when('ok') {
+            background-position: -80px 0;
+        }
+        @include when('twitter') {
+            background-position: 0 -40px;
+        }
+        @include when('vk') {
+            background-position: 0 0;
+        }
+    }
+}

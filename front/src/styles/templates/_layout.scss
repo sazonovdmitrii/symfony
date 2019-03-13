@@ -1,0 +1,66 @@
+// --------------------------------------------------------------------------
+// Layout
+// --------------------------------------------------------------------------
+// Author:      Zone
+// Email:       danyegorov@yandex.ru
+// URL:         http://zonedigital.com
+// Copyright:   Copyright (c) 2016, zonedigital.com. All rights reserved.
+// Version:     1.6
+// --------------------------------------------------------------------------
+
+// Utility
+// --------------------------------------------------------------------------
+
+.preload * {
+    transition: none !important;
+}
+
+// Wrapper
+// --------------------------------------------------------------------------
+
+.wrapper {
+    padding: 0px px($grid-width-gutter);
+    margin: 0 auto;
+    box-sizing: border-box;
+    @include breakpoint($DESCKTOP) {
+        padding: 0;
+    }
+}
+
+.fullwidth {
+    max-width: 750px;
+    margin: 0 auto;
+    @include breakpoint($screen-md) {
+        max-width: px($grid-full-width-pixels);
+    }
+}
+
+.article {
+    @extend %clearfix;
+}
+
+.article__subsection {
+    @include column(6, 12);
+
+    padding: 20px 0;
+
+    @media all and (max-width: 700px) {
+        padding: 20px 0;
+
+        & + & {
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+        }
+    }
+}
+
+// Examples
+// --------------------------------------------------------------------------
+
+.mySelector {
+    background-color: $color-purple;
+}
+
+.myJQuerySelector {
+    background-color: #fff;
+}

@@ -1,0 +1,405 @@
+// --------------------------------------------------------------------------
+// PRODUCTMENU
+// --------------------------------------------------------------------------
+// Author:      Danyl Yehorov
+// Email:       office@gainsbrook.ch
+// URL:         http://gainsbrook.ch/
+// Copyright:
+// Version:     1.0
+// --------------------------------------------------------------------------
+
+@include new('mainmenu') {
+    @include row(12);
+
+    list-style: none;
+    padding: 0;
+    text-align: justify;
+    position: relative;
+    box-sizing: border-box;
+
+    @include breakpoint($screen-md) {
+        display: flex;
+        margin-top: 0;
+        border-top: 1px solid $COLORLINES;
+        border-bottom: 1px solid $COLORLINES;
+    }
+
+    @include has('item') {
+        display: none;
+        padding: 17px 9px 14px;
+
+        //ДЕЛАЕМ ПО МАКЕТУ!!!!!!!
+        box-sizing: border-box;
+        border-left: 1px solid rgba(255, 255, 255, 0);
+
+        //ДЕЛАЕМ ПО МАКЕТУ!!!!!!!
+        border-right: 1px solid rgba(255, 255, 255, 0);
+
+        //ДЕЛАЕМ ПО МАКЕТУ!!!!!!!
+        border-bottom: 1px solid $COLORLINES;
+        margin-bottom: -1px;
+        line-height: $MENULINFONTSIZE;
+
+        @include breakpoint($screen-md) {
+            &:hover {
+                border-left: 1px solid $COLORLINES;
+                border-right: 1px solid $COLORLINES;
+                border-bottom: 1px solid $WHITE;
+            }
+        }
+
+        .open-mobile-menu & {
+            display: block;
+
+            @include breakpoint($screen-md) {
+                display: inline-block;
+            }
+        }
+
+        @include when('sub') {
+            position: relative;
+        }
+
+        @include breakpoint($screen-md) {
+            display: inline-block;
+        }
+
+        @include when('search') {
+            padding: 7px 0 7px 0;
+            width: 100%;
+            flex: 1;
+            text-align: right;
+            display: inline-block;
+            border: none;
+
+            @include breakpoint($screen-md) {
+                &:hover {
+                    border: none;
+                }
+            }
+
+            @include breakpoint($screen-md) {
+                width: auto;
+                padding: (0.5 * $PADDINGS) 0;
+            }
+        }
+    }
+
+    @include has('link') {
+        font-size: $MENULINFONTSIZE;
+        text-decoration: none;
+        color: $color-link;
+
+        @include TextProRegular;
+
+        @include when('red') {
+            color: $COLORCONTRAST;
+        }
+
+        @include breakpoint($screen-md) {
+            &:hover {
+                color: $COLORCONTRAST;
+                cursor: pointer;
+            }
+        }
+    }
+
+    @include has('submenu') {
+        display: none;
+        position: absolute;
+        min-height: calculateRem($HEIGHTSUBMENU);
+        background: #fff;
+        border-left: 1px solid $COLORLINES;
+        border-right: 1px solid $COLORLINES;
+        border-bottom: 1px solid $COLORLINES;
+        top: 100%;
+        margin-top: 1px;
+        margin-left: -1px;
+        left: 0;
+        z-index: 4;
+        box-shadow: 0px 2px 2px $COLORLINES;
+
+        .opensubmenu & {
+            @include breakpoint($screen-md) {
+                display: block;
+            }
+        }
+
+        &_column {
+            min-width: 170px;
+            display: inline-block;
+            height: calculateRem($HEIGHTSUBMENU);
+            padding: (1.5 * $PADDINGS) $PADDINGS;
+            vertical-align: top;
+            white-space: normal;
+            display: table-cell;
+            text-align: left;
+
+            @include when('sale') {
+                background-color: #ccc;
+                padding: $PADDINGS 5px;
+            }
+        }
+
+        &_group {
+            text-decoration: none;
+            color: $color-dark;
+            font-size: calculateRem(14px);
+
+            @include TextProBold;
+
+            width: 100%;
+            display: inline-block;
+            margin-top: calculateRem(14px);
+
+            &.first {
+                margin-top: 0;
+            }
+        }
+
+        &_item {
+            line-height: 1.5;
+            white-space: nowrap;
+
+            &:first-child {
+                margin-top: 5px;
+            }
+        }
+
+        &_link {
+            font-size: calculateRem(13px);
+
+            @include TextProRegular;
+
+            color: $color-grey;
+            text-decoration: none;
+
+            @include breakpoint($screen-md) {
+                padding: 5px 0;
+
+                &:hover {
+                    text-decoration: underline;
+                    color: $COLORCONTRAST;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+
+    @include has('salemenu') {
+        display: none;
+        position: absolute;
+        width: 100%;
+        min-height: calculateRem($HEIGHTSUBMENU);
+        background: #fff;
+        right: 0;
+        border-left: 1px solid $COLORLINES;
+        border-right: 1px solid $COLORLINES;
+        border-bottom: 1px solid $COLORLINES;
+        top: 100%;
+        float: left;
+        margin-top: 1px;
+        z-index: 4;
+        box-shadow: 0px 2px 2px $COLORLINES;
+
+        .opensubmenu & {
+            @include breakpoint($screen-md) {
+                display: block;
+            }
+        }
+
+        &_list {
+            width: 100%;
+            float: left;
+
+            &_item {
+                @include column(3, 12);
+
+                padding: (0.5 * $PADDINGS) (0.5 * $PADDINGS) 0;
+                text-align: center;
+                box-sizing: border-box;
+
+                &:nth-child(4n + 1) {
+                    clear: both;
+                }
+
+                &_link {
+                    font-size: $MENULINFONTSIZE;
+                    text-decoration: none;
+                    color: $color-grey;
+
+                    @include TextCondProRegular;
+
+                    &_img {
+                        width: 100%;
+                    }
+
+                    @include when('red') {
+                        color: $COLORCONTRAST;
+                        display: block;
+                        padding: 0.5 * $PADDINGS;
+                        line-height: 1.5;
+                    }
+
+                    @include when('bold') {
+                        @include TextCondProMedium;
+                    }
+                }
+
+                &:hover {
+                    background: $TEXTBACKGORUND;
+                }
+
+                @include when('full') {
+                    @include no-column;
+
+                    padding: 0;
+                }
+            }
+        }
+    }
+
+    @include has('brandmenu') {
+        display: none;
+        position: absolute;
+        width: 100%;
+        height: calculateRem($HEIGHTSUBMENU);
+        background: #fff;
+        left: 0;
+        border-left: 1px solid $COLORLINES;
+        border-right: 1px solid $COLORLINES;
+        border-bottom: 1px solid $COLORLINES;
+        top: 100%;
+        margin-top: 1px;
+        z-index: 4;
+        box-shadow: 0px 2px 2px $COLORLINES;
+
+        .opensubmenu & {
+            @include breakpoint($screen-md) {
+                display: block;
+            }
+        }
+
+        &_logo {
+            position: absolute;
+            bottom: 0;
+            max-width: 80%;
+            left: 10%;
+        }
+
+        &_list {
+            list-style: none;
+            width: 100%;
+            text-align: justify;
+            padding: (0.3 * $PADDINGS) $PADDINGS;
+
+            &:hover + .mainmenu__brandmenu_wrapper--main {
+                display: none;
+            }
+        }
+
+        &_item {
+            display: inline-block;
+            padding: (0.5 * $PADDINGS) (0.4 * $PADDINGS);
+            width: 1%;
+            float: left;
+            box-sizing: content-box;
+
+            @include TextProMedium;
+
+            @include when('last') {
+                padding: (0.5 * $PADDINGS) (2 * $PADDINGS);
+                width: 40px;
+            }
+
+            @include when('first') {
+                padding: (0.5 * $PADDINGS) (2 * $PADDINGS) (0.5 * $PADDINGS) 0;
+                width: auto;
+
+                & .mainmenu__brandmenu_wrapper {
+                    display: block;
+                    z-index: 2;
+
+                    & .mainmenu__brandmenu_brandlist_item_link {
+                        @include TextCondProRegular;
+                    }
+                }
+            }
+
+            @include breakpoint($screen-md) {
+                &:hover {
+                    background: $TEXTBACKGORUND;
+                    color: $color-dark;
+                    cursor: pointer;
+
+                    & .mainmenu__brandmenu_wrapper {
+                        display: block;
+                    }
+                }
+            }
+        }
+
+        &_wrapper {
+            display: none;
+            position: absolute;
+            left: 0;
+            padding: 10px 0 15px 0;
+            width: 100%;
+            z-index: 4;
+            background: #fff;
+            bottom: 0px;
+            box-sizing: content-box;
+            height: 270px;
+            cursor: default;
+
+            @extend %scrollbar;
+
+            &::-webkit-scrollbar {
+                width: calculateRem(8px);
+            }
+        }
+
+        &_bigletter {
+            @include column(2, 12);
+
+            text-align: center;
+            height: 100%;
+            font-size: 5rem;
+            padding-top: 3 * $PADDINGS;
+            position: relative;
+            box-sizing: border-box;
+            line-height: 1;
+
+            & small {
+                display: block;
+                font-size: 0.7rem;
+            }
+        }
+
+        &_brandlist {
+            display: flex;
+            text-align: left;
+            padding: 0;
+            list-style: none;
+            flex-direction: row;
+            flex-wrap: wrap;
+
+            &_item {
+                width: 20%;
+                padding: 0 15px;
+                line-height: ($HEIGHTSUBMENU - 4 * $PADDINGS) / 10;
+
+                &_link {
+                    font-size: $MENULINFONTSIZE;
+                    text-decoration: none;
+                    color: $color-grey;
+
+                    @include TextCondProRegular;
+
+                    display: inline-block;
+                    line-height: 1;
+                }
+            }
+        }
+    }
+}

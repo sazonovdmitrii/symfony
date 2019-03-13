@@ -1,0 +1,81 @@
+@include new('breadcrumbs') {
+    display: none;
+
+    padding-left: 0;
+    margin: 20px 0px 20px 0px;
+    font-size: 11px;
+
+    @include breakpoint($screen-md) {
+        display: block;
+    }
+
+    @include has('delete') {
+        height: 15px;
+        vertical-align: text-bottom;
+
+        &-link {
+            opacity: 0;
+            transition: opacity 0.4s;
+            .breadcrumbs__item:hover & {
+                opacity: 1;
+            }
+        }
+    }
+
+    @include has('item') {
+        margin: 0 10px 0 0;
+        display: inline-block;
+        line-height: 20px;
+
+        @include when('link') {
+            color: #999;
+            cursor: pointer;
+            &:hover {
+                text-decoration: underline;
+                color: #999;
+            }
+
+            &:after {
+                color: #999;
+                margin: 0 0 0 10px;
+                width: 4px;
+                height: 7px;
+                display: inline-block;
+                &:last-child {
+                    &:after {
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        @include when('lastlink') {
+            color: #999;
+            text-decoration: none;
+
+            &:after {
+                color: #999;
+                margin: 0 0 0 10px;
+                width: 4px;
+                height: 7px;
+                display: inline-block;
+
+                &:last-child {
+                    &:after {
+                        display: none;
+                    }
+                }
+
+                &:hover {
+                    color: #999;
+                }
+            }
+        }
+    }
+
+    @include has('right') {
+        float: right;
+        text-align: right;
+        color: #000;
+    }
+}

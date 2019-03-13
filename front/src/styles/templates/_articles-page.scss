@@ -1,0 +1,59 @@
+@include new('articles-page') {
+    color: #000;
+    @include no-column();
+
+    @include has('title') {
+        margin-bottom: 0;
+    }
+
+    @include has('category') {
+        display: block;
+        margin-top: 15px;
+        @extend %clearfix;
+    }
+
+    @include has('category-item') {
+        display: inline-block;
+        margin-left: 15px;
+        &:first-child {
+            margin-left: 0;
+        }
+        a {
+            padding: 5px 10px;
+            display: block;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    @include has('content') {
+        margin-top: 30px;
+        @include row(12);
+
+        @include when('ajax') {
+            margin-top: 0px;
+        }
+    }
+
+    @include has('pagination') {
+        @extend %clearfix;
+    }
+
+    @include has('tags') {
+        @extend %clearfix;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    @include has('searchform') {
+        text-align: center;
+        margin: 15px 0;
+    }
+
+    @include has('social') {
+        @extend %clearfix;
+        text-align: center;
+        margin-top: 30px;
+    }
+}

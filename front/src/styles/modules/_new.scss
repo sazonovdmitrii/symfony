@@ -1,0 +1,46 @@
+@include new('news') {
+    @include has('item') {
+        width: 100%;
+        float: left;
+        margin: 15px 0px;
+        @include row(12);
+    }
+
+    @include has('image') {
+        text-align: center;
+        @include no-column;
+        & img {
+            max-width: 100%;
+            max-height: 200px;
+            cursor: pointer;
+        }
+
+        @include breakpoint($screen-md) {
+            @include column(3, 12);
+        }
+    }
+
+    @include has('text') {
+        @include no-column;
+
+        box-sizing: border-box;
+
+        @include breakpoint($screen-md) {
+            @include column(9, 12);
+            padding-left: 15px;
+        }
+    }
+
+    @include has('date') {
+        margin-top: 10px;
+        float: right;
+        padding: 5px 35px 0 5px;
+        border-top: 1px solid $COLORLINES;
+    }
+
+    @include has('psevdo') {
+        text-decoration: underline;
+        color: #000;
+        cursor: pointer;
+    }
+}

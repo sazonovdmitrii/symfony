@@ -1,0 +1,163 @@
+// --------------------------------------------------------------------------
+// Global styles
+// --------------------------------------------------------------------------
+// Author:      Zone
+// Email:       danyegorov@yandex.ru
+// URL:         http://zonedigital.com
+// Copyright:   Copyright (c) 2016, zonedigital.com. All rights reserved.
+// Version:     1.5
+// --------------------------------------------------------------------------
+
+// Initialize
+// --------------------------------------------------------------------------
+
+@import 'base';
+
+// Fonts
+// --------------------------------------------------------------------------
+
+[class^='flaticon-']:before,
+[class*=' flaticon-']:before,
+[class^='flaticon-']:after,
+[class*=' flaticon-']:after {
+    font-family: Flaticon;
+    font-size: 20px;
+    font-style: normal;
+    margin-left: 20px;
+}
+
+.flaticon-avatar:before {
+    content: '\f100';
+}
+.flaticon-chat:before {
+    content: '\f101';
+}
+.flaticon-magnifying-glass:before {
+    content: '\f102';
+}
+.flaticon-shopping-bag:before {
+    content: '\f103';
+}
+.flaticon-technology:before {
+    content: '\f104';
+}
+
+// @import '../../fonts/PFDinTextCondPro-Light/styles.css';
+// @import '../../fonts/PFDinTextPro-Bold/styles.css';
+
+// @import '../../fonts/PFDinTextPro-Light/styles.css';
+// @import '../../fonts/PFDinTextPro-Medium/styles.css';
+// @import '../../fonts/PFDinTextCondPro-Regular/styles.css';
+
+// @import '../../fonts/PFDinTextPro-Regular/styles.css';
+// @import '../../fonts/PFDinTextPro-Thin/styles.css';
+// @import '../../fonts/PFDinTextPro-ExtraThin/styles.css';
+// @import '../../fonts/my-icons-collection/font/flaticon.css';
+
+// Utilities
+// --------------------------------------------------------------------------
+
+@import 'utilities/reset';
+@import 'utilities/bem';
+@import 'utilities/semantic-fluid-grid';
+@import 'utilities/functions';
+@import 'utilities/lists';
+@import 'utilities/mixins';
+@import 'utilities/placeholders';
+@import 'utilities/fonts';
+
+// Generic
+// --------------------------------------------------------------------------
+
+@import 'generic/typography';
+@import 'generic/forms';
+@import 'generic/images';
+@import 'generic/lists';
+@import 'generic/buttons';
+@import 'generic/sprite';
+
+// Interactions
+// --------------------------------------------------------------------------
+
+@import 'interactions/animations';
+
+// Furniture
+// --------------------------------------------------------------------------
+
+@import 'furniture/header';
+@import 'furniture/footer';
+
+// Modules
+// --------------------------------------------------------------------------
+
+@import 'modules/script-loading-examples';
+@import 'modules/usermenu';
+@import 'modules/mainmenu';
+@import 'modules/searchform';
+@import 'modules/catalog';
+@import 'modules/left-column';
+@import 'modules/modal';
+@import 'modules/forrecode';
+
+@import 'modules/filters-tiles';
+@import 'modules/item';
+@import 'modules/product-page-lower';
+
+@import 'modules/home';
+@import 'modules/new';
+
+@import 'modules/article';
+@import 'modules/article-gallery';
+@import 'modules/article-rightcolumn';
+@import 'modules/article-pagination';
+
+@import 'modules/articles-list';
+@import 'modules/articles-preview';
+
+@import 'modules/basket';
+@import 'modules/catalopage';
+
+@import 'modules/form-module';
+@import 'modules/gifts';
+@import 'modules/pagenav';
+@import 'modules/authforms';
+@import 'modules/login';
+// @import 'modules/breadcrumbs';
+@import 'modules/benefits';
+
+@import 'modules/tags';
+@import 'modules/social';
+
+@import 'modules/menu-brand';
+@import 'modules/brand-banner';
+@import 'modules/brand-sale';
+@import 'modules/brand-info';
+
+@import 'modules/basket-short';
+
+@import 'modules/scroll-to-top';
+
+@import 'modules/sale-info';
+
+@import 'modules/comments';
+
+@import 'modules/catalog-sorting';
+
+@import 'modules/featured-brands';
+
+@import 'modules/share';
+@import 'modules/subscribe';
+
+// Templates
+// --------------------------------------------------------------------------
+
+@import 'templates/layout';
+@import 'templates/homepage';
+@import 'templates/brands';
+@import 'templates/news';
+@import 'templates/articles-page';
+@import 'templates/info-page';
+@import 'templates/article-content';
+@import 'templates/sitemap-page';
+@import 'templates/user-page';
+@import 'templates/cabinet';

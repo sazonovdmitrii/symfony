@@ -1,0 +1,29 @@
+@include new('info-page') {
+    @include row(12);
+    @extend %clearfix;
+
+    @include has('content') {
+        line-height: 1.6;
+        @include no-column;
+
+        @include breakpoint($screen-md) {
+            @include column(9, 12);
+        }
+
+        img {
+            margin: 0 auto;
+            display: block;
+        }
+    }
+
+    @include has('leftcolumn') {
+        @extend %clearfix;
+        @include no-column();
+        position: relative;
+        margin: 0 auto 10px;
+
+        @include breakpoint($screen-md) {
+            @include column(3, 12);
+        }
+    }
+}

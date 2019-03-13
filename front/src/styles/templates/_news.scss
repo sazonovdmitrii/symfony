@@ -1,0 +1,28 @@
+@include new('news_page') {
+    @include row(12);
+
+    @include has('leftcolumn') {
+        @include no-column;
+        position: relative;
+        float: left;
+        margin-bottom: 10px;
+
+        @include breakpoint($screen-md) {
+            @include column(3, 12);
+        }
+    }
+
+    @include has('content') {
+        @include no-column;
+        position: relative;
+        float: left;
+
+        @include breakpoint($screen-md) {
+            @include column(9, 12);
+        }
+    }
+
+    & .typography__h1 {
+        padding: 15px 0;
+    }
+}

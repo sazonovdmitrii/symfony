@@ -1,0 +1,151 @@
+// --------------------------------------------------------------------------
+// USERMENU
+// --------------------------------------------------------------------------
+// Author:      Danyl Yehorov
+// Email:       office@gainsbrook.ch
+// URL:         http://gainsbrook.ch/
+// Copyright:
+// Version:     1.0
+// --------------------------------------------------------------------------
+
+@include new('usermenu') {
+    display: block;
+    list-style: none;
+    line-height: 1rem;
+    text-align: right;
+
+    @include has('email') {
+        color: $color-dark;
+        text-decoration: underline;
+    }
+
+    @include has('item') {
+        display: inline-block;
+        width: 40%;
+        text-align: center;
+        position: relative;
+        box-sizing: border-box;
+
+        @include breakpoint($DESCKTOP) {
+            width: 30%;
+        }
+
+        @include breakpoint($screen-md) {
+            width: 19%;
+            min-width: 64px;
+            height: calculateRem(60px);
+            border-bottom: calculateRem(2px) solid $WHITE;
+            margin-left: 0;
+        }
+        &:hover {
+            @include breakpoint($screen-md) {
+                border-bottom: calculateRem(2px) solid $color-grey;
+                & .usermenu__submenu {
+                    height: auto;
+                    padding-top: calculateRem($PADDINGS);
+                    border: calculateRem(1px) solid $COLORLINES;
+                    overflow: visible;
+                    border-radius: calculateRem(2px);
+                    &:before {
+                        border-radius: 0 0 calculateRem(20px) calculateRem(20px);
+                        height: calculateRem(10px);
+
+                        display: block;
+                    }
+                }
+                & .basket-short {
+                    display: block;
+                }
+            }
+        }
+    }
+
+    @include has('submenu') {
+        z-index: 4;
+        height: 0px;
+        position: absolute;
+        text-align: left;
+        background: $WHITE;
+        overflow: hidden;
+        width: 300%;
+        left: -50%;
+        top: 100%;
+        margin-top: calculateRem(2px);
+        &:before {
+            border-radius: calculateRem(20px) calculateRem(20px) 0 0;
+            transition: all 0.1s;
+            content: '';
+            position: absolute;
+            width: calculateRem(20px);
+            height: 0px;
+            background: $color-grey;
+            left: 32%;
+            top: calculateRem(-1px);
+            margin-left: calculateRem(-10px);
+            z-index: 10;
+        }
+    }
+
+    @include has('subitem') {
+        display: block;
+        line-height: 1.4rem;
+        padding: 0 calculateRem($PADDINGS);
+        &:last-child {
+            margin-top: calculateRem($PADDINGS/2);
+            background: $TEXTBACKGORUND;
+            padding: calculateRem($PADDINGS);
+        }
+    }
+
+    @include has('sublink') {
+        text-decoration: none;
+        color: $color-grey;
+        @include TextProThin;
+        display: block;
+        &:hover {
+            color: $color-dark;
+        }
+    }
+
+    @include has('label') {
+        font-size: calculateRem(11px);
+        @include TextProRegular;
+        text-transform: capitalize;
+        display: none;
+        @include breakpoint($screen-md) {
+            white-space: nowrap;
+            display: block;
+        }
+    }
+    @include has('labebasketcount') {
+        position: absolute;
+        top: 1.2rem;
+        left: 0;
+        width: 100%;
+        color: $COLORCONTRAST;
+        font-size: calculateRem(12px);
+    }
+
+    @include has('link') {
+        text-decoration: none;
+        color: $color-grey;
+        display: inline-block;
+        position: relative;
+    }
+
+    @include has('icon') {
+        display: block;
+
+        line-height: calculateRem(30px);
+        cursor: pointer;
+        padding-top: 10px;
+
+        &:after,
+        &:before {
+            margin: 0;
+            font-size: calculateRem(22px);
+            color: $color-grey;
+            vertical-align: bottom;
+        }
+    }
+}

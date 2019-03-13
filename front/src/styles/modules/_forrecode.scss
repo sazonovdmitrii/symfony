@@ -1,0 +1,22 @@
+// --------------------------------------------------------------------------
+// OLD SHIT NEED TO RECODE
+// --------------------------------------------------------------------------
+// Author:      Danyl Yehorov
+// Email:       office@gainsbrook.ch
+// URL:         http://gainsbrook.ch/
+// Copyright:
+// Version:     1.0
+// --------------------------------------------------------------------------
+
+@include new('page') {
+    display: block;
+
+    @include has('text') {
+        @include TextProRegular;
+    }
+}
+
+a {
+    color: #000;
+    text-decoration: none;
+}

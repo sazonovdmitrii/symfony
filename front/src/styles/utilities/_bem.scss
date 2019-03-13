@@ -1,0 +1,64 @@
+$bem-element-separator: '__' !default;
+$bem-modifier-separator: '--' !default;
+
+// BEM: Block (New)
+@mixin new($name, $description: '') {
+    @if $description != '' {
+        $description: ': ' + $description;
+    }
+
+    @at-root {
+        /* #{$name}#{$description} */
+        .#{$name} {
+            @content;
+        }
+    }
+}
+
+// BEM: Element (Has)
+@mixin has($name) {
+    $selector: nth(#{&}, 1);
+
+    @if str-index($selector, $bem-element-separator) {
+        @error '#{$selector} is already an element';
+    }
+
+    &#{$bem-element-separator}#{$name} {
+        @content;
+    }
+}
+
+// BEM: Modifier (When)
+@mixin when($name) {
+    $selector: nth(#{&}, 1);
+
+    @if str-index(#{&}, $bem-modifier-separator) {
+        @error '#{$selector} is already modified';
+    }
+
+    // Add the modifier and rules
+    &#{$bem-modifier-separator}#{$name} {
+        @extend #{$selector};
+        @content;
+    }
+}
+
+// EXAMPLE BEM USAGE
+//
+// @include new('widget', 'B42 - Carousel') {
+//     background: #eee;
+
+//     @include has('title') {
+//         color: #444;
+//         font-size: 1.5em;
+//         font-weight: 600;
+
+//         @include when('big') {
+//             font-size: 3em;
+//         }
+//     }
+
+//     @include has('body') {
+//         color: #888;
+//     }
+// }

@@ -1,0 +1,16 @@
+@include new('articles-preview') {
+    @include no-column();
+    text-align: center;
+    color: #000;
+
+    @include has('row') {
+        @extend %clearfix;
+        @include row(12);
+    }
+
+    @include has('title') {
+        font-size: calculateRem(35px);
+        margin: calculateRem(25px) 0;
+        @include TextProExtraThin;
+    }
+}

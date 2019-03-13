@@ -1,0 +1,95 @@
+// Images
+// --------------------------------------------------------------------------
+
+$img-path: './images/' !default;
+$svg-path: './svg/' !default;
+
+// Medias
+// --------------------------------------------------------------------------
+
+$DESCKTOP: 768px;
+$DESCKTOP-max: 992px;
+$DESCKTOP-moby: 480px;
+
+/// Mobile
+$screen-sm: 480px !default;
+$screen-sm-min: $screen-sm !default;
+
+/// Tablet Portrait
+$screen-md-fl: 1000px;
+$screen-md: 1001px !default;
+$screen-md-min: $screen-md !default;
+$screen-lg: 1020px;
+
+// Colours
+// --------------------------------------------------------------------------
+
+$color-dark: #000000;
+$color-link: #505050;
+$color-grey: #666666;
+$color-purple: #424297;
+$color-lightgrey: #999999;
+$color-buttongrey: #f3f3f3;
+$color-bordergrey: #d8d8d8;
+$color-buttonred: #c81111;
+$color-deepred: #bb1100;
+$color-red: #bd0119;
+
+$COLORCONTRAST: #db0119;
+$COLORDARKRED: #bb1100;
+$COLORLINES: #cccccc;
+$WHITE: #ffffff;
+$TEXTBACKGORUND: #eeeeee;
+$FOOTERTEXT: #333333;
+$DARKBORDER: #999999;
+
+// Fonts
+// --------------------------------------------------------------------------
+
+$font-body: 'PFDinTextPro', sans-serif;
+$line-height-heading: 1.2;
+
+$font-size15: 15px;
+$font-size14: 14px;
+$FONTBUY: 18px;
+$FONTBUY12: 12px;
+$FONTBUY20: 20px;
+
+// Semantic Grid
+// --------------------------------------------------------------------------
+$PADDINGS: 15px;
+$PADDINGS12: 12px;
+$PADDINGS10: 10px;
+$grid-num-columns: 12;
+$grid-width-columns: 75;
+$grid-width-gutter: 10;
+$grid-full-width-pixels: $grid-width-columns * $grid-num-columns + $grid-width-gutter * $grid-num-columns;
+$spacing: 1em;
+
+// Sizes
+// --------------------------------------------------------------------------
+
+$MENULINFONTSIZE: 14px;
+$MENUHEIGHT: 44px;
+$HEADERHEAD: 65px;
+$HEIGHTSUBMENU: 325px;
+$HEIGHTCATIMG: 285px;
+
+$FOOTERFONT: 16px;
+
+$ICON: 16px;
+$ICON24: 24px;
+
+$HEADBANNER: 434px;
+
+// Box Sizing Grid
+// --------------------------------------------------------------------------
+
+$container-width: 1500px;
+$column-width: 125px;
+$gutter: 30px;
+
+// Easing
+// --------------------------------------------------------------------------
+
+$bezier-slow-in: 0.17, 0.67, 0.83, 0.67;

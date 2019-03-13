@@ -1,0 +1,9 @@
+@include new('brand-banner') {
+    @include column(12, 12);
+    @include has('image') {
+        @extend %clearfix;
+        margin: 15px auto;
+        display: block;
+        max-height: 375px;
+    }
+}

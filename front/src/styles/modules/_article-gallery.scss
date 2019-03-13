@@ -1,0 +1,34 @@
+@include new('article-gallery') {
+    margin-bottom: 20px;
+    @extend %clearfix;
+    @include has('image') {
+        display: block;
+        margin: 0 auto;
+        @include breakpoint($screen-md) {
+            float: left;
+            margin: 0;
+        }
+    }
+    @include has('body') {
+        background-color: #fff;
+        margin-top: 20px;
+        float: none;
+
+        @include breakpoint($screen-md) {
+            float: left;
+            padding: 18px 20px;
+            margin-left: -30px;
+            width: 49%;
+        }
+    }
+    @include has('title') {
+        @include TextProBold;
+        font-size: calculateRem(15px);
+        line-height: 1.3;
+        margin: 8px 0;
+    }
+    @include has('text') {
+        font-size: calculateRem(15px);
+        line-height: 1.4;
+    }
+}

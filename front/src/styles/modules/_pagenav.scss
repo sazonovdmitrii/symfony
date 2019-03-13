@@ -1,0 +1,44 @@
+.pagenav {
+    @include TextProRegular();
+
+    display: block;
+    float: right;
+    color: $color-dark;
+    margin-top: $PADDINGS;
+    font-size: $font-size14;
+
+    &__items {
+        display: inline-block;
+        position: relative;
+        top: -2 * $PADDINGS/15;
+        &-item {
+        }
+    }
+    &__arrow {
+        margin: 0;
+        display: inline-block;
+        &-a {
+            border: 1px solid $COLORLINES;
+            padding: $PADDINGS/3 $PADDINGS;
+            color: $COLORLINES;
+            font-size: 2 * $font-size14;
+            &:hover {
+                color: $color-grey;
+            }
+            &-left {
+                margin-right: 2 * $PADDINGS/3;
+            }
+            &-right {
+                margin-left: 2 * $PADDINGS/3;
+            }
+            &-disabled {
+                color: $color-buttongrey;
+                cursor: default;
+                border: 1px solid $color-buttongrey;
+                &:hover {
+                    color: $color-buttongrey;
+                }
+            }
+        }
+    }
+}

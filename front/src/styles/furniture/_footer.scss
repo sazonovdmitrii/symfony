@@ -1,0 +1,136 @@
+// --------------------------------------------------------------------------
+// Footer
+// --------------------------------------------------------------------------
+// Author:      Zone
+// Email:       danyegorov@yandex.ru
+// URL:         http://zonedigital.com
+// Copyright:   Copyright (c) 2016, zonedigital.com. All rights reserved.
+// Version:     1.5
+// --------------------------------------------------------------------------
+
+@include new('footer') {
+    margin-top: 3 * $PADDINGS;
+    display: block;
+    float: left;
+    width: 100%;
+
+    @include has('row') {
+        @include row(30);
+
+        border-top: 1px solid $COLORLINES;
+        padding: 2 * $PADDINGS 0 $PADDINGS 0;
+
+        @include when('thin') {
+            padding: $PADDINGS 0;
+        }
+
+        & small {
+            margin: 0 auto;
+            text-align: center;
+            display: block;
+            font-size: 0.9rem;
+        }
+
+        &-a {
+            margin-left: $PADDINGS;
+            color: $color-grey;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        &-pay {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            padding: 2 * $PADDINGS 0;
+            font-weight: bold;
+            color: $color-dark;
+
+            &-label {
+                padding-right: 1%;
+            }
+        }
+    }
+
+    @include has('payment') {
+        display: flex;
+        height: 32px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @include has('payment-img') {
+        margin-right: 5px;
+        margin-bottom: 5px;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+    @include has('colum') {
+        @include column(15, 30);
+
+        &:first-child {
+            display: none;
+        }
+
+        @include breakpoint($screen-sm) {
+            @include column(10, 30);
+
+            &:first-child {
+                display: block;
+            }
+        }
+
+        @include breakpoint($screen-md) {
+            @include column(6, 30);
+        }
+
+        @include when('not') {
+            display: none;
+
+            @include breakpoint($screen-md) {
+                display: block;
+            }
+        }
+    }
+
+    @include has('head') {
+        @include TextProMedium;
+
+        text-transform: uppercase;
+        color: $FOOTERTEXT;
+        font-size: calculateRem($FOOTERFONT);
+        padding-bottom: $PADDINGS;
+    }
+
+    @include has('list') {
+        padding: 0;
+        margin: 0;
+
+        &_item {
+            line-height: calculateRem(1.5 * $FOOTERFONT);
+            font-size: 0.8 * $FOOTERFONT;
+
+            &_link {
+                color: $FOOTERTEXT;
+                text-decoration: none;
+                cursor: pointer;
+            }
+        }
+    }
+
+    @include has('half') {
+        @include column(12);
+
+        margin: $PADDINGS/3 0;
+
+        @media (min-width: $DESCKTOP) {
+            @include column(6);
+        }
+    }
+}

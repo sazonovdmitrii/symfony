@@ -1,0 +1,64 @@
+// --------------------------------------------------------------------------
+// CatalogPage
+// --------------------------------------------------------------------------
+// Author:      Danyl Yehorov
+// Email:       office@gainsbrook.ch
+// URL:         http://gainsbrook.ch/
+// Copyright:
+// Version:     1.0
+// --------------------------------------------------------------------------
+
+@include new('catalogpage') {
+    @include row(12);
+
+    @include has('leftmenu') {
+        @include no-column;
+        position: relative;
+        float: left;
+        margin-bottom: 10px;
+
+        @include breakpoint($screen-md) {
+            width: 16%;
+            float: left;
+            position: relative;
+            &-gradient {
+                height: 100%;
+                position: absolute;
+                top: 0;
+                right: -7 * $PADDINGS/3;
+                background: linear-gradient(to right, rgba(254, 252, 234, 0), $WHITE, $WHITE);
+            }
+        }
+    }
+
+    @include has('content') {
+        @include no-column;
+        margin-top: 10px;
+
+        @include breakpoint($screen-md) {
+            margin-top: 0px;
+            width: 84%;
+            float: left;
+            background-color: $WHITE;
+            position: relative;
+        }
+
+        @include when('full') {
+            @include column(12, 12);
+        }
+    }
+
+    @include has('head') {
+        color: $FOOTERTEXT;
+        line-height: calculateRem(24px);
+        font-size: calculateRem(18px);
+        @include TextProBold;
+        text-align: left;
+    }
+
+    @include has('foundcount') {
+        color: $color-lightgrey;
+        @include TextProRegular;
+        font-size: calculateRem(14px);
+    }
+}

@@ -1,0 +1,898 @@
+@include new('baskettitle') {
+    padding: $PADDINGS;
+    color: $color-dark;
+
+    @include TextProRegular;
+
+    font-size: calculateRem(18pt);
+}
+
+@include new('basketcase') {
+    width: 100%;
+    display: table;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: $color-dark;
+    border-collapse: collapse;
+    border-bottom: 2px solid $color-dark;
+
+    @include has('tablehead') {
+        display: table-header-group;
+        border-bottom: 2px solid $color-dark;
+    }
+
+    @include has('tablebody') {
+        display: table-row-group;
+    }
+
+    @include has('tablefoot') {
+        display: table-footer-group;
+    }
+
+    @include has('tablerow') {
+        vertical-align: middle;
+        display: table-row;
+        border-bottom: 1px dashed $TEXTBACKGORUND;
+        clear: both;
+    }
+
+    @include has('tablecell') {
+        @include column(2, 12);
+
+        display: table-cell;
+        font-size: calculateRem(10pt);
+        padding: calculateRem($PADDINGS);
+        box-sizing: border-box;
+
+        @include when('total') {
+            font-size: calculateRem(12pt);
+        }
+
+        @include when('double') {
+            @include column(1, 2);
+        }
+    }
+
+    @include has('promoinput') {
+        border-radius: 5px;
+        border: 1px solid $color-dark;
+        height: calculateRem(25px);
+        display: inline-block;
+        margin: $PADDINGS / 2;
+        margin-left: 0;
+    }
+
+    @include has('promosubmit') {
+        display: inline-block;
+        height: calculateRem(30px);
+        color: white;
+        background-color: $color-buttonred;
+        border-style: none;
+        border-radius: 5px;
+        margin: $PADDINGS / 2;
+    }
+
+    @include has('gift') {
+        color: $color-buttonred;
+        text-decoration: underline;
+        font-size: 1.2em;
+    }
+
+    @include has('textlink') {
+        color: $color-dark;
+    }
+
+    @include has('discount') {
+        display: block;
+        color: $color-lightgrey;
+        text-decoration: line-through;
+    }
+
+    @include has('basketcounter') {
+        display: inline-block;
+        color: $color-dark;
+        text-decoration: none;
+        width: calculateRem(15px);
+        height: calculateRem(15px);
+        margin: 0 calculateRem(3px);
+        text-align: center;
+        border: calculateRem(1px) solid $color-lightgrey;
+        border-radius: calculateRem(4px);
+
+        &:hover {
+            background-color: $color-buttongrey;
+        }
+    }
+}
+
+@include new('customerform') {
+    width: auto;
+    max-width: 80%;
+    margin: 0 auto;
+
+    @include has('title') {
+        font-size: calculateRem(12pt);
+        color: $color-dark;
+
+        @include TextProBold;
+
+        padding: $PADDINGS;
+    }
+
+    @include has('options') {
+        list-style: none;
+        border: 1px solid $color-bordergrey;
+        background-image: -webkit-linear-gradient(top, $WHITE 0%, $color-buttongrey 100%);
+    }
+
+    @include has('link') {
+        color: $color-dark;
+        border-bottom: 1px dashed $color-bordergrey;
+        padding: $PADDINGS / 2;
+
+        @include TextProThin;
+    }
+
+    @include has('comment') {
+        width: 100%;
+        height: calculateRem(50px);
+        background-image: -webkit-linear-gradient(top, $color-buttongrey 0%, $WHITE 50%);
+    }
+
+    @include has('ordersubmit') {
+        width: 50%;
+        float: right;
+        height: calculateRem(60px);
+        color: white;
+        background-color: $color-buttonred;
+        border-style: none;
+        border-radius: 5px;
+        font-size: calculateRem(24pt);
+    }
+}
+
+/***********Backet-new***************/
+
+@include new('basket') {
+    @include has('gift') {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        border-bottom: 1px solid $COLORLINES;
+        padding: 5px;
+
+        &-info {
+            width: 80%;
+        }
+
+        &-pic {
+            height: 80px;
+
+            & img {
+                max-height: 100%;
+            }
+        }
+
+        &-add {
+            cursor: pointer;
+            display: inline-block;
+            margin: 10px 0px;
+            width: auto;
+            text-transform: lowercase;
+            padding: 5px 10px;
+            height: auto;
+
+            @extend .button-red;
+
+            &.not_enought {
+                cursor: default;
+
+                @extend .button-litegrey;
+            }
+        }
+    }
+
+    @include has('productname') {
+        display: block;
+        margin-left: -20%;
+
+        @include breakpoint($screen-md) {
+            margin-left: 0%;
+        }
+    }
+
+    @include has('productavailabile') {
+        color: #bb1100;
+        margin-left: -20%;
+        padding-right: 0px !important;
+
+        @include breakpoint($screen-md) {
+            margin-left: 0%;
+        }
+    }
+
+    @include has('textarea') {
+        width: 100%;
+        height: 140px;
+    }
+
+    @include has('users') {
+        @extend %clearfix;
+    }
+
+    @include has('node') {
+        @include no-column;
+
+        padding: 15px 0;
+
+        @include breakpoint($screen-md) {
+            @include column(6, 12);
+        }
+    }
+
+    @include has('form') {
+        border: 1px solid $COLORLINES;
+        padding: 25px 35px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+
+        & .button-red {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
+
+    @include has('formlabel') {
+        width: 100%;
+        margin-bottom: 20px;
+        text-align: left;
+        position: relative;
+
+        .is-toggle & {
+            display: none;
+        }
+    }
+
+    @include has('formtitle') {
+        transition: transform 0.3s;
+
+        @include TextProMedium;
+
+        text-transform: uppercase;
+        color: $FOOTERTEXT;
+        font-size: calculateRem($FOOTERFONT);
+        margin-bottom: 15px;
+    }
+
+    /****cart****/
+    @include has('block') {
+        display: block;
+        margin: 15px 0;
+        width: 100%;
+    }
+
+    @include has('navblock') {
+        display: inline-block;
+    }
+
+    @include has('button') {
+        padding: 9px;
+        display: inline-table;
+        text-transform: none;
+        line-height: 1.3;
+        cursor: pointer;
+
+        &-pay {
+            padding-right: 35px;
+            position: relative;
+        }
+
+        &:nth-child(2n) {
+            margin-left: 10px;
+        }
+    }
+
+    @include has('table') {
+        width: 100%;
+        border: 1px solid #ccc;
+        color: #000;
+        overflow: hidden;
+
+        &-tr {
+            transition: opacity 0.32s, transform 0.35s;
+
+            &.is-on-load {
+                opacity: 0.6;
+            }
+
+            &.is-on-delete {
+                transform: translateX(-100%);
+            }
+        }
+
+        &-tdh {
+            @include TextProMedium();
+
+            padding: 5px;
+            background-color: #f3f3f3;
+        }
+
+        &-tdb {
+            padding: 10px 5px;
+            border-bottom: 1px solid #ccc;
+            vertical-align: top;
+            font-size: 12px;
+
+            &-availabil {
+                color: #bb1100;
+            }
+
+            &-notavailabil {
+                color: #666;
+            }
+
+            @include breakpoint($screen-md) {
+                font-size: 14px;
+            }
+        }
+
+        &-tdf {
+            padding: 5px 10px;
+            background-color: #f3f3f3;
+            vertical-align: top;
+
+            &-bottom {
+                vertical-align: bottom;
+            }
+        }
+
+        &-navitem {
+            margin: 15px 0;
+
+            &-del {
+            }
+        }
+
+        &-time {
+            padding-top: 5px;
+        }
+
+        &-list {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 5px 5px 5px 10px;
+            margin: 5px 0 5px;
+            max-width: 450px;
+            display: none;
+
+            @include breakpoint($screen-md) {
+                display: inline-block;
+            }
+
+            @include when('mobile') {
+                display: inline-block;
+                font-size: 11px;
+
+                @include breakpoint($screen-md) {
+                    display: none;
+                }
+            }
+
+            &-pt {
+                width: 50%;
+                float: left;
+            }
+        }
+
+        &-infoblock {
+            max-width: 300px;
+
+            &-text {
+                padding-left: 45px;
+            }
+        }
+    }
+
+    @include has('count') {
+        position: relative;
+        display: inline-block;
+
+        &-select {
+            width: 45px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            padding: 3px 5px 3px 8px;
+            text-align: left;
+            background-color: rgba(255, 255, 255, 0);
+            height: 28px;
+            position: relative;
+            margin-bottom: 0px;
+            line-height: 1em;
+            cursor: pointer;
+        }
+
+        &-arrow {
+            position: absolute;
+            right: 5px;
+            bottom: 3px;
+        }
+
+        &-label {
+            display: none;
+
+            #conformation & {
+                display: inline;
+            }
+        }
+    }
+
+    @include has('bold') {
+        @include TextProMedium();
+
+        padding-right: 15px;
+    }
+
+    @include has('h1') {
+        padding: 8px 0 0 5px;
+    }
+
+    @include has('icon') {
+        margin-right: 10px;
+        width: 24px;
+        float: left;
+    }
+
+    @include has('arrow') {
+        background-image: url($img-path+'arrow-w.png');
+        background-repeat: no-repeat;
+        background-size: contain;
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+
+        .button-red:hover & {
+            background-image: url($img-path+'arrow-r.png');
+        }
+    }
+
+    /****tab****/
+    @include has('tabs') {
+        color: #000;
+        float: left;
+        width: 100%;
+        background: #f3f3f3;
+        margin: 15px 0px;
+
+        &-true {
+            margin-right: 30px;
+        }
+    }
+
+    @include has('tab') {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f3f3f3;
+        color: #333333;
+        width: 20%;
+        float: left;
+        height: 30px;
+        position: relative;
+
+        &.is-active-tab {
+            color: #fff;
+            background-color: #bebebe;
+        }
+
+        @media (max-width: 768px) {
+            display: none;
+
+            &:nth-child(9) {
+                display: none;
+            }
+        }
+
+        &-arrow {
+            width: 70px;
+            position: absolute;
+            left: -20px;
+            top: 0;
+            height: 30px;
+
+            &:before {
+                content: '';
+                display: inline-block;
+                position: relative;
+                border: 15px solid #fff;
+                border-left-color: transparent !important;
+            }
+
+            &:after {
+                content: '';
+                display: inline-block;
+                position: relative;
+                border: 15px solid #f3f3f3;
+                margin-left: -15px;
+                border-left-color: transparent !important;
+
+                .is-active-tab & {
+                    border-color: #bebebe;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .basket__tab:nth-child(2n-1) &:after {
+                    //display: none;
+                }
+            }
+        }
+
+        &-label {
+            line-height: 1.5;
+        }
+    }
+
+    @include has('title') {
+        display: table;
+        margin: 15px 0px;
+        width: 100%;
+    }
+
+    @include has('content') {
+        display: none;
+
+        &.is-active-tab {
+            display: block;
+        }
+    }
+
+    @include has('addaddress') {
+        display: inline-block;
+        height: 20px;
+        text-decoration: none;
+        color: #b10;
+        text-transform: lowercase;
+        cursor: pointer;
+        right: 15px;
+        position: absolute;
+
+        & img {
+            max-height: 100%;
+            vertical-align: bottom;
+        }
+
+        &[data-handle='closeAddressForm'] img {
+            transform: rotate(45deg);
+        }
+    }
+
+    @include has('login') {
+    }
+
+    @include has('loginblock') {
+        width: 100%;
+        margin: 15px 0;
+    }
+
+    @include has('address') {
+        &-shipp {
+            width: 100%;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        &-shippblock {
+            padding: 15px 10px 15px 10px;
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.4s, height 0.5s;
+
+            @include breakpoint($screen-md) {
+                margin: 10px;
+                padding: 15px 15px 15px 25px;
+            }
+
+            &.is-on-hide {
+                transform: scaleY(0);
+                height: 0;
+                padding: 0;
+                margin: 0;
+            }
+
+            &:first-child {
+                background-color: #f3f3f3;
+            }
+
+            &-label {
+                width: 100%;
+                padding-bottom: 15px;
+                display: inline-block;
+                vertical-align: top;
+
+                @include breakpoint($screen-md) {
+                    width: 30%;
+                    padding-bottom: 0px;
+                }
+            }
+
+            &-list {
+                width: 100%;
+                display: inline-block;
+                font-size: 11px;
+
+                @include breakpoint($screen-md) {
+                    width: 60%;
+                    font-size: 14px;
+                }
+
+                &-metod {
+                    padding: 10px 0;
+                    display: block;
+
+                    @include breakpoint($screen-md) {
+                        padding: 0 0 8px;
+                    }
+                }
+            }
+        }
+
+        &-form {
+            width: 60%;
+            display: block;
+            margin: 0 auto;
+            position: relative;
+
+            @media (max-width: $DESCKTOP) {
+                width: 100%;
+            }
+
+            &:nth-child(2) {
+                text-align: right;
+            }
+
+            &-label {
+                padding: 0 2%;
+            }
+
+            tr {
+                height: 50px;
+                vertical-align: middle;
+            }
+        }
+
+        &-label {
+            display: inline-block;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 75%;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        &-select {
+            width: 75%;
+            margin: 0 0 0 8%;
+            padding: 10px;
+            background-color: #fff;
+
+            &-arrow {
+                background: url($img-path+'right-arrow.png') no-repeat;
+                background-size: contain;
+                right: 40px;
+                top: 13px;
+                opacity: 0.7;
+
+                .basket__address-form:nth-child(2) & {
+                    right: 10px;
+                }
+            }
+        }
+
+        &-input {
+            width: 100%;
+            margin: 10px 0;
+            height: 20px;
+            padding: 5px;
+            border: 1px solid #b5b5b5;
+        }
+    }
+
+    @include has('payment') {
+        &-block {
+            width: 100%;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        &-metod {
+            padding: 15px 5px;
+        }
+
+        &-promo {
+            width: 100%;
+            border-width: 0 1px 1px;
+            border-style: solid;
+            border-color: #ccc;
+            box-sizing: border-box;
+
+            &-code {
+                padding: 20px;
+                position: relative;
+
+                & span {
+                    line-height: 40px;
+                }
+
+                & .basket__input {
+                    height: 40px;
+                }
+
+                & .form__message_validation_error {
+                    bottom: 0;
+                    width: auto;
+                    right: 50%;
+                }
+            }
+
+            .basket__confirm &-code {
+                padding: 20px 10px;
+            }
+        }
+
+        &-label {
+            display: block;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+            overflow: hidden;
+            cursor: pointer;
+
+            .user-pay-method__item_img {
+                float: none;
+                margin-left: 10px;
+                vertical-align: middle;
+                max-width: 80%;
+            }
+        }
+
+        &-name {
+            width: 30%;
+            display: inline-block;
+        }
+
+        &-image {
+        }
+    }
+
+    @include has('confirm') {
+        &-data {
+            width: 100%;
+
+            @include breakpoint($screen-md) {
+                width: 24%;
+            }
+        }
+
+        &-info {
+            border: 1px solid #d5d5d5;
+            margin-bottom: 10px;
+
+            &-title {
+                background-color: #f3f3f3;
+                padding: 5px 10px;
+            }
+
+            &-list {
+                padding: 10px;
+            }
+        }
+
+        &-edit {
+            float: right;
+            color: #666;
+        }
+
+        &-items {
+            width: 100%;
+
+            @include breakpoint($screen-md) {
+                width: 75%;
+            }
+        }
+    }
+
+    @include has('input') {
+        height: 32px;
+        padding: 0 10px;
+        vertical-align: top;
+        width: 25%;
+
+        .basket__confirm & {
+            margin-left: 0;
+        }
+    }
+
+    @include has('checkbox') {
+        top: 2px;
+        position: relative;
+    }
+
+    @include has('textarea') {
+        width: 100%;
+        margin-bottom: 0px;
+
+        p + & {
+            height: 45px;
+        }
+    }
+
+    @include has('lock') {
+        display: none;
+        margin: 7px 0 5px 15px;
+        z-index: 10;
+        position: relative;
+
+        .killed & {
+            display: inline-block;
+        }
+    }
+}
+
+.is-on-validate {
+    transform: translateY(-200px);
+}
+
+.is-not-valid {
+    color: #b10;
+    text-transform: lowercase;
+}
+
+// Non BEM SHIT
+#conformation {
+    .basket__table-navitem,
+    .gift_row,
+    .basket__count-select,
+    .basket__count-arrow {
+        display: none;
+    }
+}
+
+.on-second-step {
+    display: none;
+}
+
+.hide-on-mobile {
+    display: none;
+
+    @include breakpoint($screen-md) {
+        display: block;
+    }
+}
+
+.show-on-mobile {
+    display: block;
+
+    @include breakpoint($screen-md) {
+        display: none;
+    }
+}
+
+.valid-error {
+    border-color: #b10 !important;
+}
+
+*[data-handle='editAddress'],
+*[data-handle='deleteAddress'],
+*[data-handle='deleteProduct'],
+*[data-handle='deleteGift'] {
+    cursor: pointer;
+}
+
+[data-handle='minSumMessage'] {
+    color: $color-buttonred;
+}

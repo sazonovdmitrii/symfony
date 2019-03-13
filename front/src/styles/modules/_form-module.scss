@@ -1,0 +1,66 @@
+@include new('pdata') {
+    width: 100%;
+    display: block;
+    list-style: none;
+    padding: $PADDINGS;
+    margin: 0;
+    text-align: justify;
+    position: relative;
+    clear: both;
+    @include has('block') {
+        //float: right;
+        max-width: calculateRem(285px);
+        width: 100%;
+        @include when('input') {
+            display: block;
+            width: 100%;
+            padding: calculateRem($PADDINGS/2);
+            background-color: $WHITE;
+            color: $color-bordergrey;
+            border: calculateRem(1px) solid $color-bordergrey;
+            line-height: 1.5;
+            border-radius: 0.25rem;
+        }
+    }
+    @include has('select') {
+        padding: calculateRem($PADDINGS/2);
+        background-color: $WHITE;
+        color: $color-bordergrey;
+        border: calculateRem(1px) solid $color-bordergrey;
+        line-height: 1.5;
+        border-radius: 0.25rem;
+    }
+    @include has('label') {
+        max-width: calculateRem(285px);
+        width: 100%;
+        text-align: left;
+        display: block;
+    }
+    @include has('required') {
+        color: $color-buttonred;
+    }
+    @include has('btn') {
+        color: $WHITE;
+        background-color: $color-dark;
+        text-transform: uppercase;
+        font-size: calculateRem(13px);
+        display: inline-block;
+        font-weight: normal;
+        text-align: center;
+        cursor: pointer;
+        vertical-align: middle;
+        white-space: nowrap;
+        padding: $PADDINGS/2 $PADDINGS;
+        border: calculateRem(1px) solid transparent;
+        border-radius: calculateRem($PADDINGS/3);
+        @include when('grey') {
+            color: $color-dark;
+            background-color: $color-bordergrey;
+        }
+    }
+    @include has('toph2') {
+        font-weight: normal;
+        font-size: calculateRem(24px);
+        line-height: normal;
+    }
+}

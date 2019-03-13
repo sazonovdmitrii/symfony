@@ -1,0 +1,38 @@
+.field {
+    font-size: var(--font-size-base);
+    position: relative;
+    margin: 0 0 15px;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -8px;
+    margin-right: -8px;
+}
+
+.col {
+    position: relative;
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding: 0 8px;
+    box-sizing: border-box;
+
+    @media (--viewport-tablet) {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+.col4 {
+    position: relative;
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding: 0 8px;
+    box-sizing: border-box;
+
+    @media (--viewport-tablet) {
+        flex: 0 0 33.33%;
+        max-width: 33.33%;
+    }
+}

@@ -1,0 +1,61 @@
+@include new('modal') {
+    cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NjY2NkIxMkI5MzVFMTFFNjkyNDY5RkNCMjlBNUE5RDYiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NjY2NkIxMkM5MzVFMTFFNjkyNDY5RkNCMjlBNUE5RDYiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo2NjY2QjEyOTkzNUUxMUU2OTI0NjlGQ0IyOUE1QTlENiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo2NjY2QjEyQTkzNUUxMUU2OTI0NjlGQ0IyOUE1QTlENiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PhgX5m4AAADDSURBVHjalJM9DsIwDIVDywC3QNx/RIg/MUDSVgyMDHABFjowIAZEeFZdyQpxm1r6lNZ+L6rj1Hjvn+AMzABI/6CHm2/CJhqPrL/QSwaKxA1anQPjNjkSharHWLDeyCIlTkIgay40hmYiByULd2AGNsqGRuttzYYPr6uYrvn2eLzAFLx5/YtMMS7Y8AUTsIyqOua4B3OwFePp7Nn1nLbVTtslzrkMzYfYHCNUrKPWckpctTkqWHm3a75ZQ/4q0t9/AgwANZCM4Jtx+54AAAAASUVORK5CYII='),
+        auto;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s cubic-bezier(0, 0, 0.2, 1);
+    transform: scale(0);
+    &.open {
+        transform: scale(1);
+    }
+
+    @include has('header') {
+        padding: 10px 0;
+        color: $color-grey;
+        margin-bottom: 15px;
+        border-bottom: 1px solid;
+        &-h3 {
+            @include TextProBold;
+            font-size: calculateRem(16px);
+        }
+    }
+
+    @include has('dialog') {
+        cursor: default;
+        background: #fff;
+        display: inline-block;
+        max-width: 50%;
+        position: absolute;
+        float: left;
+        width: 50%;
+        z-index: 105;
+        padding: 15px 25px;
+        left: 50%;
+        top: 50%;
+        min-width: 280px;
+        min-height: 280px;
+        max-height: 80%;
+        transform: translate(-50%, -800%);
+        transition: transform 0.5s cubic-bezier(0, 0, 0.2, 1) 0.3s;
+        overflow-y: auto;
+
+        @include breakpoint($screen-md) {
+            width: 100%;
+            max-width: 70%;
+        }
+
+        @include breakpoint(1200px) {
+            width: 60%;
+            max-width: 55%;
+        }
+
+        &.open-body {
+            transform: translate(-50%, -50%);
+        }
+    }
+}

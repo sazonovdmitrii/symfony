@@ -1,0 +1,270 @@
+@include new('product-element') {
+    @include column(6, 12);
+
+    display: block;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: $color-dark;
+    float: none;
+
+    @include when('right') {
+        float: right;
+    }
+
+    @include when('comment-section') {
+        @include column(6, 12);
+
+        float: right;
+        padding-top: calculateRem(95px);
+    }
+
+    @include has('star-wrapper') {
+        padding-bottom: $PADDINGS;
+    }
+
+    @include has('star') {
+        &::before {
+            content: '\2606';
+            cursor: pointer;
+            font-size: $FONTBUY;
+        }
+
+        &:hover::before {
+            content: '\2605';
+            color: $COLORCONTRAST;
+        }
+
+        @include when('active') {
+            &::before {
+                content: '\2605';
+                color: $COLORCONTRAST;
+                cursor: default;
+            }
+        }
+    }
+
+    @include when('bottom') {
+        @include column(1, 1);
+
+        width: 100%;
+        margin: 0;
+        text-align: center;
+        padding-top: $PADDINGS;
+    }
+
+    @include has('label') {
+        @include TextProRegular;
+
+        font-size: calculateRem(14px);
+        vertical-align: middle;
+        margin-bottom: 15px;
+        padding: calculateRem(7px) calculateRem(10px);
+        background-color: $color-buttongrey;
+
+        @include when('desc') {
+            background-color: $WHITE;
+        }
+
+        @include when('thick') {
+            @include TextProBold;
+
+            padding: calculateRem(7px) calculateRem(10px);
+            margin-bottom: calculateRem(15px);
+        }
+
+        @include when('thick-inner') {
+            @include TextProMedium;
+
+            background-color: $WHITE;
+            padding-top: calculateRem(25px);
+            padding-left: calculateRem(15px);
+            padding-bottom: calculateRem(0px);
+        }
+    }
+
+    @include has('info') {
+        @include TextProRegular;
+
+        text-align: left;
+        padding-left: calculateRem(0px);
+    }
+
+    @include has('textlist') {
+        @include TextProLight;
+
+        color: $color-dark;
+        padding-left: calculateRem(15px);
+        line-height: calculateRem(20px);
+        margin: 15px 0;
+    }
+
+    @include has('datalist') {
+        @include TextProRegular;
+
+        color: $color-dark;
+        padding-left: calculateRem(8px);
+        line-height: calculateRem(26px);
+
+        @include when('data') {
+            display: inline-block;
+            width: 30%;
+            font-size: calculateRem(14px);
+        }
+
+        @include when('data__last') {
+            display: inline-block;
+            font-size: calculateRem(14px);
+            width: 60%;
+
+            & a {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    @include has('input') {
+        height: $PADDINGS;
+        line-height: $MENULINFONTSIZE;
+        vertical-align: middle;
+        padding: calculateRem($PADDINGS / 5);
+        box-sizing: content-box;
+        background: $WHITE;
+        width: calculateRem(200px);
+        border: calculateRem(1px) solid $color-dark;
+        border-radius: calculateRem(5px);
+    }
+
+    @include has('input-text') {
+        height: calculateRem(200px);
+        width: 82%;
+        line-height: $MENULINFONTSIZE;
+        padding: calculateRem($PADDINGS / 2);
+        box-sizing: content-box;
+        background: $WHITE;
+        margin-left: 14%;
+        border: 2px solid $color-buttongrey;
+    }
+
+    @include has('input-label') {
+        @include TextProBold;
+
+        font-size: calculateRem(16px);
+        margin-left: 20%;
+    }
+
+    @include has('captcha') {
+        padding-top: $PADDINGS;
+        padding-bottom: $PADDINGS;
+    }
+
+    @include has('feedback') {
+        padding: calculateRem(10px) 0;
+    }
+
+    @include has('feedbackbutton') {
+        @include TextProRegular;
+
+        width: 100%;
+        background-color: $color-lightgrey;
+        color: $WHITE;
+        text-transform: capitalize;
+        height: calculateRem(50px);
+        border: none;
+        font-size: calculateRem(12pt);
+        vertical-align: middle;
+
+        @include breakpoint($screen-md) {
+            width: 50%;
+        }
+
+        @include when('confirm') {
+            background-color: $COLORCONTRAST;
+            margin-left: 0;
+            width: 25%;
+            text-transform: uppercase;
+        }
+    }
+
+    @include has('comment') {
+        @include TextProLight;
+
+        font-size: calculateRem(14px);
+        color: $color-dark;
+        padding-top: calculateRem(25px);
+        line-height: calculateRem(19px);
+        padding-bottom: 0;
+
+        @include when('author') {
+            @include TextProRegular;
+
+            color: $color-lightgrey;
+            padding-top: calculateRem(5px);
+            padding-bottom: calculateRem(15px);
+        }
+
+        @include when('head') {
+            padding-top: calculateRem(65px);
+            font-size: calculateRem(16px);
+            padding-bottom: calculateRem(15px);
+            border-bottom: calculateRem(1px) solid $DARKBORDER;
+        }
+
+        &:last-child {
+            & .product-element__comment--author {
+                border-bottom: none;
+            }
+        }
+
+        @include when('reply') {
+            text-align: right;
+            color: $COLORCONTRAST;
+            padding-bottom: calculateRem(15px);
+            padding-top: 0px;
+        }
+    }
+}
+
+.small_catalog {
+    @extend %clearfix;
+
+    width: 100%;
+}
+
+@include new('comments-form') {
+    width: 100%;
+
+    & .control-label,
+    & textarea {
+        width: 100%;
+    }
+
+    & textarea {
+        height: 120px;
+    }
+
+    @include breakpoint($screen-md) {
+        padding-left: 20px;
+    }
+
+    @include has('captcha') {
+        padding: 15px 0;
+
+        & img {
+            vertical-align: bottom;
+        }
+
+        & .input-text {
+            width: 150px;
+            height: 50px;
+
+            @include breakpoint($screen-md) {
+                margin-left: 15px;
+            }
+        }
+
+        &-text {
+            display: block;
+        }
+    }
+}

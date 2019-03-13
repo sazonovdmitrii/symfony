@@ -1,0 +1,39 @@
+// --------------------------------------------------------------------------
+// Benefits
+// --------------------------------------------------------------------------
+// Author:      Danyl Yehorov
+// Email:       office@gainsbrook.ch
+// URL:         http://gainsbrook.ch/
+// Copyright:
+// Version:     1.0
+// --------------------------------------------------------------------------
+
+@include new('benefits') {
+    float: left;
+    width: 100%;
+
+    @include when('sale') {
+        @include row(12);
+    }
+
+    @include breakpoint($screen-md) {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    @include has('item') {
+        float: left;
+        width: 50%;
+        display: none;
+        margin: 0 !important;
+        padding: 0 3.5px !important;
+        box-sizing: border-box;
+
+        @include breakpoint($screen-md) {
+            width: 25%;
+            display: inline-block;
+        }
+        @include when('sale') {
+            width: 33.3333333333333%;
+        }
+    }
+}

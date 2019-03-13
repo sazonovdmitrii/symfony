@@ -1,0 +1,50 @@
+@mixin text-hide {
+    font: 0/0 a;
+    color: transparent;
+    text-shadow: none;
+    background-color: transparent;
+    border: 0;
+}
+
+@include new('sprite') {
+    @include text-hide();
+
+    display: block;
+    background: transparent url($img-path+'social_and_payment.png') top left no-repeat;
+
+    @include when('visa') {
+        background-position: 0 -27px;
+        width: 54px;
+        height: 25px;
+    }
+
+    @include when('mastercard') {
+        background-position: -54px -27px;
+        width: 38px;
+        height: 25px;
+    }
+
+    @include when('maestro') {
+        background-position: -92px -27px;
+        width: 37px;
+        height: 25px;
+    }
+
+    @include when('alfa') {
+        background-position: 0 -77px;
+        width: 85px;
+        height: 25px;
+    }
+
+    @include when('mir') {
+        background-position: -85px -77px;
+        height: 25px;
+        width: 61px;
+    }
+
+    @include when('cash') {
+        background-position: -129px -27px;
+        width: 48px;
+        height: 25px;
+    }
+}

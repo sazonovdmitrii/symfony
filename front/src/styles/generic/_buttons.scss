@@ -1,0 +1,163 @@
+// --------------------------------------------------------------------------
+// Buttons
+// --------------------------------------------------------------------------
+// Author:      Zone
+// Email:       danyegorov@yandex.ru
+// URL:         http://zonedigital.com
+// Copyright:   Copyright (c) 2016, zonedigital.com. All rights reserved.
+// Version:     1.5
+// --------------------------------------------------------------------------
+
+// Base button styles
+// --------------------------------------------------------------------------
+
+button[disabled],
+html input[disabled],
+button[disabled]:hover {
+    cursor: default;
+    background: #ccc;
+    border: #ccc;
+}
+
+[role='button'] {
+    border: 0 none;
+    padding: 8px;
+    font-size: 14px;
+
+    & > .icon {
+        // icon styles here
+    }
+    & > .text {
+        // text styles
+    }
+    &:hover {
+        // hover styles
+        & > .icon {
+            // hover icon styles
+        }
+    }
+}
+
+.btn-cta {
+    @include hoverActiveFocus(background-color, $color-purple) {
+        background-color: grey;
+    }
+}
+
+// Base control styles
+// --------------------------------------------------------------------------
+
+[role='button'][rel='prev'],
+[role='button'][rel='next'] {
+    // Text
+    & .text {
+        // button controls styles
+    }
+}
+
+button.btn {
+    border-radius: 0px;
+    width: 48%;
+    float: left;
+    padding: 3 * $PADDINGS/5 8%;
+    &:last-child {
+        margin-left: 5px;
+    }
+}
+
+.button-red {
+    @include TextProRegular();
+
+    height: 40px;
+    border: 2px solid $COLORDARKRED;
+    border-radius: 0px;
+    background-color: $COLORDARKRED;
+    font-size: $font-size14;
+    text-transform: uppercase;
+    line-height: 1.5;
+    text-shadow: none;
+    width: initial;
+    display: initial;
+    color: $WHITE;
+}
+
+.button-red:hover,
+.button-white {
+    background-color: $WHITE;
+    border: 2px solid $COLORDARKRED;
+    color: $COLORDARKRED;
+    text-shadow: none;
+    &:hover {
+        & span {
+            color: $COLORDARKRED;
+        }
+    }
+}
+
+.button-grey {
+    border: 2px solid $color-grey;
+    background-color: $color-grey;
+    &:hover {
+        border: 2px solid $color-grey;
+        color: $color-grey;
+    }
+}
+
+.button-litegrey {
+    border: 2px solid #e5e5e5;
+    background-color: #e5e5e5;
+    color: $FOOTERTEXT;
+    &:hover {
+        border: 2px solid #e5e5e5;
+        color: $FOOTERTEXT;
+    }
+}
+
+@include new('button') {
+    transition: background 0.3s ease-out;
+    text-align: center;
+    user-select: none;
+    display: inline-block;
+    line-height: 1.5;
+    padding: 8px 15px;
+
+    @include when('load-more') {
+        @include no-column();
+        color: #444;
+        border: 1px solid #ccc;
+        padding: 5px 15px;
+        font-size: calculateRem(20px);
+        background-color: #eee;
+        margin-bottom: 40px;
+        &:hover {
+            background-color: darken(#eee, 10%);
+        }
+    }
+
+    @include when('white-border-g') {
+        @extend %clearfix;
+        color: #000;
+        margin: 0 auto;
+        padding: 20px 120px 20px 15px;
+        border: 1px solid #ccc;
+        font-size: calculateRem(16px);
+        background-color: #fff;
+        position: relative;
+        &:after {
+            content: '';
+            display: block;
+            border: 1px solid #ccc;
+            background-image: url($img-path+'right-arrow.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 30px;
+            height: 66px;
+            position: absolute;
+            right: -1px;
+            top: -1px;
+        }
+        &:hover {
+            background-color: darken(#fff, 10%);
+        }
+    }
+}

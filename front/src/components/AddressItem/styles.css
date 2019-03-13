@@ -1,0 +1,12 @@
+.wrapper {
+    margin-bottom: 15px;
+    padding: 5px 10px;
+    display: block;
+    overflow: hidden;
+    border-bottom: dashed 1px #dadada;
+    background: #f2f2f2;
+}
+
+.text {
+    float: left;
+}

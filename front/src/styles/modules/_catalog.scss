@@ -1,0 +1,278 @@
+// --------------------------------------------------------------------------
+// CATALOG
+// --------------------------------------------------------------------------
+// Author:      Buchenko Serafima
+// Email:       office@gainsbrook.ch
+// URL:         http://gainsbrook.ch/
+// Copyright:
+// Version:     1.0
+// --------------------------------------------------------------------------
+
+@include new('catalog') {
+    @include row(12);
+
+    padding: $PADDINGS 0;
+    min-height: 5 * $HEADERHEAD;
+    background-color: $WHITE;
+
+    @include has('item') {
+        @include column(6, 12);
+        @include TextProRegular();
+
+        text-align: center;
+        color: $color-dark;
+        border-width: 1px 1px 0px 1px;
+        border-color: $WHITE;
+        border-style: solid;
+        display: block;
+        position: relative;
+        padding-top: 2 * $PADDINGS / 3;
+        height: 380px;
+        box-sizing: border-box;
+
+        .small_catalog & {
+            @include column(4, 12);
+
+            border: none;
+            height: inherit;
+        }
+
+        .catalogpage-5column & {
+            @include column(6, 12);
+            @include breakpoint($screen-md) {
+                @include column(2, 10);
+            }
+        }
+
+        @media (min-width: $DESCKTOP) {
+            @include column(3, 12);
+
+            height: calculateRem(430px);
+
+            &:hover {
+                border-color: $COLORLINES;
+
+                & .catalog__item_img-im--first {
+                    opacity: 0;
+                }
+
+                & .catalog__item_prd,
+                & .catalog__item_img-im--second {
+                    display: block;
+                    opacity: 1;
+                }
+
+                .small_catalog &:hover {
+                    border: none;
+
+                    & .catalog__item_prd {
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        @include when('push') {
+            @include push(3);
+        }
+
+        @include when('product-page') {
+            @include column(4, 12);
+
+            border-width: 1px 1px 1px 1px;
+        }
+
+        @include when('product-page-bottom-row') {
+            border-width: 1px 1px 1px 1px;
+            width: 16.6666666667%;
+        }
+
+        &_link {
+            @include TextCondProLight();
+
+            text-decoration: none;
+            color: $color-dark;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0 10px;
+            font-size: $font-size14;
+            line-height: 1.15;
+            position: relative;
+            top: -$PADDINGS / 3;
+            display: inline-block;
+        }
+
+        &_img {
+            width: 100%;
+            height: 13 * $HEADERHEAD / 3;
+            position: relative;
+            margin-bottom: 6 * $PADDINGS / 5;
+            margin: auto;
+
+            .small_catalog & {
+                height: 160px;
+            }
+
+            &-im {
+                max-height: 85%;
+                position: absolute;
+                bottom: 5%;
+                transform: translate3d(-50%, 0, 0);
+                left: 50%;
+                max-width: 100%;
+                transition: opacity 0.3s;
+
+                @include when('first') {
+                    opacity: 1;
+                }
+
+                @include when('second') {
+                    opacity: 0;
+                }
+            }
+        }
+
+        &_brand {
+            text-transform: uppercase;
+            letter-spacing: 0.1px;
+            line-height: 1.5;
+        }
+
+        &_name {
+            letter-spacing: 0.1px;
+            font-size: $font-size14;
+            height: calculatRem(40px);
+        }
+
+        &_price {
+            font-weight: bold;
+            font-size: $font-size14;
+            font-family: 'PFDinTextPro-medium';
+            line-height: 1;
+            letter-spacing: 0.2px;
+            padding-bottom: 4 * $PADDINGS / 5;
+
+            &_curren {
+                padding-left: $PADDINGS / 3;
+            }
+
+            @include when('soldout') {
+                color: #666;
+                font-size: 0.9em;
+                font-weight: normal;
+            }
+        }
+
+        &_prd {
+            display: none;
+            width: 100%;
+            position: absolute;
+            border-width: 0px 1px 1px 1px;
+            border-color: $COLORLINES;
+            border-style: solid;
+            background: $WHITE;
+            z-index: 10;
+            text-align: center;
+            margin-left: -$PADDINGS / 15;
+            box-sizing: content-box;
+            padding-bottom: 4 * $PADDINGS / 3;
+
+            &_type:first-child {
+                border-top: 1px solid $COLORLINES;
+                padding-top: 16 * $PADDINGS / 15;
+            }
+
+            &_type {
+                @include TextProRegular();
+
+                padding: ($PADDINGS / 15) 0 0;
+                line-height: 1;
+                font-size: $FONTBUY12;
+                display: inline-block;
+                width: 84%;
+                margin: 0 8%;
+                text-align: left;
+
+                &_name {
+                    width: 70%;
+                    display: block;
+                    float: left;
+                }
+
+                &_price {
+                    font-weight: bold;
+                    float: right;
+                    color: #333;
+                    height: calculateRem(15px);
+                }
+            }
+
+            &_button {
+                margin: (2 * $PADDINGS / 3) auto 0;
+                font-size: 16 * $FONTBUY / 18;
+                display: inline-block;
+                color: #fff;
+                padding: 2px 30px;
+                line-height: 25px;
+
+                @include TextProMedium;
+
+                text-align: center;
+                text-transform: uppercase;
+                background: $COLORCONTRAST;
+
+                &:after {
+                    content: '»';
+                    font-weight: bold;
+                    font-size: 30px;
+                    position: relative;
+                    top: 2px;
+                    margin-left: 5px;
+                    display: inline-block;
+                }
+            }
+        }
+    }
+
+    @include has('search') {
+        width: 100%;
+        display: inline-block;
+        margin-bottom: $PADDINGS;
+        line-height: 14px;
+
+        &-form {
+            display: inline-block;
+            margin-left: $PADDINGS;
+        }
+
+        &-name {
+            width: 100%;
+            display: inline-block;
+        }
+
+        &-counts {
+            margin-top: 22px;
+            float: left;
+            line-height: 26px;
+        }
+    }
+
+    @include has('pager') {
+        @extend %clearfix;
+
+        // float:left;
+        width: 100%;
+        padding-bottom: $PADDINGS;
+    }
+}
+
+.catslider-a {
+    text-align: center;
+}
+
+div[style='transition: transform 0.3s; transform: translate3d(0px, 0px, 0px);']
+    ~ a[data-handle='control-left'],
+div[style=''] ~ a[data-handle='control-left'] {
+    opacity: 0.2;
+    cursor: default;
+}

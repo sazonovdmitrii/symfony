@@ -1,0 +1,80 @@
+@include new('loginform') {
+    @include row(12);
+
+    text-align: center;
+
+    @include breakpoint($screen-md) {
+        text-align: left;
+    }
+
+    @include has('leftblock') {
+        @include column(12, 12);
+
+        @include breakpoint($screen-md) {
+            @include column(4, 12);
+        }
+
+        &-label {
+            position: relative;
+            text-align: left;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        &-button {
+            width: 100%;
+        }
+    }
+
+    @include has('rightblock') {
+        margin-top: 15px;
+
+        @include column(12, 12);
+
+        @include breakpoint($screen-md) {
+            @include column(8, 12);
+
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        &-text {
+            display: none;
+
+            @include breakpoint($screen-md) {
+                display: block;
+            }
+        }
+
+        &-button {
+            width: 100%;
+
+            @include breakpoint($screen-md) {
+                float: right;
+                width: auto;
+                min-width: 24%;
+            }
+        }
+    }
+
+    @include has('title') {
+        margin-bottom: 15px;
+        display: none;
+
+        @include breakpoint($screen-md) {
+            display: block;
+        }
+    }
+
+    @include has('text') {
+        min-height: 111px;
+    }
+
+    @include has('remind-pass') {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        text-decoration: underline;
+    }
+}

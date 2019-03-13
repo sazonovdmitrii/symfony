@@ -1,0 +1,51 @@
+@include new('comments-notification') {
+    margin-bottom: 10px;
+    color: $COLORCONTRAST;
+    display: none;
+
+    &.open {
+        display: block;
+    }
+}
+
+@include new('comments-stars') {
+    float: left;
+    margin-bottom: 20px;
+    input {
+        display: none;
+    }
+
+    @include has('item') {
+        float: right;
+
+        &::before {
+            content: '\2606';
+            cursor: pointer;
+            font-size: $FONTBUY;
+        }
+
+        @include when('active') {
+            &::before {
+                content: '\2605';
+                color: $COLORCONTRAST;
+                cursor: default;
+            }
+        }
+    }
+
+    & > input:checked ~ label,
+    &:not(:checked) > label:hover,
+    &:not(:checked) > label:hover ~ label {
+        color: $COLORCONTRAST;
+
+        &::before {
+            content: '\2605';
+        }
+    }
+
+    & > input:checked + label:hover,
+    & > input:checked ~ label:hover,
+    & > input:checked ~ label:hover ~ label {
+        color: darken($COLORCONTRAST, 5%);
+    }
+}

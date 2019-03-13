@@ -1,0 +1,196 @@
+// --------------------------------------------------------------------------
+// Animations
+// --------------------------------------------------------------------------
+// Author:      Dominic da Costa @ Zone
+// Email:       danyegorov@yandex.ru
+// URL:         http://zonedigital.com
+// Copyright:   Copyright (c) 2016, zonedigital.com. All rights reserved.
+// Version:     1.5
+// --------------------------------------------------------------------------
+
+// Fade In
+// --------------------------------------------------------------------------
+
+.animate--fade {
+    animation: fadeIn 0.65s ease 1 normal;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+// Rotate
+// --------------------------------------------------------------------------
+
+.animate--rotate {
+    animation: rotate 0.65s ease 1 normal;
+}
+
+.animate--rotate-reverse {
+    animation: rotate 0.65s ease 1 alternate;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(45deg);
+    }
+}
+
+// Move Up
+// --------------------------------------------------------------------------
+
+.animate--move {
+    animation: moveUp 0.65s ease 1 normal;
+}
+
+@keyframes moveUp {
+    0% {
+        opacity: 0;
+        transform: translateY(200px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Scale Up
+// --------------------------------------------------------------------------
+
+.animate--scale {
+    animation: scaleUp 0.65s ease-in-out 1 normal;
+}
+
+@keyframes scaleUp {
+    0% {
+        opacity: 0;
+        transform: scale(0.6);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+// Fall Perspective
+// --------------------------------------------------------------------------
+
+.animate--fall {
+    animation: fall 0.8s ease-in-out 1 normal;
+}
+
+@keyframes fall {
+    0% {
+        transform-style: preserve-3d;
+        transform: translateZ(400px) translateY(300px) rotateX(-90deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateZ(0px) translateY(0px) rotateX(0deg);
+    }
+}
+
+// Fly
+// --------------------------------------------------------------------------
+
+.animate--fly {
+    animation: fly 0.8s ease-in-out 1 normal;
+}
+
+@keyframes fly {
+    0% {
+        transform-style: preserve-3d;
+        transform-origin: 50%, 50%, -300px;
+        transform: rotateX(-180deg);
+    }
+    100% {
+        opacity: 1;
+        transform: rotateX(0deg);
+    }
+}
+
+// Flip
+// --------------------------------------------------------------------------
+
+.animate--flip {
+    animation: flip 0.8s ease-in-out 1 normal;
+}
+
+@keyframes flip {
+    0% {
+        transform-style: preserve-3d;
+        transform-origin: 0%, 0%;
+        transform: rotateX(-80deg);
+    }
+    100% {
+        opacity: 1;
+        transform: rotateX(0deg);
+    }
+}
+
+// Helix
+// --------------------------------------------------------------------------
+
+.animate--helix {
+    animation: helix 0.8s ease-in-out 1 normal;
+}
+
+@keyframes helix {
+    0% {
+        transform-style: preserve-3d;
+        transform: rotateY(-180deg);
+    }
+    100% {
+        opacity: 1;
+        transform: rotateY(0deg);
+    }
+}
+
+// FullHouse
+// --------------------------------------------------------------------------
+
+.animate--fullhouse {
+    animation: fullhouse 0.8s ease-in 1 normal;
+}
+
+@keyframes fullhouse {
+    0% {
+        transform-style: preserve-3d;
+        transform: scale(0.4);
+    }
+    70% {
+        animation-timing-function: ease-out;
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+// LOADING
+// --------------------------------------------------------------------------
+
+.is-on-load {
+    opacity: 0.6;
+    position: relative;
+    &::after {
+        content: '';
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        background: url($img-path+'preload.gif') no-repeat center center;
+    }
+}

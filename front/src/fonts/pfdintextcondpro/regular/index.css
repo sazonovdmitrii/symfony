@@ -1,0 +1,8 @@
+@font-face {
+    font-display: swap;
+    font-family: 'PFDinTextCondPro';
+    src: url('./pfdintextcondpro-regular.woff') format('woff'),
+        url('./pfdintextcondpro-regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}

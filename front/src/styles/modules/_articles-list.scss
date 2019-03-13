@@ -1,0 +1,116 @@
+@include new('articles-list') {
+    @include has('link') {
+        display: flex;
+        transition: color 0.3s ease-out;
+
+        &:hover {
+            color: lighten(#000, 50%);
+
+            .articles-list__image-wrapper {
+                &::after {
+                    box-shadow: inset 0 0 0 3px #000;
+                }
+            }
+        }
+    }
+
+    @include has('item') {
+        @include column(12);
+
+        padding: 0;
+        margin-bottom: 20px;
+
+        @include breakpoint($screen-sm) {
+            @include column(6);
+
+            padding: 0;
+        }
+
+        @include breakpoint($screen-md) {
+            margin-bottom: 14px;
+        }
+    }
+
+    @include has('image-wrapper') {
+        position: relative;
+        flex: none;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1;
+            width: 100px;
+            height: 100px;
+            transition: box-shadow 0.3s ease-out;
+        }
+
+        @include when('placehold') {
+            height: 100px;
+            width: 100px;
+            background-color: #f3f3f3;
+            &::before {
+                content: '';
+                background: url($svg-path+'placehold.svg') no-repeat center;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: cover;
+                height: 40px;
+                width: 35px;
+
+                @include center;
+            }
+        }
+    }
+
+    @include has('image') {
+        max-width: 100px;
+        height: auto;
+    }
+
+    @include has('icon') {
+        background: #000 url($svg-path+'video.svg') no-repeat center / 60%;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 30px;
+        height: 30px;
+    }
+
+    @include has('text') {
+        flex: 1;
+        max-width: 100%;
+        text-align: left;
+        margin-left: 5px;
+        line-height: 1.2;
+
+        @include breakpoint($screen-md) {
+            margin-left: 10px;
+        }
+    }
+
+    @include has('title') {
+        @include TextProBold;
+
+        font-size: calculateRem(12px);
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+
+        @include breakpoint($screen-md) {
+            margin: 10px 0 5px;
+        }
+    }
+
+    @include has('meta') {
+        @include TextProLight;
+
+        font-size: calculateRem(12px);
+    }
+
+    @include has('author') {
+        text-transform: uppercase;
+    }
+}

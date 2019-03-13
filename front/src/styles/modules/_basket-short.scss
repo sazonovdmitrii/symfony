@@ -1,0 +1,138 @@
+@include new('basket-short') {
+    display: none;
+    background: $WHITE;
+    width: 455px;
+    border: calculateRem(1px) solid $COLORLINES;
+    border-radius: calculateRem(2px);
+    margin-top: calculateRem(2px);
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 9999;
+    color: $color-dark;
+    text-align: left;
+
+    @include has('list') {
+        @include no-column();
+        padding: 20px 20px 0;
+    }
+
+    @include has('item') {
+        @extend %clearfix;
+        position: relative;
+        padding: 13px 0 11px;
+        color: $color-dark;
+        border-bottom: 1px solid $COLORLINES;
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    @include has('item-img') {
+        display: block;
+        float: left;
+        margin-right: 15px;
+        width: 50px;
+        img {
+            max-height: 65px;
+        }
+    }
+
+    @include has('item-body') {
+        width: 80%;
+        text-align: left;
+        float: left;
+    }
+
+    @include has('item-brand') {
+        @include TextProMedium;
+    }
+
+    @include has('item-title') {
+        width: 85%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow-x: hidden;
+    }
+
+    @include has('item-property') {
+        width: 85%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow-x: hidden;
+    }
+
+    @include has('item-link') {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    @include has('item-quantity') {
+        display: block;
+        position: absolute;
+        top: 15px;
+        right: 0;
+    }
+
+    @include has('item-sum') {
+        @include TextProMedium;
+        display: block;
+        position: absolute;
+        right: 0;
+        bottom: 10px;
+        &-currency {
+            @include TextProRegular;
+        }
+        &-sale {
+            @include TextProRegular;
+            color: $COLORLINES;
+            text-decoration: line-through;
+        }
+    }
+
+    @include has('item-remove') {
+        display: inline;
+        cursor: pointer;
+    }
+
+    @include has('footer') {
+        @extend %clearfix;
+        padding: 15px 20px 20px;
+        border-top: 1px solid $COLORLINES;
+        background-color: $color-buttongrey;
+    }
+
+    @include has('row') {
+        display: flex;
+    }
+
+    @include has('column') {
+        flex: 1;
+
+        @include when('right') {
+            @include TextProLight;
+
+            font-size: calculateRem(18px);
+            text-align: right;
+        }
+    }
+
+    @include has('total-sum') {
+        @include TextProMedium;
+        font-size: calculateRem(18px);
+        line-height: 1.5;
+        color: $color-dark;
+    }
+
+    @include has('btn') {
+        @include TextProBold;
+
+        margin-top: 10px;
+        font-size: calculateRem(18px);
+    }
+
+    @include has('empty') {
+        @include TextProLight;
+        padding: 15px 20px;
+    }
+}

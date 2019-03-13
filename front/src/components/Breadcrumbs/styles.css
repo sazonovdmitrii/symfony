@@ -1,0 +1,48 @@
+.wrapper {
+    margin: 20px 0;
+}
+
+.item {
+    margin: 0 10px 0 0;
+    display: inline-block;
+    line-height: 20px;
+    color: #999;
+
+    &:hover,
+    &:focus {
+        & .delete {
+            opacity: 1;
+        }
+    }
+
+    &:not(:last-child) {
+        &::after {
+            content: '/';
+            margin-left: 10px;
+        }
+    }
+}
+
+.link {
+    color: #999;
+    cursor: pointer;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+        text-decoration: underline;
+    }
+}
+
+.delete {
+    border: 0;
+    padding: 0;
+    margin-left: 10px;
+    height: 15px;
+    width: 15px;
+    vertical-align: text-bottom;
+    background: var(--color-white) url(./images/remove.png) no-repeat center / contain;
+    vertical-align: top;
+    opacity: 0;
+    transition: opacity 0.2s;
+}

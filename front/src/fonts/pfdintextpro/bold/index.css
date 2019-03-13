@@ -1,0 +1,7 @@
+@font-face {
+    font-display: swap;
+    font-family: 'PFDinTextPro';
+    src: url('./pfdintextpro-bold.woff2') format('woff2'), url('./pfdintextpro-bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+}
