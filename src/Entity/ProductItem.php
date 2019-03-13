@@ -51,18 +51,7 @@ class ProductItem
     private $basketItems;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Images", mappedBy="entity_id", cascade={"persist", "remove" })
-     */
-    private $images;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @var string
-     */
-    private $image;
-
-    /**
-     * @Vich\UploadableField(mapping="product_images", fileNameProperty="image")
+     * @Vich\UploadableField(mapping="product_images", fileNameProperty="productItemImages")
      * @var File
      */
     private $imageFile;
@@ -73,46 +62,18 @@ class ProductItem
      */
     private $updatedAt;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ProductItemImage", mappedBy="product_item_id", cascade={"persist", "remove" })
+     */
+    private $productItemImages;
+
     public function __construct()
     {
         $this->product_id = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->basketItems = new ArrayCollection();
+        $this->productItemImages = new ArrayCollection();
     }
-
-
-    public function setImageFile($image = null)
-    {
-        foreach($image as $uploadedFile)
-        {
-            $file = new Images();
-            $path = sha1(uniqid(mt_rand(), true)).'.'.$uploadedFile->guessExtension();
-            $file->setUrl($path);
-            $file->setEntityId($this->getId());
-            $file->setTitle($uploadedFile->getClientOriginalName());
-            $uploadedFile->move(__DIR__ . '/../../public/uploads/images/products', $path);
-            $this->addImages($file);
-            unset($uploadedFile);
-        }
-    }
-
-    public function getImageFile()
-    {
-        return $this->images;
-        return $this->imageFile;
-    }
-
-    public function setImage($image)
-    {
-        $this->image = $image;
-    }
-
-    public function getImage()
-    {
-        return $this->image;
-    }
-
-
 
     public function getId(): ?int
     {
@@ -218,35 +179,53 @@ class ProductItem
     }
 
     /**
-     * @return Collection|Images[]
+     * @return Collection|ProductItemImage[]
      */
-    public function getImages(): Collection
+    public function getProductItemImages(): Collection
     {
-        return $this->images;
+        return $this->productItemImages;
     }
 
-    public function addImages(Images $image): self
+    public function addProductItemImage(ProductItemImage $productItemImage): self
     {
-
-//        if (!$this->images->contains($image)) {
-            $this->images[] = $image;
-//            $image->setEntityId($this->id);
-            $image->setType('product');
-//        }
+        if (!$this->productItemImages->contains($productItemImage)) {
+            $this->productItemImages[] = $productItemImage;
+            $productItemImage->setProductItemId($this);
+        }
 
         return $this;
     }
 
-    public function removeImages(Images $image): self
+    public function removeProductItemImage(ProductItemImage $productItemImage): self
     {
-        if ($this->images->contains($image)) {
-            $this->images->removeElement($image);
+        if ($this->productItemImages->contains($productItemImage)) {
+            $this->productItemImages->removeElement($productItemImage);
             // set the owning side to null (unless already changed)
-            if ($image->getEntityId() === $this->id && $image->getType() == 'product') {
-                $image->setEntityId(null);
+            if ($productItemImage->getProductItemId() === $this) {
+                $productItemImage->setProductItemId(null);
             }
         }
 
         return $this;
+    }
+
+    public function setImageFile($image = null)
+    {
+        foreach($image as $uploadedFile)
+        {
+            $file = new ProductItemImage();
+            $path = sha1(uniqid(mt_rand(), true)).'.'.$uploadedFile->guessExtension();
+            $file->setPath($path);
+            $file->setProductItemId($this);
+            $file->setTitle($uploadedFile->getClientOriginalName());
+            $uploadedFile->move(__DIR__ . '/../../public/uploads/images/products', $path);
+            $this->addProductItemImage($file);
+            unset($uploadedFile);
+        }
+    }
+
+    public function getImageFile()
+    {
+        return $this->getProductItemImages()->getValues();
     }
 }

@@ -5,9 +5,9 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\ImagesRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\ProductItemImageRepository")
  */
-class Images
+class ProductItemImage
 {
     /**
      * @ORM\Id()
@@ -17,19 +17,15 @@ class Images
     private $id;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\ManyToOne(targetEntity="App\Entity\ProductItem", inversedBy="productItemImages")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $entity_id;
+    private $product_item_id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $url;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $type;
+    private $path;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -46,38 +42,26 @@ class Images
         return $this->id;
     }
 
-    public function getEntityId(): ?int
+    public function getProductItemId(): ?ProductItem
     {
-        return $this->entity_id;
+        return $this->product_item_id;
     }
 
-    public function setEntityId(?int $entity_id): self
+    public function setProductItemId(?ProductItem $product_item_id): self
     {
-        $this->entity_id = $entity_id;
+        $this->product_item_id = $product_item_id;
 
         return $this;
     }
 
-    public function getUrl(): ?string
+    public function getPath(): ?string
     {
-        return $this->url;
+        return $this->path;
     }
 
-    public function setUrl(string $url): self
+    public function setPath(string $path): self
     {
-        $this->url = $url;
-
-        return $this;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(?string $type): self
-    {
-        $this->type = $type;
+        $this->path = $path;
 
         return $this;
     }

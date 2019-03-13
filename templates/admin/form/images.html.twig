@@ -5,7 +5,11 @@
                 {% set download_title = download_uri|split('/')|last ?: 'download'|trans({}, 'VichUploaderBundle') %}
                 <a href="{{ asset(download_uri) }}">{{ download_title }}</a>
             {% endif %}
-{{ dump(form) }}
+
+            {% for key, image in form.vars.data %}
+                <img src="/uploads/images/products/{{ image.path }}" width="100"/>
+            {% endfor %}
+
             <div class="row">
                 {% if form.delete is defined %}
                     <div class="col-sm-3 col-md-2">
