@@ -7,6 +7,7 @@
         "ext-iconv": "*",
         "doctrine/doctrine-bundle": "^1.9",
         "easycorp/easyadmin-bundle": "^1.17",
+        "overblog/graphql-bundle": "^0.11.11",
         "sensio/framework-extra-bundle": "^5.1",
         "symfony/asset": "4.1.*",
         "symfony/console": "4.1.*",
@@ -29,6 +30,7 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.0",
+        "overblog/graphiql-bundle": "^0.1.2",
         "symfony/debug-pack": "*",
         "symfony/dotenv": "4.1.*",
         "symfony/maker-bundle": "^1.0",

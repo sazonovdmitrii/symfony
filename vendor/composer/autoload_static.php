@@ -102,6 +102,12 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
             'PhpParser\\' => 10,
             'PackageVersions\\' => 16,
         ),
+        'O' => 
+        array (
+            'Overblog\\GraphiQLBundle\\' => 24,
+            'Overblog\\GraphQLGenerator\\' => 26,
+            'Overblog\\GraphQLBundle\\' => 23,
+        ),
         'M' => 
         array (
             'Monolog\\' => 8,
@@ -110,6 +116,10 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
         'J' => 
         array (
             'JavierEguiluz\\Bundle\\EasyAdminBundle\\' => 37,
+        ),
+        'G' => 
+        array (
+            'GraphQL\\' => 8,
         ),
         'F' => 
         array (
@@ -408,6 +418,18 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
         array (
             0 => __DIR__ . '/..' . '/ocramius/package-versions/src/PackageVersions',
         ),
+        'Overblog\\GraphiQLBundle\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/overblog/graphiql-bundle',
+        ),
+        'Overblog\\GraphQLGenerator\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/overblog/graphql-php-generator/src',
+        ),
+        'Overblog\\GraphQLBundle\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/overblog/graphql-bundle/src',
+        ),
         'Monolog\\' => 
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
@@ -419,6 +441,10 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
         'JavierEguiluz\\Bundle\\EasyAdminBundle\\' => 
         array (
             0 => __DIR__ . '/..' . '/easycorp/easyadmin-bundle/legacy',
+        ),
+        'GraphQL\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/webonyx/graphql-php/src',
         ),
         'Fig\\Link\\' => 
         array (

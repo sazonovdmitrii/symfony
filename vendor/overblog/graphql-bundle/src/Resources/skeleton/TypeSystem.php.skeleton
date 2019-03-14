@@ -1,0 +1,16 @@
+<?php
+<namespace>
+<useStatement>
+<classDocBlock>
+<classType>class <className> extends <parentClassName><implements>
+{<traits>
+
+<spaces>public function __construct(ConfigProcessor $configProcessor, GlobalVariables $globalVariables = null)
+<spaces>{
+<spaces><spaces>$configLoader = function(GlobalVariables $globalVariable) {
+<spaces><spaces><spaces>return <config>;
+<spaces><spaces>};
+<spaces><spaces>$config = $configProcessor->process(LazyConfig::create($configLoader, $globalVariables))->load();
+<spaces><spaces>parent::__construct($config);
+<spaces>}
+}
