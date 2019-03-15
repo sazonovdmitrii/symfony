@@ -1,0 +1,11 @@
+ProductItem:
+  type: object
+  config:
+    description: "Product Item"
+    fields:
+      id:
+        type: "Int!"
+        description: "Product Item Id."
+      name:
+        type: "String"
+        description: "Product Item Name"

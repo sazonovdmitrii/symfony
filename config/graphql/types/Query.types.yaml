@@ -1,0 +1,7 @@
+Query:
+  type: object
+  config:
+    description: "Product Item ORM repository"
+    fields:
+      productitem:
+        type: "ProductItem"
