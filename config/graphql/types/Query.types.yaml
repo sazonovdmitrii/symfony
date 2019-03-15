@@ -5,3 +5,8 @@ Query:
     fields:
       productitem:
         type: "ProductItem"
+        args:
+            id:
+              description: "Resolves using the product item id."
+              type: "Int"
+        resolve: "@=resolver('ProductItem', [args])"
