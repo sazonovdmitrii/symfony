@@ -13,7 +13,7 @@ class Basket extends LpService
             ->getSession()
             ->get('basket');
 
-        return count($basket['items']->getValues());
+        return (isset($basket['items'])) ? count($basket['items']->getValues()) : 0;
     }
 
     /**
