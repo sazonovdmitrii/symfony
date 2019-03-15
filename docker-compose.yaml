@@ -23,19 +23,23 @@ services:
             - postgres
             - db_lp:mysql
             - memcached
+        networks:
+            main:
+                aliases:
+                    - php
     nginx:
         build: nginx
         ports:
             - '8081:80'
             - '1337:1337'
-        links:
-            - php
-            - node
         volumes_from:
             - php
-            - node
         volumes:
             - ./logs/nginx/:/var/log/nginx:cached
+        networks:
+            main:
+                aliases:
+                    - nginx
     db_lp:
         image: mariadb:latest
         restart: on-failure
@@ -54,12 +58,18 @@ services:
           - "11212:11211"
     node:
         image: "node:lts"
-        user: "node"
+        restart: on-failure
         working_dir: /home/node/app
-        environment:
-            - NODE_ENV=development
         volumes:
             - ./front:/home/node/app
+        environment:
+            - GRAPHQL=http://nginx:1337/graphql/
         command: "sh node.sh"
         expose:
             - "3000"
+        networks:
+            main:
+                aliases:
+                    - node
+networks:
+    main:
