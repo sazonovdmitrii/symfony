@@ -1,25 +1,25 @@
 import React from 'react';
-import styles from './styles.css';
 
-export default ({ children: childrenProp, value, onChange }) => {
+export default ({ children: childrenProp, index }) => {
     let childIndex = 0;
     const children = React.Children.map(childrenProp, child => {
         if (!React.isValidElement(child)) {
             return null;
         }
 
-        const childValue = child.props.value || childIndex;
-        const selected = childValue === value;
+        const childProps = child.props;
+        const childValue = childProps.value || childIndex;
+        const selected = childValue === index;
 
         childIndex += 1;
 
+        if (!selected) return null;
+
         return React.cloneElement(child, {
             selected,
-            onClick: onChange,
-            index: childIndex,
             value: childValue,
         });
     });
 
-    return <div className={styles.row}>{children}</div>;
+    return children;
 };

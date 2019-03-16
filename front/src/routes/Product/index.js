@@ -1,9 +1,26 @@
 import React, { Component } from 'react';
 
 import Button from 'components/Button';
+import Tabs from 'components/Tabs';
+import Tab from 'components/Tabs/Tab';
+import TabsView from 'components/Tabs/TabsView';
 
 export default class Product extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            tabIndex: 0,
+        };
+    }
+    handleChangeTab = ({ value }) => {
+        this.setState({
+            tabIndex: value,
+        });
+    };
     render() {
+        const { tabIndex } = this.state;
+
         return (
             <div className="product">
                 <p class="admin-edit">
@@ -49,52 +66,51 @@ export default class Product extends Component {
                             </div>
                         </div>
                         <div class="product__brand-info">
-                            <input type="radio" name="odin" checked="checked" id="tab1" />
-                            <label for="tab1" class="product__brand-info-li">
-                                Доставка
-                            </label>
-                            <input type="radio" name="odin" id="tab2" />
-                            <label for="tab2" class="product__brand-info-li">
-                                Подарки к заказу
-                                <span class="gifts-json__count" data-render="gifts_count">
-                                    2
-                                </span>
-                            </label>
-                            <input type="radio" name="odin" id="tab3" />
-                            <label for="tab3" class="product__brand-info-li">
-                                Оплата
-                            </label>
-                            <div class="product__brand-info-shipp product__brand-info-block" id="block1">
-                                <p class="product__brand-info-shipp-p">
-                                    Стоимость:
-                                    <span data-render="minDelivery" data-price="1000">
-                                        бесплатно по Москве от 1000 руб.; по&nbsp;России от 3000 руб.
+                            <Tabs value={tabIndex} onChange={this.handleChangeTab}>
+                                <Tab className="product__brand-info-li" selected>
+                                    Доставка
+                                </Tab>
+                                <Tab className="product__brand-info-li">
+                                    Подарки к заказу
+                                    <span class="gifts-json__count" data-render="gifts_count">
+                                        2
                                     </span>
-                                </p>
-                                <p class="product__brand-info-shipp-p">
-                                    Доставка по Москве:
-                                    <span
-                                        data-render="delivery_string"
-                                        class="product__brand-info-shipp-p-date"
-                                    >
-                                        1-3 дня
-                                    </span>
-                                </p>
-                                <ul class="product__brand-info-shipp-ul">
-                                    <p class="product__brand-info-shipp-ul-p">Способ доставки:</p>
-                                    <li class="product__brand-info-shipp-ul-post">
-                                        <a href="http://laparfumerie.ru/info/dostavka-pochta-rossii.htm">
-                                            Почта России
-                                        </a>
-                                        ,
-                                    </li>
-                                    <li class="product__brand-info-shipp-ul-post">
-                                        <a href="http://laparfumerie.ru/info/delivery-and-payment.htm">
-                                            Собственная курьерская служба
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
+                                </Tab>
+                                <Tab className="product__brand-info-li">Оплата</Tab>
+                            </Tabs>
+                            <TabsView index={tabIndex}>
+                                <div class="product__brand-info-shipp product__brand-info-block">
+                                    <p class="product__brand-info-shipp-p">
+                                        Стоимость:
+                                        <span data-render="minDelivery" data-price="1000">
+                                            бесплатно по Москве от 1000 руб.; по&nbsp;России от 3000 руб.
+                                        </span>
+                                    </p>
+                                    <p class="product__brand-info-shipp-p">
+                                        Доставка по Москве:
+                                        <span
+                                            data-render="delivery_string"
+                                            class="product__brand-info-shipp-p-date"
+                                        >
+                                            1-3 дня
+                                        </span>
+                                    </p>
+                                    <ul class="product__brand-info-shipp-ul">
+                                        <p class="product__brand-info-shipp-ul-p">Способ доставки:</p>
+                                        <li class="product__brand-info-shipp-ul-post">
+                                            <a href="http://laparfumerie.ru/info/dostavka-pochta-rossii.htm">
+                                                Почта России
+                                            </a>
+                                            ,
+                                        </li>
+                                        <li class="product__brand-info-shipp-ul-post">
+                                            <a href="http://laparfumerie.ru/info/delivery-and-payment.htm">
+                                                Собственная курьерская служба
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </TabsView>
                         </div>
                     </div>
                     <div className="product__image">image</div>

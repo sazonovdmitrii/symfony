@@ -8,15 +8,14 @@ const cx = classnames.bind(styles);
 
 export default class Tab extends Component {
     handleClick = () => {
-        const { onClick, value, visited } = this.props;
+        const { onClick, value } = this.props;
 
-        onClick({ step: value, visited });
+        onClick({ value });
     };
 
     render() {
-        const { selected, visited, children } = this.props;
-        const buttonClassName = cx(styles.button, {
-            visited,
+        const { selected, children, className } = this.props;
+        const buttonClassName = cx(styles.tab, className, {
             active: selected,
         });
 

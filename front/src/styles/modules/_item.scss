@@ -216,7 +216,8 @@
             }
 
             &-shipp {
-                display: none;
+                z-index: 2;
+                position: relative;
                 font-size: 14px;
 
                 //line-height: 1;

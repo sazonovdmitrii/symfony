@@ -4,13 +4,13 @@
 
 ### Scripts
 
-###`yarn start`
+`yarn start`
 Start webpack-dev-server w/o ssr.
 
-###`yarn build`
+`yarn build`
 Build new bundle.
 
-###`yarn ssr:start`
+`yarn ssr:start`
 Start nodejs server with ssr.(PRODUCTION)
 
 ### Stack
