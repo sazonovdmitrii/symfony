@@ -17,7 +17,10 @@ easy_admin:
             class: App\Entity\Users
             list:
                 fields: ['id', 'email', 'roles']
-
+        Menu:
+            class: App\Entity\Menu
+            list:
+                fields: ['id', 'name', 'title']
         Catalog:
             class: App\Entity\Catalog
             list:
@@ -79,3 +82,4 @@ easy_admin:
           - Order
           - Delivery
           - PaymentMethod
+          - Menu
