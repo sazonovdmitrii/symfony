@@ -14,6 +14,10 @@ export function createClient() {
     const httpLink = new createHttpLink({
         credentials: 'same-origin',
         uri: GRAPHQL,
+        fetchOptions: {
+            mode: 'no-cors',
+        },
+        connectToDevTools: !SERVER,
     });
 
     // If we're in the browser, we'd have received initial state from the

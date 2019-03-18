@@ -241,7 +241,7 @@ const config = {
     },
     node: {
         setImmediate: false,
-        process: !isProd,
+        // process: !isProd,
         module: 'empty',
         dgram: 'empty',
         fs: 'empty',
