@@ -21,6 +21,10 @@ easy_admin:
             class: App\Entity\Menu
             list:
                 fields: ['id', 'name', 'title']
+        MenuItem:
+            class: App\Entity\MenuItem
+            list:
+                fields: ['id', 'title']
         Catalog:
             class: App\Entity\Catalog
             list:
@@ -82,4 +86,5 @@ easy_admin:
           - Order
           - Delivery
           - PaymentMethod
-          - Menu
+          - label: 'Menu'
+            children: ['Menu', 'MenuItem']

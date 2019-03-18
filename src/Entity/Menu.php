@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -30,6 +32,16 @@ class Menu
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $created;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\MenuItem", mappedBy="entity_id")
+     */
+    private $menuItems;
+
+    public function __construct()
+    {
+        $this->menuItems = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -68,6 +80,37 @@ class Menu
     public function setCreated(?\DateTimeInterface $created): self
     {
         $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|MenuItem[]
+     */
+    public function getMenuItems(): Collection
+    {
+        return $this->menuItems;
+    }
+
+    public function addMenuItem(MenuItem $menuItem): self
+    {
+        if (!$this->menuItems->contains($menuItem)) {
+            $this->menuItems[] = $menuItem;
+            $menuItem->setEntityId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMenuItem(MenuItem $menuItem): self
+    {
+        if ($this->menuItems->contains($menuItem)) {
+            $this->menuItems->removeElement($menuItem);
+            // set the owning side to null (unless already changed)
+            if ($menuItem->getEntityId() === $this) {
+                $menuItem->setEntityId(null);
+            }
+        }
 
         return $this;
     }
