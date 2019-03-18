@@ -17,9 +17,9 @@
         @include TextProRegular;
 
         box-sizing: border-box;
-        line-height: $MENULINFONTSIZE;
-        padding: calculateRem($PADDINGS / 3);
-        background: $TEXTBACKGORUND;
+        line-height: $MENULINFONTSIZE !important;
+        padding: calculateRem($PADDINGS / 3) !important;
+        background: $TEXTBACKGORUND !important;
         width: 100%;
         border: 1px solid $COLORLINES;
         border-radius: calculateRem(5px);
@@ -33,9 +33,7 @@
         }
 
         @include breakpoint($screen-md) {
-            width: 160px;
-            height: $PADDINGS;
-            box-sizing: content-box;
+            width: 160px !important;
         }
 
         @include when('articles') {

@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import Helmet from 'react-helmet';
 import { hot } from 'react-hot-loader/root';
 import { Switch, Route, withRouter } from 'react-router';
-import gql from 'graphql-tag';
-import { Query } from 'react-apollo';
 
 import routes from './routes';
 
@@ -12,15 +10,6 @@ import Footer from './components/Footer';
 import Container from './components/Container';
 import Breadcrumbs from './components/Breadcrumbs';
 import ScrollToTop from './components/ScrollToTop';
-
-const TEST = gql`
-    {
-        productitem(id: 1) {
-            id
-            name
-        }
-    }
-`;
 
 const App = props => (
     <div>
@@ -32,18 +21,6 @@ const App = props => (
             </title>
         </Helmet>
         <Container>
-            <Query query={TEST}>
-                {({ loading, error, data }) => {
-                    if (loading) return 'Loading...';
-                    if (error) return `Error! ${error.message}`;
-
-                    return (
-                        <div>
-                            id: {data.id} name:{data.name}
-                        </div>
-                    );
-                }}
-            </Query>
             <Header />
             <Breadcrumbs items={[{ name: 'Главная', url: '/' }, { name: 'Парфюмерия' }]} />
             <Switch>

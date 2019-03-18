@@ -1,7 +1,27 @@
 import React, { Component } from 'react';
+import gql from 'graphql-tag';
+import { Query } from 'react-apollo';
 
 import Benefits from 'components/Benefits';
 import BestSales from 'components/BestSales';
+
+const TEST = gql`
+    {
+        productitem(id: 1) {
+            id
+            name
+        }
+    }
+`;
+
+const TEST2 = gql`
+    {
+        productitem(id: 2) {
+            id
+            name
+        }
+    }
+`;
 
 export default class Home extends Component {
     constructor(props) {
@@ -12,6 +32,30 @@ export default class Home extends Component {
 
         return (
             <div className="homepage">
+                <Query query={TEST}>
+                    {({ loading, error, data }) => {
+                        if (loading) return 'Loading...';
+                        if (error) return `Error! ${error.message}`;
+
+                        return (
+                            <div>
+                                id: {data.id} name:{data.name}
+                            </div>
+                        );
+                    }}
+                </Query>
+                <Query query={TEST2}>
+                    {({ loading, error, data }) => {
+                        if (loading) return 'Loading...';
+                        if (error) return `Error! ${error.message}`;
+
+                        return (
+                            <div>
+                                id: {data.id} name:{data.name}
+                            </div>
+                        );
+                    }}
+                </Query>
                 <section className="homepage__slider">
                     <div
                         data-behavior="carouselModule"

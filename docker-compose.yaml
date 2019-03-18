@@ -12,6 +12,10 @@ services:
 #        - db-data:/var/lib/postgresql/data:rw
         ports:
         - "5432:5432"
+        networks:
+            main:
+                aliases:
+                    - postgres
     php:
         build: php-fpm
         ports:
@@ -19,10 +23,6 @@ services:
         volumes:
             - ${PWD}:/var/www/symfony
             - ./logs/symfony:/var/www/symfony/var/logs
-        links:
-            - postgres
-            - db_lp:mysql
-            - memcached
         networks:
             main:
                 aliases:
@@ -52,10 +52,18 @@ services:
           - MYSQL_ROOT_PASSWORD=root
           - MYSQL_DATABASE=lp
           - MYSQL_USER=root
+        networks:
+            main:
+                aliases:
+                    - db_lp:mysql
     memcached:
         image: memcached:1.4
         ports:
           - "11212:11211"
+        networks:
+            main:
+                aliases:
+                    - memcached
     node:
         image: "node:lts"
         restart: on-failure

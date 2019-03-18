@@ -2,7 +2,7 @@ import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloLink } from 'apollo-link';
 import { onError } from 'apollo-link-error';
-import { HttpLink } from 'apollo-link-http';
+import { createHttpLink } from 'apollo-link-http';
 
 export function createClient() {
     const cache = new InMemoryCache();
@@ -10,7 +10,7 @@ export function createClient() {
     // Create a HTTP client (both server/client). It takes the GraphQL
     // server from the `GRAPHQL` environment variable, which by default is
     // set to an external playground at https://graphqlhub.com/graphql
-    const httpLink = new HttpLink({
+    const httpLink = new createHttpLink({
         credentials: 'same-origin',
         uri: GRAPHQL,
     });

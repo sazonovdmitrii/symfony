@@ -17,6 +17,8 @@ const isAnalyze = process.env.ANALYZE || false;
 
 const cssFilename = isProd ? '[name].[contenthash:8].css' : '[name].css';
 
+require('dotenv').config();
+
 const PATHS = {
     polyfills: path.join(__dirname, 'src/polyfills'),
     app: path.join(__dirname, 'src'),

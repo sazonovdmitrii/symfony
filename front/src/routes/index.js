@@ -16,14 +16,6 @@ import Brands from './Brands';
 import User from './User';
 import Basket from './Basket';
 
-const GET_CONTENT = gql`
-    {
-        content(slug: "") {
-            id
-            breed
-        }
-    }
-`;
 
 const component = props => {
     console.log(props);
