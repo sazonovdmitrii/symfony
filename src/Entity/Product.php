@@ -54,10 +54,10 @@ class Product
     private $productItems;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ProductUrl", mappedBy="entity_id")
+     * @ORM\OneToMany(targetEntity="App\Entity\ProductUrl", mappedBy="entity")
      */
     private $productUrls;
-    
+
     public function __construct()
     {
         $this->catalog = new ArrayCollection();
@@ -201,7 +201,7 @@ class Product
     {
         if (!$this->productUrls->contains($productUrl)) {
             $this->productUrls[] = $productUrl;
-            $productUrl->setEntityId($this);
+            $productUrl->setEntity($this);
         }
 
         return $this;
@@ -212,8 +212,8 @@ class Product
         if ($this->productUrls->contains($productUrl)) {
             $this->productUrls->removeElement($productUrl);
             // set the owning side to null (unless already changed)
-            if ($productUrl->getEntityId() === $this) {
-                $productUrl->setEntityId(null);
+            if ($productUrl->getEntity() === $this) {
+                $productUrl->setEntity(null);
             }
         }
 
