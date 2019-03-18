@@ -165,7 +165,7 @@ const config = {
     },
     plugins: [
         new webpack.DefinePlugin({
-            GRAPHQL: JSON.stringify(process.env.GRAPHQL),
+            GRAPHQL: JSON.stringify(process.env.DOCKER_GRAPHQL || process.env.GRAPHQL),
             SERVER: true,
             SEOHIDE: true,
             WS_SUBSCRIPTIONS: JSON.stringify(process.env.WS_SUBSCRIPTIONS),
