@@ -9,6 +9,10 @@ easy_admin:
             class: App\Entity\ProductUrl
             list:
                 fields: ['id', 'url', 'created']
+        CatalogUrl:
+            class: App\Entity\CatalogUrl
+            list:
+                fields: ['id', 'url', 'created']
         Users:
             class: App\Entity\Users
             list:
@@ -67,7 +71,7 @@ easy_admin:
             - 'admin/form/images.html.twig'
         menu:
           - label: 'Urls'
-            children: ['ProductUrl']
+            children: ['ProductUrl', 'CatalogUrl']
           - Users
           - Catalog
           - Items

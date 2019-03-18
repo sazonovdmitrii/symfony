@@ -53,9 +53,15 @@ class Catalog
      */
     private $products;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\CatalogUrl", mappedBy="entity_id")
+     */
+    private $catalogUrls;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
+        $this->catalogUrls = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -166,5 +172,36 @@ class Catalog
     public function __toString()
     {
         return $this->name;
+    }
+
+    /**
+     * @return Collection|CatalogUrl[]
+     */
+    public function getCatalogUrls(): Collection
+    {
+        return $this->catalogUrls;
+    }
+
+    public function addCatalogUrl(CatalogUrl $catalogUrl): self
+    {
+        if (!$this->catalogUrls->contains($catalogUrl)) {
+            $this->catalogUrls[] = $catalogUrl;
+            $catalogUrl->setEntityId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCatalogUrl(CatalogUrl $catalogUrl): self
+    {
+        if ($this->catalogUrls->contains($catalogUrl)) {
+            $this->catalogUrls->removeElement($catalogUrl);
+            // set the owning side to null (unless already changed)
+            if ($catalogUrl->getEntityId() === $this) {
+                $catalogUrl->setEntityId(null);
+            }
+        }
+
+        return $this;
     }
 }

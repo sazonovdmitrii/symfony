@@ -5,9 +5,9 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\ProductUrlRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\CatalogUrlRepository")
  */
-class ProductUrl
+class CatalogUrl
 {
     /**
      * @ORM\Id()
@@ -17,7 +17,7 @@ class ProductUrl
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="productUrls")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Catalog", inversedBy="catalogUrls")
      */
     private $entity_id;
 
@@ -36,12 +36,12 @@ class ProductUrl
         return $this->id;
     }
 
-    public function getEntityId(): ?Product
+    public function getEntityId(): ?Catalog
     {
         return $this->entity_id;
     }
 
-    public function setEntityId(?Product $entity_id): self
+    public function setEntityId(?Catalog $entity_id): self
     {
         $this->entity_id = $entity_id;
 
