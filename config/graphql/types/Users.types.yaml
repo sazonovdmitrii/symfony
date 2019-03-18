@@ -1,0 +1,11 @@
+Users:
+  type: object
+  config:
+    description: "Users"
+    fields:
+      id:
+        type: "Int!"
+        description: "User Id."
+      email:
+        type: "String"
+        description: "Email"

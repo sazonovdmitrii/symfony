@@ -52,12 +52,18 @@ class Product
      * @ORM\ManyToMany(targetEntity="App\Entity\ProductItem", mappedBy="product_id")
      */
     private $productItems;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ProductUrl", mappedBy="entity_id")
+     */
+    private $productUrls;
     
     public function __construct()
     {
         $this->catalog = new ArrayCollection();
         $this->catalogs = new ArrayCollection();
         $this->productItems = new ArrayCollection();
+        $this->productUrls = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -178,6 +184,37 @@ class Product
         if ($this->productItems->contains($productItem)) {
             $this->productItems->removeElement($productItem);
             $productItem->removeProductId($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductUrl[]
+     */
+    public function getProductUrls(): Collection
+    {
+        return $this->productUrls;
+    }
+
+    public function addProductUrl(ProductUrl $productUrl): self
+    {
+        if (!$this->productUrls->contains($productUrl)) {
+            $this->productUrls[] = $productUrl;
+            $productUrl->setEntityId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductUrl(ProductUrl $productUrl): self
+    {
+        if ($this->productUrls->contains($productUrl)) {
+            $this->productUrls->removeElement($productUrl);
+            // set the owning side to null (unless already changed)
+            if ($productUrl->getEntityId() === $this) {
+                $productUrl->setEntityId(null);
+            }
         }
 
         return $this;

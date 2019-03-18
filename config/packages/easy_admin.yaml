@@ -4,7 +4,11 @@ easy_admin:
         Urls:
             class: App\Entity\Urls
             list:
-                fields: ['id', 'url', 'type', 'created']
+                fields: ['id', 'url', 'created']
+        ProductUrl:
+            class: App\Entity\ProductUrl
+            list:
+                fields: ['id', 'url', 'created']
         Users:
             class: App\Entity\Users
             list:
@@ -42,6 +46,8 @@ easy_admin:
                     - catalogs
                     - { type: 'tab', label: 'Product Items' }
                     - productItems
+                    - { type: 'tab', label: 'Virtual Urls' }
+                    - productUrls
         Order:
             class: App\Entity\Orders
             list:
@@ -59,3 +65,13 @@ easy_admin:
         form_theme:
             - '@EasyAdmin/form/bootstrap_3_horizontal_layout.html.twig'
             - 'admin/form/images.html.twig'
+        menu:
+          - label: 'Urls'
+            children: ['ProductUrl']
+          - Users
+          - Catalog
+          - Items
+          - Product
+          - Order
+          - Delivery
+          - PaymentMethod
