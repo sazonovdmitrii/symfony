@@ -20,6 +20,7 @@ doctrine:
                 url: '%env(DATABASE_LP_PERL_URL)%'
                 driver: pdo_mysql
                 server_version: '5.7'
+                charset: UTF8
     orm:
         default_entity_manager: default
         entity_managers:

@@ -58,7 +58,7 @@ easy_admin:
                     - { type: 'tab', label: 'Product Items' }
                     - productItems
                     - { type: 'tab', label: 'Virtual Urls' }
-                    - productUrls
+                    - { property: 'productUrls', type: 'easyadmin_autocomplete' }
         Order:
             class: App\Entity\Orders
             list:

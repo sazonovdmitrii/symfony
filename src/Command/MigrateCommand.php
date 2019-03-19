@@ -29,10 +29,8 @@ class MigrateCommand extends ContainerAwareCommand
         $this->_lpDoctrine = $doctrine->getManager('lp_perl');
         $this->_defaultDoctrine = $doctrine->getManager();
         $this->output = $output;
-    
-        $this->product_urls();
-
         $this->products();
+        $this->product_urls();
     }
 
     protected function product_urls()
@@ -41,21 +39,25 @@ class MigrateCommand extends ContainerAwareCommand
 
         $doctrine = $this->_defaultDoctrine->getConnection();
 
-        $urls = $this->_lpDoctrine->getConnection()->prepare("SELECT * FROM virtual_urls WHERE type IN ('product', 'product_archive')");
+        $urls = $this->_lpDoctrine->getConnection()->prepare(
+            "SELECT * FROM virtual_urls WHERE type IN ('product', 'product_archive') AND eid IN (SELECT id FROM products)"
+        );
         $urls->execute();
 
-        $doctrine->query('DELETE FROM urls');
         $allUrls = $urls->fetchAll();
         $counter = 0;
         foreach($allUrls as $lpUrl) {
             $counter++;
             $url = str_replace('/ru/', '', $lpUrl['url']);
+            if($lpUrl['created'] == '0000-00-00 00:00:00') {
+                $lpUrl['created'] = '2019-01-01 00:00:00';
+            }
             $doctrine->exec(
                 "
                     INSERT INTO producturl (
                         id, 
                         url, 
-                        eid,                          
+                        entity_id,                          
                         created
                     ) VALUES(
                         " . $lpUrl['id'] . ", 
@@ -68,7 +70,7 @@ class MigrateCommand extends ContainerAwareCommand
             $this->output->writeln([$counter . '/' . count($allUrls)]);
         }
 
-        $this->output->writeln(['Url migration have done!']);
+        $this->output->writeln(['Product Url migration have done!']);
     }
 
     protected function products()
@@ -77,34 +79,58 @@ class MigrateCommand extends ContainerAwareCommand
 
         $doctrine = $this->_defaultDoctrine->getConnection();
 
-        $urls = $this->_lpDoctrine->getConnection()->prepare("SELECT * FROM virtual_urls");
-        $urls->execute();
+        $products = $this->_lpDoctrine->getConnection()->prepare("SELECT * FROM products");
+        $products->execute();
 
-        $doctrine->query('DELETE FROM urls');
-        $doctrine->beginTransaction();
+        $doctrine->query('DELETE FROM producturl');
+        $doctrine->query('DELETE FROM product');
+        $allProducts = $products->fetchAll();
 
-        foreach($urls->fetchAll() as $lpUrl) {
-            $url = str_replace('/ru/', '', $lpUrl['url']);
+        $counter = 0;
+        foreach($allProducts as $product) {
+            $counter++;
+            $name = $this->_getProductName($product['id']);
+            $visible = ($product['visible']) ? 't' : 'f';
+            if($product['created'] == '0000-00-00 00:00:00') {
+                $product['created'] = '2019-01-01 00:00:00';
+            }
+            if($product['updated'] == '0000-00-00 00:00:00') {
+                $product['updated'] = '2019-01-01 00:00:00';
+            }
             $doctrine->exec(
                 "
-                    INSERT INTO urls (
+                    INSERT INTO product (
                         id, 
-                        url, 
-                        eid, 
-                        type, 
-                        created
+                        visible, 
+                        name, 
+                        price, 
+                        created,
+                        updated
                     ) VALUES(
-                        " . $lpUrl['id'] . ", 
-                        '" . $url . "', 
-                        " . $lpUrl['eid'] . ",
-                        '" . $lpUrl['type'] . "',
-                        '" . $lpUrl['created'] . "'
+                        " . $product['id'] . ", 
+                        '" . $visible . "', 
+                        '" . $name . "', 
+                        " . $product['min_price'] . ",
+                        '" . $product['created'] . "',
+                        '" . $product['updated'] . "'
                     )
                 "
             );
+            $this->output->writeln([$counter . '/' . count($allProducts)]);
         }
-        $doctrine->commit();
-
         $this->output->writeln(['Products migration have done!']);
+    }
+
+    private function _getProductName(int $productId)
+    {
+        $products = $this->_lpDoctrine->getConnection()->prepare(
+            "select * from translations where eid=".$productId." and type=9"
+        );
+        $products->execute();
+        $productTranslation = $products->fetch();
+        if(isset($productTranslation['value'])) {
+            return str_replace("'", "''", $productTranslation['value']);
+        }
+        return '';
     }
 }
