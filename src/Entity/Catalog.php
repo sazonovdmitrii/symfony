@@ -54,7 +54,7 @@ class Catalog
     private $products;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\CatalogUrl", mappedBy="entity_id")
+     * @ORM\OneToMany(targetEntity="App\Entity\CatalogUrl", mappedBy="entity")
      */
     private $catalogUrls;
 
@@ -186,7 +186,7 @@ class Catalog
     {
         if (!$this->catalogUrls->contains($catalogUrl)) {
             $this->catalogUrls[] = $catalogUrl;
-            $catalogUrl->setEntityId($this);
+            $catalogUrl->setEntity($this);
         }
 
         return $this;
@@ -197,8 +197,8 @@ class Catalog
         if ($this->catalogUrls->contains($catalogUrl)) {
             $this->catalogUrls->removeElement($catalogUrl);
             // set the owning side to null (unless already changed)
-            if ($catalogUrl->getEntityId() === $this) {
-                $catalogUrl->setEntityId(null);
+            if ($catalogUrl->getEntity() === $this) {
+                $catalogUrl->setEntity(null);
             }
         }
 

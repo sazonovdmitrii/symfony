@@ -23,6 +23,9 @@ services:
         volumes:
             - ${PWD}:/var/www/symfony
             - ./logs/symfony:/var/www/symfony/var/logs
+        links:
+            - postgres
+            - db_lp:mysql
         networks:
             main:
                 aliases:

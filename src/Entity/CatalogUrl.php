@@ -17,11 +17,6 @@ class CatalogUrl
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Catalog", inversedBy="catalogUrls")
-     */
-    private $entity_id;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $url;
@@ -31,21 +26,14 @@ class CatalogUrl
      */
     private $created;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Catalog", inversedBy="catalogUrls")
+     */
+    private $entity;
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getEntityId(): ?Catalog
-    {
-        return $this->entity_id;
-    }
-
-    public function setEntityId(?Catalog $entity_id): self
-    {
-        $this->entity_id = $entity_id;
-
-        return $this;
     }
 
     public function getUrl(): ?string
@@ -75,5 +63,17 @@ class CatalogUrl
     public function __toString()
     {
         return $this->url;
+    }
+
+    public function getEntity(): ?Catalog
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(?Catalog $entity): self
+    {
+        $this->entity = $entity;
+
+        return $this;
     }
 }

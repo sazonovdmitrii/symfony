@@ -9,6 +9,9 @@ easy_admin:
             class: App\Entity\ProductUrl
             list:
                 fields: ['id', 'url', 'created']
+            form:
+                fields:
+                    - url
         CatalogUrl:
             class: App\Entity\CatalogUrl
             list:
@@ -29,6 +32,15 @@ easy_admin:
             class: App\Entity\Catalog
             list:
                 fields: ['id', 'name', 'visible']
+            form:
+              fields:
+                  - { type: 'tab' , label: 'General' }
+                  - visible
+                  - name
+                  - created
+                  - updated
+                  - { type: 'tab', label: 'Virtual Urls' }
+                  - { property: 'catalogUrls', type: 'easyadmin_autocomplete' }
 
         Items:
             class: App\Entity\ProductItem
