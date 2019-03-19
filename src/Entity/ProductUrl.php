@@ -17,11 +17,6 @@ class ProductUrl
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="productUrls")
-     */
-    private $entity_id;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $url;
@@ -31,21 +26,14 @@ class ProductUrl
      */
     private $created;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="productUrls")
+     */
+    private $entity;
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getEntityId(): ?Product
-    {
-        return $this->entity_id;
-    }
-
-    public function setEntityId(?Product $entity_id): self
-    {
-        $this->entity_id = $entity_id;
-
-        return $this;
     }
 
     public function getUrl(): ?string
@@ -75,5 +63,17 @@ class ProductUrl
     public function __toString()
     {
         return $this->url;
+    }
+
+    public function getEntity(): ?Product
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(?Product $entity): self
+    {
+        $this->entity = $entity;
+
+        return $this;
     }
 }

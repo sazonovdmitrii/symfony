@@ -30,44 +30,43 @@ class MigrateCommand extends ContainerAwareCommand
         $this->_defaultDoctrine = $doctrine->getManager();
         $this->output = $output;
     
-        $this->urls();
+        $this->product_urls();
 
         $this->products();
     }
 
-    protected function urls()
+    protected function product_urls()
     {
-        $this->output->writeln(['Migrating Urls...']);
+        $this->output->writeln(['Migrating Product Urls...']);
 
         $doctrine = $this->_defaultDoctrine->getConnection();
 
-        $urls = $this->_lpDoctrine->getConnection()->prepare("SELECT * FROM virtual_urls");
+        $urls = $this->_lpDoctrine->getConnection()->prepare("SELECT * FROM virtual_urls WHERE type IN ('product', 'product_archive')");
         $urls->execute();
 
         $doctrine->query('DELETE FROM urls');
-        $doctrine->beginTransaction();
-
-        foreach($urls->fetchAll() as $lpUrl) {
+        $allUrls = $urls->fetchAll();
+        $counter = 0;
+        foreach($allUrls as $lpUrl) {
+            $counter++;
             $url = str_replace('/ru/', '', $lpUrl['url']);
             $doctrine->exec(
                 "
-                    INSERT INTO urls (
+                    INSERT INTO producturl (
                         id, 
                         url, 
-                        eid, 
-                        type, 
+                        eid,                          
                         created
                     ) VALUES(
                         " . $lpUrl['id'] . ", 
                         '" . $url . "', 
-                        " . $lpUrl['eid'] . ",
-                        '" . $lpUrl['type'] . "',
+                        " . $lpUrl['eid'] . ",                        
                         '" . $lpUrl['created'] . "'
                     )
                 "
             );
+            $this->output->writeln([$counter . '/' . count($allUrls)]);
         }
-        $doctrine->commit();
 
         $this->output->writeln(['Url migration have done!']);
     }

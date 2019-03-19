@@ -1,7 +1,10 @@
 .idea
+var/cache/*
+var/cache
+/var/cache/*
 /var/cache
-/var/log
-/var/logs
+/db/*
 /db
-/logs
+logs/*
+var/log/*
 composer.lock
