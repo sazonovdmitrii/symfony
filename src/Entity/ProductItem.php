@@ -31,11 +31,6 @@ class ProductItem
     private $created;
 
     /**
-     * @ORM\Column(type="datetime")
-     */
-    private $updated;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
@@ -57,15 +52,29 @@ class ProductItem
     private $imageFile;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
-     * @var \DateTime
-     */
-    private $updatedAt;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\ProductItemImage", mappedBy="product_item_id", cascade={"persist", "remove" })
      */
     private $productItemImages;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updated;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="productItems")
+     */
+    private $entity;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $status;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $avarda_id;
 
     public function __construct()
     {
@@ -88,18 +97,6 @@ class ProductItem
     public function setCreated(\DateTimeInterface $created): self
     {
         $this->created = $created;
-
-        return $this;
-    }
-
-    public function getUpdated(): ?\DateTimeInterface
-    {
-        return $this->updated;
-    }
-
-    public function setUpdated(\DateTimeInterface $updated): self
-    {
-        $this->updated = $updated;
 
         return $this;
     }
@@ -227,5 +224,53 @@ class ProductItem
     public function getImageFile()
     {
         return $this->getProductItemImages()->getValues();
+    }
+
+    public function getUpdated(): ?\DateTimeInterface
+    {
+        return $this->updated;
+    }
+
+    public function setUpdated(?\DateTimeInterface $updated): self
+    {
+        $this->updated = $updated;
+
+        return $this;
+    }
+
+    public function getEntity(): ?Product
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(?Product $entity): self
+    {
+        $this->entity = $entity;
+
+        return $this;
+    }
+
+    public function getStatus(): ?bool
+    {
+        return $this->status;
+    }
+
+    public function setStatus(bool $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getAvardaId(): ?int
+    {
+        return $this->avarda_id;
+    }
+
+    public function setAvardaId(?int $avarda_id): self
+    {
+        $this->avarda_id = $avarda_id;
+
+        return $this;
     }
 }

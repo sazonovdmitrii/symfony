@@ -32,6 +32,7 @@ class MigrateCommand extends ContainerAwareCommand
         $this->_defaultDoctrine = $doctrine->getManager();
         $this->output = $output;
         $this->users();
+        $this->product_items();
         $this->catalogs();
         $this->catalog_urls();
         $this->products();
@@ -40,6 +41,7 @@ class MigrateCommand extends ContainerAwareCommand
 
     protected function users()
     {
+        $diff = 20000;
         $this->output->writeln(['Migrating Users...']);
         $users = $this->_lpDoctrine->getConnection()->prepare(
             "SELECT * FROM users"
@@ -47,28 +49,30 @@ class MigrateCommand extends ContainerAwareCommand
         $users->execute();
 
         $doctrine = $this->_defaultDoctrine->getConnection();
-        $doctrine->query('DELETE FROM users');
+        $doctrine->query('DELETE FROM users WHERE id > ' . $diff);
 
         $allUsers = $users->fetchAll();
         $passwordEncoder = $this->getContainer()->get('security.password_encoder');
         $counter = 0;
         foreach($allUsers as $lpUser) {
             $counter++;
-            $user = new Users();
-            $user->setEmail($lpUser['email']);
-            $user->setPassword($passwordEncoder->encodePassword(
-                $user,
-                $lpUser['password']
-            )
-            );
-            $roles = ['ROLE_USER'];
-            if($lpUser['is_admin']) {
-                $roles = ['ROLE_ADMIN'];
+            if($lpUser['id'] > $diff) {
+                $user = new Users();
+                $user->setEmail($lpUser['email']);
+                $user->setPassword($passwordEncoder->encodePassword(
+                    $user,
+                    $lpUser['password']
+                )
+                );
+                $roles = ['ROLE_USER'];
+                if($lpUser['is_admin']) {
+                    $roles = ['ROLE_ADMIN'];
+                }
+                $user->setRoles($roles);
+                $this->_defaultDoctrine->persist($user);
+                $this->_defaultDoctrine->flush();
+                $this->output->writeln([$counter . '/' . count($allUsers) . ' ----- ' . $lpUser['id']]);
             }
-            $user->setRoles($roles);
-            $this->_defaultDoctrine->persist($user);
-            $this->_defaultDoctrine->flush();
-            $this->output->writeln([$counter . '/' . count($allUsers)]);
         }
         $this->output->writeln(['Users migration have done!']);
     }
@@ -251,6 +255,57 @@ class MigrateCommand extends ContainerAwareCommand
         $this->output->writeln(['Catalogs migration have done!']);
     }
 
+    protected function product_items()
+    {
+        $this->output->writeln(['Migrating Products Items...']);
+
+        $doctrine = $this->_defaultDoctrine->getConnection();
+
+        $productsItems = $this->_lpDoctrine->getConnection()->prepare(
+            "SELECT * FROM products_items WHERE prod_id IN (SELECT id FROM products)"
+        );
+        $doctrine->query('DELETE FROM productitem');
+        $productsItems->execute();
+
+        $allProductsItems = $productsItems->fetchAll();
+
+        $counter = 0;
+        foreach($allProductsItems as $productsItem) {
+            $counter++;
+            $name = $this->_getProductItemName($productsItem['id']);
+            $visible = ($productsItem['available']) ? 't' : 'f';
+            if($productsItem['created'] == '0000-00-00 00:00:00') {
+                $productsItem['created'] = '2019-01-01 00:00:00';
+            }
+            if($productsItem['updated'] == '0000-00-00 00:00:00') {
+                $productsItem['updated'] = '2019-01-01 00:00:00';
+            }
+            $doctrine->exec(
+                "
+                    INSERT INTO productitem (
+                        id, 
+                        entity_id,
+                        status, 
+                        name, 
+                        avarda_id, 
+                        created,
+                        updated
+                    ) VALUES(
+                        " . $productsItem['id'] . ",
+                         " . $productsItem['prod_id'] . ",
+                        '" . $visible . "', 
+                        '" . $name . "', 
+                        " . $productsItem['avarda_id'] . ",
+                        '" . $productsItem['created'] . "',
+                        '" . $productsItem['updated'] . "'
+                    )
+                "
+            );
+            $this->output->writeln([$counter . '/' . count($allProductsItems) . '-----' . $productsItem['id']]);
+        }
+        $this->output->writeln(['Migrating Products Items have done!']);
+    }
+
     private function _getProductName(int $productId)
     {
         $products = $this->_lpDoctrine->getConnection()->prepare(
@@ -258,6 +313,19 @@ class MigrateCommand extends ContainerAwareCommand
         );
         $products->execute();
         $productTranslation = $products->fetch();
+        if(isset($productTranslation['value'])) {
+            return str_replace("'", "''", $productTranslation['value']);
+        }
+        return '';
+    }
+
+    private function _getProductItemName(int $productItemId)
+    {
+        $translation = $this->_lpDoctrine->getConnection()->prepare(
+            "SELECT * FROM translations WHERE eid=".$productItemId." AND type=14"
+        );
+        $translation->execute();
+        $productTranslation = $translation->fetch();
         if(isset($productTranslation['value'])) {
             return str_replace("'", "''", $productTranslation['value']);
         }

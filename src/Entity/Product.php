@@ -49,21 +49,21 @@ class Product
     private $catalogs;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\ProductItem", mappedBy="product_id")
-     */
-    private $productItems;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\ProductUrl", mappedBy="entity")
      */
     private $productUrls;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ProductItem", mappedBy="entity")
+     */
+    private $productItems;
 
     public function __construct()
     {
         $this->catalog = new ArrayCollection();
         $this->catalogs = new ArrayCollection();
-        $this->productItems = new ArrayCollection();
         $this->productUrls = new ArrayCollection();
+        $this->productItems = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -162,34 +162,6 @@ class Product
     }
 
     /**
-     * @return Collection|ProductItem[]
-     */
-    public function getProductItems(): Collection
-    {
-        return $this->productItems;
-    }
-
-    public function addProductItem(ProductItem $productItem): self
-    {
-        if (!$this->productItems->contains($productItem)) {
-            $this->productItems[] = $productItem;
-            $productItem->addProductId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProductItem(ProductItem $productItem): self
-    {
-        if ($this->productItems->contains($productItem)) {
-            $this->productItems->removeElement($productItem);
-            $productItem->removeProductId($this);
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|ProductUrl[]
      */
     public function getProductUrls(): Collection
@@ -214,6 +186,37 @@ class Product
             // set the owning side to null (unless already changed)
             if ($productUrl->getEntity() === $this) {
                 $productUrl->setEntity(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductItem[]
+     */
+    public function getProductItems(): Collection
+    {
+        return $this->productItems;
+    }
+
+    public function addProductItem(ProductItem $productItem): self
+    {
+        if (!$this->productItems->contains($productItem)) {
+            $this->productItems[] = $productItem;
+            $productItem->setEntity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductItem(ProductItem $productItem): self
+    {
+        if ($this->productItems->contains($productItem)) {
+            $this->productItems->removeElement($productItem);
+            // set the owning side to null (unless already changed)
+            if ($productItem->getEntity() === $this) {
+                $productItem->setEntity(null);
             }
         }
 
