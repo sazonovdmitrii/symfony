@@ -7,6 +7,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\Entity\Users;
 
 class MigrateCommand extends ContainerAwareCommand
 {
@@ -29,10 +31,46 @@ class MigrateCommand extends ContainerAwareCommand
         $this->_lpDoctrine = $doctrine->getManager('lp_perl');
         $this->_defaultDoctrine = $doctrine->getManager();
         $this->output = $output;
+        $this->users();
         $this->catalogs();
         $this->catalog_urls();
         $this->products();
         $this->product_urls();
+    }
+
+    protected function users()
+    {
+        $this->output->writeln(['Migrating Users...']);
+        $users = $this->_lpDoctrine->getConnection()->prepare(
+            "SELECT * FROM users"
+        );
+        $users->execute();
+
+        $doctrine = $this->_defaultDoctrine->getConnection();
+        $doctrine->query('DELETE FROM users');
+
+        $allUsers = $users->fetchAll();
+        $passwordEncoder = $this->getContainer()->get('security.password_encoder');
+        $counter = 0;
+        foreach($allUsers as $lpUser) {
+            $counter++;
+            $user = new Users();
+            $user->setEmail($lpUser['email']);
+            $user->setPassword($passwordEncoder->encodePassword(
+                $user,
+                $lpUser['password']
+            )
+            );
+            $roles = ['ROLE_USER'];
+            if($lpUser['is_admin']) {
+                $roles = ['ROLE_ADMIN'];
+            }
+            $user->setRoles($roles);
+            $this->_defaultDoctrine->persist($user);
+            $this->_defaultDoctrine->flush();
+            $this->output->writeln([$counter . '/' . count($allUsers)]);
+        }
+        $this->output->writeln(['Users migration have done!']);
     }
 
     protected function product_urls()
