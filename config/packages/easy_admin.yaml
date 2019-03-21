@@ -83,6 +83,9 @@ easy_admin:
             class: App\Entity\PaymentMethod
             list:
                 fields: ['id', 'name']
+        ImportProduct:
+            class: App\Entity\ImportProduct
+
     design:
         brand_color: 'black'
         form_theme:
@@ -98,5 +101,6 @@ easy_admin:
           - Order
           - Delivery
           - PaymentMethod
+          - ImportProduct
           - label: 'Menu'
             children: ['Menu', 'MenuItem']
