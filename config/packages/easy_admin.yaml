@@ -89,7 +89,8 @@ easy_admin:
     design:
         brand_color: 'black'
         form_theme:
-            - '@EasyAdmin/form/bootstrap_3_horizontal_layout.html.twig'
+            - 'admin/form/bootstrap_3_layout.html.twig'
+            - 'admin/form/bootstrap_3_horizontal_layout.html.twig'
             - 'admin/form/images.html.twig'
         menu:
           - label: 'Urls'
