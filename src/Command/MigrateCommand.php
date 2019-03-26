@@ -41,7 +41,7 @@ class MigrateCommand extends ContainerAwareCommand
 
     protected function users()
     {
-        $diff = 20000;
+        $diff = 0;
         $this->output->writeln(['Migrating Users...']);
         $users = $this->_lpDoctrine->getConnection()->prepare(
             "SELECT * FROM users"

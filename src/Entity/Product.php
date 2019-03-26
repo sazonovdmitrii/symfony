@@ -58,12 +58,18 @@ class Product
      */
     private $productItems;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\ProductTag", mappedBy="entity_id")
+     */
+    private $productTags;
+
     public function __construct()
     {
         $this->catalog = new ArrayCollection();
         $this->catalogs = new ArrayCollection();
         $this->productUrls = new ArrayCollection();
         $this->productItems = new ArrayCollection();
+        $this->productTags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -218,6 +224,34 @@ class Product
             if ($productItem->getEntity() === $this) {
                 $productItem->setEntity(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductTag[]
+     */
+    public function getProductTags(): Collection
+    {
+        return $this->productTags;
+    }
+
+    public function addProductTag(ProductTag $productTag): self
+    {
+        if (!$this->productTags->contains($productTag)) {
+            $this->productTags[] = $productTag;
+            $productTag->addEntityId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductTag(ProductTag $productTag): self
+    {
+        if ($this->productTags->contains($productTag)) {
+            $this->productTags->removeElement($productTag);
+            $productTag->removeEntityId($this);
         }
 
         return $this;

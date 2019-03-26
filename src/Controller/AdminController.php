@@ -57,4 +57,22 @@ class AdminController extends BaseAdminController
 
         return $this->executeDynamicMethod('render<EntityName>Template', array('edit', $this->entity['templates']['edit'], $parameters));
     }
+
+    public function listImportProductAction()
+    {
+        $this->dispatch(EasyAdminEvents::PRE_LIST);
+
+        $fields = $this->entity['list']['fields'];
+        $paginator = $this->findAll($this->entity['class'], $this->request->query->get('page', 1), $this->entity['list']['max_results'], $this->request->query->get('sortField'), $this->request->query->get('sortDirection'), $this->entity['list']['dql_filter']);
+
+        $this->dispatch(EasyAdminEvents::POST_LIST, array('paginator' => $paginator));
+
+        $parameters = array(
+            'paginator' => $paginator,
+            'fields' => $fields,
+            'delete_form_template' => $this->createDeleteForm($this->entity['name'], '__id__')->createView(),
+        );
+        $template = 'admin/ImportProduct/page.html.twig';
+        return $this->executeDynamicMethod('render<EntityName>Template', array('list', $template, $parameters));
+    }
 }

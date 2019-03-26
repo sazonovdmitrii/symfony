@@ -85,6 +85,8 @@ easy_admin:
                 fields: ['id', 'name']
         ImportProduct:
             class: App\Entity\ImportProduct
+        ProductTag:
+            class: App\Entity\ProductTag
 
     design:
         brand_color: 'black'
@@ -92,16 +94,15 @@ easy_admin:
             - 'admin/form/bootstrap_3_layout.html.twig'
             - 'admin/form/bootstrap_3_horizontal_layout.html.twig'
             - 'admin/form/images.html.twig'
+            - 'admin/default/list.html.twig'
         menu:
           - label: 'Urls'
             children: ['ProductUrl', 'CatalogUrl']
+          - label: 'Catalog'
+            children: ['Catalog', 'Product', 'Items', 'ProductTag']
+          - label: 'Order'
+            children: ['Order', 'Delivery', 'PaymentMethod', 'ProductTag']
           - Users
-          - Catalog
-          - Items
-          - Product
-          - Order
-          - Delivery
-          - PaymentMethod
           - ImportProduct
           - label: 'Menu'
             children: ['Menu', 'MenuItem']
