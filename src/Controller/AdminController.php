@@ -75,4 +75,11 @@ class AdminController extends BaseAdminController
         $template = 'admin/ImportProduct/page.html.twig';
         return $this->executeDynamicMethod('render<EntityName>Template', array('list', $template, $parameters));
     }
+
+    public function importproductImportProductAction()
+    {
+        echo "<pre>";
+        print_r($_FILES);
+        die();
+    }
 }
