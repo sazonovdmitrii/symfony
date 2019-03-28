@@ -78,8 +78,17 @@ class AdminController extends BaseAdminController
 
     public function importproductImportProductAction()
     {
-        echo "<pre>";
-        print_r($_FILES);
-        die();
+        $uploads = $this->getParameter('kernel.project_dir') . '/public/uploads/import/';
+
+        foreach($this->request->files->get("fileUpload") as $fileUpload) {
+            $fileUpload->move(
+                $uploads,
+                sha1(
+                    basename($fileUpload->getClientOriginalName()) . time()
+                ) . '.' . $fileUpload->getClientOriginalExtension()
+            );
+        }
+
+        return $this->redirectToReferrer();
     }
 }

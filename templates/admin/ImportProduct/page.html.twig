@@ -52,9 +52,11 @@
 
 {% block main %}
     {% set _list_item_actions = easyadmin_get_actions_for_list_item(_entity_config.name) %}
+
     <form action="/admin/?entity=ImportProduct&action=importproduct" method="post" enctype="multipart/form-data">
-        <input multiple type="file" id="multiple-upload"/>
-        <input type="submit" value="Upload">
+        <label> Выбрать файлы (XLS): </label>
+        <input type="file" name="fileUpload[]" multiple >
+        <input type="submit" name="Submit" value="Загрузить" >
     </form>
 
     {% block paginator %}
@@ -83,10 +85,6 @@
     <script src="{{ asset('bundles/easyadmin/javascript/jquery.MultiFile.min.js') }}"></script>
     <script type="text/javascript">
         $(function() {
-            $('#multiple-upload').MultiFile({
-                max: 3,
-                accept: 'gif|jpg|png|mp4|xls'
-            });
             $('#main').find('table .toggle input[type="checkbox"]').change(function() {
                 var toggle = $(this);
                 var newValue = toggle.prop('checked');
