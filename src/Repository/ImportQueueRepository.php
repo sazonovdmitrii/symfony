@@ -47,4 +47,11 @@ class ImportQueueRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function flushAll()
+    {
+        return $this->_em
+            ->createQuery('DELETE FROM ' . $this->_entityName)
+            ->execute();
+    }
 }

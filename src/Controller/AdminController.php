@@ -4,6 +4,9 @@ namespace App\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AdminController as BaseAdminController;
 use EasyCorp\Bundle\EasyAdminBundle\Event\EasyAdminEvents;
+use App\Entity\ImportQueue;
+use Doctrine\Common\Persistence\ObjectManager;
+use Magento\Catalog\Model\Layer\Filter\Dynamic\Improved;
 
 class AdminController extends BaseAdminController
 {
@@ -78,15 +81,21 @@ class AdminController extends BaseAdminController
 
     public function importproductImportProductAction()
     {
+        $this->getDoctrine()->getRepository(ImportQueue::class)->flushAll();
+
+        $manager = $this->getDoctrine()->getManager();
         $uploads = $this->getParameter('kernel.project_dir') . '/public/uploads/import/';
 
         foreach($this->request->files->get("fileUpload") as $fileUpload) {
-            $fileUpload->move(
-                $uploads,
-                sha1(
+            $filename = sha1(
                     basename($fileUpload->getClientOriginalName()) . time()
-                ) . '.' . $fileUpload->getClientOriginalExtension()
-            );
+                ) . '.' . $fileUpload->getClientOriginalExtension();
+            $fileUpload->move($uploads, $filename);
+
+            $queueItem = new ImportQueue();
+            $queueItem->setPath($filename);
+            $manager->persist($queueItem);
+            $manager->flush();
         }
 
         return $this->redirectToReferrer();
