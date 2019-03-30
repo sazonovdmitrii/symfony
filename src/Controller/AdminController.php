@@ -5,8 +5,6 @@ namespace App\Controller;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AdminController as BaseAdminController;
 use EasyCorp\Bundle\EasyAdminBundle\Event\EasyAdminEvents;
 use App\Entity\ImportQueue;
-use Doctrine\Common\Persistence\ObjectManager;
-use Magento\Catalog\Model\Layer\Filter\Dynamic\Improved;
 
 class AdminController extends BaseAdminController
 {
