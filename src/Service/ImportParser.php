@@ -4,16 +4,31 @@ namespace App\Service;
 
 class ImportParser
 {
-    public function getHappyMessage()
+    protected $path;
+
+    /**
+     * @param string $path
+     * @return $this
+     */
+    public function setPath(string $path)
     {
-        $messages = [
-            'You did it! You updated the system! Amazing!',
-            'That was one of the coolest updates I\'ve seen all day!',
-            'Great work! Keep going!',
-        ];
+        $this->path = $path;
+        return $this;
+    }
 
-        $index = array_rand($messages);
+    /**
+     * @return mixed
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
 
-        return $messages[$index];
+    public function process()
+    {
+        if(!($xls = $this->getPath())) {
+            throw new Exception('Path is required option');
+        }
+        var_dump($xls);
     }
 }

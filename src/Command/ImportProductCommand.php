@@ -12,12 +12,11 @@ class ImportProductCommand extends ContainerAwareCommand
     protected static $defaultName = 'lp:productimport';
     protected $importParser;
 
-    public function __construct(ImportParser $messageGenerator)
+    public function __construct(ImportParser $importParser)
     {
-        $this->importParser = $messageGenerator;
+        $this->importParser = $importParser;
         parent::__construct();
     }
-
 
     protected function configure()
     {
@@ -28,15 +27,15 @@ class ImportProductCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-//        $doctrine = $this->getContainer()->get('doctrine');
-//        $importQueue = new ImportQueue();
         $importQueueRepository = $this->getContainer()
             ->get('doctrine')
             ->getRepository(ImportQueue::class);
 
         $queue = $importQueueRepository->findAll();
         foreach($queue as $queueItem) {
-            var_dump($queueItem->getPath());
+            $this->importParser
+                ->setPath($queueItem->getPath())
+                ->process();
         }
         $output->writeln(['Import has done']);
     }

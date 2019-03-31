@@ -22,7 +22,8 @@ services:
             - '9002:9000'
         volumes:
             - ${PWD}:/var/www/symfony
-            - ./logs/symfony:/var/www/symfony/var/logs
+            - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+            - ./docker/php/php.ini:/usr/local/etc/php/php.ini
         links:
             - postgres
             - db_lp:mysql
@@ -38,6 +39,8 @@ services:
         volumes_from:
             - php
         volumes:
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+#            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
             - ./logs/nginx/:/var/log/nginx:cached
         networks:
             main:
