@@ -10,6 +10,11 @@ const cx = classnames.bind(styles);
 const MaskedInput = IMaskMixin(({ inputRef, ...props }) => <input ref={inputRef} {...props} />);
 
 export default class $Input extends Component {
+    static defaultProps = {
+        type: 'text',
+        theme: {},
+    };
+
     id = `input${nanoid()}`;
 
     state = {
@@ -58,17 +63,17 @@ export default class $Input extends Component {
     };
 
     render() {
-        const { type, label, required, mask, min, max, value, name, onChange } = this.props;
+        const { type, label, required, mask, min, max, value, name, onChange, theme } = this.props;
         const { focused, filled, error, text } = this.state;
-        const labelClassName = cx(styles.label, {
+        const labelClassName = cx(styles.label, theme.label, {
             focused,
             filled: filled || !!value,
             error,
         });
-        const inputClassName = cx(styles.input, {
+        const inputClassName = cx(styles.input, theme.input, {
             error,
         });
-        const textClassName = cx(styles.text, {
+        const textClassName = cx(styles.text, theme.text, {
             error,
         });
 

@@ -5,7 +5,9 @@ export default class Checkbox extends Component {
     static defaultProps = {
         checked: false,
     };
+
     id = `checkbox${nanoid()}`;
+
     handleChange = event => {
         const { checked } = event.target;
         const { onChange } = this.props;
@@ -14,6 +16,7 @@ export default class Checkbox extends Component {
             onChange(event, checked);
         }
     };
+
     render() {
         const { name, className, value, checked } = this.props;
 

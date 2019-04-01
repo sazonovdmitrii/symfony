@@ -6,6 +6,7 @@ export default class BestSales extends Component {
     constructor(props) {
         super(props);
     }
+
     render() {
         return (
             <div className="bestsales">

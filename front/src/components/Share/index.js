@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import vkIcon from './images/vk_soc.png';
 import fbIcon from './images/fb_soc.png';

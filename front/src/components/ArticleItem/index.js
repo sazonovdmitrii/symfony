@@ -9,9 +9,11 @@ export default class ArticleItem extends Component {
         author: 'FACE',
         name: 'Стиль Creed',
     };
+
     constructor(props) {
         super(props);
     }
+
     render() {
         const { url, image, has_video, author, name } = this.props;
 

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { withRouter } from 'react-router';
 
 class ScrollToTop extends Component {
@@ -8,7 +8,7 @@ class ScrollToTop extends Component {
         if (location.pathname !== prevProps.location.pathname) {
             window.scrollTo(0, 0);
 
-            if (!/\/$/.test(location.pathname)) history.replace(location.pathname + '/');
+            if (!/\/$/.test(location.pathname)) history.replace(`${location.pathname}/`);
         }
     }
 

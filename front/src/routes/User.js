@@ -1,48 +1,26 @@
 import React, { Component } from 'react';
 import { Switch, Route, withRouter } from 'react-router';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
-import Personal from './Personal';
 import AddressBook from './AddressBook';
-import Security from './Security';
+import EditAddress from './EditAddress';
+import NotFound from './NotFound';
 import Orders from './Orders';
+import Personal from './Personal';
+import Register from './Register';
+import RemindPassword from './RemindPassword';
+import Security from './Security';
 
-const component = props => {
-    const { first, second } = props.match.params;
-    const route = getRoute(second);
-
-    return route;
-};
-
-const getRoute = (param = '') => {
-    switch (param) {
-        case 'personal':
-            return <Personal />;
-        case 'addressbook':
-            return <AddressBook />;
-        case 'security':
-            return <Security />;
-        case 'orders':
-            return <Orders />;
-        default:
-            return null;
-    }
-};
-
-const getContent = (first = '', second) => {
-    switch (param) {
-        case 'personal':
-            return <Personal />;
-        case 'addressbook':
-            return <AddressBook />;
-        case 'security':
-            return <Security />;
-        case 'orders':
-            return <Orders />;
-        default:
-            return null;
-    }
-};
+const routes = [
+    { path: '/user/addressbook', component: AddressBook },
+    { path: '/user/addressbook/edit/:id', component: EditAddress },
+    { path: '/user/orders', component: Orders },
+    { path: '/user/personal', component: Personal },
+    { path: '/user/register', component: Register },
+    { path: '/user/remind-password', component: RemindPassword },
+    { path: '/user/security', component: Security },
+    { component: NotFound },
+];
 
 const getTitle = (params = '') => {
     switch (params) {
@@ -85,31 +63,32 @@ class User extends Component {
                     <h1 className="page-header__title">{title}</h1>
                     <ul className="page-header-menu">
                         <li className="page-header-menu__item">
-                            <Link to="/user/personal" className="page-header-menu__item-link">
+                            <NavLink to="/user/personal" className="page-header-menu__item-link">
                                 Персональные данные
-                            </Link>
+                            </NavLink>
                         </li>
                         <li className="page-header-menu__item">
-                            <Link to="/user/addressbook" className="page-header-menu__item-link">
+                            <NavLink to="/user/addressbook" className="page-header-menu__item-link">
                                 Моя адресная книга
-                            </Link>
+                            </NavLink>
                         </li>
                         <li className="page-header-menu__item">
-                            <Link to="/user/security" className="page-header-menu__item-link">
+                            <NavLink to="/user/security" className="page-header-menu__item-link">
                                 Смена пароля
-                            </Link>
+                            </NavLink>
                         </li>
                         <li className="page-header-menu__item">
-                            <Link to="/user/orders" className="page-header-menu__item-link">
+                            <NavLink to="/user/orders" className="page-header-menu__item-link">
                                 Мои заказы
-                            </Link>
+                            </NavLink>
                         </li>
                     </ul>
                 </div>
                 <div className="cabinet-content">
                     <Switch>
-                        <Route path="/:first/:second" component={component} exact={true} />
-                        <Route path="/:first/:second/:third/:fourth" component={component} exact={true} />
+                        {routes.map(({ component, path }) => (
+                            <Route key={path} path={path} component={component} exact />
+                        ))}
                     </Switch>
                 </div>
             </div>

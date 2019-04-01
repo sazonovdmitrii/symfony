@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 import UserMenu from 'components/UserMenu';
@@ -22,7 +22,7 @@ export default () => (
                         </a>
                     </div>
                     <div className="header__mobilemenu">
-                        <button data-handle="openmobilemenu" className="header__openmobile">
+                        <button type="button" data-handle="openmobilemenu" className="header__openmobile">
                             <img src={mobileMenuIcon} alt="" />
                         </button>
                     </div>

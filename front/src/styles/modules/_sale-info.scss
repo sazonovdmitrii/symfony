@@ -3,35 +3,38 @@
 
     @include has('title') {
         @include TextProExtraThin;
-        line-height: 1;
+
+        line-height: 1.2;
         font-size: calculateRem(50px);
         letter-spacing: 1px;
         margin-bottom: 16px;
     }
 
     @include has('body') {
-        @include no-column();
+        flex: 1;
+        padding: 0 15px;
         font-size: 0.9375rem;
-        line-height: 1.4;
+        line-height: 1.5;
     }
 
     @include has('date') {
-        display: none;
         @include TextProMedium;
+
+        display: none;
         font-size: calculateRem(15px);
-        line-height: 1.5;
         color: $FOOTERTEXT;
+
         @include breakpoint($screen-md) {
             display: block;
         }
     }
 
     @include has('image') {
+        order: 2;
         display: none;
-        width: auto;
         height: 290px;
-        float: right;
-        margin-left: 15px;
+        flex: 1;
+        padding: 0 15px;
 
         @include breakpoint($screen-md) {
             display: block;

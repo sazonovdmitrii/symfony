@@ -26,10 +26,7 @@
 // --------------------------------------------------------------------------
 
 @include new('header-fixed') {
-    height: 100px;
-    width: 100%;
-
-    @include no-column;
+    height: 50px;
 
     @include breakpoint($screen-md) {
         height: auto;
@@ -42,10 +39,6 @@
         right: 0;
         z-index: 10;
         background-color: $WHITE;
-
-        @include row(12);
-
-        padding: 0 5px;
         border-bottom: 1px solid #eee;
 
         @include breakpoint($screen-md) {

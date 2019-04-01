@@ -15,13 +15,32 @@
     width: 100%;
 
     @include has('row') {
-        @include row(30);
+        @include row();
 
+        &-a {
+            margin-left: $PADDINGS;
+            color: $color-grey;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    }
+
+    @include has('section') {
         border-top: 1px solid $COLORLINES;
         padding: 2 * $PADDINGS 0 $PADDINGS 0;
 
         @include when('thin') {
             padding: $PADDINGS 0;
+        }
+
+        @include when('pay') {
+            border: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2 * $PADDINGS 0;
+            font-weight: bold;
+            color: $color-dark;
         }
 
         & small {
@@ -30,28 +49,10 @@
             display: block;
             font-size: 0.9rem;
         }
+    }
 
-        &-a {
-            margin-left: $PADDINGS;
-            color: $color-grey;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-
-        &-pay {
-            width: 100%;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-            padding: 2 * $PADDINGS 0;
-            font-weight: bold;
-            color: $color-dark;
-
-            &-label {
-                padding-right: 1%;
-            }
-        }
+    @include has('section-label') {
+        padding-right: 1%;
     }
 
     @include has('payment') {

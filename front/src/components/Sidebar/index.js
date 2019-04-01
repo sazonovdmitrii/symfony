@@ -1,21 +1,15 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import ArticleSidebar from './ArticleSidebar';
 import CatalogSidebar from './CatalogSidebar';
 
-export default class Name extends Component {
-    constructor(props) {
-        super(props);
+export default ({ type = 'catalog' }) => {
+    switch (type) {
+        case 'news':
+        case 'article':
+            return <ArticleSidebar />;
+        case 'catalog':
+        default:
+            return <CatalogSidebar />;
     }
-    render() {
-        const { type } = this.props;
-
-        switch (type) {
-            case 'news':
-            case 'article':
-                return <ArticleSidebar />;
-            case 'catalog':
-                return <CatalogSidebar />;
-        }
-    }
-}
+};

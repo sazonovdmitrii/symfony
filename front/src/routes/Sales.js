@@ -1,5 +1,7 @@
 import React, { Component, Fragment } from 'react';
 
+import { Link } from 'react-router-dom';
+
 export default class Sales extends Component {
     constructor(props) {
         super(props);
@@ -12,29 +14,11 @@ export default class Sales extends Component {
                 </div>
                 <div className="homesale">
                     <div className="homesale__sale">
-                        <a className="homesale__picture" href="/sales/nina-ricci-na-14-marta/">
+                        <Link className="homesale__picture" to="/sales/nina-ricci-na-14-marta/">
                             <picture className="homesale__image">
-                                <source
-                                    srcSet="/sale/1533/sale_1533_0.jpg._1x.webp 1x, /sale/1533/sale_1533_0.jpg._2x.webp 2x, /sale/1533/sale_1533_0.jpg._3x.webp 3x"
-                                    media="(min-width: 1000px)"
-                                    type="image/webp"
-                                />
-                                <source
-                                    srcSet="/sale/1533/sale_1533_0.jpg._1x.jpg 1x, /sale/1533/sale_1533_0.jpg._2x.jpg 2x, /sale/1533/sale_1533_0.jpg._3x.jpg 3x"
-                                    media="(min-width: 1000px)"
-                                />
-                                <source
-                                    srcSet="/sale/1533/sale_1533_1.jpg._m_1x.webp 1x, /sale/1533/sale_1533_1.jpg._m_2x.webp 2x, /sale/1533/sale_1533_1.jpg._m_3x.webp 3x"
-                                    media="(min-width: 320px) and (max-width:999px)"
-                                    type="image/webp"
-                                />
-                                <source
-                                    srcSet="/sale/1533/sale_1533_1.jpg._1x.jpg 1x, /sale/1533/sale_1533_1.jpg._m_2x.jpg 2x, /sale/1533/sale_1533_1.jpg._m_3x.jpg 3x"
-                                    media="(min-width: 320px) and (max-width:999px)"
-                                />
                                 <img
                                     className="homesale__image-img"
-                                    src="/sale/1533/sale_1533_1.jpg._1x.jpg"
+                                    src="https://placehold.it/290x290"
                                     alt=""
                                 />
                             </picture>
@@ -44,7 +28,7 @@ export default class Sales extends Component {
                                     Парфюмерия Nina Ricci со скидкой 11%
                                 </span>
                             </div>
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </Fragment>

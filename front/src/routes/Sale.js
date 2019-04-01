@@ -1,16 +1,21 @@
 import React, { Component, Fragment } from 'react';
 
+import Input from 'components/Input';
+import Products from 'components/Products';
+
 export default class Sale extends Component {
     constructor(props) {
         super(props);
+
+        console.log(this.props.match.params);
     }
     render() {
         return (
             <Fragment>
-                <div class="sale-info">
-                    <img class="sale-info__image" src="/sale/1533/sale_1533_0.jpg" />
-                    <div class="sale-info__body rte">
-                        <h1 class="sale-info__title">Парфюмерия Nina Ricci со скидкой 11%</h1>
+                <div className="sale-info">
+                    <img className="sale-info__image" src="https://placehold.it/503x290" alt="" />
+                    <div className="sale-info__body rte">
+                        <h1 className="sale-info__title">Парфюмерия Nina Ricci со скидкой 11%</h1>
                         <p>
                             <span>
                                 Духи Nina Ricci — это интересная история о любви, женственности, романтических
@@ -24,31 +29,30 @@ export default class Sale extends Component {
                                 скидкой 11%.
                             </span>
                         </p>
-                        <p class="sale-info__date"> Акция действует с 14 марта по 13 апреля</p>
-                        <form class="subscribe" role="subscribe-form" data-behavior="subscribe">
-                            <div class="subscribe__form subscribe-form">
-                                <label class="salesub__label">
-                                    <span class="salesub__label-txt--labelname">E-mail:</span>
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        class="salesub__input input-text"
-                                        placeholder="Email"
-                                        pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}"
-                                        title="Пример: info@laparfumerie.ru"
-                                        required=""
-                                    />
-                                </label>
-                                <button class="button button_role_login button-red">Подписаться</button>
+                        <p className="sale-info__date"> Акция действует с 14 марта по 13 апреля</p>
+                        <form className="subscribe" role="subscribe-form" data-behavior="subscribe">
+                            <div className="subscribe__form subscribe-form">
+                                <Input
+                                    type="email"
+                                    name="email"
+                                    label="Email"
+                                    className="salesub__input input-text"
+                                    placeholder="Email"
+                                    pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}"
+                                    title="Пример: info@laparfumerie.ru"
+                                    required
+                                />
+                                <button className="button button_role_login button-red">Подписаться</button>
                                 <input type="hidden" name="type" value="2" />
-                                <div class="subscribe__notification" data-render="notification" />
+                                <div className="subscribe__notification" data-render="notification" />
                             </div>
                         </form>
-                        <p class="sale-info__date">
+                        <p className="sale-info__date">
                             Чтобы первым получать новые скидки, подпишитесь на рассылку акций!
                         </p>
                     </div>
                 </div>
+                <Products />
             </Fragment>
         );
     }

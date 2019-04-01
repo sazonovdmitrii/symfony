@@ -1,16 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const safePostCssParser = require('postcss-safe-parser');
 const TerserPlugin = require('terser-webpack-plugin');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const ManifestPlugin = require('webpack-manifest-plugin');
 const nodeModules = require('webpack-node-externals');
 
 const isProd = process.env.NODE_ENV === 'production';
@@ -21,28 +12,12 @@ const cssFilename = isProd ? '[name].[contenthash:8].css' : '[name].css';
 const PATHS = {
     polyfills: path.join(__dirname, 'src/polyfills'),
     app: path.join(__dirname, 'src/ssr'),
-    build: path.resolve(__dirname, 'dist'), // site/public/ckkz
-    public: '/static/',
+    build: path.resolve(__dirname, 'dist/public'),
+    public: '/',
 };
-
-const minify = isProd
-    ? {
-          removeComments: true,
-          collapseWhitespace: true,
-          removeRedundantAttributes: true,
-          useShortDoctype: true,
-          removeEmptyAttributes: true,
-          removeStyleLinkTypeAttributes: true,
-          keepClosingSlash: true,
-          minifyJS: true,
-          minifyCSS: true,
-          minifyURLs: true,
-      }
-    : false;
 
 const getStyleLoaders = cssOptions => {
     const loaders = [
-        // MiniCssExtractPlugin.loader,
         {
             loader: require.resolve('css-loader'),
             options: {
@@ -51,30 +26,12 @@ const getStyleLoaders = cssOptions => {
                 exportOnlyLocals: true,
             },
         },
-        {
-            loader: require.resolve('postcss-loader'),
-            options: {
-                ident: 'postcss',
-                plugins: [
-                    require('postcss-flexbugs-fixes'),
-                    require('postcss-preset-env')({
-                        autoprefixer: {
-                            flexbox: 'no-2009',
-                        },
-                        preserve: false,
-                        stage: 0,
-                        importFrom: './src/base.css',
-                    }),
-                    require('postcss-hexrgba'),
-                    require('postcss-color-function'),
-                ],
-            },
-        },
     ];
     return loaders;
 };
 
 const config = {
+    name: 'server',
     target: 'node',
     mode: isProd ? 'production' : 'development',
     bail: isProd,
@@ -83,7 +40,7 @@ const config = {
     output: {
         path: PATHS.build,
         publicPath: PATHS.public,
-        filename: 'server.js',
+        filename: '../server.js',
         libraryTarget: 'commonjs2',
     },
     optimization: {
@@ -146,7 +103,6 @@ const config = {
                     {
                         test: /\.css$/,
                         loader: getStyleLoaders({
-                            importLoaders: 1,
                             localIdentName: '[folder]__[local]__[hash:base64:5]',
                             modules: true,
                         }),
@@ -178,14 +134,9 @@ const config = {
     resolve: {
         extensions: ['.js'],
         modules: ['node_modules', 'src'],
-        alias: isProd
-            ? {
-                  'lodash-es': 'lodash',
-              }
-            : {},
     },
     externals: nodeModules(),
-    performance: false,
+    // performance: false,
 };
 
 module.exports = config;

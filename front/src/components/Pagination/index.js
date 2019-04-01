@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 export default class Pagination extends Component {
-    constructor(props) {
-        super(props);
-    }
+    static defaultProps = {
+        type: 'catalog',
+    };
+
     render() {
         const { type } = this.props;
 
