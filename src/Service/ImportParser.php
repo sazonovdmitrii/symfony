@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Service;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class ImportParser
+class ImportParser extends AbstractController
 {
     protected $path;
 
@@ -29,6 +30,8 @@ class ImportParser
         if(!($xls = $this->getPath())) {
             throw new Exception('Path is required option');
         }
-        var_dump($xls);
+        var_dump(get_class($this->container->get('arodiss.xls.reader')));
+        die();
+        var_dump(file_get_contents($xls));
     }
 }

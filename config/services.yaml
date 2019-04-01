@@ -6,6 +6,7 @@
 parameters:
     locale: 'en'
     app.path.product_images: /uploads/images/products
+    app.path.import_product: /public/uploads/import/
 
 services:
     # default configuration for services in *this* file

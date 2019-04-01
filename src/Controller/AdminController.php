@@ -82,7 +82,8 @@ class AdminController extends BaseAdminController
         $this->getDoctrine()->getRepository(ImportQueue::class)->flushAll();
 
         $manager = $this->getDoctrine()->getManager();
-        $uploads = $this->getParameter('kernel.project_dir') . '/public/uploads/import/';
+        $uploads = $this->getParameter('kernel.project_dir') .
+            $this->getParameter('app.path.import_product');
 
         foreach($this->request->files->get("fileUpload") as $fileUpload) {
             $filename = sha1(

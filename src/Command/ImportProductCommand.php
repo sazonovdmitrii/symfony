@@ -5,15 +5,20 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use App\Service\ImportParser;
+use App\Service\ConfigService;
 use App\Entity\ImportQueue;
 
 class ImportProductCommand extends ContainerAwareCommand
 {
     protected static $defaultName = 'lp:productimport';
     protected $importParser;
+    protected $config;
 
-    public function __construct(ImportParser $importParser)
-    {
+    public function __construct(
+        ConfigService $configService,
+        ImportParser $importParser
+    ) {
+        $this->config = $configService;
         $this->importParser = $importParser;
         parent::__construct();
     }
@@ -34,9 +39,14 @@ class ImportProductCommand extends ContainerAwareCommand
         $queue = $importQueueRepository->findAll();
         foreach($queue as $queueItem) {
             $this->importParser
-                ->setPath($queueItem->getPath())
+                ->setPath($this->_uploadDir() . $queueItem->getPath())
                 ->process();
         }
         $output->writeln(['Import has done']);
+    }
+
+    protected function _uploadDir()
+    {
+        return $this->config->get('kernel.project_dir') . $this->config->get('app.path.import_product');
     }
 }
