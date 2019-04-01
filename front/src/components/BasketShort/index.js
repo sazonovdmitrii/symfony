@@ -6,6 +6,7 @@ export default class BasketShort extends Component {
     constructor(props) {
         super(props);
     }
+
     render() {
         const { items = [], basket = {} } = this.props;
 

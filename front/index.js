@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import cluster from 'cluster';
 
 // Load env vars, for the `GRAPHQL` endpoint and anything else we need
 require('dotenv').config();
@@ -25,4 +26,36 @@ if (!fs.existsSync(script)) {
 }
 
 // Start the script
-require(script);
+// test clusters for prod
+if (process.env.RUNNER === 'production' && process.env.NODE_ENV === 'production') {
+    if (cluster.isMaster) {
+        const worker = cluster.fork();
+        console.log(`Master ${process.pid} is running`);
+
+        cluster.on('exit', (worker, exitCode) => {
+            console.log(`worker ${worker.process.pid} died`);
+
+            if (signal) {
+                console.log(`worker was killed by signal: ${signal}`);
+            } else if (code !== 0) {
+                console.log(`worker exited with error code: ${code}`);
+            } else {
+                console.log('worker success!');
+            }
+
+            if (exitCode !== SUCCESS) {
+                cluster.fork();
+            }
+        });
+
+        const numCPUs = require('os').cpus().length;
+        for (let i = 0; i < numCPUs; i++) {
+            cluster.fork();
+        }
+    } else {
+        require(script);
+        console.log(`Worker ${process.pid} started`);
+    }
+} else {
+    require(script);
+}

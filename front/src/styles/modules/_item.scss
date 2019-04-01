@@ -31,7 +31,6 @@
 }
 
 @include new('product') {
-    @include row('12');
     @include TextProRegular();
 
     color: $color-dark;
@@ -39,15 +38,17 @@
 
     @include has('row') {
         @include row('12');
+
+        &:not(:first-child) {
+            margin-top: 30px;
+        }
     }
 
     @include has('options') {
         @include no-column;
 
         @include breakpoint($screen-md) {
-            @include column-alpha(6, 12);
-
-            padding-right: 15px;
+            @include column(6);
         }
     }
 
@@ -59,7 +60,7 @@
         @include breakpoint($screen-md) {
             margin-top: 0px;
 
-            @include column-omega(6, 12);
+            @include column(6);
         }
 
         @include when('full') {

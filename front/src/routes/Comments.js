@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 
-export default class FixedHeader extends Component {
+export default class Comments extends Component {
     constructor(props) {
         super(props);
     }
     render() {
-        return <div />;
+        return <div>Comments</div>;
     }
 }

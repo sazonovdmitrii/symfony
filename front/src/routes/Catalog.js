@@ -15,7 +15,7 @@ export default class Catalog extends Component {
                 <Sidebar />
                 <div className="catalogpage__content">
                     <div className="brand-info">
-                        <h1 className="brand-info__title">Cerruti (Черрути)</h1>
+                        <h1 className="brand-info__title">{this.props.match.params.filter && 'filter'}</h1>
                         <p className="brand-info__subtitle">Черрути</p>
                         <div className="brand-info__body">
                             <p>

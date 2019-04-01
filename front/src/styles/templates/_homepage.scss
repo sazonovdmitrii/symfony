@@ -35,7 +35,6 @@ $paddings: 20px;
         width: 100%;
 
         @include breakpoint($screen-md) {
-            margin: 0 3.5px;
             margin-top: 15px;
             min-height: 502px;
         }
@@ -220,6 +219,7 @@ $paddings: 20px;
             top: 50%;
             transform: translateY(-50%);
             color: $color-grey;
+
             @include breakpoint($screen-md) {
                 font-size: 14px;
                 line-height: 14px;
@@ -239,9 +239,15 @@ $paddings: 20px;
     float: left;
     min-height: 60px;
     width: 100%;
+
     &-title {
         margin: $PADDINGS/3 0;
         letter-spacing: 0.1px;
         line-height: 1.5;
+        margin-top: 25px;
+        text-transform: uppercase;
+        font-weight: normal;
+        text-align: center;
+        color: black;
     }
 }

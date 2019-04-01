@@ -1,0 +1,27 @@
+.form {
+    display: flex;
+    width: 100%;
+
+    @media (min-width: 480px) {
+        width: 45%;
+    }
+}
+
+.input {
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 4px 0 0 4px;
+}
+
+.button {
+    border-radius: 0 4px 4px 0;
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid var(--color-border);
+    border-left: none;
+    box-shadow: none;
+    width: 20%;
+    background: url('./images/email-b.png') no-repeat center;
+}

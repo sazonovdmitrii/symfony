@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 
+import Input from 'components/Input';
+
+import styles from './styles.css';
+
 export default class Subscribe extends Component {
     constructor(props) {
         super(props);
@@ -8,23 +12,24 @@ export default class Subscribe extends Component {
             notification: null,
         };
     }
+
     render() {
         const { notification } = this.state;
 
         return (
-            <form className="subscribe" action="/user/subscribe" role="subscribe-form">
+            <form className="subscribe" action="/user/subscribe">
                 <label className="subscribe__label">Подпишитесь на скидки</label>
-                <div className="subscribe__form">
-                    <input
+                <div className={styles.form}>
+                    <Input
                         type="email"
-                        className="subscribe__input"
+                        theme={{ input: styles.input }}
                         name="email"
                         placeholder="Ваш e-mail"
                         pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}"
                         title="Пример: info@laparfumerie.ru"
                         required
                     />
-                    <button type="submit" className="subscribe__button" />
+                    <button type="submit" className={styles.button} />
                 </div>
                 {notification && <div className="subscribe__notification">{notification}</div>}
             </form>

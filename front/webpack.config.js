@@ -10,19 +10,19 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const safePostCssParser = require('postcss-safe-parser');
 const TerserPlugin = require('terser-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const ManifestPlugin = require('webpack-manifest-plugin');
 
 const isProd = process.env.NODE_ENV === 'production';
 const isAnalyze = process.env.ANALYZE || false;
 
 const cssFilename = isProd ? '[name].[contenthash:8].css' : '[name].css';
 
+console.log(process.env.GRAPHQL);
 require('dotenv').config();
 
 const PATHS = {
     polyfills: path.join(__dirname, 'src/polyfills'),
     app: path.join(__dirname, 'src'),
-    build: path.resolve(__dirname, 'dist/public/static'), // site/public/ckkz
+    build: path.resolve(__dirname, 'dist/public/static'),
     public: '/static/',
 };
 
@@ -77,15 +77,12 @@ const getStyleLoaders = (cssOptions, preprocessor) => {
 };
 
 const config = {
+    name: 'client',
     mode: isProd ? 'production' : 'development',
     bail: isProd,
     devtool: isProd ? '' : 'cheap-module-source-map',
     entry: {
-        app: [
-            !isProd && require.resolve('webpack-dev-server/client') + '?/',
-            PATHS.polyfills,
-            PATHS.app,
-        ].filter(Boolean),
+        app: [PATHS.polyfills, PATHS.app],
     },
     output: {
         path: PATHS.build,
@@ -166,10 +163,10 @@ const config = {
                             cacheDirectory: true,
                         },
                     },
-                    // {
-                    //     test: /\.svg$/,
-                    //     use: '@svgr/webpack',
-                    // },
+                    {
+                        test: /\.svg$/,
+                        use: require.resolve('@svgr/webpack'),
+                    },
                     {
                         test: /\.css$/,
                         loader: getStyleLoaders({
@@ -205,6 +202,7 @@ const config = {
     plugins: [
         new MiniCssExtractPlugin({
             filename: cssFilename,
+            disable: !isProd,
         }),
         new webpack.DefinePlugin({
             GRAPHQL: JSON.stringify(process.env.GRAPHQL),
@@ -215,21 +213,21 @@ const config = {
         }),
         new HtmlWebpackPlugin({
             minify,
+            inject: false,
             alwaysWriteToDisk: true,
             filename: path.resolve(__dirname, 'dist/public/index.html'),
             template: 'src/views/static.html',
         }),
         new HtmlWebpackHarddiskPlugin(),
-        // new ManifestPlugin(),
     ],
-    stats: {
-        hash: false,
-        version: false,
-        children: false,
-        modules: false,
-        warnings: false,
-        entrypoints: false,
-    },
+    // stats: {
+    //     hash: false,
+    //     version: false,
+    //     children: false,
+    //     modules: false,
+    //     warnings: false,
+    //     entrypoints: false,
+    // },
     resolve: {
         extensions: ['.scss', '.js'],
         modules: ['node_modules', 'src'],
@@ -249,24 +247,12 @@ const config = {
         tls: 'empty',
         child_process: 'empty',
     },
-    performance: false,
-    devServer: {
-        contentBase: path.resolve(__dirname, 'dist/public'),
-        historyApiFallback: true,
-        hot: true,
-        compress: true,
-        stats: 'errors-only',
-        overlay: {
-            errors: false,
-            warnings: false,
-        },
-    },
 };
 
 if (isProd) {
     config.plugins.push(new CleanWebpackPlugin());
 } else {
-    config.plugins.push(new CaseSensitivePathsPlugin(), new webpack.HotModuleReplacementPlugin());
+    config.plugins.push(new CaseSensitivePathsPlugin());
 }
 
 if (isAnalyze) {

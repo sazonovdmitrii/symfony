@@ -1,10 +1,3 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-export default class Name extends Component {
-    constructor(props) {
-        super(props);
-    }
-    render() {
-        return <div />;
-    }
-}
+export default () => <div>TopBrands</div>;

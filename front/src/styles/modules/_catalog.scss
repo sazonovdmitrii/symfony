@@ -10,13 +10,14 @@
 
 @include new('catalog') {
     @include row(12);
+    margin: 0;
 
     padding: $PADDINGS 0;
     min-height: 5 * $HEADERHEAD;
     background-color: $WHITE;
 
     @include has('item') {
-        @include column(6, 12);
+        @include column(6);
         @include TextProRegular();
 
         text-align: center;
@@ -31,21 +32,23 @@
         box-sizing: border-box;
 
         .small_catalog & {
-            @include column(4, 12);
+            @include column(4);
 
             border: none;
             height: inherit;
         }
 
         .catalogpage-5column & {
-            @include column(6, 12);
+            @include column(6);
+
             @include breakpoint($screen-md) {
-                @include column(2, 10);
+                @include column(2);
             }
         }
 
         @media (min-width: $DESCKTOP) {
-            @include column(3, 12);
+            @include column(3);
+            padding: 0;
 
             height: calculateRem(430px);
 
@@ -87,6 +90,10 @@
             width: 16.6666666667%;
         }
 
+        &-inner {
+            padding: 0 10px;
+        }
+
         &_link {
             @include TextCondProLight();
 
@@ -94,7 +101,6 @@
             color: $color-dark;
             width: 100%;
             box-sizing: border-box;
-            padding: 0 10px;
             font-size: $font-size14;
             line-height: 1.15;
             position: relative;
@@ -145,9 +151,9 @@
         }
 
         &_price {
-            font-weight: bold;
+            @include TextProMedium;
+
             font-size: $font-size14;
-            font-family: 'PFDinTextPro-medium';
             line-height: 1;
             letter-spacing: 0.2px;
             padding-bottom: 4 * $PADDINGS / 5;
@@ -165,17 +171,16 @@
 
         &_prd {
             display: none;
-            width: 100%;
             position: absolute;
-            border-width: 0px 1px 1px 1px;
+            left: -1px;
+            right: -1px;
+            border-width: 0px 1px 1px;
+            padding: 0 10px 4 * $PADDINGS / 3;
             border-color: $COLORLINES;
             border-style: solid;
             background: $WHITE;
             z-index: 10;
             text-align: center;
-            margin-left: -$PADDINGS / 15;
-            box-sizing: content-box;
-            padding-bottom: 4 * $PADDINGS / 3;
 
             &_type:first-child {
                 border-top: 1px solid $COLORLINES;
@@ -189,8 +194,6 @@
                 line-height: 1;
                 font-size: $FONTBUY12;
                 display: inline-block;
-                width: 84%;
-                margin: 0 8%;
                 text-align: left;
 
                 &_name {

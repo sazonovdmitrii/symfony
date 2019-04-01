@@ -6,20 +6,70 @@ import ReactDOMServer from 'react-dom/server';
 import Helmet from 'react-helmet';
 import { ApolloProvider, getDataFromTree } from 'react-apollo';
 import { StaticRouter } from 'react-router';
+import pathToRegexp from 'path-to-regexp';
+import knex from 'knex';
 
 import { createClient } from './lib/apollo';
 import App from './App';
 import output from './lib/output';
 import Html from './views/Html';
 
+import routes from './routes/index';
+
+// w8 db 😟
+// var db = knex({
+//     client: 'pg',
+//     connection: {
+//         host: 'localhost',
+//         port: '5432',
+//         user: 'symfony',
+//         password: 'symfony',
+//         database: 'symfony',
+//     },
+// });
+
+let virtualUrls = [
+    {
+        type: 'product',
+        url: '/catalog/product.htm',
+        to: '/duhi/gucci.htm',
+    },
+    {
+        type: 'catalog',
+        url: '/catalog/subcatalog',
+        to: '/duhi/gucci',
+    },
+];
+
+(async url => {
+    // w8 db 😟
+    // virtualUrls = await db.select('*').from('virtual_url');
+})();
+
 export default output => async ctx => {
+    const location = ctx.request.url;
     const client = createClient();
 
-    const routerContext = {};
+    let routerContext = {};
+
+    // check for redirects
+    const { to, type } = virtualUrls.find(item => item.url === location) || {};
+
+    if (type && to) {
+        // find route by type
+        const testRoute = routes.find(item => item.type && item.type === type);
+
+        if (testRoute) {
+            routerContext = {
+                url: to,
+                status: 301,
+            };
+        }
+    }
 
     const components = (
         <ApolloProvider client={client}>
-            <StaticRouter location={ctx.request.url} context={routerContext}>
+            <StaticRouter location={location} context={routerContext}>
                 <App />
             </StaticRouter>
         </ApolloProvider>

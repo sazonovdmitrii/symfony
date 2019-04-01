@@ -1,3 +1,5 @@
+const isProd = process.env.NODE_ENV === 'production';
+
 module.exports = {
     presets: [
         [
@@ -5,6 +7,12 @@ module.exports = {
             {
                 modules: false,
                 useBuiltIns: false,
+                targets: !isProd
+                    ? {
+                          node: 'current',
+                      }
+                    : {},
+                ignoreBrowserslistConfig: !isProd,
             },
         ],
         [
@@ -15,6 +23,7 @@ module.exports = {
         ],
     ],
     plugins: [
+        'react-hot-loader/babel',
         '@babel/plugin-transform-react-constant-elements',
         '@babel/plugin-syntax-dynamic-import',
         [
@@ -30,11 +39,11 @@ module.exports = {
                 useBuiltIns: true,
             },
         ],
-        [
+        isProd && [
             'transform-react-remove-prop-types',
             {
                 removeImport: true,
             },
         ],
-    ],
+    ].filter(Boolean),
 };

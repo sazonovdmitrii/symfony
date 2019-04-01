@@ -1,13 +1,15 @@
 import React, { Component, Fragment } from 'react';
+import { Link } from 'react-router-dom';
 
 import ProductCard from 'components/ProductCard';
 import BrandSale from 'components/BrandSale';
+import Button from 'components/Button';
 
 export default class Products extends Component {
     handleShowMore = () => {};
+
     render() {
         const { products = [] } = this.props;
-        const vrs = { banners: [] };
         const page = '';
         const product_count = 1;
 
@@ -17,19 +19,20 @@ export default class Products extends Component {
         return (
             <Fragment>
                 <ul className="catalog">
-                    {products.map(product => {
-                        <ProductCard key={product.id} />;
-                    })}
+                    {products.map(product => (
+                        <ProductCard key={product.id} />
+                    ))}
+                    <ProductCard />
                     <li className="brand-banner">
-                        <a href="">
+                        <Link to="/">
                             <Banner />
-                        </a>
+                        </Link>
                     </li>
-                    {page == 'aromat' && product_count <= 2 && <BrandSale />}
+                    {page === 'aromat' && product_count <= 2 && <BrandSale />}
                 </ul>
-                <button className="button--load-more" onClick={this.handleShowMore}>
+                <Button className="button--load-more" onClick={this.handleShowMore} fullWidth secondary>
                     Показать еще ...
-                </button>
+                </Button>
             </Fragment>
         );
     }

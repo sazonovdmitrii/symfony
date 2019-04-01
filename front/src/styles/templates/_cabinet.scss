@@ -45,14 +45,15 @@
         text-align: center;
     }
 
+    @include has('row') {
+        @include row();
+    }
+
     @include has('column') {
-        @include no-column;
+        @include column(12);
 
         @include breakpoint($screen-md) {
-            @include column(6, 12);
-
-            margin: 0;
-            padding: 0 15px;
+            @include column(6);
         }
 
         @include when('center') {
@@ -123,12 +124,6 @@
     }
 
     @include has('buttons') {
-        @include breakpoint($screen-md) {
-            float: left;
-            text-align: left;
-            margin-left: 15px;
-        }
-
         button + button {
             margin-left: 15px;
         }
