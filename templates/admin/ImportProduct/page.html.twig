@@ -54,9 +54,18 @@
     {% set _list_item_actions = easyadmin_get_actions_for_list_item(_entity_config.name) %}
 
     <form action="/admin/?entity=ImportProduct&action=importproduct" method="post" enctype="multipart/form-data">
-        <label> Выбрать файлы (XLS): </label>
-        <input type="file" name="fileUpload[]" multiple >
-        <input type="submit" name="Submit" value="Загрузить" >
+        <div class="form-group">
+            <label for="exampleFormControlSelect1">Тип прайс-листа</label>
+            <select class="form-control" id="exampleFormControlSelect1">
+                <option value="0">Градиент</option>
+                <option value="1">Марина Парфюм</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="fileUploading"> Выбрать файлы (XLS): </label>
+            <input type="file" class="form-control-file" name="fileUpload[]" multiple id="fileUploading" >
+        </div>
+        <input type="submit" name="Submit" class="btn btn-primary" value="Загрузить" >
     </form>
 
     {% block paginator %}
