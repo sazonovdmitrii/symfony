@@ -101,7 +101,7 @@ class MigrateCommand extends ContainerAwareCommand
                     INSERT INTO producturl (
                         id, 
                         url, 
-                        entity_id,                          
+                        entity_id_id,                          
                         created
                     ) VALUES(
                         " . $lpUrl['id'] . ", 

@@ -7,6 +7,8 @@ class ImportParser extends AbstractController
 {
     protected $path;
 
+    protected $service;
+
     /**
      * @param string $path
      * @return $this
@@ -15,6 +17,24 @@ class ImportParser extends AbstractController
     {
         $this->path = $path;
         return $this;
+    }
+
+    /**
+     * @param string $service
+     * @return $this
+     */
+    public function setService($service)
+    {
+        $this->service = $service;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getService()
+    {
+        return $this->service;
     }
 
     /**
@@ -27,11 +47,28 @@ class ImportParser extends AbstractController
 
     public function process()
     {
-        if(!($xls = $this->getPath())) {
+        if(!($xlsPath = $this->getPath())) {
             throw new Exception('Path is required option');
         }
-        var_dump(get_class($this->container->get('arodiss.xls.reader')));
-        die();
-        var_dump(file_get_contents($xls));
+
+        if(!($service = $this->getService())) {
+            throw new Exception('No usable service');
+        }
+
+        $xls = $service->createSpreadsheet($xlsPath);
+
+        $worksheet = $xls->getActiveSheet();
+
+        $rows = [];
+        foreach ($worksheet->getRowIterator() AS $row) {
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(FALSE);
+            $cells = [];
+            foreach ($cellIterator as $cell) {
+                $cells[] = $cell->getValue();
+            }
+            $rows[] = $cells;
+        }
+        print_r($rows);
     }
 }
