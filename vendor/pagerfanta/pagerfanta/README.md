@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/whiteoctober/Pagerfanta.png?branch=master)](https://travis-ci.org/whiteoctober/Pagerfanta) [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/whiteoctober/Pagerfanta/badges/quality-score.png?s=1ee480491644c07812b5206cf07d33a5035d0118)](https://scrutinizer-ci.com/g/whiteoctober/Pagerfanta/) [![Code Coverage](https://scrutinizer-ci.com/g/whiteoctober/Pagerfanta/badges/coverage.png?s=284be0616a9ba0439ee1123bcaf5fb3f6bfb0e50)](https://scrutinizer-ci.com/g/whiteoctober/Pagerfanta/) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/9e710230-b088-4904-baef-5f5e2d62e681/mini.png)](https://insight.sensiolabs.com/projects/9e710230-b088-4904-baef-5f5e2d62e681) [![Latest Stable Version](https://poser.pugx.org/pagerfanta/pagerfanta/v/stable.png)](https://packagist.org/packages/pagerfanta/pagerfanta) [![Total Downloads](https://poser.pugx.org/pagerfanta/pagerfanta/downloads.png)](https://packagist.org/packages/pagerfanta/pagerfanta)
 
-This project is for PHP >= 7.0.
+This project is for PHP 7.
 If you need support for PHP < 7, use [Release v1.1.0](https://github.com/whiteoctober/Pagerfanta/releases/tag/v1.1.0).
 
 ## Usage
@@ -24,11 +24,13 @@ $currentPage = $pagerfanta->getCurrentPage();
 
 $nbResults = $pagerfanta->getNbResults();
 $currentPageResults = $pagerfanta->getCurrentPageResults();
+```
 
+Some of the other methods available:
+
+```php
 $pagerfanta->getNbPages();
-
 $pagerfanta->haveToPaginate(); // whether the number of results is higher than the max per page
-
 $pagerfanta->hasPreviousPage();
 $pagerfanta->getPreviousPage();
 $pagerfanta->hasNextPage();
@@ -36,6 +38,21 @@ $pagerfanta->getNextPage();
 $pagerfanta->getCurrentPageOffsetStart();
 $pagerfanta->getCurrentPageOffsetEnd();
 ```
+
+### Changing the page based on user selection
+
+If you're using the example route-generator function shown below,
+the page selected by the user will be available in the `page` GET (querystring) parameter.
+
+You would then need to call `setCurrentPage` with the value of that parameter:
+
+```php
+if (isset($_GET["page"])) {
+    $pagerfanta->setCurrentPage($_GET["page"]);
+}
+```
+
+### setMaxPerPage and setCurrentPage
 
 The `->setMaxPerPage()` and `->setCurrentPage()` methods implement
 a fluent interface:
@@ -408,7 +425,7 @@ RouteGenerator example:
 
 $routeGenerator = function($page) {
     return '/path?page='.$page;
-}
+};
 ```
 Pagerfanta comes with five views:  The default one, three for
 [Twitter Bootstrap](https://github.com/twitter/bootstrap), one for

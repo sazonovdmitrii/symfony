@@ -1,6 +1,6 @@
 {
     "name": "pagerfanta/pagerfanta",
-    "description": "Pagination for PHP 5.3",
+    "description": "Pagination for PHP",
     "keywords": ["page","paging", "paginator", "pagination"],
     "type": "library",
     "license": "MIT",
@@ -11,10 +11,10 @@
         }
     ],
     "require": {
-        "php": ">=7.0"
+        "php": "^7.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7|^6",
+        "phpunit/phpunit": "^6.5",
         "doctrine/orm": "~2.3",
         "mandango/mandango": "~1.0@dev",
         "mandango/mondator": "~1.0@dev",
@@ -36,7 +36,10 @@
         "solarium/solarium": "To use the SolariumAdapter."
     },
     "autoload": {
-        "psr-0": { "Pagerfanta\\": "src/" }
+        "psr-4": { "Pagerfanta\\": "src/Pagerfanta/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "Pagerfanta\\Tests\\": "tests/Pagerfanta/Tests/" }
     },
     "extra": {
         "branch-alias": {

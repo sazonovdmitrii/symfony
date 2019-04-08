@@ -27,7 +27,7 @@ use Pagerfanta\Exception\OutOfRangeCurrentPageException;
  *
  * @author Pablo Díez <pablodip@gmail.com>
  */
-class Pagerfanta implements \Countable, \IteratorAggregate, PagerfantaInterface
+class Pagerfanta implements \Countable, \IteratorAggregate, \JsonSerializable, PagerfantaInterface
 {
     private $adapter;
     private $allowOutOfRangePages;
@@ -62,7 +62,7 @@ class Pagerfanta implements \Countable, \IteratorAggregate, PagerfantaInterface
     /**
      * Sets whether or not allow out of range pages.
      *
-     * @param Boolean $value
+     * @param boolean $value
      *
      * @return self
      */
@@ -76,7 +76,7 @@ class Pagerfanta implements \Countable, \IteratorAggregate, PagerfantaInterface
     /**
      * Returns whether or not allow out of range pages.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function getAllowOutOfRangePages()
     {
@@ -86,7 +86,7 @@ class Pagerfanta implements \Countable, \IteratorAggregate, PagerfantaInterface
     /**
      * Sets whether or not normalize out of range pages.
      *
-     * @param Boolean $value
+     * @param boolean $value
      *
      * @return self
      */
@@ -100,7 +100,7 @@ class Pagerfanta implements \Countable, \IteratorAggregate, PagerfantaInterface
     /**
      * Returns whether or not normalize out of range pages.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function getNormalizeOutOfRangePages()
     {
@@ -398,7 +398,7 @@ class Pagerfanta implements \Countable, \IteratorAggregate, PagerfantaInterface
     /**
      * Returns if the number of results is higher than the max per page.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function haveToPaginate()
     {
@@ -408,7 +408,7 @@ class Pagerfanta implements \Countable, \IteratorAggregate, PagerfantaInterface
     /**
      * Returns whether there is previous page or not.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasPreviousPage()
     {
@@ -434,7 +434,7 @@ class Pagerfanta implements \Countable, \IteratorAggregate, PagerfantaInterface
     /**
      * Returns whether there is next page or not.
      *
-     * @return Boolean
+     * @return boolean
      */
     public function hasNextPage()
     {
@@ -460,7 +460,7 @@ class Pagerfanta implements \Countable, \IteratorAggregate, PagerfantaInterface
     /**
      * Implements the \Countable interface.
      *
-     * Return integer The number of results.
+     * @return integer The number of results.
      */
     public function count()
     {
@@ -470,7 +470,7 @@ class Pagerfanta implements \Countable, \IteratorAggregate, PagerfantaInterface
     /**
      * Implements the \IteratorAggregate interface.
      *
-     * Returns an \ArrayIterator instance with the current results.
+     * @return \ArrayIterator instance with the current results.
      */
     public function getIterator()
     {
@@ -485,6 +485,21 @@ class Pagerfanta implements \Countable, \IteratorAggregate, PagerfantaInterface
         }
 
         return new \ArrayIterator($results);
+    }
+
+    /**
+     * Implements the \JsonSerializable interface.
+     *
+     * @return array current page results
+     */
+    public function jsonSerialize()
+    {
+        $results = $this->getCurrentPageResults();
+        if ($results instanceof \Traversable) {
+            return iterator_to_array($results);
+        }
+        
+        return $results;
     }
 
     private function toInteger($value)

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace GraphQL\Type\Definition;
 
 use GraphQL\Language\AST\FieldNode;
@@ -8,7 +11,7 @@ use GraphQL\Language\AST\InlineFragmentNode;
 use GraphQL\Language\AST\OperationDefinitionNode;
 use GraphQL\Language\AST\SelectionSetNode;
 use GraphQL\Type\Schema;
-use GraphQL\Utils\Utils;
+use function array_merge_recursive;
 
 /**
  * Structure containing information useful for field resolution process.
@@ -30,7 +33,7 @@ class ResolveInfo
      * @api
      * @var FieldNode[]
      */
-    public $fieldNodes;
+    public $fieldNodes = [];
 
     /**
      * Expected return type of the field being resolved
@@ -52,7 +55,7 @@ class ResolveInfo
      * Path to this field from the very root value
      *
      * @api
-     * @var array
+     * @var string[][]
      */
     public $path;
 
@@ -60,7 +63,7 @@ class ResolveInfo
      * Instance of a schema used for execution
      *
      * @api
-     * @var Schema
+     * @var Schema|null
      */
     public $schema;
 
@@ -70,13 +73,13 @@ class ResolveInfo
      * @api
      * @var FragmentDefinitionNode[]
      */
-    public $fragments;
+    public $fragments = [];
 
     /**
      * Root value passed to query execution
      *
      * @api
-     * @var mixed
+     * @var mixed|null
      */
     public $rootValue;
 
@@ -84,7 +87,7 @@ class ResolveInfo
      * AST of operation definition node (query, mutation)
      *
      * @api
-     * @var OperationDefinitionNode
+     * @var OperationDefinitionNode|null
      */
     public $operation;
 
@@ -92,13 +95,40 @@ class ResolveInfo
      * Array of variables passed to query execution
      *
      * @api
-     * @var array
+     * @var mixed[]
      */
-    public $variableValues;
+    public $variableValues = [];
 
-    public function __construct(array $values)
-    {
-        Utils::assign($this, $values);
+    /**
+     * @param FieldNode[]                                                               $fieldNodes
+     * @param ScalarType|ObjectType|InterfaceType|UnionType|EnumType|ListOfType|NonNull $returnType
+     * @param string[][]                                                                $path
+     * @param FragmentDefinitionNode[]                                                  $fragments
+     * @param mixed|null                                                                $rootValue
+     * @param mixed[]                                                                   $variableValues
+     */
+    public function __construct(
+        string $fieldName,
+        $fieldNodes,
+        $returnType,
+        ObjectType $parentType,
+        array $path,
+        Schema $schema,
+        array $fragments,
+        $rootValue,
+        ?OperationDefinitionNode $operation,
+        array $variableValues
+    ) {
+        $this->fieldName      = $fieldName;
+        $this->fieldNodes     = $fieldNodes;
+        $this->returnType     = $returnType;
+        $this->parentType     = $parentType;
+        $this->path           = $path;
+        $this->schema         = $schema;
+        $this->fragments      = $fragments;
+        $this->rootValue      = $rootValue;
+        $this->operation      = $operation;
+        $this->variableValues = $variableValues;
     }
 
     /**
@@ -132,9 +162,11 @@ class ResolveInfo
      * Warning: this method it is a naive implementation which does not take into account
      * conditional typed fragments. So use it with care for fields of interface and union types.
      *
-     * @api
      * @param int $depth How many levels to include in output
-     * @return array
+     *
+     * @return bool[]
+     *
+     * @api
      */
     public function getFieldSelection($depth = 0)
     {
@@ -147,28 +179,34 @@ class ResolveInfo
 
         return $fields;
     }
-
-    private function foldSelectionSet(SelectionSetNode $selectionSet, $descend)
+    /**
+     * @return bool[]
+     */
+    private function foldSelectionSet(SelectionSetNode $selectionSet, int $descend) : array
     {
         $fields = [];
-
         foreach ($selectionSet->selections as $selectionNode) {
             if ($selectionNode instanceof FieldNode) {
-                $fields[$selectionNode->name->value] = $descend > 0 && !empty($selectionNode->selectionSet)
+                $fields[$selectionNode->name->value] = $descend > 0 && ! empty($selectionNode->selectionSet)
                     ? $this->foldSelectionSet($selectionNode->selectionSet, $descend - 1)
                     : true;
-            } else if ($selectionNode instanceof FragmentSpreadNode) {
+            } elseif ($selectionNode instanceof FragmentSpreadNode) {
                 $spreadName = $selectionNode->name->value;
                 if (isset($this->fragments[$spreadName])) {
                     /** @var FragmentDefinitionNode $fragment */
                     $fragment = $this->fragments[$spreadName];
-                    $fields = array_merge_recursive($this->foldSelectionSet($fragment->selectionSet, $descend), $fields);
+                    $fields   = array_merge_recursive(
+                        $this->foldSelectionSet($fragment->selectionSet, $descend),
+                        $fields
+                    );
                 }
-            } else if ($selectionNode instanceof InlineFragmentNode) {
-                $fields = array_merge_recursive($this->foldSelectionSet($selectionNode->selectionSet, $descend), $fields);
+            } elseif ($selectionNode instanceof InlineFragmentNode) {
+                $fields = array_merge_recursive(
+                    $this->foldSelectionSet($selectionNode->selectionSet, $descend),
+                    $fields
+                );
             }
         }
-
         return $fields;
     }
 }

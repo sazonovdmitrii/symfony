@@ -29,8 +29,8 @@ class DoctrineORMAdapter implements AdapterInterface
      * Constructor.
      *
      * @param \Doctrine\ORM\Query|\Doctrine\ORM\QueryBuilder $query               A Doctrine ORM query or query builder.
-     * @param Boolean                                        $fetchJoinCollection Whether the query joins a collection (true by default).
-     * @param Boolean|null                                   $useOutputWalkers    Whether to use output walkers pagination mode
+     * @param boolean                                        $fetchJoinCollection Whether the query joins a collection (true by default).
+     * @param boolean|null                                   $useOutputWalkers    Whether to use output walkers pagination mode
      */
     public function __construct($query, $fetchJoinCollection = true, $useOutputWalkers = null)
     {
@@ -51,7 +51,7 @@ class DoctrineORMAdapter implements AdapterInterface
     /**
      * Returns whether the query joins a collection.
      *
-     * @return Boolean Whether the query joins a collection.
+     * @return boolean Whether the query joins a collection.
      */
     public function getFetchJoinCollection()
     {

@@ -24,4 +24,6 @@ return [
     Vich\UploaderBundle\VichUploaderBundle::class => ['all' => true],
     Overblog\GraphQLBundle\OverblogGraphQLBundle::class => ['all' => true],
     Overblog\GraphiQLBundle\OverblogGraphiQLBundle::class => ['dev' => true],
+//    Roromix\Bundle\SpreadsheetBundle\RoromixSpreadsheetBundle::class => ['all' => true],
+    Onurb\Bundle\ExcelBundle\OnurbExcelBundle::class => ['all' => true],
 ];
