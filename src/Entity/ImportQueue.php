@@ -31,6 +31,41 @@ class ImportQueue
      */
     private $created;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $type;
+
+    /**
+     * @var array
+     */
+    static private $types = [
+        'Градиент',
+        'Марина Парфюм'
+    ];
+
+    const STATUS_NEW = 'Новое';
+    const STATUS_IN_PROCESS = 'В процессе';
+    const STATUS_DONE = 'Завершено';
+    /**
+     * @var array
+     */
+    static private $statuses = [
+        self::STATUS_NEW,
+        self::STATUS_IN_PROCESS,
+        self::STATUS_DONE
+    ];
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updated;
+
+    public function __construct()
+    {
+        $this->created = new \DateTime('now');
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -68,6 +103,45 @@ class ImportQueue
     public function setCreated(?\DateTimeInterface $created): self
     {
         $this->created = $created;
+        return $this;
+    }
+
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+
+    public function setType(?int $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    static public function getAllTypes()
+    {
+        return self::$types;
+    }
+
+    /**
+     * @return array
+     */
+    static public function getAllStatuses()
+    {
+        return self::$statuses;
+    }
+
+    public function getUpdated(): ?\DateTimeInterface
+    {
+        return $this->updated;
+    }
+
+    public function setUpdated(?\DateTimeInterface $updated): self
+    {
+        $this->updated = $updated;
 
         return $this;
     }

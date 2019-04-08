@@ -64,14 +64,18 @@ class AdminController extends BaseAdminController
         $this->dispatch(EasyAdminEvents::PRE_LIST);
 
         $fields = $this->entity['list']['fields'];
+
         $paginator = $this->findAll($this->entity['class'], $this->request->query->get('page', 1), $this->entity['list']['max_results'], $this->request->query->get('sortField'), $this->request->query->get('sortDirection'), $this->entity['list']['dql_filter']);
 
         $this->dispatch(EasyAdminEvents::POST_LIST, array('paginator' => $paginator));
+        $data = $this->getDoctrine()->getRepository(ImportQueue::class)->findAll();
 
         $parameters = array(
             'paginator' => $paginator,
             'fields' => $fields,
             'delete_form_template' => $this->createDeleteForm($this->entity['name'], '__id__')->createView(),
+            'data' => $data,
+            'types' => ImportQueue::getAllTypes()
         );
         $template = 'admin/ImportProduct/page.html.twig';
         return $this->executeDynamicMethod('render<EntityName>Template', array('list', $template, $parameters));
@@ -85,6 +89,8 @@ class AdminController extends BaseAdminController
         $uploads = $this->getParameter('kernel.project_dir') .
             $this->getParameter('app.path.import_product');
 
+        $priceType = $this->request->get('type');
+
         foreach($this->request->files->get("fileUpload") as $fileUpload) {
             $filename = sha1(
                     basename($fileUpload->getClientOriginalName()) . time()
@@ -92,7 +98,9 @@ class AdminController extends BaseAdminController
             $fileUpload->move($uploads, $filename);
 
             $queueItem = new ImportQueue();
+            $queueItem->setType($priceType);
             $queueItem->setPath($filename);
+            $queueItem->setStatus([ImportQueue::STATUS_NEW]);
             $manager->persist($queueItem);
             $manager->flush();
         }
