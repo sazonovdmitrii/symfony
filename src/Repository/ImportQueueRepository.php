@@ -48,10 +48,12 @@ class ImportQueueRepository extends ServiceEntityRepository
     }
     */
 
-    public function flushAll()
+    public function flushAll($priceType)
     {
-        return $this->_em
-            ->createQuery('DELETE FROM ' . $this->_entityName)
-            ->execute();
+        $query = 'DELETE FROM importqueue WHERE type = :type';
+        $statement = $this->_em->getConnection()->prepare($query);
+        $statement->bindValue('type', $priceType);
+        $statement->execute();
+
     }
 }

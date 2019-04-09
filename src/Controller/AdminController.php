@@ -83,13 +83,15 @@ class AdminController extends BaseAdminController
 
     public function importproductImportProductAction()
     {
-        $this->getDoctrine()->getRepository(ImportQueue::class)->flushAll();
+        $priceType = $this->request->get('type');
+
+        $this->getDoctrine()
+            ->getRepository(ImportQueue::class)
+            ->flushAll($priceType);
 
         $manager = $this->getDoctrine()->getManager();
         $uploads = $this->getParameter('kernel.project_dir') .
             $this->getParameter('app.path.import_product');
-
-        $priceType = $this->request->get('type');
 
         foreach($this->request->files->get("fileUpload") as $fileUpload) {
             $filename = sha1(

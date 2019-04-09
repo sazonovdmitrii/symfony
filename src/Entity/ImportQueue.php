@@ -106,9 +106,9 @@ class ImportQueue
         return $this;
     }
 
-    public function getType(): ?int
+    public function getType(): ?string
     {
-        return $this->type;
+        return (isset(self::getAllTypes()[$this->type])) ? self::getAllTypes()[$this->type] : '';
     }
 
     public function setType(?int $type): self
