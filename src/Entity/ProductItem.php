@@ -76,12 +76,18 @@ class ProductItem
      */
     private $avarda_id;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ImportRelation", mappedBy="entity")
+     */
+    private $importRelations;
+
     public function __construct()
     {
         $this->product_id = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->basketItems = new ArrayCollection();
         $this->productItemImages = new ArrayCollection();
+        $this->importRelations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -270,6 +276,37 @@ class ProductItem
     public function setAvardaId(?int $avarda_id): self
     {
         $this->avarda_id = $avarda_id;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ImportRelation[]
+     */
+    public function getImportRelations(): Collection
+    {
+        return $this->importRelations;
+    }
+
+    public function addImportRelation(ImportRelation $importRelation): self
+    {
+        if (!$this->importRelations->contains($importRelation)) {
+            $this->importRelations[] = $importRelation;
+            $importRelation->setEntity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImportRelation(ImportRelation $importRelation): self
+    {
+        if ($this->importRelations->contains($importRelation)) {
+            $this->importRelations->removeElement($importRelation);
+            // set the owning side to null (unless already changed)
+            if ($importRelation->getEntity() === $this) {
+                $importRelation->setEntity(null);
+            }
+        }
 
         return $this;
     }
