@@ -34,4 +34,17 @@ class Gradient implements ImportFormatter
         }
         return $result;
     }
+
+    /**
+     * @param $row
+     * @return array
+     */
+    public function fill($row)
+    {
+        return [
+            'sku' => $row[2],
+            'name' => $row[1],
+            'price' => $row[8]
+        ];
+    }
 }

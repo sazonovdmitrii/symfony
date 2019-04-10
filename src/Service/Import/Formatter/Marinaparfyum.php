@@ -33,4 +33,17 @@ class Marinaparfyum implements ImportFormatter
         }
         return true;
     }
+
+    /**
+     * @param $row
+     * @return array
+     */
+    public function fill($row)
+    {
+        return [
+            'sku' => $row[1],
+            'name' => $row[2],
+            'price' => $row[3]
+        ];
+    }
 }

@@ -49,7 +49,7 @@ class ImportParser extends AbstractController
                 $cells[] = $cell->getValue();
             }
             if($this->getFormatter()->filter($cells) && $this->getFormatter()->validate($cells)) {
-                $rows[] = $cells;
+                $rows[] = $this->getFormatter()->fill($cells);
             }
         }
         print_r($rows);
