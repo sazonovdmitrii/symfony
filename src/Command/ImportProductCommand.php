@@ -41,6 +41,7 @@ class ImportProductCommand extends ContainerAwareCommand
             $this->importParser
                 ->setPath($this->_uploadDir() . $queueItem->getPath())
                 ->setService($this->getContainer()->get('phpspreadsheet'))
+                ->setType($queueItem->getType())
                 ->process();
         }
         $output->writeln(['Import has done']);
