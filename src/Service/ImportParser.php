@@ -18,8 +18,10 @@ class ImportParser extends AbstractController
 
     protected $formatterLoader;
 
-    public function __construct(TranslitService $translitService, Loader $loader)
-    {
+    public function __construct(
+        TranslitService $translitService,
+        Loader $loader
+    ) {
         $this->translitService = $translitService;
         $this->formatterLoader = $loader;
     }
@@ -52,7 +54,7 @@ class ImportParser extends AbstractController
                 $rows[] = $this->getFormatter()->fill($cells);
             }
         }
-        print_r($rows);
+        return $rows;
     }
 
     /**

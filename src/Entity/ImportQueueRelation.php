@@ -27,14 +27,14 @@ class ImportQueueRelation
     private $name;
 
     /**
-     * @ORM\Column(type="decimal", precision=2, scale=2, nullable=true)
-     */
-    private $price;
-
-    /**
      * @ORM\Column(type="integer", nullable=true)
      */
     private $type;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $price;
 
     public function getId(): ?int
     {
@@ -65,18 +65,6 @@ class ImportQueueRelation
         return $this;
     }
 
-    public function getPrice()
-    {
-        return $this->price;
-    }
-
-    public function setPrice($price): self
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
     public function getType(): ?int
     {
         return $this->type;
@@ -85,6 +73,18 @@ class ImportQueueRelation
     public function setType(?int $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getPrice(): ?string
+    {
+        return $this->price;
+    }
+
+    public function setPrice(?string $price): self
+    {
+        $this->price = $price;
 
         return $this;
     }
