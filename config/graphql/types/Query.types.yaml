@@ -17,3 +17,10 @@ Query:
               description: "Resolves using the user id."
               type: "Int"
         resolve: "@=resolver('User', [args])"
+      product:
+        type: "Product"
+        args:
+            id:
+              description: "Resolves using the product ID."
+              type: "Int"
+        resolve: "@=resolver('Product', [args])"
