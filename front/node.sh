@@ -1,2 +1,2 @@
 #!/bin/sh
-yarn && yarn ssr:start
+yarn && yarn ssr:dev

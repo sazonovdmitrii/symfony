@@ -206,6 +206,7 @@ const config = {
         }),
         new webpack.DefinePlugin({
             GRAPHQL: JSON.stringify(process.env.GRAPHQL),
+            DATABASE: JSON.stringify(process.env.DATABASE),
             SERVER: false,
             SEOHIDE: false,
             WS_SUBSCRIPTIONS: JSON.stringify(process.env.WS_SUBSCRIPTIONS),

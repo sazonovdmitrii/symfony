@@ -20,7 +20,7 @@ import routes from './routes/index';
 const db = knex({
     client: 'pg',
     connection: {
-        host: 'localhost',
+        host: DATABASE,
         port: '5432',
         user: 'symfony',
         password: 'symfony',
@@ -32,36 +32,31 @@ export default output => async ctx => {
     const location = ctx.request.url;
     const client = createClient();
 
-    //check for redirects
-    // let url = null || (await db('virtualurl').where('url', location));
+    // let url = await db('virtualurl').where('url', location);
     let url = null;
-    const isProduct = /\.htm$/.test(location);
-    const type = isProduct ? 'product' : 'catalog';
 
-    // check for products
-    // if (!url) {
-
-    const database = isProduct ? 'producturl' : 'catalogurl';
-    const [row] = await db(database).where('url', location.replace(/^\//, ''));
-
-    url = row ? row.url : null;
-    url && console.log(url, '// url is in the database 👍');
+    // check for product/catalog
+    if (!url) {
+        const isProduct = /\.htm$/.test(location);
+        const type = isProduct ? 'product' : 'catalog';
+        const database = isProduct ? 'producturl' : 'catalogurl';
+        const [row] = await db(database).where('url', location.replace(/^\//, ''));
+        url = row ? row.url : null;
+        url && console.log(url, '// url is in the database 👍');
+    }
 
     // make redirect
     let routerContext = {};
-    // if (type && url) {
-    //     // find route by type
-    //     // const testRoute = routes.find(item => item.type && item.type === type);
+    if (type && url) {
+        // find route by type
+        // const testRoute = routes.find(item => item.type && item.type === type);
 
-    //     // console.log(testRoute, '🔥');
-    //     // if (testRoute) {
-    //     routerContext = {
-    //         type,
-    //         url: url.replace(/^/, '/'),
-    //         status: 301,
-    //     };
-    //     // }
-    // }
+        routerContext = {
+            type,
+            url: `/${url}`,
+            status: 301,
+        };
+    }
 
     const components = (
         <ApolloProvider client={client}>
