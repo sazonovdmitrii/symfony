@@ -20,6 +20,7 @@ import KoaWebpack from 'koa-webpack';
 import ora from 'ora';
 // Lodash utility for merging objects
 import { mergeWith } from 'lodash';
+import koaLogger from 'koa-logger';
 
 /* Local */
 import clientConfig from '../../webpack.config.js';
@@ -192,3 +193,5 @@ app.use(staticMiddleware(path.resolve(common.dist, '..', 'public'), false));
 
 // Router
 app.use(router.allowedMethods()).use(router.routes());
+
+app.use(koaLogger());

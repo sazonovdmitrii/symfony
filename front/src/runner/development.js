@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 
 import hotServerMiddleware from '../lib/hotServerMiddleware';
-import { app, common, compiler } from './app';
+import { app, common, compiler, devServer } from './app';
 
 common.spinner.info(chalk.default.magenta('Development mode')).info('Building development server...');
 

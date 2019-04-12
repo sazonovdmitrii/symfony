@@ -9,7 +9,12 @@ export default class Products extends Component {
     handleShowMore = () => {};
 
     render() {
-        const { products = [] } = this.props;
+        const {
+            products = [
+                { url: '/agent-provocateur-tualetnaye-duhi-agent-provocateur.htm' },
+                { url: '/st-dupont-tualetnaya-voda-st-dupont-pour-homme.htm' },
+            ],
+        } = this.props;
         const page = '';
         const product_count = 1;
 
@@ -19,8 +24,8 @@ export default class Products extends Component {
         return (
             <Fragment>
                 <ul className="catalog">
-                    {products.map(product => (
-                        <ProductCard key={product.id} />
+                    {products.map(item => (
+                        <ProductCard key={item.id} url={item.url} />
                     ))}
                     <ProductCard />
                     <li className="brand-banner">

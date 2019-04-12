@@ -29,7 +29,6 @@ if (!fs.existsSync(script)) {
 // test clusters for prod
 if (process.env.RUNNER === 'production' && process.env.NODE_ENV === 'production') {
     if (cluster.isMaster) {
-        const worker = cluster.fork();
         console.log(`Master ${process.pid} is running`);
 
         cluster.on('exit', (worker, exitCode) => {
@@ -43,6 +42,7 @@ if (process.env.RUNNER === 'production' && process.env.NODE_ENV === 'production'
                 console.log('worker success!');
             }
 
+            console.log(exitCode);
             if (exitCode !== SUCCESS) {
                 cluster.fork();
             }

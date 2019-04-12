@@ -42,6 +42,6 @@ common.spinner.info(chalk.default.green('Production mode'));
     app.use(require(common.compiled.server).default(output));
 
     app.listen(common.port, () => {
-        common.spinner.succeed(`Running on http://localhost:${common.port}`);
+        common.spinner.succeed(`Running on http://${common.host}:${common.port}`);
     });
 })();

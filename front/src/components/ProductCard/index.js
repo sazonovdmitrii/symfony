@@ -6,7 +6,7 @@ import Button from 'components/Button';
 export default class ProductCard extends Component {
     static defaultProps = {
         id: 0,
-        url: '/products/123',
+        url: '/agent-provocateur-tualetnaye-duhi-agent-provocateur.htm',
         items: [
             {
                 name: 'Сыворотка против выпадения волос не смываемый 300 мл',
@@ -58,7 +58,7 @@ export default class ProductCard extends Component {
                     <span className="criteo-data" data-dtl="id" data-id={id} style={{ display: 'none' }}>
                         {id}
                     </span>
-                    <Link to={`${url  }/test.htm`} className="catalog__item_link">
+                    <Link to={url} className="catalog__item_link">
                         {sale && sale.discount > 0 && (
                             <span className="sale-item__bubble sale-item__bubble_role_discount">
                                 -{sale.discount}%

@@ -17,55 +17,51 @@ import Html from './views/Html';
 import routes from './routes/index';
 
 // w8 db 😟
-// var db = knex({
-//     client: 'pg',
-//     connection: {
-//         host: 'localhost',
-//         port: '5432',
-//         user: 'symfony',
-//         password: 'symfony',
-//         database: 'symfony',
-//     },
-// });
-
-let virtualUrls = [
-    {
-        type: 'product',
-        url: '/catalog/product.htm',
-        to: '/duhi/gucci.htm',
+const db = knex({
+    client: 'pg',
+    connection: {
+        host: 'localhost',
+        port: '5432',
+        user: 'symfony',
+        password: 'symfony',
+        database: 'symfony',
     },
-    {
-        type: 'catalog',
-        url: '/catalog/subcatalog',
-        to: '/duhi/gucci',
-    },
-];
-
-(async url => {
-    // w8 db 😟
-    // virtualUrls = await db.select('*').from('virtual_url');
-})();
+});
 
 export default output => async ctx => {
     const location = ctx.request.url;
     const client = createClient();
 
+    //check for redirects
+    // let url = null || (await db('virtualurl').where('url', location));
+    let url = null;
+    const isProduct = /\.htm$/.test(location);
+    const type = isProduct ? 'product' : 'catalog';
+
+    // check for products
+    // if (!url) {
+
+    const database = isProduct ? 'producturl' : 'catalogurl';
+    const [row] = await db(database).where('url', location.replace(/^\//, ''));
+
+    url = row ? row.url : null;
+    url && console.log(url, '// url is in the database 👍');
+
+    // make redirect
     let routerContext = {};
+    // if (type && url) {
+    //     // find route by type
+    //     // const testRoute = routes.find(item => item.type && item.type === type);
 
-    // check for redirects
-    const { to, type } = virtualUrls.find(item => item.url === location) || {};
-
-    if (type && to) {
-        // find route by type
-        const testRoute = routes.find(item => item.type && item.type === type);
-
-        if (testRoute) {
-            routerContext = {
-                url: to,
-                status: 301,
-            };
-        }
-    }
+    //     // console.log(testRoute, '🔥');
+    //     // if (testRoute) {
+    //     routerContext = {
+    //         type,
+    //         url: url.replace(/^/, '/'),
+    //         status: 301,
+    //     };
+    //     // }
+    // }
 
     const components = (
         <ApolloProvider client={client}>
@@ -89,7 +85,7 @@ export default output => async ctx => {
         return;
     }
 
-    if (routerContext.status === 404) {
+    if (!url || routerContext.status === 404) {
         // By default, just set the status code to 404. You can
         // modify this section to do things like log errors to a
         // third-party, or redirect users to a dedicated 404 page
