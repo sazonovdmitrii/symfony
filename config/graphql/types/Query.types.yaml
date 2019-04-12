@@ -23,4 +23,7 @@ Query:
             id:
               description: "Resolves using the product ID."
               type: "Int"
+            slug:
+              description: "Resolves using the product slug."
+              type: "String"
         resolve: "@=resolver('Product', [args])"

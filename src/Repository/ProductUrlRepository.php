@@ -19,6 +19,16 @@ class ProductUrlRepository extends ServiceEntityRepository
         parent::__construct($registry, ProductUrl::class);
     }
 
+    public function findByUrl(string $url)
+    {
+        $result = $this->createQueryBuilder('u')
+            ->where('u.url = :url')
+            ->setParameter('url', $url)
+            ->getQuery()
+            ->getResult();
+        return (isset($result[0])) ? $result[0] : false;
+    }
+
     // /**
     //  * @return ProductUrl[] Returns an array of ProductUrl objects
     //  */

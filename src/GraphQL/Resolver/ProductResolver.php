@@ -10,17 +10,36 @@ class ProductResolver implements ResolverInterface, AliasedInterface {
 
     private $em;
 
+    /**
+     * ProductResolver constructor.
+     *
+     * @param EntityManager $em
+     */
     public function __construct(EntityManager $em)
     {
         $this->em = $em;
     }
 
+    /**
+     * @param Argument $args
+     * @return array
+     */
     public function resolve(Argument $args)
     {
-        $product = $this->em->getRepository('App:Product')->find($args['id']);
-        return $product;
+        $productUrl = $this->em
+            ->getRepository('App:ProductUrl')
+            ->findByUrl($args['slug']);
+
+        if($productUrl) {
+            return $productUrl->getEntity();
+        }
+
+        return [];
     }
 
+    /**
+     * @return array
+     */
     public static function getAliases()
     {
         return [
