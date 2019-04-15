@@ -27,3 +27,13 @@ Query:
               description: "Resolves using the product slug."
               type: "String"
         resolve: "@=resolver('Product', [args])"
+      catalog:
+        type: "Catalog"
+        args:
+            id:
+              description: "Resolves using the catalog ID."
+              type: "Int"
+            slug:
+              description: "Resolves using the catalog slug."
+              type: "String"
+        resolve: "@=resolver('Catalog', [args])"

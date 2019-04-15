@@ -19,6 +19,16 @@ class CatalogUrlRepository extends ServiceEntityRepository
         parent::__construct($registry, CatalogUrl::class);
     }
 
+    public function findByUrl(string $url)
+    {
+        $result = $this->createQueryBuilder('u')
+            ->where('u.url = :url')
+            ->setParameter('url', $url)
+            ->getQuery();
+        $result = $result->getResult();
+        return (isset($result[0])) ? $result[0] : false;
+    }
+
     // /**
     //  * @return CatalogUrl[] Returns an array of CatalogUrl objects
     //  */

@@ -1,0 +1,11 @@
+Catalog:
+  type: object
+  config:
+    description: "Catalog"
+    fields:
+      id:
+        type: "Int!"
+        description: "Catalog Id."
+      name:
+        type: "String"
+        description: "Catalog Name"

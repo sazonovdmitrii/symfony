@@ -6,7 +6,7 @@ use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 
-class ProductResolver implements ResolverInterface, AliasedInterface {
+class CatalogResolver implements ResolverInterface, AliasedInterface {
 
     private $em;
 
@@ -26,14 +26,13 @@ class ProductResolver implements ResolverInterface, AliasedInterface {
      */
     public function resolve(Argument $args)
     {
-        $productUrl = $this->em
-            ->getRepository('App:ProductUrl')
+        $catalogUrl = $this->em
+            ->getRepository('App:CatalogUrl')
             ->findByUrl($args['slug']);
 
-        if($productUrl) {
-            $product = $productUrl->getEntity();
-            $product->setTest('asdf');
-            return $product;
+        if($catalogUrl) {
+            $catalog = $catalogUrl->getEntity();
+            return $catalog;
         }
 
         return [];
@@ -45,7 +44,7 @@ class ProductResolver implements ResolverInterface, AliasedInterface {
     public static function getAliases()
     {
         return [
-            'resolve' => 'Product'
+            'resolve' => 'Catalog'
         ];
     }
 }
