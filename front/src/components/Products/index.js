@@ -27,7 +27,6 @@ export default class Products extends Component {
                     {products.map(item => (
                         <ProductCard key={item.id} url={item.url} />
                     ))}
-                    <ProductCard />
                     <li className="brand-banner">
                         <Link to="/">
                             <Banner />
@@ -35,7 +34,12 @@ export default class Products extends Component {
                     </li>
                     {page === 'aromat' && product_count <= 2 && <BrandSale />}
                 </ul>
-                <Button className="button--load-more" onClick={this.handleShowMore} fullWidth secondary>
+                <Button
+                    className="button--load-more"
+                    onClick={this.handleShowMore}
+                    kind="secondary"
+                    fullWidth
+                >
                     Показать еще ...
                 </Button>
             </Fragment>

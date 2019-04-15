@@ -109,7 +109,7 @@ export default class ProductCard extends Component {
                                 <small>Ещё {items.size - 9} предложений в товаре</small>
                             </p>
                         )}
-                        <Button href={url} fullWidth primary>
+                        <Button href={url} kind="primary" fullWidth>
                             {cantbuy === 0 ? 'КУПИТЬ' : 'ОБЗОР'}
                         </Button>
                     </div>

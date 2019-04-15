@@ -47,7 +47,7 @@ class CommentForm extends Component {
                 <InputGroup>
                     <Input type="textarea" name="comment" label="Коментарий" required />
                 </InputGroup>
-                <Button type="submit" className="product-element__feedbackbutton1" primary>
+                <Button type="submit" className="product-element__feedbackbutton1" kind="primary">
                     Опубликовать
                 </Button>
             </form>
