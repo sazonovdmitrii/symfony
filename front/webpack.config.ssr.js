@@ -122,6 +122,7 @@ const config = {
     plugins: [
         new webpack.DefinePlugin({
             GRAPHQL: JSON.stringify(process.env.DOCKER_GRAPHQL || process.env.GRAPHQL),
+            DATABASE: JSON.stringify(process.env.DOCKER_DATABASE || process.env.DATABASE),
             SERVER: true,
             SEOHIDE: true,
             WS_SUBSCRIPTIONS: JSON.stringify(process.env.WS_SUBSCRIPTIONS),

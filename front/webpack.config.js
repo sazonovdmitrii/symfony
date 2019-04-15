@@ -206,6 +206,7 @@ const config = {
         }),
         new webpack.DefinePlugin({
             GRAPHQL: JSON.stringify(process.env.GRAPHQL),
+            DATABASE: JSON.stringify(process.env.DATABASE),
             SERVER: false,
             SEOHIDE: false,
             WS_SUBSCRIPTIONS: JSON.stringify(process.env.WS_SUBSCRIPTIONS),
@@ -220,14 +221,14 @@ const config = {
         }),
         new HtmlWebpackHarddiskPlugin(),
     ],
-    // stats: {
-    //     hash: false,
-    //     version: false,
-    //     children: false,
-    //     modules: false,
-    //     warnings: false,
-    //     entrypoints: false,
-    // },
+    stats: {
+        hash: false,
+        version: false,
+        children: false,
+        modules: false,
+        warnings: false,
+        entrypoints: false,
+    },
     resolve: {
         extensions: ['.scss', '.js'],
         modules: ['node_modules', 'src'],

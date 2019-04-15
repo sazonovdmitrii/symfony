@@ -77,7 +77,8 @@ services:
         volumes:
             - ./front:/home/node/app
         environment:
-            - DOCKER_GRAPHQL=http://nginx:1337/graphql/
+            - GRAPHQL=http://nginx:1337/graphql/
+            - DATABASE=postgres
         command: "sh node.sh"
         expose:
             - "3000"

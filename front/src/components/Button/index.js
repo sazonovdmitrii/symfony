@@ -5,7 +5,7 @@ import styles from './styles.css';
 
 const cx = classnames.bind(styles);
 
-export default ({
+const Button = ({
     primary,
     secondary,
     large,
@@ -29,3 +29,14 @@ export default ({
 
     return <Button role={role} className={buttonClassName} type={type} href={href || null} {...props} />;
 };
+
+Button.defaultProps = {
+    primary: false,
+    secondary: false,
+    large: false,
+    small: false,
+    fullWidth: false,
+    className: '',
+};
+
+export default Button;

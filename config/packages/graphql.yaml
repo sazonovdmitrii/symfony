@@ -1,5 +1,6 @@
 overblog_graphql:
     definitions:
+        show_debug_info: true # Debug info is disabled by default
         schema:
             query: Query
         mappings:
@@ -9,3 +10,5 @@ overblog_graphql:
                     type: yaml
                     dir: "%kernel.project_dir%/config/graphql/types"
                     suffix: ~
+    security:
+            handle_cors: true # Disable cors

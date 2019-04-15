@@ -4,6 +4,7 @@ import { ApolloLink } from 'apollo-link';
 import { onError } from 'apollo-link-error';
 import { createHttpLink } from 'apollo-link-http';
 import { createPersistedQueryLink } from 'apollo-link-persisted-queries';
+// import unfetch from 'unfetch';
 
 export function createClient() {
     const cache = new InMemoryCache();
@@ -12,12 +13,9 @@ export function createClient() {
     // server from the `GRAPHQL` environment variable, which by default is
     // set to an external playground at https://graphqlhub.com/graphql
     const httpLink = new createHttpLink({
+        // fetch: !SERVER ? unfetch : null,
         credentials: 'same-origin',
         uri: GRAPHQL,
-        fetchOptions: {
-            mode: 'no-cors',
-        },
-        connectToDevTools: !SERVER,
     });
 
     // If we're in the browser, we'd have received initial state from the
@@ -31,14 +29,30 @@ export function createClient() {
     // to tell Apollo how to handle GraphQL requests
     return new ApolloClient({
         cache,
-        link: createPersistedQueryLink({ useGETForHashedQueries: true }).concat({
-            ...httpLink, // <-- just use HTTP on the server
+        // mb todo use get for better cache
+        // link: createPersistedQueryLink({ useGETForHashedQueries: true }).concat({
+        //     ...httpLink, // <-- just use HTTP on the server
 
-            // General error handler, to log errors back to the console.
-            // Replace this in production with whatever makes sense in your
-            // environment. Remember you can use the global `SERVER` variable to
-            // determine whether you're running on the server, and record errors
-            // out to third-party services, etc
+        //     // General error handler, to log errors back to the console.
+        //     // Replace this in production with whatever makes sense in your
+        //     // environment. Remember you can use the global `SERVER` variable to
+        //     // determine whether you're running on the server, and record errors
+        //     // out to third-party services, etc
+        //     onError: ({ graphQLErrors, networkError }) => {
+        //         if (graphQLErrors) {
+        //             graphQLErrors.map(({ message, locations, path }) =>
+        //                 console.log(
+        //                     `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+        //                 )
+        //             );
+        //         }
+        //         if (networkError) {
+        //             console.log(`[Network error]: ${networkError}`);
+        //         }
+        //     },
+        // }),
+        link: {
+            ...httpLink,
             onError: ({ graphQLErrors, networkError }) => {
                 if (graphQLErrors) {
                     graphQLErrors.map(({ message, locations, path }) =>
@@ -51,7 +65,7 @@ export function createClient() {
                     console.log(`[Network error]: ${networkError}`);
                 }
             },
-        }),
+        },
         // On the server, enable SSR mode
         ssrMode: SERVER,
     });
