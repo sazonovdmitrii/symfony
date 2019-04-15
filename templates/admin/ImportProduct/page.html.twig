@@ -53,6 +53,10 @@
 {% block main %}
     {% set _list_item_actions = easyadmin_get_actions_for_list_item(_entity_config.name) %}
 
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
     {% if data|length > 0 %}
         <table class="table">
             <thead>
@@ -75,19 +79,6 @@
             </tbody>
         </table>
     {% endif %}
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
-    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <label for="autocomplete">Выберите продукт: </label>
-    <input id="autocomplete"/>
-
-    <script>
-        $(document).ready(function(){
-            $( "#autocomplete" ).autocomplete({
-                source: [ "test1", "test2", "test3", "test4"]
-            });
-        });
-    </script>
 
     <form action="/admin/?entity=ImportProduct&action=importproduct" method="post" enctype="multipart/form-data">
         <div class="form-group">
@@ -111,6 +102,7 @@
             <tr>
                 <th>&nbsp;&nbsp;Sku</th>
                 <th>&nbsp;&nbsp;Имя</th>
+                <th>&nbsp;&nbsp;Привязка</th>
             </tr>
         </thead>
         <tbody>
@@ -118,10 +110,32 @@
                 <tr>
                     <th>{{ item.sku }}</th>
                     <th>{{ item.name }}</th>
+                    <th><input id="autocomplete" class="autocomplete form-control"/></th>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $( ".autocomplete" ).autocomplete({
+                source: function(request, response){
+                    $.ajax({
+                        url: "/products/jsonFormat",
+                        success: function(data){
+                            response($.map(data, function(item){
+                                return{
+                                    label: item.name,
+                                    value: item.id
+                                }
+                            }));
+                        }
+                    });
+                },
+                minLength: 2
+            });
+        });
+    </script>
 
     {% block paginator %}
         {{ include(_entity_config.templates.paginator) }}

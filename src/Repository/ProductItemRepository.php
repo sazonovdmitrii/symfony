@@ -19,6 +19,11 @@ class ProductItemRepository extends ServiceEntityRepository
         parent::__construct($registry, ProductItem::class);
     }
 
+    public function findLimit($limit)
+    {
+        return $this->findBy([], null, $limit);
+    }
+
     // /**
     //  * @return ProductItem[] Returns an array of ProductItem objects
     //  */

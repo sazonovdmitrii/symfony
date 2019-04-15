@@ -9,6 +9,8 @@ use App\Entity\ImportQueue;
 
 class AdminController extends BaseAdminController
 {
+    const PAGE_LISTING = 20;
+
     public function editItemsAction()
     {
         $this->dispatch(EasyAdminEvents::PRE_EDIT);
@@ -70,7 +72,9 @@ class AdminController extends BaseAdminController
 
         $this->dispatch(EasyAdminEvents::POST_LIST, array('paginator' => $paginator));
         $data = $this->getDoctrine()->getRepository(ImportQueue::class)->findAll();
-        $queue = $this->getDoctrine()->getRepository(ImportQueueRelation::class)->findAll();
+        $queue = $this->getDoctrine()
+            ->getRepository(ImportQueueRelation::class)
+            ->findLimit(self::PAGE_LISTING);
 
         $parameters = array(
             'paginator' => $paginator,

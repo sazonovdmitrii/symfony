@@ -1,3 +1,7 @@
+products_json:
+    path:     /products/jsonFormat
+    controller: App\Lp\CatalogBundle\Controller\ProductController::jsonFormat
+
 urls:
     path:     /{slug}
     controller: App\Lp\UrlsBundle\Controller\UrlController::match

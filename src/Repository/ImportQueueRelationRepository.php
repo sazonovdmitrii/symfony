@@ -19,6 +19,11 @@ class ImportQueueRelationRepository extends ServiceEntityRepository
         parent::__construct($registry, ImportQueueRelation::class);
     }
 
+    public function findLimit($limit)
+    {
+        return $this->findBy([], null, $limit);
+    }
+
     // /**
     //  * @return ImportQueueRelation[] Returns an array of ImportQueueRelation objects
     //  */
