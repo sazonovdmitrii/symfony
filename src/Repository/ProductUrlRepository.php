@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\ProductUrl;
+use App\Service\LpService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -23,9 +24,11 @@ class ProductUrlRepository extends ServiceEntityRepository
     {
         $result = $this->createQueryBuilder('u')
             ->where('u.url = :url')
+            ->orWhere('u.url = :alt_url')
             ->setParameter('url', $url)
-            ->getQuery()
-            ->getResult();
+            ->setParameter('alt_url', $url . LpService::productPostfix())
+            ->getQuery();
+        $result = $result->getResult();
         return (isset($result[0])) ? $result[0] : false;
     }
 

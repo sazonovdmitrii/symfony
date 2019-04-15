@@ -66,9 +66,9 @@ easy_admin:
                     - created
                     - updated
                     - { type: 'tab', label: 'Categories' }
-                    - catalogs
+                    - { property: 'catalogs', type: 'easyadmin_autocomplete' }
                     - { type: 'tab', label: 'Product Items' }
-                    - productItems
+                    - { property: 'productItems', type: 'easyadmin_autocomplete' }
                     - { type: 'tab', label: 'Virtual Urls' }
                     - { property: 'productUrls', type: 'easyadmin_autocomplete' }
         Order:
@@ -94,7 +94,6 @@ easy_admin:
             - 'admin/form/bootstrap_3_layout.html.twig'
             - 'admin/form/bootstrap_3_horizontal_layout.html.twig'
             - 'admin/form/images.html.twig'
-            - 'admin/default/list.html.twig'
         menu:
           - label: 'Urls'
             children: ['ProductUrl', 'CatalogUrl']

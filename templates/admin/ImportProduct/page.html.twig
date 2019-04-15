@@ -75,6 +75,19 @@
             </tbody>
         </table>
     {% endif %}
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <label for="autocomplete">Выберите продукт: </label>
+    <input id="autocomplete"/>
+
+    <script>
+        $(document).ready(function(){
+            $( "#autocomplete" ).autocomplete({
+                source: [ "test1", "test2", "test3", "test4"]
+            });
+        });
+    </script>
 
     <form action="/admin/?entity=ImportProduct&action=importproduct" method="post" enctype="multipart/form-data">
         <div class="form-group">
@@ -91,6 +104,24 @@
         </div>
         <input type="submit" name="Submit" class="btn btn-primary" value="Загрузить" >
     </form>
+
+    <br/>
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th>&nbsp;&nbsp;Sku</th>
+                <th>&nbsp;&nbsp;Имя</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in queue %}
+                <tr>
+                    <th>{{ item.sku }}</th>
+                    <th>{{ item.name }}</th>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
     {% block paginator %}
         {{ include(_entity_config.templates.paginator) }}

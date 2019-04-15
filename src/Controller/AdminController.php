@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\ImportQueueRelation;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AdminController as BaseAdminController;
 use EasyCorp\Bundle\EasyAdminBundle\Event\EasyAdminEvents;
 use App\Entity\ImportQueue;
@@ -69,12 +70,14 @@ class AdminController extends BaseAdminController
 
         $this->dispatch(EasyAdminEvents::POST_LIST, array('paginator' => $paginator));
         $data = $this->getDoctrine()->getRepository(ImportQueue::class)->findAll();
+        $queue = $this->getDoctrine()->getRepository(ImportQueueRelation::class)->findAll();
 
         $parameters = array(
             'paginator' => $paginator,
             'fields' => $fields,
             'delete_form_template' => $this->createDeleteForm($this->entity['name'], '__id__')->createView(),
             'data' => $data,
+            'queue' => $queue,
             'types' => ImportQueue::getAllTypes()
         );
         $template = 'admin/ImportProduct/page.html.twig';
