@@ -44,19 +44,17 @@ export default output => async ctx => {
         url = row ? row.url : null;
         url && console.log(url, '// url is in the database 👍');
     }
-
     // make redirect
     let routerContext = {};
-    if (type && url) {
-        // find route by type
-        // const testRoute = routes.find(item => item.type && item.type === type);
+    // if (url) {
+    //     // find route by type
+    //     // const testRoute = routes.find(item => item.type && item.type === type);
 
-        routerContext = {
-            type,
-            url: `/${url}`,
-            status: 301,
-        };
-    }
+    //     routerContext = {
+    //         url: `/${url}`,
+    //         status: 301,
+    //     };
+    // }
 
     const components = (
         <ApolloProvider client={client}>
@@ -67,7 +65,12 @@ export default output => async ctx => {
     );
 
     // Await GraphQL data coming from the API server
-    await getDataFromTree(components);
+    try {
+        await getDataFromTree(components);
+    } catch (error) {
+        // Prevent GraphQL client errors from crashing SSR.
+        console.error('Error while running `getInitialState`', error);
+    }
 
     if ([301, 302].includes(routerContext.status)) {
         // 301 = permanent redirect, 302 = temporary
@@ -80,7 +83,7 @@ export default output => async ctx => {
         return;
     }
 
-    if (!url || routerContext.status === 404) {
+    if (routerContext.status === 404) {
         // By default, just set the status code to 404. You can
         // modify this section to do things like log errors to a
         // third-party, or redirect users to a dedicated 404 page

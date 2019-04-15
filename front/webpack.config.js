@@ -221,14 +221,14 @@ const config = {
         }),
         new HtmlWebpackHarddiskPlugin(),
     ],
-    // stats: {
-    //     hash: false,
-    //     version: false,
-    //     children: false,
-    //     modules: false,
-    //     warnings: false,
-    //     entrypoints: false,
-    // },
+    stats: {
+        hash: false,
+        version: false,
+        children: false,
+        modules: false,
+        warnings: false,
+        entrypoints: false,
+    },
     resolve: {
         extensions: ['.scss', '.js'],
         modules: ['node_modules', 'src'],

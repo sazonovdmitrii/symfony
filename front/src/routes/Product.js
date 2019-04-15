@@ -133,13 +133,11 @@ export default class Product extends Component {
         const { tabIndex, selectedProduct } = this.state;
         const slug = location.pathname.replace(/^\//, '').replace(/\/$/, '');
 
-        console.log(this.props);
-
         return (
             <Query query={GET_PRODUCT} variables={{ slug }}>
                 {({ loading, error, data }) => {
                     if (loading) return 'Loading...';
-                    if (error) return <NotFound />;
+                    if (error) return `Error: ${error}`;
 
                     const { product } = data;
                     const { name } = product;
@@ -283,6 +281,7 @@ export default class Product extends Component {
                                                 {items.map(item =>
                                                     item.available ? (
                                                         <li
+                                                            key={item.id}
                                                             className={`product__cart-block-type-ul-li ${
                                                                 selectedProduct.id === item.id
                                                                     ? 'product__cart-block-type-ul-li-active'
