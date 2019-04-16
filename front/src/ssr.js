@@ -69,7 +69,7 @@ export default output => async ctx => {
         await getDataFromTree(components);
     } catch (error) {
         // Prevent GraphQL client errors from crashing SSR.
-        console.error('Error while running `getInitialState`', error);
+        console.error('Error while running `getDataFromTree`', error, location);
     }
 
     if ([301, 302].includes(routerContext.status)) {

@@ -36,7 +36,7 @@ export default class Order extends Component {
                             2019-02-18 17:27:17
                             <br />
                             <br />
-                            <Button onClick={this.handleShowMore} secondary>
+                            <Button onClick={this.handleShowMore} kind="secondary">
                                 Подробнее
                             </Button>
                         </td>

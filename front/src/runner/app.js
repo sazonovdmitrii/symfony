@@ -128,7 +128,7 @@ export async function devServer(koaApp, compiler, opt = {}) {
         compiler: compiler,
         devMiddleware: {
             logLevel: 'info',
-            publicPath: '/static/',
+            publicPath: '/',
             stats: false,
         },
         hotClient,

@@ -112,7 +112,7 @@ const config = {
                         exclude: [/\.(ejs|js|jsx|mjs)$/, /\.html$/, /\.json$/, /\.scss$/],
                         options: {
                             emitFile: false,
-                            name: 'media/[name].[hash:8].[ext]',
+                            name: 'static/media/[name].[hash:8].[ext]',
                         },
                     },
                 ],

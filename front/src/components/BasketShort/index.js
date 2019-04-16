@@ -67,7 +67,12 @@ export default class BasketShort extends Component {
                                     &nbsp;{basket.currency || 'руб.'}
                                 </div>
                             </div>
-                            <Button href="/basket/#adress" className="basket-short__btn" primary fullWidth>
+                            <Button
+                                to="/basket/#adress"
+                                className="basket-short__btn"
+                                kind="primary"
+                                fullWidth
+                            >
                                 Оформить заказ
                             </Button>
                         </div>

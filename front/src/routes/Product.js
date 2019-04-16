@@ -268,7 +268,7 @@ export default class Product extends Component {
                                                     <input type="hidden" data-name="name" value="" />
                                                     <i className="click-arrow" />
                                                 </div>
-                                                <Button onClick={this.handleAddToCard} primary>
+                                                <Button onClick={this.handleAddToCard} kind="primary">
                                                     Добавить в корзину
                                                 </Button>
                                             </div>
