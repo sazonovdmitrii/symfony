@@ -68,7 +68,7 @@ export default class BasketShort extends Component {
                                 </div>
                             </div>
                             <Button
-                                href="/basket/#adress"
+                                to="/basket/#adress"
                                 className="basket-short__btn"
                                 kind="primary"
                                 fullWidth
