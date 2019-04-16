@@ -19,6 +19,7 @@ const GET_PRODUCT = gql`
     query Product($slug: String!) {
         product(slug: $slug) {
             name
+            id
         }
     }
 `;
@@ -140,7 +141,9 @@ export default class Product extends Component {
                     if (error) return `Error: ${error}`;
 
                     const { product } = data;
-                    const { name } = product;
+                    const { name, id } = product;
+
+                    if (!id) return <NotFound />;
 
                     return (
                         <div className="product">
@@ -273,61 +276,63 @@ export default class Product extends Component {
                                                 </Button>
                                             </div>
                                         </div>
-                                        <div className="product__cart-block-type">
-                                            <ul
-                                                data-behavior="utmCheck"
-                                                className="product__cart-block-type-ul"
-                                            >
-                                                {items.map(item =>
-                                                    item.available ? (
-                                                        <li
-                                                            key={item.id}
-                                                            className={`product__cart-block-type-ul-li ${
-                                                                selectedProduct.id === item.id
-                                                                    ? 'product__cart-block-type-ul-li-active'
-                                                                    : ''
-                                                            }`}
-                                                            onClick={() => this.handleChangeItem(item.id)}
-                                                        >
-                                                            <div className="product__cart-block-type-ul-li-container">
-                                                                <img
-                                                                    className="product__cart-block-type-ul-li-container-img"
-                                                                    src="https://laparfumerie.ru/item/2015/01/18/23599_45305_353568.jpg.smaller.jpg"
-                                                                    alt={item.name}
-                                                                />
-                                                            </div>
-                                                            <div className="product__cart-block-type-ul-li-nameblock">
-                                                                {item.name}
-                                                                <div className="product__cart-block-type-ul-li-nameblock-price">
-                                                                    {item.prices.sale_price
-                                                                        ? item.prices.sale_price.value
-                                                                        : item.prices.final_price.value}
-                                                                    <span className="product__cart-block-type-ul-li-nameblock-currer">
-                                                                        руб.
-                                                                    </span>
+                                        {items && (
+                                            <div className="product__cart-block-type">
+                                                <ul
+                                                    data-behavior="utmCheck"
+                                                    className="product__cart-block-type-ul"
+                                                >
+                                                    {items.map(item =>
+                                                        item.available ? (
+                                                            <li
+                                                                key={item.id}
+                                                                className={`product__cart-block-type-ul-li ${
+                                                                    selectedProduct.id === item.id
+                                                                        ? 'product__cart-block-type-ul-li-active'
+                                                                        : ''
+                                                                }`}
+                                                                onClick={() => this.handleChangeItem(item.id)}
+                                                            >
+                                                                <div className="product__cart-block-type-ul-li-container">
+                                                                    <img
+                                                                        className="product__cart-block-type-ul-li-container-img"
+                                                                        src="https://laparfumerie.ru/item/2015/01/18/23599_45305_353568.jpg.smaller.jpg"
+                                                                        alt={item.name}
+                                                                    />
                                                                 </div>
-                                                            </div>
-                                                        </li>
-                                                    ) : (
-                                                        <li className="product__cart-block-type-ul-li--not_available">
-                                                            <div className="product__cart-block-type-ul-li-container">
-                                                                <img
-                                                                    src="https://laparfumerie.ru/item/2015/06/03/22842_53746_377759.jpg.smaller.jpg"
-                                                                    alt={item.name}
-                                                                    className="product__cart-block-type-ul-li-container-img"
-                                                                />
-                                                            </div>
-                                                            <div className="product__cart-block-type-ul-li-nameblock">
-                                                                Туалетная вода 1.2 мл
-                                                                <div className="product__cart-block-type-ul-li-nameblock-available">
-                                                                    Ожидает поступления
+                                                                <div className="product__cart-block-type-ul-li-nameblock">
+                                                                    {item.name}
+                                                                    <div className="product__cart-block-type-ul-li-nameblock-price">
+                                                                        {item.prices.sale_price
+                                                                            ? item.prices.sale_price.value
+                                                                            : item.prices.final_price.value}
+                                                                        <span className="product__cart-block-type-ul-li-nameblock-currer">
+                                                                            руб.
+                                                                        </span>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        </li>
-                                                    )
-                                                )}
-                                            </ul>
-                                        </div>
+                                                            </li>
+                                                        ) : (
+                                                            <li className="product__cart-block-type-ul-li--not_available">
+                                                                <div className="product__cart-block-type-ul-li-container">
+                                                                    <img
+                                                                        src="https://laparfumerie.ru/item/2015/06/03/22842_53746_377759.jpg.smaller.jpg"
+                                                                        alt={item.name}
+                                                                        className="product__cart-block-type-ul-li-container-img"
+                                                                    />
+                                                                </div>
+                                                                <div className="product__cart-block-type-ul-li-nameblock">
+                                                                    Туалетная вода 1.2 мл
+                                                                    <div className="product__cart-block-type-ul-li-nameblock-available">
+                                                                        Ожидает поступления
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        )
+                                                    )}
+                                                </ul>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
