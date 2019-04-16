@@ -22,9 +22,9 @@ const db = knex({
     connection: {
         host: DATABASE,
         port: '5432',
-        user: 'symfony',
-        password: 'symfony',
-        database: 'symfony',
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
     },
 });
 
