@@ -19,3 +19,11 @@ Start nodejs server with ssr.(PRODUCTION)
 -   [React Apollo](https://github.com/apollographql/react-apollo)
 -   [React Router](https://github.com/ReactTraining/react-router)
 -   [Koa](https://github.com/koajs/koa)
+
+### env
+
+GRAPHQL=http://localhost/graphql/
+DATABASE=dbhost
+DB_USER=user
+DB_PASSWORD=password
+DB_NAME=dbname
