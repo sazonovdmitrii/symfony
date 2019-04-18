@@ -36,4 +36,7 @@ Query:
             slug:
               description: "Resolves using the catalog slug."
               type: "String"
+            products:
+              description: 'Products'
+              type: "String"
         resolve: "@=resolver('Catalog', [args])"

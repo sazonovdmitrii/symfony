@@ -5,7 +5,7 @@ use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 
-class CatalogResolver implements ResolverInterface, AliasedInterface {
+class ProductsFieldsResolver implements ResolverInterface, AliasedInterface {
 
     private $em;
 
@@ -25,6 +25,8 @@ class CatalogResolver implements ResolverInterface, AliasedInterface {
      */
     public function resolve(Argument $args)
     {
+//        var_dump($args);
+//        die();
         $catalogUrl = $this->em
             ->getRepository('App:CatalogUrl')
             ->findByUrl($args['slug']);

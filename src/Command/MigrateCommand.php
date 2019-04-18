@@ -30,8 +30,11 @@ class MigrateCommand extends ContainerAwareCommand
         $doctrine = $this->getContainer()->get('doctrine');
         $this->_lpDoctrine = $doctrine->getManager('lp_perl');
         $this->_defaultDoctrine = $doctrine->getManager();
+
         $this->output = $output;
-        $this->users();
+//        $this->users();
+        $this->catalog_products();
+        die();
         $this->product_items();
         $this->catalogs();
         $this->catalog_urls();
@@ -343,5 +346,39 @@ class MigrateCommand extends ContainerAwareCommand
             return str_replace("'", "''", $productTranslation['value']);
         }
         return '';
+    }
+
+    public function catalog_products()
+    {
+        $this->output->writeln(['Migrating Catalog Products...']);
+        $catalogProducts = $this->_lpDoctrine->getConnection()->prepare(
+            "SELECT * FROM catalog_2_products WHERE cat_id IN (
+                SELECT id FROM catalog
+            ) AND prod_id IN (
+                SELECT id FROM products
+            )"
+        );
+        $catalogProducts->execute();
+
+        $doctrine = $this->_defaultDoctrine->getConnection();
+        $doctrine->query('DELETE FROM product_catalog');
+
+        $allCatalogProducts = $catalogProducts->fetchAll();
+        $counter = 0;
+        foreach($allCatalogProducts as $catalogProduct) {
+            $counter++;
+            $doctrine->exec(
+                "
+                    INSERT INTO product_catalog (
+                        product_id, 
+                        catalog_id
+                    ) VALUES(
+                        " .  $catalogProduct['prod_id'] . ",
+                         " . $catalogProduct['cat_id'] . "
+                    )
+                "
+            );
+            $this->output->writeln([$counter . '/' . count($allCatalogProducts) . '-----' . $catalogProduct['id']]);
+        }
     }
 }
