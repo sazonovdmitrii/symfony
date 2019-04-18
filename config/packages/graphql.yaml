@@ -16,4 +16,4 @@ overblog_graphql:
                     dir: "%kernel.project_dir%/config/graphql/types"
                     suffix: ~
     security:
-            handle_cors: true # Disable cors
+        handle_cors: true # Disable cors

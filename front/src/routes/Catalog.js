@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 
@@ -10,9 +10,13 @@ import Filters from 'components/Filters';
 import Products from 'components/Products';
 
 const GET_CATALOG = gql`
-    query Catalog($slug: String!) {
+    query Catalog($slug: String!, $offset: Int!, $limit: Int!) {
         catalog(slug: $slug) {
             name
+            products(limit: $limit, offset: $offset) {
+                id
+                name
+            }
         }
     }
 `;
@@ -25,14 +29,12 @@ const Catalog = props => {
         <div className="catalogpage">
             <Sidebar />
             <div className="catalogpage__content">
-                <Query query={GET_CATALOG} variables={{ slug }}>
-                    {({ loading, error, data }) => {
+                <Query query={GET_CATALOG} variables={{ slug, offset: 0, limit: 40 }}>
+                    {({ loading, error, data: { catalog }, fetchMore }) => {
                         if (loading) return 'Loading...';
                         if (error) return `Error: ${error}`;
 
-                        const { catalog } = data;
-                        const { name } = catalog;
-
+                        const { name, products } = catalog;
                         if (!name) return <NotFound />;
 
                         return (
@@ -57,7 +59,29 @@ const Catalog = props => {
                                     </a>
                                 </div>
                                 <Filters />
-                                <Products />
+                                <Products
+                                    items={products}
+                                    onLoadMore={() =>
+                                        fetchMore({
+                                            variables: {
+                                                offset: catalog.products.length,
+                                            },
+                                            updateQuery: (prev, { fetchMoreResult }) => {
+                                                if (!fetchMoreResult) return prev.catalog;
+
+                                                return Object.assign({}, prev, {
+                                                    catalog: {
+                                                        ...prev.catalog,
+                                                        products: [
+                                                            ...prev.catalog.products,
+                                                            ...fetchMoreResult.catalog.products,
+                                                        ],
+                                                    },
+                                                });
+                                            },
+                                        })
+                                    }
+                                />
                                 <div className="catalog__pager">
                                     <Pagination />
                                 </div>
