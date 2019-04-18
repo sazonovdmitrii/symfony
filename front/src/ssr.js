@@ -30,7 +30,9 @@ const db = knex({
 
 export default output => async ctx => {
     const location = ctx.request.url;
-    const client = createClient();
+    // get token from cookies 🍪
+    const token = ctx.cookies.get('token');
+    const client = createClient({ token });
 
     // let url = await db('virtualurl').where('url', location);
     let url = null;
@@ -44,7 +46,8 @@ export default output => async ctx => {
         url = row ? row.url : null;
         url && console.log(url, '// url is in the database 👍');
     }
-    // make redirect
+
+    // TODO make redirect
     let routerContext = {};
     // if (url) {
     //     // find route by type

@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
-import { withRouter } from 'react-router';
+import { withRouter, Switch, Route } from 'react-router';
 import Helmet from 'react-helmet';
-import { Switch, Route } from 'react-router';
 
 import routes from './routes';
 

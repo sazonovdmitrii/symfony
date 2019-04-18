@@ -1,13 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import funnelIcon from './images/funnel.png';
+
 export default () => (
     <div data-behavior="leftModule" className="catalogpage__leftmenu">
         <button type="button" className="leftcolumn__mobileshow--filters" data-handle="openMenu">
             Категории <img src="/fe/images/down.png" alt="" />
         </button>
         <button type="button" className="leftcolumn__mobilesfiltes" data-handle="showfiltersmobile">
-            <img src="/fe/images/funnel.png" alt="" />
+            <img src={funnelIcon} alt="" />
         </button>
         <ul className="leftcolumn">
             <li className="leftcolumn__item">

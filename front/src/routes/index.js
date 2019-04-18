@@ -7,7 +7,7 @@ import Loadable from 'react-loadable';
 import NotFound from './NotFound';
 import Loader from 'components/Loader';
 
-const getComponent = (component, async = true) => {
+const getComponent = (component, async = !SERVER) => {
     if (async) {
         return Loadable({ loading: Loader, loader: () => import(`${component}`) });
     } else {
@@ -74,7 +74,7 @@ export default [
     {
         path: ['/sales-leader/'],
         exact: true,
-        component: getComponent('./SalesLeader', false),
+        component: getComponent('./SalesLeader'),
     },
     {
         type: 'product',

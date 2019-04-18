@@ -15,7 +15,6 @@ export default class Filters extends Component {
                 <div className="filtertiles__item-name" onClick={this.handleOpen}>
                     <span className="filtertiles__item-name-link">Бренд</span>
                     <i className="filtertiles__item-name-i" />
-                    <img src="/fe/images/down.png" />
                 </div>
                 <div className="filtertiles__dropmenu">
                     <input className="filtertiles__dropmenu-search" placeholder="Найти" />
