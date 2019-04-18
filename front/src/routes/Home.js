@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { hot } from 'react-hot-loader/root';
-import gql from 'graphql-tag';
-import { Query, withApollo, graphql, compose } from 'react-apollo';
 
 import Container from 'components/Container';
 import Banners from 'components/Banners';

@@ -1,21 +1,34 @@
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloLink } from 'apollo-link';
+import { setContext } from 'apollo-link-context';
 import { onError } from 'apollo-link-error';
 import { createHttpLink } from 'apollo-link-http';
-import { createPersistedQueryLink } from 'apollo-link-persisted-queries';
-// import unfetch from 'unfetch';
+// mb todo use get for better cache
+// import { createPersistedQueryLink } from 'apollo-link-persisted-queries';
 
-export function createClient() {
+let apolloClient = null;
+
+const create = ({ token }) => {
     const cache = new InMemoryCache();
-
     // Create a HTTP client (both server/client). It takes the GraphQL
     // server from the `GRAPHQL` environment variable, which by default is
     // set to an external playground at https://graphqlhub.com/graphql
     const httpLink = new createHttpLink({
-        // fetch: !SERVER ? unfetch : null,
         credentials: 'same-origin',
         uri: GRAPHQL,
+    });
+
+    const authLink = setContext((_, { headers }) => {
+        // get the authentication token from local storage if it exists
+
+        // return the headers to the context so httpLink can read them
+        return {
+            headers: {
+                ...headers,
+                authorization: token ? `Bearer ${token}` : '',
+            },
+        };
     });
 
     // If we're in the browser, we'd have received initial state from the
@@ -24,9 +37,6 @@ export function createClient() {
         cache.restore(window.__APOLLO__);
     }
 
-    // Return a new Apollo Client back, with the cache we've just created,
-    // and an array of 'links' (Apollo parlance for GraphQL middleware)
-    // to tell Apollo how to handle GraphQL requests
     return new ApolloClient({
         cache,
         // mb todo use get for better cache
@@ -51,9 +61,8 @@ export function createClient() {
         //         }
         //     },
         // }),
-        link: {
-            ...httpLink,
-            onError: ({ graphQLErrors, networkError }) => {
+        link: ApolloLink.from([
+            onError(({ graphQLErrors, networkError }) => {
                 if (graphQLErrors) {
                     graphQLErrors.map(({ message, locations, path }) =>
                         console.log(
@@ -64,9 +73,21 @@ export function createClient() {
                 if (networkError) {
                     console.log(`[Network error]: ${networkError}`);
                 }
-            },
-        },
+            }),
+            authLink.concat(httpLink),
+        ]),
         // On the server, enable SSR mode
         ssrMode: SERVER,
     });
+};
+
+export function createClient({ token = '' }) {
+    if (!apolloClient) {
+        apolloClient = create({ token });
+    }
+
+    // Return a new Apollo Client back, with the cache we've just created,
+    // and an array of 'links' (Apollo parlance for GraphQL middleware)
+    // to tell Apollo how to handle GraphQL requests
+    return apolloClient;
 }
