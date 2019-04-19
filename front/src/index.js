@@ -7,7 +7,6 @@ import React from 'react';
 import { render, hydrate } from 'react-dom';
 import { Router } from 'react-router-dom';
 import { hot } from 'react-hot-loader/root';
-import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
 import { createBrowserHistory } from 'history';
 import hardtack from 'hardtack';

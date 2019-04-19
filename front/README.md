@@ -22,8 +22,16 @@ Start nodejs server with ssr.(PRODUCTION)
 
 ### env
 
+```sh
 GRAPHQL=http://localhost/graphql/
 DATABASE=dbhost
 DB_USER=user
 DB_PASSWORD=password
 DB_NAME=dbname
+```
+
+### production startup
+
+1. `yarn global add @babel/core @babel/node pm2`
+2. in this folder `pm2 start`
+3. go drink beer

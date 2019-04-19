@@ -5,15 +5,12 @@
     "license": "MIT",
     "private": true,
     "scripts": {
-        "dev": "webpack",
+        "build": "cross-env RUNNER=build NODE_ENV=production babel-node index.js --config-file ./babel.config.ssr.js",
         "build:analyze": "ANALYZE=true NODE_ENV=production webpack",
         "lint": "eslint ./src/components",
-        "start": "cross-env webpack-dev-server",
-        "build": "cross-env RUNNER=build NODE_ENV=production babel-node index.js --config-file ./babel.config.ssr.js",
-        "ssr:dev": "cross-env RUNNER=development NODE_ENV=development nodemon -w ./dist/server.js --exec babel-node index.js --config-file ./babel.config.ssr.js",
-        "ssr:start": "cross-env RUNNER=production NODE_ENV=production nodemon -w ./dist/server.js --exec babel-node index.js --config-file ./babel.config.ssr.js",
-        "stylelint": "stylelint ./source",
-        "test": "cross-env RUNNER=production NODE_ENV=production babel-node test.js --config-file ./babel.config.ssr.js"
+        "start": "pm2 start",
+        "start:wds": "cross-env webpack-dev-server",
+        "stylelint": "stylelint ./source"
     },
     "dependencies": {
         "@babel/core": "^7.4.3",
@@ -26,7 +23,6 @@
         "@babel/preset-env": "^7.4.3",
         "@babel/preset-react": "^7.0.0",
         "@svgr/webpack": "^4.1.0",
-        "apollo-boost": "^0.3.1",
         "apollo-cache-inmemory": "^1.5.1",
         "apollo-client": "^2.5.1",
         "apollo-link-batch-http": "^1.2.11",
