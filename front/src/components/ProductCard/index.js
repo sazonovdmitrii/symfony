@@ -92,12 +92,12 @@ export default class ProductCard extends Component {
                     <p className="catalog__item_price">{price()}</p>
                     <div className="catalog__item_prd">
                         {cantbuy !== 1 &&
-                            items.map(data_alow => {
+                            items.map(item => {
                                 return (
-                                    <p className="catalog__item_prd_type">
-                                        <span className="catalog__item_prd_type_name">{data_alow.name}</span>
+                                    <p key={item.name} className="catalog__item_prd_type">
+                                        <span className="catalog__item_prd_type_name">{item.name}</span>
                                         <strong className="catalog__item_prd_type_price">
-                                            {data_alow.price}
+                                            {item.price}
                                             <span className="catalog__item_prd_type_price_curren">р.</span>
                                         </strong>
                                     </p>

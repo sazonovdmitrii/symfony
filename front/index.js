@@ -25,37 +25,42 @@ if (!fs.existsSync(script)) {
     process.exit(1);
 }
 
-// Start the script
-// test clusters for prod
-if (process.env.RUNNER === 'production' && process.env.NODE_ENV === 'production') {
-    if (cluster.isMaster) {
-        console.log(`Master ${process.pid} is running`);
+// // Check that the runner exists
+// if (!fs.existsSync(script)) {
+//     console.error(`Runner doesn't exist: ${script}`);
+//     process.exit(1);
+// }
 
-        cluster.on('exit', (worker, exitCode) => {
-            console.log(`worker ${worker.process.pid} died`);
+// // Start the script
+// // test clusters for prod
+// if (process.env.RUNNER === 'production' && process.env.NODE_ENV === 'production') {
+//     if (cluster.isMaster) {
+//         console.log(`Master ${process.pid} is running`);
 
-            if (signal) {
-                console.log(`worker was killed by signal: ${signal}`);
-            } else if (code !== 0) {
-                console.log(`worker exited with error code: ${code}`);
-            } else {
-                console.log('worker success!');
-            }
+//         const numCPUs = require('os').cpus().length;
+//         for (let i = 0; i < numCPUs; i++) {
+//             cluster.fork();
+//         }
 
-            console.log(exitCode);
-            if (exitCode !== SUCCESS) {
-                cluster.fork();
-            }
-        });
+//         cluster.on('exit', (worker, code, signal) => {
+//             console.log(`worker ${worker.process.pid} died`);
 
-        const numCPUs = require('os').cpus().length;
-        for (let i = 0; i < numCPUs; i++) {
-            cluster.fork();
-        }
-    } else {
-        require(script);
-        console.log(`Worker ${process.pid} started`);
-    }
-} else {
-    require(script);
-}
+//             if (signal) {
+//                 console.log(`worker was killed by signal: ${signal}`);
+//             } else if (code !== 0) {
+//                 console.log(`worker exited with error code: ${code}`);
+//             } else {
+//                 console.log('worker success!');
+//             }
+//         });
+
+//         cluster.on('disconnect', worker => {
+//             console.log(`The worker #${worker.id} has disconnected`);
+//         });
+//     } else {
+//         require(script);
+//         console.log(`Worker ${process.pid} started`);
+//     }
+// } else {
+require(script);
+// }
