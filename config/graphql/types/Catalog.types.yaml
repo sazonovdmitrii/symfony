@@ -2,6 +2,7 @@ Catalog:
   type: object
   config:
     description: "Catalog"
+    resolveField: '@=resolver("App\\GraphQL\\Resolver\\CatalogResolver", [info, value, args])'
     fields:
       id:
         type: "Int!"
@@ -10,16 +11,5 @@ Catalog:
         type: "String"
         description: "Catalog Name"
       products:
-        type: "[Product]"
-        description: "Define catalog products"
-        argsBuilder:
-                  builder: "Pager"
-                  config:
-                      defaultLimit: 50
-        args:
-            limit:
-                type: "Int!"
-                defaultValue: 20
-            offset:
-                type: "Int!"
-                defaultValue: 0
+        type: ProductConnection
+        argsBuilder: Relay::ForwardConnection
