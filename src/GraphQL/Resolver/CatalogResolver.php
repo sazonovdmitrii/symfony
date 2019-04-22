@@ -40,8 +40,8 @@ class CatalogResolver implements ResolverInterface {
     public function products(Catalog $catalog, Argument $args) :Connection
     {
         $products = $catalog->getProducts()->toArray();
-        $paginator = new Paginator(function ($offset, $limit) use ($products) {
-            return array_slice($products, $offset, $limit ?? 10);
+        $paginator = new Paginator(function () use ($products, $args) {
+            return array_slice($products, $args['offset'], $args['limit'] ?? 10);
         });
         return $paginator->auto($args, count($products));
     }

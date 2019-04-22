@@ -12,4 +12,4 @@ Catalog:
         description: "Catalog Name"
       products:
         type: ProductConnection
-        argsBuilder: Relay::ForwardConnection
+        argsBuilder: PaginatoringBuilder

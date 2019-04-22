@@ -6,6 +6,9 @@ overblog_graphql:
                 -
                     alias: "Pager"
                     class: "App\\GraphQL\\Args\\Pager"
+                -
+                    alias: "PaginatoringBuilder"
+                    class: "App\\GraphQL\\Args\\PaginatoringBuilder"
         schema:
             query: Query
         mappings:
