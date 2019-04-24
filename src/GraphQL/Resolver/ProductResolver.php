@@ -31,9 +31,7 @@ class ProductResolver implements ResolverInterface, AliasedInterface {
             ->findByUrl($args['slug']);
 
         if($productUrl) {
-            $product = $productUrl->getEntity();
-            $product->setTest('asdf');
-            return $product;
+            return $productUrl->getEntity();
         }
 
         return [];
