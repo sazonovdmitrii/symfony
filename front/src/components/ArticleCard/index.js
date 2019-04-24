@@ -1,9 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default () => (
     <div className="article-item">
-        <a
-            href="/articles/istoriya-brenda-jimmy-choo.htm"
+        <Link
+            to="/articles/istoriya-brenda-jimmy-choo.htm"
             className="article-item__link"
             title="История бренда Jimmy Choo"
         >
@@ -19,6 +20,6 @@ export default () => (
                     <div className="article-item__date">9 месяцев назад</div>
                 </div>
             </div>
-        </a>
+        </Link>
     </div>
 );

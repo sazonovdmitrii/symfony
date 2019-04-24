@@ -1,7 +1,4 @@
 import React from 'react';
-import gql from 'graphql-tag';
-import { Query } from 'react-apollo';
-import { ApolloConsumer } from 'react-apollo';
 import Loadable from 'react-loadable';
 
 import NotFound from './NotFound';
@@ -29,11 +26,13 @@ export default [
     {
         path: '/(articles|news)/:slug.htm',
         exact: true,
+        strict: true,
         component: getComponent('./Article'),
     },
     {
-        path: '/info/:slug.htm?',
+        path: '/info/:slug.htm',
         exact: true,
+        strict: true,
         component: getComponent('./Content'),
     },
     {
@@ -67,19 +66,20 @@ export default [
         component: getComponent('./Search'),
     },
     {
-        path: ['/order/:id'],
+        path: '/order/:id',
         exact: true,
         component: getComponent('./Order'),
     },
     {
-        path: ['/sales-leader/'],
+        path: '/sales-leader',
         exact: true,
         component: getComponent('./SalesLeader'),
     },
     {
         type: 'product',
-        path: ['/:product.htm', '/:catalog/:product.htm', '/:catalog/:subcatalog/:product.htm'],
+        path: '/:catalog?/:subcatalog?/:product.htm',
         exact: true,
+        strict: true,
         component: getComponent('./Product'),
     },
     {

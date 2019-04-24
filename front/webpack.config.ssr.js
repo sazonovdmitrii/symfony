@@ -16,21 +16,7 @@ const PATHS = {
     public: '/',
 };
 
-const getStyleLoaders = cssOptions => {
-    const loaders = [
-        {
-            loader: require.resolve('css-loader'),
-            options: {
-                ...cssOptions,
-                sourceMap: false,
-                exportOnlyLocals: true,
-            },
-        },
-    ];
-    return loaders;
-};
-
-const config = {
+module.exports = {
     name: 'server',
     target: 'node',
     mode: isProd ? 'production' : 'development',
@@ -89,7 +75,7 @@ const config = {
                 oneOf: [
                     {
                         test: /\.(mjs|js|jsx)$/,
-                        loader: require.resolve('babel-loader'),
+                        loader: 'babel-loader',
                         options: {
                             compact: isProd,
                             cacheCompression: isProd,
@@ -102,14 +88,17 @@ const config = {
                     },
                     {
                         test: /\.css$/,
-                        loader: getStyleLoaders({
+                        loader: 'css-loader',
+                        options: {
                             localIdentName: '[folder]__[local]__[hash:base64:5]',
                             modules: true,
-                        }),
+                            sourceMap: false,
+                            exportOnlyLocals: true,
+                        },
                     },
                     {
-                        loader: require.resolve('file-loader'),
-                        exclude: [/\.(ejs|js|jsx|mjs)$/, /\.html$/, /\.json$/, /\.scss$/],
+                        loader: 'file-loader',
+                        exclude: [/\.(ejs|js|jsx|mjs)$/, /\.json$/],
                         options: {
                             emitFile: false,
                             name: 'static/media/[name].[hash:8].[ext]',
@@ -139,5 +128,3 @@ const config = {
     externals: nodeModules(),
     // performance: false,
 };
-
-module.exports = config;

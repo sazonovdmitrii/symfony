@@ -19,12 +19,12 @@ export default () => {
                         </Link>
                         <ul className="usermenu__submenu">
                             <li className="usermenu__subitem">
-                                <Link className="usermenu__sublink" to="/user/personal/">
+                                <Link className="usermenu__sublink" to="/user/personal">
                                     Персональная информация
                                 </Link>
                             </li>
                             <li className="usermenu__subitem">
-                                <Link className="usermenu__sublink" to="/user/orders/">
+                                <Link className="usermenu__sublink" to="/user/orders">
                                     Ваши заказы
                                 </Link>
                             </li>
@@ -54,7 +54,7 @@ export default () => {
                 )}
             </li>
             <li className="usermenu__item">
-                <Link className="usermenu__link" to="/basket/">
+                <Link className="usermenu__link" to="/basket">
                     <span className="usermenu__icon flaticon-shopping-bag" />
                     <span className="usermenu__labebasketcount">{basket_items_count || 0}</span>
                     <span className="usermenu__label">Корзина</span>

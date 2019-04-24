@@ -35,3 +35,10 @@ DB_NAME=dbname
 1. `yarn global add @babel/core @babel/node pm2`
 2. in this folder `pm2 start`
 3. go drink beer
+
+### how to use pm2
+
+`pm2 start` - start server with config from `ecosystem.config.js`
+`pm2 logs` - show logs
+`pm2 monit` - launch dashboard with monitoring and logs
+`pm2 reload all` - restart servers(for example after rebuild server(`yarn build`))

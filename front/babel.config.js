@@ -23,7 +23,6 @@ module.exports = {
         ],
     ],
     plugins: [
-        'react-hot-loader/babel',
         '@babel/plugin-transform-react-constant-elements',
         '@babel/plugin-syntax-dynamic-import',
         [

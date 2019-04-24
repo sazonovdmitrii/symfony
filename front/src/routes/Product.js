@@ -129,10 +129,10 @@ export default class Product extends Component {
             likes,
             name_translit,
             vendor_code,
-            location,
+            match,
         } = this.props;
         const { tabIndex, selectedProduct } = this.state;
-        const slug = location.pathname.replace(/^\//, '').replace(/\/$/, '');
+        const { product: slug } = match.params;
 
         return (
             <Query query={GET_PRODUCT} variables={{ slug }}>
