@@ -1,120 +1,124 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
 import Button from 'components/Button';
 
-export default class ProductCard extends Component {
-    static defaultProps = {
-        id: 0,
-        url: '/agent-provocateur-tualetnaye-duhi-agent-provocateur.htm',
-        items: [
-            {
-                name: 'Сыворотка против выпадения волос не смываемый 300 мл',
-                price: 666,
-            },
-        ],
-        sale: false,
-        secondary_image: null,
-        primary_image: null,
-        brand_name: 'gucci',
-        texts: {},
-        cantbuy: 0,
-        min_price: 666,
+import styles from './styles.css';
+
+const ProductCard = ({
+    id,
+    url,
+    items = [],
+    sale,
+    secondary_image,
+    primary_image,
+    brand_name,
+    texts = {},
+    cantbuy,
+    min_price,
+    name,
+}) => {
+    const price = () => {
+        if (min_price && min_price > 0 && cantbuy !== 1) {
+            return (
+                <Fragment>
+                    от <span>{min_price}</span> руб.
+                </Fragment>
+            );
+        }
+
+        return <span className="catalog__item_price--soldout">ОЖИДАЕТСЯ ПОСТУПЛЕНИЕ</span>;
     };
 
-    handleChangeImage = () => {
-        // todo
-    };
-
-    render() {
-        const {
-            id,
-            url,
-            items = [],
-            sale,
-            secondary_image,
-            primary_image,
-            brand_name,
-            texts = {},
-            cantbuy,
-            min_price,
-        } = this.props;
-        const not_available = items.some(item => item.not_available === 0) || 0;
-        const price = () => {
-            if (min_price && min_price > 0 && cantbuy !== 1) {
-                return (
-                    <Fragment>
-                        от <span data-dtl="price">{min_price}</span> руб.
-                    </Fragment>
-                );
-            }
-
-            return <span className="catalog__item_price--soldout">ОЖИДАЕТСЯ ПОСТУПЛЕНИЕ</span>;
-        };
-
-        return (
-            <li className="catalog__item">
-                <div className="catalog__item-inner">
-                    <span className="criteo-data" data-dtl="id" data-id={id} style={{ display: 'none' }}>
-                        {id}
-                    </span>
-                    <Link to={url} className="catalog__item_link">
-                        {sale && sale.discount > 0 && (
-                            <span className="sale-item__bubble sale-item__bubble_role_discount">
-                                -{sale.discount}%
-                            </span>
-                        )}
-                        <div className="catalog__item_img" onMouseEnter={this.handleChangeImage}>
-                            {secondary_image && primary_image ? (
-                                <Fragment>
-                                    <img
-                                        src={`${primary_image}.product.jpg`}
-                                        className="catalog__item_img-im--first"
-                                        alt=""
-                                    />
-                                    <img
-                                        src={`${secondary_image}.product.jpg`}
-                                        className="catalog__item_img-im--second"
-                                        alt=""
-                                    />
-                                </Fragment>
-                            ) : (
+    return (
+        <li className="catalog__item">
+            <div className="catalog__item-inner">
+                <span className="criteo-data" data-dtl="id" data-id={id} style={{ display: 'none' }}>
+                    {id}
+                </span>
+                <Link to={url} className="catalog__item_link">
+                    {sale && sale.discount > 0 && (
+                        <span className="sale-item__bubble sale-item__bubble_role_discount">
+                            -{sale.discount}%
+                        </span>
+                    )}
+                    <div className="catalog__item_img">
+                        {secondary_image && primary_image ? (
+                            <Fragment>
                                 <img
-                                    src={'https://placehold.it/213x239' || `${primary_image}.product.jpg`}
-                                    className="catalog__item_img-im"
+                                    src={`${primary_image}.product.jpg`}
+                                    className="catalog__item_img-im--first"
                                     alt=""
                                 />
-                            )}
-                        </div>
-                        {!SEOHIDE && <h2 className="catalog__item_brand">{brand_name}</h2>}
-                        <h3 className="catalog__item_name">{texts.product_name}</h3>
-                    </Link>
-                    <p className="catalog__item_price">{price()}</p>
-                    <div className="catalog__item_prd">
-                        {cantbuy !== 1 &&
-                            items.map(item => {
-                                return (
-                                    <p key={item.name} className="catalog__item_prd_type">
-                                        <span className="catalog__item_prd_type_name">{item.name}</span>
-                                        <strong className="catalog__item_prd_type_price">
-                                            {item.price}
-                                            <span className="catalog__item_prd_type_price_curren">р.</span>
-                                        </strong>
-                                    </p>
-                                );
-                            })}
-
-                        {cantbuy !== 1 && items.length > 9 && (
-                            <p className="catalog__item_prd_type">
-                                <small>Ещё {items.size - 9} предложений в товаре</small>
-                            </p>
+                                <img
+                                    src={`${secondary_image}.product.jpg`}
+                                    className="catalog__item_img-im--second"
+                                    alt=""
+                                />
+                            </Fragment>
+                        ) : (
+                            <Fragment>
+                                <img
+                                    src={'https://placehold.it/213x239/000' || `${primary_image}.product.jpg`}
+                                    className="catalog__item_img-im--first"
+                                    alt=""
+                                />
+                                <img
+                                    src={'https://placehold.it/213x239' || `${primary_image}.product.jpg`}
+                                    className="catalog__item_img-im--second"
+                                    alt=""
+                                />
+                            </Fragment>
                         )}
-                        <Button href={url} kind="primary" fullWidth>
-                            {cantbuy === 0 ? 'КУПИТЬ' : 'ОБЗОР'}
-                        </Button>
                     </div>
+                    {!SEOHIDE && <h2 className="catalog__item_brand">{brand_name}</h2>}
+                    <h3 className="catalog__item_name">{name}</h3>
+                </Link>
+                <p className="catalog__item_price">{price()}</p>
+                <div className="catalog__item_prd">
+                    {cantbuy !== 1 &&
+                        items.map(item => {
+                            return (
+                                <p key={item.name} className="catalog__item_prd_type">
+                                    <span className="catalog__item_prd_type_name">{item.name}</span>
+                                    <strong className="catalog__item_prd_type_price">
+                                        {item.price}
+                                        <span className="catalog__item_prd_type_price_curren">р.</span>
+                                    </strong>
+                                </p>
+                            );
+                        })}
+                    {cantbuy !== 1 && items.length > 9 && (
+                        <p className="catalog__item_prd_type">
+                            <small>Ещё {items.size - 9} предложений в товаре</small>
+                        </p>
+                    )}
+                    <Button className={styles.button} href={url} kind="primary">
+                        {cantbuy === 0 ? 'КУПИТЬ' : 'ОБЗОР'}
+                    </Button>
                 </div>
-            </li>
-        );
-    }
-}
+            </div>
+        </li>
+    );
+};
+
+ProductCard.defaultProps = {
+    id: 0,
+    url: '/agent-provocateur-tualetnaye-duhi-agent-provocateur.htm',
+    items: [
+        {
+            name: 'Сыворотка против выпадения волос не смываемый 300 мл',
+            price: 666,
+        },
+    ],
+    sale: false,
+    secondary_image: null,
+    primary_image: null,
+    brand_name: '',
+    name: '',
+    texts: {},
+    cantbuy: 0,
+    min_price: 0,
+};
+
+export default ProductCard;

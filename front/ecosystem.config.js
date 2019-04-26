@@ -14,6 +14,7 @@ module.exports = {
             env_production: {
                 NODE_ENV: 'production',
                 RUNNER: 'production',
+                SERVER: true,
             },
             log_date_format: 'DD-MM-YYYY HH:mm:ss',
         },

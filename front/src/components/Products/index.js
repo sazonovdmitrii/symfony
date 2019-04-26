@@ -20,7 +20,7 @@ const Products = ({
         <Fragment>
             <ul className="catalog">
                 {items.map(item => (
-                    <ProductCard key={item.id} url={item.url} />
+                    <ProductCard key={item.id} {...item.node} />
                 ))}
                 <li className="brand-banner">
                     <Link to="/">

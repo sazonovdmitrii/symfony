@@ -1,4 +1,5 @@
 const isProd = process.env.NODE_ENV === 'production';
+const isServer = process.env.SERVER;
 
 module.exports = {
     presets: [
@@ -7,12 +8,13 @@ module.exports = {
             {
                 modules: false,
                 useBuiltIns: false,
-                targets: !isProd
-                    ? {
-                          node: 'current',
-                      }
-                    : {},
-                ignoreBrowserslistConfig: !isProd,
+                targets:
+                    isServer || !isProd
+                        ? {
+                              node: 'current',
+                          }
+                        : {},
+                ignoreBrowserslistConfig: isServer || !isProd,
             },
         ],
         [
@@ -38,7 +40,7 @@ module.exports = {
                 useBuiltIns: true,
             },
         ],
-        isProd && [
+        (isServer || isProd) && [
             'transform-react-remove-prop-types',
             {
                 removeImport: true,
