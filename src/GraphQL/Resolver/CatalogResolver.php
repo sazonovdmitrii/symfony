@@ -2,12 +2,13 @@
 namespace App\GraphQL\Resolver;
 use Doctrine\ORM\EntityManager;
 use App\Entity\Catalog;
-use Doctrine\ORM\EntityManagerInterface;
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Paginator;
+use Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder;
+
 
 class CatalogResolver implements ResolverInterface {
 
@@ -39,11 +40,14 @@ class CatalogResolver implements ResolverInterface {
 
     public function products(Catalog $catalog, Argument $args) :Connection
     {
-        $products = $catalog->getProducts()->toArray();
-        $paginator = new Paginator(function () use ($products, $args) {
-            return array_slice($products, $args['offset'], $args['limit'] ?? 10);
+        $products = $catalog->getProducts();
+        $paginator = new Paginator(function ($offset, $limit) use ($products) {
+            return array_slice($products->toArray(), $offset, $limit ?? 10);
         });
-        return $paginator->auto($args, count($products));
+        $data = $paginator->auto($args, function() use ($products) {
+            return $products->count();
+        });
+        return $data;
     }
 
     public function count(Catalog $catalog)
