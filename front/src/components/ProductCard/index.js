@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import Button from 'components/Button';
 
+import Loader from './Loader.js';
 import styles from './styles.css';
 
 const ProductCard = ({
@@ -17,6 +18,7 @@ const ProductCard = ({
     cantbuy,
     min_price,
     name,
+    loading,
 }) => {
     const price = () => {
         if (min_price && min_price > 0 && cantbuy !== 1) {
@@ -32,72 +34,79 @@ const ProductCard = ({
 
     return (
         <li className="catalog__item">
-            <div className="catalog__item-inner">
-                <span className="criteo-data" data-dtl="id" data-id={id} style={{ display: 'none' }}>
-                    {id}
-                </span>
-                <Link to={url} className="catalog__item_link">
-                    {sale && sale.discount > 0 && (
-                        <span className="sale-item__bubble sale-item__bubble_role_discount">
-                            -{sale.discount}%
-                        </span>
-                    )}
-                    <div className="catalog__item_img">
-                        {secondary_image && primary_image ? (
-                            <Fragment>
-                                <img
-                                    src={`${primary_image}.product.jpg`}
-                                    className="catalog__item_img-im--first"
-                                    alt=""
-                                />
-                                <img
-                                    src={`${secondary_image}.product.jpg`}
-                                    className="catalog__item_img-im--second"
-                                    alt=""
-                                />
-                            </Fragment>
-                        ) : (
-                            <Fragment>
-                                <img
-                                    src={'https://placehold.it/213x239/000' || `${primary_image}.product.jpg`}
-                                    className="catalog__item_img-im--first"
-                                    alt=""
-                                />
-                                <img
-                                    src={'https://placehold.it/213x239' || `${primary_image}.product.jpg`}
-                                    className="catalog__item_img-im--second"
-                                    alt=""
-                                />
-                            </Fragment>
+            {loading ? (
+                <Loader />
+            ) : (
+                <div className="catalog__item-inner">
+                    <span className="criteo-data" data-dtl="id" data-id={id} style={{ display: 'none' }}>
+                        {id}
+                    </span>
+                    <Link to={url} className="catalog__item_link">
+                        {sale && sale.discount > 0 && (
+                            <span className="sale-item__bubble sale-item__bubble_role_discount">
+                                -{sale.discount}%
+                            </span>
                         )}
+                        <div className="catalog__item_img">
+                            {secondary_image && primary_image ? (
+                                <Fragment>
+                                    <img
+                                        src={`${primary_image}.product.jpg`}
+                                        className="catalog__item_img-im--first"
+                                        alt=""
+                                    />
+                                    <img
+                                        src={`${secondary_image}.product.jpg`}
+                                        className="catalog__item_img-im--second"
+                                        alt=""
+                                    />
+                                </Fragment>
+                            ) : (
+                                <Fragment>
+                                    <img
+                                        src={
+                                            'https://placehold.it/213x239/000' ||
+                                            `${primary_image}.product.jpg`
+                                        }
+                                        className="catalog__item_img-im--first"
+                                        alt=""
+                                    />
+                                    <img
+                                        src={'https://placehold.it/213x239' || `${primary_image}.product.jpg`}
+                                        className="catalog__item_img-im--second"
+                                        alt=""
+                                    />
+                                </Fragment>
+                            )}
+                        </div>
+                        {!SEOHIDE && <h2 className="catalog__item_brand">{brand_name}</h2>}
+                        <h3 className="catalog__item_name">{name}</h3>
+                    </Link>
+                    <p className="catalog__item_price">{price()}</p>
+                    <div className="catalog__item_prd">
+                        {cantbuy !== 1 &&
+                            items.map(item => {
+                                return (
+                                    <p key={item.name} className="catalog__item_prd_type">
+                                        <span className="catalog__item_prd_type_name">{item.name}</span>
+                                        <strong className="catalog__item_prd_type_price">
+                                            {item.price}
+                                            <span className="catalog__item_prd_type_price_curren">р.</span>
+                                        </strong>
+                                    </p>
+                                );
+                            })}
+                        {cantbuy !== 1 && items.length > 9 && (
+                            <p className="catalog__item_prd_type">
+                                <small>Ещё {items.size - 9} предложений в товаре</small>
+                            </p>
+                        )}
+                        <Button className={styles.button} href={url} kind="primary">
+                            {cantbuy === 0 ? 'КУПИТЬ' : 'ОБЗОР'}
+                        </Button>
                     </div>
-                    {!SEOHIDE && <h2 className="catalog__item_brand">{brand_name}</h2>}
-                    <h3 className="catalog__item_name">{name}</h3>
-                </Link>
-                <p className="catalog__item_price">{price()}</p>
-                <div className="catalog__item_prd">
-                    {cantbuy !== 1 &&
-                        items.map(item => {
-                            return (
-                                <p key={item.name} className="catalog__item_prd_type">
-                                    <span className="catalog__item_prd_type_name">{item.name}</span>
-                                    <strong className="catalog__item_prd_type_price">
-                                        {item.price}
-                                        <span className="catalog__item_prd_type_price_curren">р.</span>
-                                    </strong>
-                                </p>
-                            );
-                        })}
-                    {cantbuy !== 1 && items.length > 9 && (
-                        <p className="catalog__item_prd_type">
-                            <small>Ещё {items.size - 9} предложений в товаре</small>
-                        </p>
-                    )}
-                    <Button className={styles.button} href={url} kind="primary">
-                        {cantbuy === 0 ? 'КУПИТЬ' : 'ОБЗОР'}
-                    </Button>
                 </div>
-            </div>
+            )}
         </li>
     );
 };

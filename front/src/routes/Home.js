@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { hot } from 'react-hot-loader/root';
 
 import Container from 'components/Container';
 import Banners from 'components/Banners';
@@ -11,7 +10,7 @@ const items = [
     { img: 'https://placehold.it/1110x486/0000FF' },
 ];
 
-export default hot(({ carousel }) => (
+export default ({ carousel }) => (
     <div className="homepage">
         <section className="homepage__slider">
             <Banners interval={5000}>
@@ -85,4 +84,4 @@ export default hot(({ carousel }) => (
             </section>
         </Container>
     </div>
-));
+);
