@@ -13,3 +13,6 @@ Catalog:
       products:
         type: ProductConnection
         argsBuilder: PaginatoringBuilder
+      count:
+        type: "Int!"
+        description: "Count of products"

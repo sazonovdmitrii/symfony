@@ -46,6 +46,11 @@ class CatalogResolver implements ResolverInterface {
         return $paginator->auto($args, count($products));
     }
 
+    public function count(Catalog $catalog)
+    {
+        return $catalog->getProducts()->count();
+    }
+
     /**
      * @param Argument $args
      * @return array
