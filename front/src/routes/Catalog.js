@@ -13,28 +13,51 @@ const GET_CATALOG = gql`
     query Catalog($slug: String!, $offset: Int!, $limit: Int!) {
         catalog(slug: $slug) {
             name
+            count
             products(limit: $limit, offset: $offset) {
-                id
-                name
+                edges {
+                    cursor
+                    node {
+                        id
+                        name
+                    }
+                }
+                pageInfo {
+                    hasNextPage
+                    hasPreviousPage
+                    startCursor
+                    endCursor
+                }
             }
         }
     }
 `;
 
 const Catalog = props => {
-    const { match } = props;
-    const { catalog: slug } = match.params;
+    const { match, limit } = props;
+    const { catalog: slug, subcatalog } = match.params;
+    let offset = 0;
+    let myCount = 0;
+    let currentPage = 1;
+
+    const isPage = subcatalog && subcatalog.match(/page-\d{1,}/);
+
+    if (isPage) {
+        currentPage = +subcatalog.match(/\d+/)[0];
+
+        offset = currentPage * limit;
+    }
 
     return (
         <div className="catalogpage">
             <Sidebar />
             <div className="catalogpage__content">
-                <Query query={GET_CATALOG} variables={{ slug, offset: 0, limit: 40 }}>
+                <Query query={GET_CATALOG} variables={{ slug, limit, offset }}>
                     {({ loading, error, data: { catalog }, fetchMore }) => {
                         if (loading) return 'Loading...';
                         if (error) return `Error: ${error}`;
 
-                        const { name, products } = catalog;
+                        const { name, products, count } = catalog;
                         if (!name) return <NotFound />;
 
                         return (
@@ -59,32 +82,39 @@ const Catalog = props => {
                                     </a>
                                 </div>
                                 <Filters />
-                                <Products
-                                    items={products}
-                                    onLoadMore={() =>
-                                        fetchMore({
-                                            variables: {
-                                                offset: catalog.products.length,
-                                            },
-                                            updateQuery: (prev, { fetchMoreResult }) => {
-                                                if (!fetchMoreResult) return prev.catalog;
-
-                                                return Object.assign({}, prev, {
-                                                    catalog: {
-                                                        ...prev.catalog,
-                                                        products: [
-                                                            ...prev.catalog.products,
-                                                            ...fetchMoreResult.catalog.products,
-                                                        ],
+                                <Products items={products.edges} />
+                                {count > limit && (
+                                    <div className="catalog__pager">
+                                        <Pagination
+                                            current={currentPage}
+                                            max={Math.round(count / limit)}
+                                            onNextPage={() =>
+                                                fetchMore({
+                                                    variables: {
+                                                        cursor: products.pageInfo.endCursor,
                                                     },
-                                                });
-                                            },
-                                        })
-                                    }
-                                />
-                                <div className="catalog__pager">
-                                    <Pagination />
-                                </div>
+                                                    updateQuery: (previousResult, { fetchMoreResult }) => {
+                                                        const newEdges = fetchMoreResult.products.edges;
+                                                        const pageInfo = fetchMoreResult.products.pageInfo;
+
+                                                        return newEdges.length
+                                                            ? {
+                                                                  // Put the new products at the end of the list and update `pageInfo`
+                                                                  // so we have the new `endCursor` and `hasNextPage` values
+                                                                  products: {
+                                                                      pageInfo,
+                                                                      __typename:
+                                                                          previousResult.products.__typename,
+                                                                      edges: newEdges,
+                                                                  },
+                                                              }
+                                                            : previousResult;
+                                                    },
+                                                })
+                                            }
+                                        />
+                                    </div>
+                                )}
                             </Fragment>
                         );
                     }}
@@ -92,6 +122,10 @@ const Catalog = props => {
             </div>
         </div>
     );
+};
+
+Catalog.defaultProps = {
+    limit: 40,
 };
 
 export default Catalog;
