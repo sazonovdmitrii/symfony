@@ -12,8 +12,7 @@ Catalog:
         description: "Catalog Name"
       products:
         type: ProductConnection
-        #argsBuilder: PaginatoringBuilder
-        argsBuilder: Relay::ForwardConnection
+        argsBuilder: PaginatoringBuilder
       count:
         type: "Int!"
         description: "Count of products"
