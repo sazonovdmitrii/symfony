@@ -49,6 +49,11 @@ export default ({ all_brands_top_menu = {} }) => (
             </div>
         </li>
         <li data-handle="opensubmenu" className="mainmenu__item">
+            <Link className="mainmenu__link" to="/parfumeriya/">
+                Парфюмерия
+            </Link>
+        </li>
+        <li data-handle="opensubmenu" className="mainmenu__item">
             <Link className="mainmenu__link" to="/sales/">
                 Акции
             </Link>

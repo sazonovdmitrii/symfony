@@ -1,0 +1,25 @@
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -15px;
+}
+
+.col {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding: 0 15px;
+    box-sizing: border-box;
+
+    @media (--viewport-tablet) {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+.hideOnMobile {
+    display: none;
+
+    @media (--viewport-tablet) {
+        display: block;
+    }
+}

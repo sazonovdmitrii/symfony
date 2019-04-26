@@ -37,27 +37,31 @@ const Pagination = ({ type = 'catalog', max, current = 1 }) => {
         default:
             return (
                 <div className="pagenav">
-                    <div className="pagenav__arrow">
-                        <Link
-                            to={current === 2 ? '..' : `../page-${current - 1}/`}
-                            className={leftArrowClassName}
-                        >
-                            ‹
-                        </Link>
-                    </div>
+                    {current !== 1 && (
+                        <div className="pagenav__arrow">
+                            <Link
+                                to={current === 2 ? '..' : `../page-${current - 1}/`}
+                                className={leftArrowClassName}
+                            >
+                                ‹
+                            </Link>
+                        </div>
+                    )}
                     <div className="pagenav__items">
                         Страница <span className="pagenav__items-item">{current}</span>
                         <span className="pagenav__items-item" /> из{' '}
                         <span className="pagenav__items-item">{max}</span>
                     </div>
-                    <div className="pagenav__arrow">
-                        <Link
-                            to={current === 1 ? 'page-2/' : `../page-${current + 1}/`}
-                            className={rightArrowClassName}
-                        >
-                            ›
-                        </Link>
-                    </div>
+                    {current !== max && (
+                        <div className="pagenav__arrow">
+                            <Link
+                                to={current === 1 ? 'page-2/' : `../page-${current + 1}/`}
+                                className={rightArrowClassName}
+                            >
+                                ›
+                            </Link>
+                        </div>
+                    )}
                 </div>
             );
     }

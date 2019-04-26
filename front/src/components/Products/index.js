@@ -5,33 +5,37 @@ import ProductCard from 'components/ProductCard';
 import BrandSale from 'components/BrandSale';
 import Button from 'components/Button';
 
-const Products = ({
-    items = [
-        { id: 1, url: '/agent-provocateur-tualetnaye-duhi-agent-provocateur.htm' },
-        { id: 2, url: '/st-dupont-tualetnaya-voda-st-dupont-pour-homme.htm' },
-    ],
-    onLoadMore,
-}) => {
-    const page = '';
-    const product_count = 1;
+const Banner = ({ url = '', alt = '' }) => (
+    <img className="brand-banner__image" src={url} alt={alt} style={{ width: '100%' }} />
+);
 
-    const Banner = ({ url = '', alt = '' }) => <img className="brand-banner__image" src={url} alt={alt} />;
+const Products = ({ items = [], onLoadMore, count, page = '', loading = true }) => {
     return (
         <Fragment>
             <ul className="catalog">
-                {items.map(item => (
-                    <ProductCard key={item.id} {...item.node} />
+                {items.map((item, index, array) => (
+                    <Fragment key={item.node.id}>
+                        <ProductCard {...item.node} loading={loading} />
+                        {!SERVER && // seohide
+                        page === 'brand' &&
+                        array.length !== index + 1 && // skip last row
+                        index &&
+                        parseInt((index + 1) / 8, 10) === (index + 1) / 8 ? (
+                            <li className="brand-banner">
+                                <Link to="/">
+                                    <Banner url="https://laparfumerie.ru/catalog/2013/08/22/25981_236427.jpg" />
+                                </Link>
+                            </li>
+                        ) : null}
+                    </Fragment>
                 ))}
-                <li className="brand-banner">
-                    <Link to="/">
-                        <Banner />
-                    </Link>
-                </li>
                 {page === 'aromat' && product_count <= 2 && <BrandSale />}
             </ul>
-            <Button className="button--load-more" onClick={onLoadMore} kind="secondary" fullWidth>
-                Показать еще ...
-            </Button>
+            {count !== items.length && onLoadMore && (
+                <Button className="button--load-more" onClick={onLoadMore} kind="secondary" fullWidth>
+                    Показать еще ...
+                </Button>
+            )}
         </Fragment>
     );
 };

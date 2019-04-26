@@ -82,6 +82,7 @@
         "prop-types": "^15.7.2",
         "react": "^16.8.6",
         "react-apollo": "^2.5.5",
+        "react-content-loader": "^4.2.1",
         "react-dom": "^16.8.6",
         "react-helmet": "^5.2.0",
         "react-hot-loader": "^4.8.3",
