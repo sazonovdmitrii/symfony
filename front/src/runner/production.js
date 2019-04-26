@@ -5,8 +5,6 @@ import Output from '../lib/output';
 import Stats, { IStats } from '../lib/stats';
 import { app, build, common } from './app';
 
-// ----------------------------------------------------------------------------
-
 function getStats(file) {
     return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
@@ -42,6 +40,7 @@ common.spinner.info(chalk.default.green('Production mode'));
     app.use(require(common.compiled.server).default(output));
 
     app.listen(common.port, () => {
+        common.spinner.succeed(`Graphql server: ${process.env.GRAPHQL}`);
         common.spinner.succeed(`Running on http://${common.host}:${common.port}`);
     });
 })();

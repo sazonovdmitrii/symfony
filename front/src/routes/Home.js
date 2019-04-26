@@ -7,15 +7,14 @@ import Benefits from 'components/Benefits';
 import BestSales from 'components/BestSales';
 
 const items = [
-    { img: 'https://laparfumerie.ru/carousel/main/107092_750149_ru.jpg._2x.webp' },
-    { img: 'https://laparfumerie.ru/carousel/main/106970_749436_ru.jpg._2x.webp' },
-    { img: 'https://laparfumerie.ru/carousel/main/106967_749433_ru.jpg._2x.webp' },
+    { img: 'https://placehold.it/1110x486/FF0000' },
+    { img: 'https://placehold.it/1110x486/0000FF' },
 ];
 
 export default hot(({ carousel }) => (
     <div className="homepage">
         <section className="homepage__slider">
-            <Banners interval="5000">
+            <Banners interval={5000}>
                 {items.map((item, index) => {
                     const image = <img src={item.img} alt="" />;
 

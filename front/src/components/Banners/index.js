@@ -23,6 +23,10 @@ export default class Banners extends Component {
         this.initAutoplay();
     }
 
+    componentWillUnmount() {
+        clearTimeout(this.timer);
+    }
+
     initAutoplay = () => {
         const { interval } = this.props;
         const { activeBannerIndex } = this.state;
@@ -75,6 +79,6 @@ export default class Banners extends Component {
 }
 
 Banners.propTypes = {
-    children: PropTypes.arrayOf(PropTypes.nodes),
+    children: PropTypes.node,
     interval: PropTypes.number,
 };

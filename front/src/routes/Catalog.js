@@ -22,8 +22,8 @@ const GET_CATALOG = gql`
 `;
 
 const Catalog = props => {
-    const { location } = props;
-    const slug = location.pathname.replace(/^\//, '').replace(/\/$/, '');
+    const { match } = props;
+    const { catalog: slug } = match.params;
 
     return (
         <div className="catalogpage">

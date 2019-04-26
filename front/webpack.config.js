@@ -157,7 +157,6 @@ const config = {
                         test: /\.(mjs|js|jsx)$/,
                         loader: require.resolve('babel-loader'),
                         options: {
-                            configFile: path.resolve(__dirname, 'babel.config.ssr.js'),
                             compact: isProd,
                             cacheCompression: isProd,
                             cacheDirectory: true,

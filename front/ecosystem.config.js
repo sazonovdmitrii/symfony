@@ -3,12 +3,10 @@ module.exports = {
         {
             name: 'ssr',
             script: 'index.js',
-            exec_interpreter: 'babel-node',
-            // TODO clusters
-            // exec_mode: 'cluster',
-            // instances: 'max',
-            exec_mode: 'fork',
-            node_args: '--config-file ./babel.config.ssr.js',
+            exec_mode: 'cluster',
+            watch: './dist/server.js',
+            instances: 'max',
+            restart_delay: 3000,
             env: {
                 NODE_ENV: 'development',
                 RUNNER: 'development',
@@ -17,6 +15,7 @@ module.exports = {
                 NODE_ENV: 'production',
                 RUNNER: 'production',
             },
+            log_date_format: 'DD-MM-YYYY HH:mm:ss',
         },
     ],
     deploy: {
@@ -26,8 +25,7 @@ module.exports = {
             ref: 'origin/master',
             repo: 'git@github.com:morphes/symfony.git',
             path: '/var/www/lp/front',
-            'post-deploy':
-                'yarn --production && yarn build && pm2 reload ecosystem.config.js --env production',
+            'post-deploy': 'yarn --production && yarn build && pm2 reload all --env production',
         },
     },
 };

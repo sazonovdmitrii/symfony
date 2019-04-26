@@ -1,6 +1,22 @@
-import path from 'path';
-import fs from 'fs';
-import cluster from 'cluster';
+require('@babel/register')({
+    cache: true,
+    presets: [
+        [
+            '@babel/preset-env',
+            {
+                targets: {
+                    node: 'current',
+                },
+                ignoreBrowserslistConfig: true,
+            },
+        ],
+        '@babel/preset-react',
+    ],
+});
+require('regenerator-runtime/runtime');
+
+const path = require('path');
+const fs = require('fs');
 
 // Load env vars, for the `GRAPHQL` endpoint and anything else we need
 require('dotenv').config();
@@ -21,46 +37,9 @@ const script = path.resolve('./src/runner', `${process.env.RUNNER}.js`);
 
 // Check that the runner exists
 if (!fs.existsSync(script)) {
-    console.error(`Runner doesn't exist: ${script}`);
+    console.error(`❌ Runner doesn't exist: ${script}`);
     process.exit(1);
 }
 
-// // Check that the runner exists
-// if (!fs.existsSync(script)) {
-//     console.error(`Runner doesn't exist: ${script}`);
-//     process.exit(1);
-// }
-
-// // Start the script
-// // test clusters for prod
-// if (process.env.RUNNER === 'production' && process.env.NODE_ENV === 'production') {
-//     if (cluster.isMaster) {
-//         console.log(`Master ${process.pid} is running`);
-
-//         const numCPUs = require('os').cpus().length;
-//         for (let i = 0; i < numCPUs; i++) {
-//             cluster.fork();
-//         }
-
-//         cluster.on('exit', (worker, code, signal) => {
-//             console.log(`worker ${worker.process.pid} died`);
-
-//             if (signal) {
-//                 console.log(`worker was killed by signal: ${signal}`);
-//             } else if (code !== 0) {
-//                 console.log(`worker exited with error code: ${code}`);
-//             } else {
-//                 console.log('worker success!');
-//             }
-//         });
-
-//         cluster.on('disconnect', worker => {
-//             console.log(`The worker #${worker.id} has disconnected`);
-//         });
-//     } else {
-//         require(script);
-//         console.log(`Worker ${process.pid} started`);
-//     }
-// } else {
+console.log(`⚙️ Worker ${process.pid} started...`);
 require(script);
-// }

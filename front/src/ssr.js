@@ -1,8 +1,7 @@
 import 'cross-fetch/polyfill';
 
-import Koa from 'koa';
 import React from 'react';
-import ReactDOMServer from 'react-dom/server';
+import { renderToString } from 'react-dom/server';
 import Helmet from 'react-helmet';
 import { ApolloProvider, getDataFromTree } from 'react-apollo';
 import { StaticRouter } from 'react-router';
@@ -97,8 +96,8 @@ export default output => async ctx => {
         return;
     }
 
-    const html = ReactDOMServer.renderToString(components);
-    const reactRender = ReactDOMServer.renderToString(
+    const html = renderToString(components);
+    const reactRender = renderToString(
         <Html
             cssFiles={output.client.main('css')}
             helmet={Helmet.renderStatic()}

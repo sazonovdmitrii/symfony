@@ -20,13 +20,13 @@ import KoaWebpack from 'koa-webpack';
 import ora from 'ora';
 // Lodash utility for merging objects
 import { mergeWith } from 'lodash';
+import koaLogger from 'koa-logger';
 
 /* Local */
 import clientConfig from '../../webpack.config.js';
 import serverConfig from '../../webpack.config.ssr.js';
 // import staticConfig from '../webpack/static';
 
-// ----------------------------------------------------------------------------
 
 function staticMiddleware(root, immutable = true) {
     return async (ctx, next) => {
@@ -159,6 +159,16 @@ const router = new KoaRouter()
 
 // Koa instance
 export const app = new Koa()
+    // logs
+    .use(
+        koaLogger((str, args) => {
+            const [format, method, url, status, time, length] = args;
+
+            if (status === 500) {
+                console.log('🔥', str);
+            }
+        })
+    )
     // CORS
     .use(koaCors())
     // Error catcher
@@ -192,9 +202,3 @@ app.use(staticMiddleware(path.resolve(common.dist, '..', 'public'), false));
 
 // Router
 app.use(router.allowedMethods()).use(router.routes());
-
-if (!common.isProduction) {
-    const koaLogger = require('koa-logger');
-
-    app.use(koaLogger());
-}
