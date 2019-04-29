@@ -82,9 +82,10 @@ const create = ({ token }) => {
 };
 
 export function createClient({ token = '' }) {
-    if (!apolloClient) {
-        apolloClient = create({ token });
-    }
+    // todo
+    // if (!apolloClient) {
+    apolloClient = create({ token });
+    // }
 
     // Return a new Apollo Client back, with the cache we've just created,
     // and an array of 'links' (Apollo parlance for GraphQL middleware)

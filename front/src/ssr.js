@@ -16,16 +16,16 @@ import Html from './views/Html';
 import routes from './routes/index';
 
 // w8 db 😟
-const db = knex({
-    client: 'pg',
-    connection: {
-        host: DATABASE,
-        port: '5432',
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-    },
-});
+// const db = knex({
+//     client: 'pg',
+//     connection: {
+//         host: DATABASE,
+//         port: '5432',
+//         user: process.env.DB_USER || 'symfony',
+//         password: process.env.DB_PASSWORD || 'symfony',
+//         database: process.env.DB_NAME || 'symfony',
+//     },
+// });
 
 export default output => async ctx => {
     const location = ctx.request.url;
@@ -37,14 +37,14 @@ export default output => async ctx => {
     let url = null;
 
     // check for product/catalog
-    if (!url) {
-        const isProduct = /\.htm$/.test(location);
-        const type = isProduct ? 'product' : 'catalog';
-        const database = isProduct ? 'producturl' : 'catalogurl';
-        const [row] = await db(database).where('url', location.replace(/^\//, ''));
-        url = row ? row.url : null;
-        url && console.log(url, '// url is in the database 👍');
-    }
+    // if (!url) {
+    //     const isProduct = /\.htm$/.test(location);
+    //     const type = isProduct ? 'product' : 'catalog';
+    //     const database = isProduct ? 'producturl' : 'catalogurl';
+    //     const [row] = await db(database).where('url', location.replace(/^\//, ''));
+    //     url = row ? row.url : null;
+    //     url && console.log(url, '// url is in the database 👍');
+    // }
 
     // TODO make redirect
     let routerContext = {};

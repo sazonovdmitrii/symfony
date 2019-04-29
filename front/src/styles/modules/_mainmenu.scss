@@ -9,7 +9,7 @@
 // --------------------------------------------------------------------------
 
 @include new('mainmenu') {
-    display: none;
+    display: block;
     list-style: none;
     padding: 0;
     text-align: justify;

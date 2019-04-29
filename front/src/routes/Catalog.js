@@ -18,17 +18,10 @@ const GET_CATALOG = gql`
             count
             products(limit: $limit, offset: $offset) {
                 edges {
-                    cursor
                     node {
                         id
                         name
                     }
-                }
-                pageInfo {
-                    hasNextPage
-                    hasPreviousPage
-                    startCursor
-                    endCursor
                 }
             }
         }
@@ -37,7 +30,6 @@ const GET_CATALOG = gql`
 
 const Catalog = props => {
     const { match, limit } = props;
-    const { catalog, subcatalog, filter } = match.params;
 
     let isPage;
     const slug = Object.values(match.params)
@@ -64,14 +56,22 @@ const Catalog = props => {
         <Query query={GET_CATALOG} variables={{ slug, limit, offset }}>
             {({ loading, error, data: { catalog }, fetchMore }) => {
                 if (error) return `Error: ${error}`;
+                if (loading && !catalog) return null;
 
                 const { name, products, count, description, subtitle, filters = [] } = catalog;
                 if (!name || !products.edges.length) return <NotFound />;
+                let maxPages = count / limit;
+                let isTest = maxPages.toString().match(/\./);
+
+                maxPages = parseInt(maxPages, 10);
+                if (isTest) {
+                    maxPages += 1;
+                }
 
                 const pagination = count > limit && (
                     <div className="catalog__pager">
                         <div className="catalog__search-counts">Мы нашли {count} товара</div>
-                        <Pagination current={currentPage} max={Math.round(count / limit)} />
+                        <Pagination current={currentPage} max={maxPages} />
                     </div>
                 );
 
@@ -114,18 +114,15 @@ const Catalog = props => {
                                             offset: products.edges.length,
                                         },
                                         updateQuery: (prev, { fetchMoreResult }) => {
-                                            console.log(fetchMoreResult);
                                             if (!fetchMoreResult) return prev;
 
                                             const newEdges = fetchMoreResult.catalog.products.edges;
-                                            const pageInfo = fetchMoreResult.catalog.products.pageInfo;
 
                                             return newEdges.length
                                                 ? {
                                                       catalog: {
                                                           ...prev.catalog,
                                                           products: {
-                                                              pageInfo,
                                                               __typename: prev.catalog.products.__typename,
                                                               edges: [
                                                                   ...prev.catalog.products.edges,
