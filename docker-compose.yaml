@@ -70,21 +70,21 @@ services:
             main:
                 aliases:
                     - memcached
-    node:
-        image: "node:lts"
-        restart: on-failure
-        working_dir: /home/node/app
-        volumes:
-            - ./front:/home/node/app
-        environment:
-            - GRAPHQL=http://nginx:1337/graphql/
-            - DATABASE=postgres
-        command: "sh node.sh"
-        expose:
-            - "3000"
-        networks:
-            main:
-                aliases:
-                    - node
+    # node:
+    #     image: "node:lts"
+    #     restart: on-failure
+    #     working_dir: /home/node/app
+    #     volumes:
+    #         - ./front:/home/node/app
+    #     environment:
+    #         - GRAPHQL=http://nginx:1337/graphql/
+    #         - DATABASE=postgres
+    #     command: "sh node.sh"
+    #     expose:
+    #         - "3000"
+    #     networks:
+    #         main:
+    #             aliases:
+    #                 - node
 networks:
     main:
