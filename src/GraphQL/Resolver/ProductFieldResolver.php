@@ -1,12 +1,15 @@
 <?php
+
 namespace App\GraphQL\Resolver;
 
 use Doctrine\ORM\EntityManager;
+use App\Entity\Product;
+use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Argument;
-use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 
-class ProductResolver implements ResolverInterface, AliasedInterface {
+class ProductFieldResolver implements ResolverInterface
+{
 
     private $em;
 
@@ -20,6 +23,12 @@ class ProductResolver implements ResolverInterface, AliasedInterface {
         $this->em = $em;
     }
 
+    public function __invoke(ResolveInfo $info, $value, Argument $args)
+    {
+        $method = $info->fieldName;
+        return $this->$method($value, $args);
+    }
+
     /**
      * @param Argument $args
      * @return array
@@ -30,11 +39,28 @@ class ProductResolver implements ResolverInterface, AliasedInterface {
             ->getRepository('App:ProductUrl')
             ->findByUrl($args['slug']);
 
-        if($productUrl) {
+        if ($productUrl) {
             return $productUrl->getEntity();
         }
 
         return [];
+    }
+
+    public function name(Product $product)
+    {
+        return $product->getName();
+    }
+
+    public function url(Product $product)
+    {
+        return $this->em
+            ->getRepository('App:ProductUrl')
+            ->findByEntity($product->getId());
+    }
+
+    public function id(Product $product)
+    {
+        return $product->getId();
     }
 
     /**
