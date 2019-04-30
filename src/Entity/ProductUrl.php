@@ -22,6 +22,11 @@ class ProductUrl
     private $url;
 
     /**
+     * @ORM\Column(type="integer", length=255, nullable=true)
+     */
+    private $entity_id;
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $created;

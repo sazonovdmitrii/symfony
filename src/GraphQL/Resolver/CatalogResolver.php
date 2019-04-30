@@ -2,7 +2,6 @@
 namespace App\GraphQL\Resolver;
 use Doctrine\ORM\EntityManager;
 use App\Entity\Catalog;
-use Doctrine\ORM\EntityManagerInterface;
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;

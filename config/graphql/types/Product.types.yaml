@@ -2,6 +2,7 @@ Product:
   type: object
   config:
     description: "Product"
+    resolveField: '@=resolver("App\\GraphQL\\Resolver\\ProductResolver", [info, value, args])'
     fields:
       id:
         type: "Int!"
@@ -9,3 +10,9 @@ Product:
       name:
         type: "String"
         description: "Product Name"
+      url:
+        type: "String"
+        description: "Product Url"
+#      items:
+#        type: ItemConnection
+#        argsBuilder: PaginatoringBuilder

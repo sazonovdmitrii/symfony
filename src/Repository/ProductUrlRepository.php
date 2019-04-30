@@ -32,6 +32,16 @@ class ProductUrlRepository extends ServiceEntityRepository
         return (isset($result[0])) ? $result[0] : false;
     }
 
+    public function findByEntity(string $id)
+    {
+        $result = $this->createQueryBuilder('u')
+            ->where('u.entity_id = :eid')
+            ->setParameter('eid', $id)
+            ->getQuery();
+        $result = $result->getResult();
+        return (isset($result[0])) ? $result[0] : false;
+    }
+
     // /**
     //  * @return ProductUrl[] Returns an array of ProductUrl objects
     //  */
