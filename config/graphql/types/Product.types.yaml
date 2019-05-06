@@ -2,7 +2,7 @@ Product:
   type: object
   config:
     description: "Product"
-    resolveField: '@=resolver("App\\GraphQL\\Resolver\\ProductResolver", [info, value, args])'
+    resolveField: '@=resolver("App\\GraphQL\\Resolver\\ProductFieldResolver", [info, value, args])'
     fields:
       id:
         type: "Int!"
