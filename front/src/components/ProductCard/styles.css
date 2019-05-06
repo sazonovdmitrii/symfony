@@ -1,3 +1,20 @@
+.wrapper {
+    display: block;
+    text-align: center;
+    color: var(--color-black);
+    border-width: 1px 1px 0;
+    border-color: var(--color-white);
+    border-style: solid;
+    position: relative;
+    padding-top: 10px;
+    height: 380px;
+    box-sizing: border-box;
+
+    &:hover {
+        border-color: #ccc;
+    }
+}
+
 .button {
     margin: 10px auto 0;
     display: inline-block;

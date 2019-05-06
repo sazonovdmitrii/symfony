@@ -7,22 +7,29 @@
     "scripts": {
         "build": "cross-env RUNNER=build NODE_ENV=production babel-node index.js",
         "build:analyze": "ANALYZE=true NODE_ENV=production webpack",
+        "build:static": "cross-env RUNNER=static NODE_ENV=production babel-node index.js",
         "lint": "eslint ./src/components",
         "start": "cross-env RUNNER=development NODE_ENV=development nodemon -w ./dist/server.js --exec babel-node index.js",
         "start:wds": "cross-env webpack-dev-server",
         "stylelint": "stylelint ./source"
     },
+    "browserslist": [
+        "last 2 versions",
+        "not dead",
+        "not ie_mob 11",
+        "not op_mob > 0"
+    ],
     "dependencies": {
-        "@babel/core": "^7.4.3",
+        "@babel/core": "^7.4.4",
         "@babel/node": "^7.2.2",
-        "@babel/plugin-proposal-class-properties": "^7.4.0",
-        "@babel/plugin-proposal-object-rest-spread": "^7.4.3",
+        "@babel/plugin-proposal-class-properties": "^7.4.4",
+        "@babel/plugin-proposal-object-rest-spread": "^7.4.4",
         "@babel/plugin-syntax-dynamic-import": "^7.2.0",
         "@babel/plugin-transform-react-constant-elements": "^7.2.0",
-        "@babel/plugin-transform-runtime": "^7.4.3",
-        "@babel/preset-env": "^7.4.3",
+        "@babel/plugin-transform-runtime": "^7.4.4",
+        "@babel/preset-env": "^7.4.4",
         "@babel/preset-react": "^7.0.0",
-        "@babel/register": "^7.4.0",
+        "@babel/register": "^7.4.4",
         "@svgr/webpack": "^4.1.0",
         "apollo-cache-inmemory": "^1.5.1",
         "apollo-client": "^2.5.1",
@@ -56,6 +63,7 @@
         "kcors": "^2.2.2",
         "knex": "^0.16.3",
         "koa": "^2.7.0",
+        "koa-logger": "^3.2.0",
         "koa-router": "^7.4.0",
         "koa-send": "^5.0.0",
         "koa-webpack": "^5.2.2",
@@ -63,7 +71,7 @@
         "microseconds": "^0.1.0",
         "mini-css-extract-plugin": "^0.6.0",
         "nanoid": "^2.0.1",
-        "node-sass": "^4.11.0",
+        "node-sass": "^4.12.0",
         "nodemon": "^1.18.11",
         "object-assign": "^4.1.1",
         "object.entries": "^1.1.0",
@@ -115,11 +123,6 @@
         "eslint-plugin-jsx-a11y": "^6.2.1",
         "eslint-plugin-react": "^7.12.4",
         "eslint-plugin-react-hooks": "^1.6.0",
-        "koa-logger": "^3.2.0",
         "webpack-dev-server": "^3.2.1"
-    },
-    "browserslist": [
-        "last 2 versions",
-        "not op_mini all"
-    ]
+    }
 }

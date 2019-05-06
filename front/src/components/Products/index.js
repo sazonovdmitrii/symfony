@@ -1,43 +1,143 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import gql from 'graphql-tag';
+import { Query } from 'react-apollo';
 
 import ProductCard from 'components/ProductCard';
 import BrandSale from 'components/BrandSale';
 import Button from 'components/Button';
+import Loader from 'components/Loader';
 
-const Banner = ({ url = '', alt = '' }) => (
-    <img className="brand-banner__image" src={url} alt={alt} style={{ width: '100%' }} />
-);
+import classnames from 'classnames/bind';
 
-const Products = ({ items = [], onLoadMore, count, page = '', loading = true }) => {
+import styles from './styles.css';
+
+const cx = classnames.bind(styles);
+
+const GET_PRODUCTS = gql`
+    query Products($slug: String!, $offset: Int!, $limit: Int!) {
+        catalog(slug: $slug) {
+            count
+            products(limit: $limit, offset: $offset) {
+                edges {
+                    node {
+                        id
+                        name
+                        url
+                    }
+                }
+            }
+        }
+    }
+`;
+
+const Products = ({ title, page, slug, limit, offset, col, className }) => {
+    const rowClassName = cx(styles.row, className);
+    const colClassName = cx(styles.col, {
+        [`col${col}`]: col,
+    });
+
     return (
-        <Fragment>
-            <ul className="catalog">
-                {items.map((item, index, array) => (
-                    <Fragment key={item.node.id}>
-                        <ProductCard {...item.node} loading={loading} />
-                        {!SERVER && // seohide
-                        page === 'brand' &&
-                        array.length !== index + 1 && // skip last row
-                        index &&
-                        parseInt((index + 1) / 8, 10) === (index + 1) / 8 ? (
-                            <li className="brand-banner">
-                                <Link to="/">
-                                    <Banner url="https://laparfumerie.ru/catalog/2013/08/22/25981_236427.jpg" />
-                                </Link>
-                            </li>
-                        ) : null}
+        <Query query={GET_PRODUCTS} variables={{ slug, limit, offset }}>
+            {({ loading, error, data, fetchMore }) => {
+                if (loading && !data.catalog) return <Loader />;
+                if (error || !data) {
+                    console.error(`Error: ${error}`);
+                    return null;
+                }
+
+                const { products, count } = data.catalog;
+
+                return (
+                    <Fragment>
+                        {title || null}
+                        <div className={'catalog' || rowClassName}>
+                            {products &&
+                                products.edges.map((item, index, array) => (
+                                    <div key={item.node.id} className={'catalog__item' || colClassName}>
+                                        <ProductCard {...item.node} loading={loading} />
+                                        {!SERVER && // seohide
+                                        page === 'brand' &&
+                                        array.length !== index + 1 && // skip last row
+                                        index &&
+                                        parseInt((index + 1) / 8, 10) === (index + 1) / 8 ? (
+                                            <div className="brand-banner">
+                                                <Link to="/">
+                                                    <img
+                                                        className="brand-banner__image"
+                                                        src="https://laparfumerie.ru/catalog/2013/08/22/25981_236427.jpg"
+                                                        style={{ width: '100%' }}
+                                                        alt=""
+                                                    />
+                                                </Link>
+                                            </div>
+                                        ) : null}
+                                    </div>
+                                ))}
+                            {page === 'aromat' && <BrandSale />}
+                        </div>
+                        {count !== products.edges.length && (
+                            <Button
+                                className="button--load-more"
+                                onClick={() =>
+                                    fetchMore({
+                                        variables: {
+                                            offset: products.edges.length,
+                                        },
+                                        updateQuery: (prev, { fetchMoreResult }) => {
+                                            if (!fetchMoreResult) return prev;
+
+                                            const newEdges = fetchMoreResult.catalog.products.edges;
+
+                                            return newEdges.length
+                                                ? {
+                                                      catalog: {
+                                                          ...prev.catalog,
+                                                          products: {
+                                                              __typename: prev.catalog.products.__typename,
+                                                              edges: [
+                                                                  ...prev.catalog.products.edges,
+                                                                  ...newEdges,
+                                                              ],
+                                                          },
+                                                      },
+                                                  }
+                                                : prev;
+                                        },
+                                    })
+                                }
+                                kind="secondary"
+                                fullWidth
+                            >
+                                Показать еще ...
+                            </Button>
+                        )}
                     </Fragment>
-                ))}
-                {page === 'aromat' && product_count <= 2 && <BrandSale />}
-            </ul>
-            {count !== items.length && onLoadMore && (
-                <Button className="button--load-more" onClick={onLoadMore} kind="secondary" fullWidth>
-                    Показать еще ...
-                </Button>
-            )}
-        </Fragment>
+                );
+            }}
+        </Query>
     );
+};
+
+Products.defaultProps = {
+    limit: 40,
+    offset: 0,
+    title: null,
+    page: '',
+    slug: '',
+    className: null,
+    col: 4,
+};
+
+Products.propTypes = {
+    limit: PropTypes.number,
+    offset: PropTypes.number,
+    title: PropTypes.node,
+    page: PropTypes.string,
+    slug: PropTypes.string,
+    col: PropTypes.number,
+    className: PropTypes.string,
 };
 
 export default Products;

@@ -64,13 +64,15 @@
 
         @include when('search') {
             padding: 7px 0 7px 0;
-            width: 100%;
             flex: 1;
+            margin-left: auto;
             text-align: right;
             display: inline-block;
             border: none;
 
             @include breakpoint($screen-md) {
+                flex: none;
+
                 &:hover {
                     border: none;
                 }

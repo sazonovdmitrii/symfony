@@ -15,6 +15,7 @@
     transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
     cursor: pointer;
     text-align: center;
+    text-decoration: none !important;
 }
 
 .primary {

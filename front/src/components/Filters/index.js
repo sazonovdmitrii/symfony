@@ -1,30 +1,36 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-export default class Filters extends Component {
-    constructor(props) {
-        super(props);
-    }
+import Select from 'components/Select';
+import OldSelect from 'components/Select/oldSelect';
 
-    handleOpen = () => {
-        // todo
+import styles from './styles.css';
+
+const Filters = props => {
+    const handleChange = value => {
+        console.log(value);
     };
 
-    render() {
-        return (
-            <div className="filtertiles__item">
-                <div className="filtertiles__item-name" onClick={this.handleOpen}>
-                    <span className="filtertiles__item-name-link">Бренд</span>
-                    <i className="filtertiles__item-name-i" />
-                </div>
-                <div className="filtertiles__dropmenu">
-                    <input className="filtertiles__dropmenu-search" placeholder="Найти" />
-                    <ul data-render="taglist" className="filtertiles__dropmenu_list list">
-                        <li className="filtertiles__dropmenu_item active-0">
-                            <a href="/parfumeriya/brend_hugo-boss/">Hugo Boss (239)</a>
-                        </li>
-                    </ul>
-                </div>
+    return (
+        <div className={styles.row}>
+            <div className={styles.col}>
+                <Select
+                    label="Брэнд"
+                    items={[
+                        { value: 'Hugo Boss (241)', id: 1 },
+                        { value: 'Nouvelle Etoile (Новая Заря) (237)', id: 2 },
+                    ]}
+                    onChange={handleChange}
+                />
+                <OldSelect
+                    label="Брэнд"
+                    items={[
+                        { value: 'Hugo Boss (241)', id: 1, url: '/' },
+                        { value: 'Nouvelle Etoile (Новая Заря) (237)', id: 2, url: '/' },
+                    ]}
+                />
             </div>
-        );
-    }
-}
+        </div>
+    );
+};
+
+export default Filters;
