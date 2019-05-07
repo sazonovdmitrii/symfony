@@ -1,3 +1,11 @@
 import React from 'react';
 
-export default () => <div>loading</div>;
+import styles from './styles.css';
+
+export default () => (
+    <div class={styles.wrapper}>
+        <div class={styles.loader}>
+            <div />
+        </div>
+    </div>
+);

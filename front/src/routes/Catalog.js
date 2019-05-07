@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
@@ -10,20 +10,13 @@ import Sidebar from 'components/Sidebar';
 import Pagination from 'components/Pagination';
 import Filters from 'components/Filters';
 import Products from 'components/Products';
+import Loader from 'components/Loader';
 
 const GET_CATALOG = gql`
-    query Catalog($slug: String!, $offset: Int!, $limit: Int!) {
+    query Catalog($slug: String!) {
         catalog(slug: $slug) {
             name
             count
-            products(limit: $limit, offset: $offset) {
-                edges {
-                    node {
-                        id
-                        name
-                    }
-                }
-            }
         }
     }
 `;
@@ -53,15 +46,15 @@ const Catalog = props => {
     }
 
     return (
-        <Query query={GET_CATALOG} variables={{ slug, limit, offset }}>
-            {({ loading, error, data: { catalog }, fetchMore }) => {
-                if (error) return `Error: ${error}`;
-                if (loading && !catalog) return null;
+        <Query query={GET_CATALOG} variables={{ slug }}>
+            {({ loading, error, data }) => {
+                if (loading) return <Loader />;
+                if (error || !data) return <NotFound />;
 
-                const { name, products, count, description, subtitle, filters = [] } = catalog;
-                if (!name || !products.edges.length) return <NotFound />;
+                const { name, count, description, subtitle, filters = [] } = data.catalog;
+
                 let maxPages = count / limit;
-                let isTest = maxPages.toString().match(/\./);
+                const isTest = maxPages.toString().match(/\./);
 
                 maxPages = parseInt(maxPages, 10);
                 if (isTest) {
@@ -103,39 +96,9 @@ const Catalog = props => {
                                 )}
                             </div>
                             {filters.length ? <Filters items={filters} /> : null}
+                            <Filters items={[...new Array(10).keys()]} />
                             {pagination}
-                            <Products
-                                loading={loading}
-                                count={count}
-                                items={products.edges}
-                                onLoadMore={() =>
-                                    fetchMore({
-                                        variables: {
-                                            offset: products.edges.length,
-                                        },
-                                        updateQuery: (prev, { fetchMoreResult }) => {
-                                            if (!fetchMoreResult) return prev;
-
-                                            const newEdges = fetchMoreResult.catalog.products.edges;
-
-                                            return newEdges.length
-                                                ? {
-                                                      catalog: {
-                                                          ...prev.catalog,
-                                                          products: {
-                                                              __typename: prev.catalog.products.__typename,
-                                                              edges: [
-                                                                  ...prev.catalog.products.edges,
-                                                                  ...newEdges,
-                                                              ],
-                                                          },
-                                                      },
-                                                  }
-                                                : prev;
-                                        },
-                                    })
-                                }
-                            />
+                            <Products slug={slug} limit={limit} offset={offset} count={count} />
                             {pagination}
                         </div>
                     </div>

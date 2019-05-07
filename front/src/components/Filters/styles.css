@@ -1,0 +1,13 @@
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -15px -7.5px 0;
+}
+
+.col {
+    flex: 0 0 16.66667%;
+    max-width: 16.66667%;
+    padding: 0 7.5px;
+    box-sizing: border-box;
+    margin-top: 15px;
+}

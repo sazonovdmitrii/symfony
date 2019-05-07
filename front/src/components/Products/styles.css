@@ -1,0 +1,32 @@
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -15px;
+    padding: 15px 0;
+}
+
+.col {
+    padding: 0 15px;
+    box-sizing: border-box;
+}
+
+.col12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+
+.col6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+}
+
+.col4 {
+    flex: 0 0 25%;
+    max-width: 25%;
+    height: 26.875rem;
+}
+
+.col3 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+}

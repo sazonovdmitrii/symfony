@@ -39,6 +39,12 @@ DB_NAME=dbname
 ### how to use pm2
 
 `pm2 start` - start server with config from `ecosystem.config.js`
+`pm2 l` - show all process
 `pm2 logs` - show logs
 `pm2 monit` - launch dashboard with monitoring and logs
 `pm2 reload all` - restart servers(for example after rebuild server(`yarn build`))
+`pm2 flush` - empty all application logs
+
+### skeleton
+
+http://danilowoz.com/create-content-loader/

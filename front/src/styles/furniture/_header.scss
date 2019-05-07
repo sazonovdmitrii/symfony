@@ -40,6 +40,7 @@
         z-index: 10;
         background-color: $WHITE;
         border-bottom: 1px solid #eee;
+        padding: 0 5px;
 
         @include breakpoint($screen-md) {
             position: relative;

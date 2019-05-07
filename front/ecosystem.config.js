@@ -4,7 +4,7 @@ module.exports = {
             name: 'ssr',
             script: 'index.js',
             exec_mode: 'cluster',
-            watch: './dist/server.js',
+            // watch: './dist/server.js',
             instances: 'max',
             restart_delay: 3000,
             env: {
@@ -16,17 +16,18 @@ module.exports = {
                 RUNNER: 'production',
                 SERVER: true,
             },
+            vizion: false,
             log_date_format: 'DD-MM-YYYY HH:mm:ss',
         },
     ],
     deploy: {
-        production: {
+        development: {
             user: 'root',
-            host: '212.224.112.28',
+            host: ['212.224.112.28'],
             ref: 'origin/master',
             repo: 'git@github.com:morphes/symfony.git',
             path: '/var/www/lp/front',
-            'post-deploy': 'yarn --production && yarn build && pm2 reload all --env production',
+            'post-deploy': 'yarn --production && yarn build && pm2 reload all',
         },
     },
 };

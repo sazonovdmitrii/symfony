@@ -15,6 +15,8 @@ import InputGroup from 'components/InputGroup';
 import CommentForm from 'components/CommentForm';
 import Comment from 'components/Comment';
 import RichText from 'components/RichText';
+import Select from 'components/Select';
+import Loader from 'components/Loader';
 
 const GET_PRODUCT = gql`
     query Product($slug: String!) {
@@ -39,14 +41,14 @@ const Product = ({ items, name, images, brand_name, comments, likes, name_transl
     };
     const handleAddToCard = () => {
         // const { selectedProduct } = this.state;
-        //todo add to card
+        // todo add to card
     };
 
     return (
         <Query query={GET_PRODUCT} variables={{ slug }}>
             {({ loading, error, data }) => {
-                if (loading) return 'Loading...';
-                if (error) return `Error: ${error}`;
+                if (loading) return <Loader />;
+                if (error || !data) return <NotFound />;
 
                 const { product } = data;
                 const { name, id } = product;
@@ -89,9 +91,9 @@ const Product = ({ items, name, images, brand_name, comments, likes, name_transl
                                         <i className="product-element__star--active" />
                                     </div>
                                     <span className="product__brand-stat-review">
-                                        <a href="#review">
+                                        <Link to="#review">
                                             <i>{comments.length}</i> отзыва
-                                        </a>
+                                        </Link>
                                     </span>
                                     <div className="product__brand-stat-like">
                                         <i className="product__brand-stat-like-img" />
@@ -164,26 +166,11 @@ const Product = ({ items, name, images, brand_name, comments, likes, name_transl
                                     </div>
                                     <div className="product__cart-block-button">
                                         <div className="product__cart-block-button-form product-item__frm">
-                                            <div className="left-3" style={{ width: '60px' }}>
-                                                <select
-                                                    name="amount"
-                                                    id="amount"
-                                                    data-price=""
-                                                    data-card="2922.00"
+                                            <div className="left-3">
+                                                <Select
                                                     className="select-group"
-                                                >
-                                                    <option value="1">1</option>
-                                                    <option value="2">2</option>
-                                                    <option value="3">3</option>
-                                                    <option value="4">4</option>
-                                                    <option value="5">5</option>
-                                                    <option value="6">6</option>
-                                                    <option value="7">7</option>
-                                                    <option value="8">8</option>
-                                                    <option value="9">9</option>
-                                                    <option value="10">10</option>
-                                                </select>
-                                                <input type="hidden" data-name="name" value="" />
+                                                    items={[...new Array(10).keys()]}
+                                                />
                                                 <i className="click-arrow" />
                                             </div>
                                             <Button onClick={handleAddToCard} kind="primary">
@@ -257,7 +244,7 @@ const Product = ({ items, name, images, brand_name, comments, likes, name_transl
                                 <ul className="product-element__datalist">
                                     <li className="product-element__datalist--data">Бренд:</li>
                                     <li className="product-element__datalist--data__last">
-                                        <a href="/duhi-armand-basi/"> Armand Basi </a>
+                                        <Link to="/duhi-armand-basi/">Armand Basi</Link>
                                     </li>
                                 </ul>
                                 <div>
@@ -268,9 +255,9 @@ const Product = ({ items, name, images, brand_name, comments, likes, name_transl
                                                 Раскрыть свою неповторимость, почувствовать прилив невероятной
                                                 энергии в любое время года легко, если у вас имеется туалетная
                                                 вода In Red
-                                                <a href="https://laparfumerie.ru/duhi-armand-basi/">
+                                                <Link to="/duhi-armand-basi/">
                                                     <strong>Armand Basi </strong>
-                                                </a>
+                                                </Link>
                                                 (Ин Ред от Арманд Баси). Воздушный, нежный аромат — это смелый
                                                 синтез авангардизма и традиций классики модного дома, который
                                                 хочется заказать, чтобы познакомиться с ним. Индивидуальность,
@@ -299,8 +286,8 @@ const Product = ({ items, name, images, brand_name, comments, likes, name_transl
                                 <div className="small_catalog">
                                     <div className="catalog carousel-4o2s163">
                                         <div className="catalog__item">
-                                            <a
-                                                href="/armand-basi-nabor-in-red2.htm"
+                                            <Link
+                                                to="/armand-basi-nabor-in-red2.htm"
                                                 className="catalog__item_link"
                                             >
                                                 <div className="catalog__item_img">
@@ -317,19 +304,19 @@ const Product = ({ items, name, images, brand_name, comments, likes, name_transl
                                                 <h3 className="catalog__item_name">
                                                     Набор Armand Basi In Red
                                                 </h3>
-                                            </a>
+                                            </Link>
                                             <p className="catalog__item_price">
                                                 <span className="catalog__item_price--soldout">
                                                     Ожидается поступление
                                                 </span>
                                             </p>
                                             <div className="catalog__item_prd">
-                                                <a
-                                                    href="/armand-basi-nabor-in-red2.htm"
+                                                <Link
+                                                    to="/armand-basi-nabor-in-red2.htm"
                                                     className="catalog__item_prd_button"
                                                 >
                                                     Обзор
-                                                </a>
+                                                </Link>
                                             </div>
                                         </div>
                                         <a data-handle="control-left" href="#">

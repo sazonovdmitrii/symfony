@@ -54,8 +54,8 @@ export default () => {
                             <UserMenu />
                         </div>
                     </div>
-                    <HeaderMenu className={menuClassName} />
                 </div>
+                <HeaderMenu className={menuClassName} />
             </div>
         </header>
     );
