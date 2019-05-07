@@ -7,6 +7,8 @@ use App\Entity\Product;
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Relay\Connection\Paginator;
+use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 
 class ProductFieldResolver implements ResolverInterface
 {
@@ -61,6 +63,15 @@ class ProductFieldResolver implements ResolverInterface
     public function id(Product $product)
     {
         return $product->getId();
+    }
+
+    public function items(Product $product, Argument $args) :Connection
+    {
+        $items = $product->getProductItems()->toArray();
+        $paginator = new Paginator(function () use ($items, $args) {
+            return array_slice($items, $args['offset'], $args['limit'] ?? 10);
+        });
+        return $paginator->auto($args, count($items));
     }
 
     /**
