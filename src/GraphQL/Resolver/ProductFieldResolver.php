@@ -55,9 +55,12 @@ class ProductFieldResolver implements ResolverInterface
 
     public function url(Product $product)
     {
-        return $this->em
+        if($productUrl = $this->em
             ->getRepository('App:ProductUrl')
-            ->findByEntity($product->getId());
+            ->findByEntity($product->getId())) {
+            return str_replace('//', '/', '/' . $productUrl);
+        }
+        return '';
     }
 
     public function id(Product $product)
