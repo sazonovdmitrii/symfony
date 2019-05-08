@@ -88,7 +88,9 @@ easy_admin:
             class: App\Entity\ImportProduct
         ProductTag:
             class: App\Entity\ProductTag
-
+        Configuration:
+            class: App\Entity\ProductTag
+            controller: App\Controller\Admin\ConfigurationController
     design:
         brand_color: 'black'
         form_theme:
@@ -106,3 +108,4 @@ easy_admin:
           - ImportProduct
           - label: 'Menu'
             children: ['Menu', 'MenuItem']
+          - Configuration
