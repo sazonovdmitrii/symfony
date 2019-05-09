@@ -6,27 +6,31 @@
 {% endblock %}
 
 {% block main %}
-    <div id="accordion">
-        <div class="card">
-            <div class="card-header" id="headingOne">
-                <h5 class="mb-0">
-                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        Ценообразование
-                    </button>
-                </h5>
-            </div>
+    <form action="/admin/" method="GET">
+        <input type="hidden" name="entity" value="Configuration"/>
+        <input type="hidden" name="action" value="save"/>
+        <div id="accordion">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne"
+                                aria-expanded="true"
+                                aria-controls="collapseOne">
+                            Ценообразование
+                        </button>
+                    </h5>
+                </div>
 
-            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                <div class="card-body">
-                    <form>
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
                         <div class="form-group">
                             <label for="profit">Маржинальность</label>
-                            <input type="text" class="form-control" id="profit">
+                            <input type="text" class="form-control" name="profit" id="profit">
                         </div>
                         <button type="submit" class="btn btn-primary">Сохранить</button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 {% endblock main %}
