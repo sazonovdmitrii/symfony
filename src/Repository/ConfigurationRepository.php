@@ -21,8 +21,8 @@ class ConfigurationRepository extends ServiceEntityRepository
 
     public function flush()
     {
-        return $this->createQueryBuilder('c')
-            ->delete();
+        $tableName = $this->_em->getClassMetadata(Configuration::class)->getTableName();
+        return $this->_em->getConnection()->prepare('DELETE FROM ' . $tableName)->execute();
     }
 
     // /**

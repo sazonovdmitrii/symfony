@@ -30,6 +30,10 @@ class ConfigurationController extends BaseAdminController
 
     protected function renderTemplate($actionName, $templatePath, array $parameters = array())
     {
+        $list = $this->getDoctrine()->getRepository(Configuration::class)->findAll();
+        foreach($list as $item) {
+            $parameters['list'][$item->getOption()] = $item->getValue();
+        }
         return $this->render($this->_template, $parameters);
     }
 
@@ -48,10 +52,5 @@ class ConfigurationController extends BaseAdminController
         $this->entityManager->flush();
         $this->entityManager->clear();
         return $this->redirectToReferrer();
-    }
-
-    public function urlRedirectAction()
-    {
-
     }
 }
