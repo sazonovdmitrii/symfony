@@ -8,10 +8,10 @@
         "build": "NODE_ENV=production yarn build:webpack && yarn build:lib",
         "build-storybook": "build-storybook",
         "build:analyze": "ANALYZE=true NODE_ENV=production webpack",
-        "build:lib": "babel -d lib src/lib",
+        "build:lib": "babel -d serverBabel src/lib",
         "build:webpack": "webpack",
         "lint": "eslint ./src/components",
-        "start": "NODE_ENV=production SERVER=true node lib/index.js",
+        "start": "NODE_ENV=production SERVER=true node serverBabel/index.js",
         "start:dev": "SERVER=true nodemon --exec babel-node src/lib/index.js -w ./src/lib/index.js",
         "storybook": "start-storybook -p 6006",
         "stylelint": "stylelint ./source"
