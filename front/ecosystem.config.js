@@ -2,7 +2,7 @@ module.exports = {
     apps: [
         {
             name: 'ssr',
-            script: 'index.js',
+            script: './serverBabel/index.js',
             exec_mode: 'cluster',
             // watch: './dist/server.js',
             instances: 'max',
