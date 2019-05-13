@@ -1,37 +1,77 @@
-import React, { Component } from 'react';
+import React, { useState, useDebugValue } from 'react';
+import PropTypes from 'prop-types';
 import nanoid from 'nanoid';
+import classnames from 'classnames/bind';
 
-export default class Checkbox extends Component {
-    static defaultProps = {
-        checked: false,
+import styles from './styles.css';
+
+const cx = classnames.bind(styles);
+
+const Checkbox = ({
+    type,
+    className,
+    disabled,
+    isError,
+    label,
+    name,
+    onChange,
+    required,
+    checked: propChecked,
+}) => {
+    const [state, setState] = useState({
+        id: `checkbox${nanoid()}`,
+        checked: propChecked || false,
+    });
+    const { checked, id } = state;
+    const rootClassName = cx(styles.root, className, { disabled });
+    const checkboxClassName = cx(styles.checkbox, {
+        checked,
+    });
+    const handleChange = event => {
+        if (disabled) return;
+
+        setState({ ...state, checked: !checked });
+        onChange(event, !checked);
     };
+    useDebugValue(checked ? 'checked' : 'unchecked');
 
-    id = `checkbox${nanoid()}`;
+    return (
+        <label className={rootClassName} htmlFor={id}>
+            <input
+                id={id}
+                type={type}
+                name={name}
+                className={styles.input}
+                checked={checked}
+                disabled={disabled}
+                required={required}
+                aria-invalid={isError || null}
+                aria-required={required || null}
+                onChange={handleChange}
+            />
+            <span className={checkboxClassName} />
+            {label && <div className={styles.label}>{label}</div>}
+        </label>
+    );
+};
 
-    handleChange = event => {
-        const { checked } = event.target;
-        const { onChange } = this.props;
+Checkbox.defaultProps = {
+    type: 'checkbox',
+    checked: false,
+    disabled: false,
+    isError: false,
+    label: null,
+    className: null,
+    onChange: () => {},
+};
 
-        if (onChange) {
-            onChange(event, checked);
-        }
-    };
+Checkbox.propTypes = {
+    className: PropTypes.string,
+    name: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
+    checked: PropTypes.bool,
+    label: PropTypes.string,
+    onChange: PropTypes.func,
+};
 
-    render() {
-        const { name, className, value, checked } = this.props;
-
-        return (
-            <label className={className} htmlFor={this.id}>
-                <input
-                    id={this.id}
-                    type="checkbox"
-                    name={name}
-                    value={value}
-                    onChange={this.handleChange}
-                    checked={checked}
-                />
-                Получать уведомления о новых распродажах
-            </label>
-        );
-    }
-}
+export default Checkbox;

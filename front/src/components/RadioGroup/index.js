@@ -1,32 +1,30 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 import styles from './styles.css';
 
-export default class RadioGroup extends Component {
-    handleRadioChange = (event, checked) => {
-        const { onChange } = this.props;
-
-        if (checked && onChange) {
-            onChange(event, event.target.value);
+const RadioGroup = ({ name, value = null, children, onChange }) => {
+    return React.Children.map(children, child => {
+        if (!React.isValidElement(child)) {
+            return null;
         }
-    };
 
-    render() {
-        const { name, value, children, onChange } = this.props;
+        const checked = value === child.props.value;
 
-        return React.Children.map(children, child => {
-            if (!React.isValidElement(child)) {
-                return null;
-            }
-
-            const checked = value === child.props.value;
-
-            return React.cloneElement(child, {
-                name,
-                checked,
-                onChange,
-                className: styles.item,
-            });
+        return React.cloneElement(child, {
+            name,
+            checked,
+            onChange,
+            className: styles.item,
         });
-    }
-}
+    });
+};
+
+RadioGroup.propTypes = {
+    name: PropTypes.string.isRequired,
+    value: PropTypes.string,
+    onChange: PropTypes.func.isRequired,
+    children: PropTypes.node.isRequired,
+};
+
+export default RadioGroup;

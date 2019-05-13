@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import classnames from 'classnames/bind';
+
+import { useOnClickOutside } from 'hooks';
 
 import styles from './styles.css';
 
 const cx = classnames.bind(styles);
 
 const Select = ({ items, label, active, onChange }) => {
+    const ref = useRef();
     const [openList, setList] = useState(false);
     const [selectedValue, setValue] = useState(active);
     const listClassName = cx(styles.list, {
@@ -25,9 +28,10 @@ const Select = ({ items, label, active, onChange }) => {
             onChange(selectedValue);
         }, [onChange, selectedValue, selectedValue.id]);
     }
+    useOnClickOutside(ref, () => setList(false));
 
     return (
-        <div className={styles.wrapper}>
+        <div className={styles.wrapper} ref={ref}>
             {label && <div className={labelClassName}>{label}</div>}
             <div className={styles.inner} onClick={() => setList(!openList)}>
                 <div className={styles.value}>{selectedValue.value}</div>

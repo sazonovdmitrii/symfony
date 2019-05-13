@@ -16,10 +16,9 @@ export default Nav;
 
 Nav.defaultProps = {
     index: 0,
-    onChange: () => {},
 };
 
 Nav.propTypes = {
     index: PropTypes.number,
-    onChange: PropTypes.func,
+    onChange: PropTypes.func.isRequired,
 };

@@ -1,92 +1,91 @@
-import React from 'react';
-import Loadable from 'react-loadable';
+import loadable from '@loadable/component';
 
-import NotFound from './NotFound';
+import Product from './Product';
+import Catalog from './Catalog';
 import Loader from 'components/Loader';
+import NotFound from './NotFound';
 
-const getComponent = (component, async = !SERVER) => {
-    if (async) {
-        return Loadable({ loading: Loader, loader: () => import(`${component}`) });
-    } else {
-        return require(`${component}`).default;
-    }
-};
+const getComponent = (component, async = !SERVER) =>
+    loadable(() => import(`./${component}`), {
+        fallback: Loader,
+    });
 
 export default [
     {
-        component: getComponent('./Home'),
+        component: getComponent('Home'),
         exact: true,
         path: '/',
-    },
-    {
-        path: '/(articles|news)',
-        exact: true,
-        component: getComponent('./Articles'),
     },
     {
         path: '/(articles|news)/:slug.htm',
         exact: true,
         strict: true,
-        component: getComponent('./Article'),
+        component: getComponent('Article'),
+    },
+    {
+        path: '/(articles|news)/:page?',
+        exact: true,
+        strict: true,
+        component: getComponent('Articles'),
     },
     {
         path: '/info/:slug.htm',
         exact: true,
         strict: true,
-        component: getComponent('./Content'),
+        component: getComponent('Content'),
     },
     {
         path: '/basket',
         exact: true,
-        component: getComponent('./Basket'),
+        component: getComponent('Basket'),
     },
     {
         path: '/user/:slug?',
         exact: true,
-        component: getComponent('./User'),
+        component: getComponent('User'),
     },
     {
         path: '/brands',
         exact: true,
-        component: getComponent('./Brands'),
-    },
-    {
-        path: '/sales',
-        exact: true,
-        component: getComponent('./Sales'),
+        component: getComponent('Brands'),
     },
     {
         path: '/sales/:slug',
         exact: true,
-        component: getComponent('./Sale'),
+        component: getComponent('Sale'),
+    },
+    {
+        path: '/sales',
+        exact: true,
+        component: getComponent('Sales'),
     },
     {
         path: '/search',
         exact: true,
-        component: getComponent('./Search'),
+        component: getComponent('Search'),
     },
     {
         path: '/order/:id',
         exact: true,
-        component: getComponent('./Order'),
+        component: getComponent('Order'),
     },
     {
         path: '/sales-leader',
         exact: true,
-        component: getComponent('./SalesLeader'),
+        component: getComponent('SalesLeader'),
     },
     {
         type: 'product',
         path: '/:catalog?/:subcatalog?/:product.htm',
         exact: true,
         strict: true,
-        component: getComponent('./Product'),
+        component: Product,
     },
     {
         type: 'catalog',
         path: '/:catalog/:subcatalog?/:filter?',
         exact: true,
-        component: getComponent('./Catalog'),
+        component: Catalog,
     },
     {
         component: NotFound,

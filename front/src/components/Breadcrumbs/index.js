@@ -26,7 +26,7 @@ const Breadcrumbs = ({ items = [], location, history }) => {
                     <Link to={item.url || '/'} className={styles.link} itemProp="item">
                         {item.name}
                     </Link>
-                    {!item.filter && (
+                    {item.filter && (
                         <button
                             type="button"
                             className={styles.delete}

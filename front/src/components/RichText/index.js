@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useTransition, animated } from 'react-spring';
 import classNames from 'classnames/bind';
@@ -9,32 +9,25 @@ const cx = classNames.bind(styles);
 
 const RichText = ({ maxHeight, children, expanded }) => {
     const [show, setState] = useState(expanded);
-    const containerNode = React.createRef();
-
-    useEffect(() => {
-        const { offsetHeight } = containerNode.current;
-
-        if (offsetHeight && maxHeight > offsetHeight) setState(true);
-    }, [containerNode, maxHeight]);
-
+    const containerNode = useRef(null);
     const transitions = useTransition(show, null, {
         from: { opacity: 1 },
         enter: { opacity: 0 },
         leave: { opacity: 1 },
     });
-
     const expandedClassName = cx({
         expanded: show,
     });
 
+    useEffect(() => {
+        const { offsetHeight } = containerNode.current;
+
+        if (offsetHeight && maxHeight > offsetHeight) setState(true);
+    }, []);
+
     return (
         <div>
-            <div
-                ref={containerNode}
-                className="nfe_rte"
-                itemProp="description"
-                style={{ position: 'relative' }}
-            >
+            <div ref={containerNode} className="rte" itemProp="description" style={{ position: 'relative' }}>
                 <div
                     className={expandedClassName}
                     style={{ maxHeight: `${maxHeight}px`, overflow: 'hidden' }}
@@ -58,6 +51,7 @@ const RichText = ({ maxHeight, children, expanded }) => {
 
 RichText.propTypes = {
     maxHeight: PropTypes.number,
+    expanded: PropTypes.bool,
 };
 
 RichText.defaultProps = {
