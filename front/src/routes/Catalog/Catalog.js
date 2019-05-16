@@ -14,7 +14,7 @@ const Catalog = ({ match, slug, limit, name, count, description, subtitle, filte
     let currentPage = 1;
 
     if (isPage) {
-        currentPage = +isPage.match(/\d+/)[0];
+        currentPage = match.url.match(/\d+$/)[0];
 
         offset = (currentPage - 1) * limit;
     }
