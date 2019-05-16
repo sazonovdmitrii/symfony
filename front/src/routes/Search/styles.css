@@ -1,0 +1,28 @@
+.root {
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.span {
+    line-height: 26px;
+    margin: 0 8px 0 0;
+}
+
+.rows {
+}
+
+.link {
+    display: inline-block;
+
+    &:not(:last-child) {
+        &::after {
+            content: '|';
+            margin: 0 5px;
+            color: var(--color-black);
+        }
+    }
+}
+
+.active {
+    color: var(--color-primary);
+}

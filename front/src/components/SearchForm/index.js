@@ -1,25 +1,30 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
+import { withRouter } from 'react-router';
 
 import Input from 'components/Input';
 
-export default class Name extends Component {
-    handleSubmit = e => {
+const SearchForm = props => {
+    const [search, setSearch] = useState('');
+    const handleSubmit = e => {
         e.preventDefault();
 
-        // todo
+        if (!search) return;
+
+        props.history.push(`/search/?search=${search}`);
     };
 
-    render() {
-        return (
-            <form className="searchform" action="/search/" onSubmit={this.handleSubmit}>
-                <Input
-                    theme={{ input: 'searchform__input' }}
-                    type="text"
-                    name="search"
-                    placeholder="Искать"
-                />
-                <button type="submit" className="searchform__icon flaticon-magnifying-glass" />
-            </form>
-        );
-    }
-}
+    return (
+        <form method="GET" action="/search/" className="searchform" onSubmit={handleSubmit}>
+            <Input
+                name="search"
+                value={search}
+                placeholder="Искать"
+                theme={{ input: 'searchform__input' }}
+                onChange={({ target: { value } }) => setSearch(value)}
+            />
+            <button type="submit" className="searchform__icon flaticon-magnifying-glass" />
+        </form>
+    );
+};
+
+export default withRouter(SearchForm);
