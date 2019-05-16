@@ -9,13 +9,16 @@ import Filters from 'components/Filters';
 import Products from 'components/Products';
 
 const Catalog = ({ match, slug, limit, name, count, description, subtitle, filters = [] }) => {
-    const isPage = Object.values(match.params).some((item = '') => item.match(/page-\d{1,}/));
+    const isPage = match.url.match(/(\/page-)(?<index>\d+)/);
     let offset = 0;
     let currentPage = 1;
 
     if (isPage) {
-        currentPage = match.url.match(/\d+$/)[0];
+        const {
+            groups: { index },
+        } = isPage;
 
+        currentPage = index;
         offset = (currentPage - 1) * limit;
     }
 
