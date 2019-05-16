@@ -18,7 +18,7 @@ const Catalog = ({ match, slug, limit, name, count, description, subtitle, filte
             groups: { index },
         } = isPage;
 
-        currentPage = index;
+        currentPage = parseInt(index, 10);
         offset = (currentPage - 1) * limit;
     }
 

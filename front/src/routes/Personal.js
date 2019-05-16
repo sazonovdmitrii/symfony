@@ -22,13 +22,19 @@ export default class Personal extends Component {
             sms_subscription: false,
         };
     }
-    handleChange = ({ target }, checked) => {
-        const { name, value } = target;
 
+    handleChange = ({ target: { name, value } }) => {
         this.setState({
-            [name]: checked || value,
+            [name]: value,
         });
     };
+
+    handleChangeSwitch = ({ target: { name } }, checked) => {
+        this.setState({
+            [name]: checked,
+        });
+    };
+
     render() {
         const { gender, last_name, name, mid_name, phone, email_subscription, sms_subscription } = this.state;
 
@@ -67,6 +73,7 @@ export default class Personal extends Component {
                         </InputGroup>
                     </div>
                     <div className="cabinet-content__column">
+                        Пол:
                         <InputGroup>
                             <RadioGroup name="gender" value={gender} onChange={this.handleChange}>
                                 <Radio value="" label="Не указан" />
@@ -86,30 +93,28 @@ export default class Personal extends Component {
                                 required
                             />
                         </InputGroup>
-                        <fieldset className="cabinet-content__data">
+                        <InputGroup>
                             <Checkbox
-                                className="cabinet-content__data-check"
                                 label="Получать уведомления о новых распродажах"
                                 name="email_subscription"
-                                value={email_subscription}
-                                onChange={this.handleChange}
+                                checked={email_subscription}
+                                onChange={this.handleChangeSwitch}
                             />
-                        </fieldset>
-                        <fieldset className="cabinet-content__data">
+                        </InputGroup>
+                        <InputGroup>
                             <Checkbox
-                                className="cabinet-content__data-check"
                                 label="Получать SMS-сообщения"
                                 name="sms_subscription"
-                                value={sms_subscription}
-                                onChange={this.handleChange}
+                                checked={sms_subscription}
+                                onChange={this.handleChangeSwitch}
                             />
-                        </fieldset>
+                        </InputGroup>
                     </div>
                     <div className="cabinet-content__column cabinet-content__buttons">
-                        <Button type="submit" role="submit" primary>
+                        <Button type="submit" role="submit" kind="primary">
                             Сохранить
                         </Button>
-                        <Button type="reset" secondary>
+                        <Button type="reset" kind="secondary">
                             Отменить
                         </Button>
                     </div>

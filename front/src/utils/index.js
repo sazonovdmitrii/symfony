@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { Query } from 'react-apollo';
+import { Route } from 'react-router-dom';
 
 import NotFound from 'routes/NotFound';
 
@@ -34,3 +35,17 @@ export const withQuery = ({ query, variables }) => Component => {
         </Query>
     );
 };
+
+export const RouteStatus = props => (
+    <Route
+        render={({ staticContext }) => {
+            // we have to check if staticContext exists
+            // because it will be undefined if rendered through a BrowserRouter
+            if (staticContext) {
+                staticContext.statusCode = props.statusCode;
+            }
+
+            return <div>{props.children}</div>;
+        }}
+    />
+);

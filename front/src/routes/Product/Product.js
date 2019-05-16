@@ -285,7 +285,6 @@ const Product = ({
 Product.defaultProps = {
     items: [],
     name: 'Без названия',
-    price: null,
     brand_name: null,
     images: ['https://laparfumerie.ru/product/2016/07/18/4271_80597_658713_ru.jpg'],
     comments: [
@@ -310,7 +309,6 @@ Product.propTypes = {
     name: PropTypes.string,
     id: PropTypes.number.isRequired,
     items: PropTypes.arrayOf(PropTypes.object),
-    price: PropTypes.string,
     brand_name: PropTypes.string,
     images: PropTypes.arrayOf(PropTypes.string),
     likes: PropTypes.number,

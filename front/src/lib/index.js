@@ -1,12 +1,11 @@
-require('dotenv').config();
-
 // Koa 2 web server.  Handles incoming HTTP requests, and will serve back
 // the React render, or any of the static assets being compiled
 import Koa from 'koa';
-import { mergeWith } from 'lodash';
 
 import middlewares from './middlewares';
 import config from './config';
+
+require('dotenv').config();
 
 // Catch CTRL/CMD+C interrupts cleanly
 process.on('SIGINT', () => {
@@ -15,6 +14,7 @@ process.on('SIGINT', () => {
 
 const app = new Koa();
 
+// TODO fix hmr
 if (process.env.NODE_ENV !== 'production') {
     (async () => {
         /* eslint-disable global-require, import/no-extraneous-dependencies */

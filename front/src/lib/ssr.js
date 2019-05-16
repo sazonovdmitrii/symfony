@@ -71,9 +71,9 @@ export default async ctx => {
         console.error('Error while running `getDataFromTree`', error, location);
     }
 
-    if ([301, 302].includes(routerContext.status)) {
+    if ([301, 302].includes(routerContext.statusCode)) {
         // 301 = permanent redirect, 302 = temporary
-        ctx.status = routerContext.status;
+        ctx.statusCode = routerContext.statusCode;
 
         // Issue the new `Location:` header
         ctx.redirect(routerContext.url);
@@ -82,15 +82,15 @@ export default async ctx => {
         return;
     }
 
-    if (routerContext.status === 404) {
-        // By default, just set the status code to 404. You can
+    if (routerContext.statusCode === 404) {
+        // By default, just set the statusCode to 404. You can
         // modify this section to do things like log errors to a
         // third-party, or redirect users to a dedicated 404 page
 
         ctx.status = 404;
-        ctx.body = 'Not found';
+        // ctx.body = 'Not found';
 
-        return;
+        // return;
     }
 
     const html = renderToString(components);
