@@ -7,6 +7,7 @@ export default class AddressBook extends Component {
     constructor(props) {
         super(props);
     }
+
     render() {
         return <AddressItem />;
     }

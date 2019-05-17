@@ -7,9 +7,9 @@ import { createHttpLink } from 'apollo-link-http';
 // mb todo use get for better cache
 // import { createPersistedQueryLink } from 'apollo-link-persisted-queries';
 
-let apolloClient = null;
+let graphQLClient = null;
 
-const create = ({ token }) => {
+const create = ({ token = '' }) => {
     const cache = new InMemoryCache();
     // Create a HTTP client (both server/client). It takes the GraphQL
     // server from the `GRAPHQL` environment variable, which by default is
@@ -20,7 +20,7 @@ const create = ({ token }) => {
     });
 
     const authLink = setContext((_, { headers }) => {
-        // get the authentication token from local storage if it exists
+        // get the authentication token from cookie if it exists
 
         // return the headers to the context so httpLink can read them
         return {
@@ -81,14 +81,12 @@ const create = ({ token }) => {
     });
 };
 
-export function createClient({ token = '' }) {
-    // todo
-    // if (!apolloClient) {
-    apolloClient = create({ token });
-    // }
+export function createClient({ token }) {
+    if (!process.browser) return create({ token });
 
-    // Return a new Apollo Client back, with the cache we've just created,
-    // and an array of 'links' (Apollo parlance for GraphQL middleware)
-    // to tell Apollo how to handle GraphQL requests
-    return apolloClient;
+    if (!graphQLClient) {
+        graphQLClient = create({ token });
+    }
+
+    return graphQLClient;
 }

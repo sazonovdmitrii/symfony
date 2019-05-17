@@ -201,7 +201,7 @@ const getConfig = target => {
         plugins: [
             new webpack.DefinePlugin({
                 'process.env.GRAPHQL': JSON.stringify(process.env.DOCKER_GRAPHQL || process.env.GRAPHQL),
-                'process.env.DATABASE': JSON.stringify(process.env.DOCKER_DATABASE || process.env.DATABASE),
+                'process.env.DB_HOST': JSON.stringify(process.env.DOCKER_DATABASE || process.env.DB_HOST),
                 'process.env.SERVER': isNode,
                 SERVER: isNode,
                 SEOHIDE: !isNode,

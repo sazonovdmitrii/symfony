@@ -9,6 +9,7 @@ export default class Sale extends Component {
 
         console.log(this.props.match.params);
     }
+
     render() {
         return (
             <Fragment>

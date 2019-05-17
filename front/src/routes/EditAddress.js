@@ -6,6 +6,7 @@ export default class EditAddress extends Component {
 
         console.log(this.props.match.params);
     }
+
     render() {
         return <div>EditAddress</div>;
     }

@@ -14,7 +14,6 @@ import config from './config';
 // import routes from './routes/index';
 
 export default async ctx => {
-    console.log(config.nodeStats, config.webStats, 'stats 🔥');
     const location = ctx.request.url;
     // get token from cookies 🍪
     const token = ctx.cookies.get('token');
@@ -81,6 +80,8 @@ export default async ctx => {
         // Return early -- no need to set a response body
         return;
     }
+
+    console.log('ssr: ', routerContext);
 
     if (routerContext.statusCode === 404) {
         // By default, just set the statusCode to 404. You can

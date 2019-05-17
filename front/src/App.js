@@ -12,6 +12,9 @@ import ScrollToTop from './components/ScrollToTop';
 
 const App = props => {
     const isHomePage = props.location.pathname === '/';
+    const isUserPage = /user/.test(props.location.pathname);
+
+    console.log(isUserPage);
 
     return (
         <Fragment>
@@ -42,7 +45,10 @@ const App = props => {
             </Helmet>
             <Container>
                 <Header />
-                {!isHomePage && (
+                {!isHomePage && !isUserPage && (
+                    <Breadcrumbs items={[{ name: 'Главная', url: '/' }, { name: 'Парфюмерия' }]} />
+                )}
+                {isUserPage && (
                     <Breadcrumbs items={[{ name: 'Главная', url: '/' }, { name: 'Парфюмерия' }]} />
                 )}
                 <Switch>

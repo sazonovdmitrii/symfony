@@ -2,6 +2,7 @@ import loadable from '@loadable/component';
 
 import Product from './Product';
 import Catalog from './Catalog';
+import Search from './Search';
 import Loader from 'components/Loader';
 import NotFound from './NotFound';
 
@@ -62,7 +63,7 @@ export default [
     {
         path: '/search',
         exact: true,
-        component: getComponent('Search'),
+        component: Search,
     },
     {
         path: '/order/:id',

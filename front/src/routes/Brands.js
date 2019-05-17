@@ -5,6 +5,7 @@ export default class Brands extends Component {
     constructor(props) {
         super(props);
     }
+
     render() {
         return (
             <Fragment>

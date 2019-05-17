@@ -22,6 +22,9 @@ export const withQuery = ({ query, variables }) => Component => {
                         </Fragment>
                     );
                 }
+                // const notFound = values.every(item => !item);
+                // if (!data) return <NotFound />;
+                // // console.log(data);
                 const newData = Object.values(data).reduce((obj, item) => {
                     return { ...obj, ...item };
                 }, {});

@@ -39,12 +39,12 @@ if (process.env.NODE_ENV !== 'production') {
             compiler: webpack(webpackConfig),
             devMiddleware: {
                 logLevel: 'warn',
-                publicPath: '/static/',
+                publicPath: '/',
                 // publicPath: '/',
                 stats: false,
-                writeToDisk(filePath) {
-                    return /main/.test(filePath) || /loadable-stats/.test(filePath);
-                },
+                // writeToDisk(filePath) {
+                //     return /main/.test(filePath) || /loadable-stats/.test(filePath);
+                // },
                 writeToDisk: true,
             },
             hotClient,

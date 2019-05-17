@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Helmet from 'react-helmet';
 
 import Container from 'components/Container';
 import Banners from 'components/Banners';
@@ -12,6 +13,17 @@ const items = [
 
 export default ({ carousel }) => (
     <div className="homepage">
+        <Helmet>
+            <title />
+            <meta
+                name="description"
+                content="Продаем элитную парфюмерию и косметику для женщин и мужчин с доставкой"
+            />
+            <meta
+                name="keywords"
+                content="парфюмерия, духи, интернет магазин парфюмерии, laparfumerie, лапарфюмерия"
+            />
+        </Helmet>
         <section className="homepage__slider">
             <Banners interval={5000}>
                 {items.map((item, index) => {

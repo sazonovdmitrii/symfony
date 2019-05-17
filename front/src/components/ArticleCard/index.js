@@ -33,7 +33,7 @@ ArticleCard.defaultProps = {
     name: 'Без названия',
     url: '',
     date: null,
-    loading: true,
+    loading: false,
     image: 'https://placehold.it/300x300',
 };
 
