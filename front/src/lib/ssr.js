@@ -24,7 +24,7 @@ export default async ctx => {
     // We create an extractor from the statsFile
     const webExtractor = new ChunkExtractor({ statsFile: config.webStats });
 
-    console.log(location, '🤔');
+    // console.log(location, '🤔');
     // console.log(webExtractor.getScriptElements());
 
     // let url = await db('virtualurl').where('url', location);
@@ -67,7 +67,7 @@ export default async ctx => {
         await getDataFromTree(components);
     } catch (error) {
         // Prevent GraphQL client errors from crashing SSR.
-        console.error('Error while running `getDataFromTree`', error, location);
+        // console.error('Error while running `getDataFromTree`', error, location);
     }
 
     if ([301, 302].includes(routerContext.statusCode)) {
@@ -81,7 +81,7 @@ export default async ctx => {
         return;
     }
 
-    console.log('ssr: ', routerContext);
+    // console.log('ssr: ', routerContext);
 
     if (routerContext.statusCode === 404) {
         // By default, just set the statusCode to 404. You can

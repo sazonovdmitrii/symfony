@@ -38,7 +38,7 @@ if (process.env.NODE_ENV !== 'production') {
         const defaultOptions = {
             compiler: webpack(webpackConfig),
             devMiddleware: {
-                logLevel: 'warn',
+                logLevel: 'silent',
                 publicPath: '/',
                 // publicPath: '/',
                 stats: false,

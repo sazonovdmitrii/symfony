@@ -30,20 +30,21 @@ const staticMiddleware = (root, immutable = true) => async (ctx, next) => {
 
 export default app => {
     app.use(
-        koaLogger((str, args) => {
-            const [format, method, url, status, time, length] = args;
+        koaLogger()
+        // ((str, args) => {
+        //     const [format, method, url, status, time, length] = args;
 
-            if (status === 500) {
-                console.log('🔥', str);
-                // const text = Object.entries({ method, url, time, length }).join('\n');
-                // fetch(`https://integram.org/crx8r0xS-m3`, {
-                //     method: 'POST',
-                //     body: JSON.stringify({
-                //         text: 'hello',
-                //     }),
-                // });
-            }
-        })
+        //     if (status === 500) {
+        //         console.log('🔥', str);
+        //         // const text = Object.entries({ method, url, time, length }).join('\n');
+        //         // fetch(`https://integram.org/crx8r0xS-m3`, {
+        //         //     method: 'POST',
+        //         //     body: JSON.stringify({
+        //         //         text: 'hello',
+        //         //     }),
+        //         // });
+        //     }
+        // })
     )
         // CORS
         .use(koaCors())

@@ -12,7 +12,7 @@
         "build:webpack": "webpack",
         "lint": "eslint ./src/components",
         "start": "NODE_ENV=production SERVER=true node serverBabel/index.js",
-        "start:dev": "SERVER=true nodemon --exec babel-node src/lib/index.js -w ./src/lib",
+        "start:dev": "LOG_LEVEL=debug SERVER=true nodemon --exec babel-node src/lib/index.js -w ./src/lib",
         "storybook": "start-storybook -p 6006",
         "stylelint": "stylelint ./source"
     },
@@ -70,7 +70,9 @@
         "kcors": "^2.2.2",
         "knex": "^0.16.3",
         "koa": "^2.7.0",
+        "koa-bunyan-logger": "^2.1.0",
         "koa-logger": "^3.2.0",
+        "koa-pino-logger": "^2.1.3",
         "koa-router": "^7.4.0",
         "koa-send": "^5.0.0",
         "microseconds": "^0.1.0",
