@@ -175,11 +175,20 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
             'Overblog\\GraphQLBundle\\' => 23,
             'Onurb\\Bundle\\' => 13,
         ),
+        'N' => 
+        array (
+            'Namshi\\JOSE\\' => 12,
+        ),
         'M' => 
         array (
             'Monolog\\' => 8,
             'Metadata\\' => 9,
             'Matrix\\' => 7,
+        ),
+        'L' => 
+        array (
+            'Lexik\\Bundle\\JWTAuthenticationBundle\\' => 37,
+            'Lcobucci\\JWT\\' => 13,
         ),
         'J' => 
         array (
@@ -523,6 +532,10 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
         array (
             0 => __DIR__ . '/..' . '/onurb/excel-bundle/lib',
         ),
+        'Namshi\\JOSE\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/namshi/jose/src/Namshi/JOSE',
+        ),
         'Monolog\\' => 
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
@@ -534,6 +547,14 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
         'Matrix\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
+        ),
+        'Lexik\\Bundle\\JWTAuthenticationBundle\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/lexik/jwt-authentication-bundle',
+        ),
+        'Lcobucci\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/lcobucci/jwt/src',
         ),
         'JavierEguiluz\\Bundle\\EasyAdminBundle\\' => 
         array (
