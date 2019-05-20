@@ -1,0 +1,11 @@
+Auth:
+  type: object
+  config:
+    description: "Authorization"
+    fields:
+      email:
+        type: "String"
+        description: "Email"
+      hash:
+        type: "String"
+        description: "Hash"

@@ -40,3 +40,13 @@ Query:
               description: 'Products'
               type: "String"
         resolve: "@=resolver('Catalog', [args])"
+      auth:
+        type: "Auth"
+        args:
+          email:
+            description: "Auth."
+            type: "String"
+          password:
+            description: "Password."
+            type: "String"
+        resolve: "@=resolver('Auth', [args])"

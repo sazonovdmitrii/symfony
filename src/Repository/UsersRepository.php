@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Users;
+use App\Service\LpService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -17,6 +18,28 @@ class UsersRepository extends ServiceEntityRepository
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Users::class);
+    }
+
+    public function findByEmail(string $email)
+    {
+        $result = $this->createQueryBuilder('u')
+            ->where('u.email = :email')
+            ->setParameter('email', $email)
+            ->getQuery();
+        $result = $result->getResult();
+        return (isset($result[0])) ? $result[0] : false;
+    }
+
+    public function findByAuth(string $email, string $password)
+    {
+        $result = $this->createQueryBuilder('u')
+            ->where('u.email = :email')
+            ->andWhere('u.password = :password')
+            ->setParameter('email', $email)
+            ->setParameter('password', $password)
+            ->getQuery();
+        $result = $result->getResult();
+        return (isset($result[0])) ? $result[0] : false;
     }
 
     // /**

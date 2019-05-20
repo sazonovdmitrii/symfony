@@ -35,6 +35,8 @@ class Users implements UserInterface
      */
     private $password;
 
+    private $hash;
+
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Orders", mappedBy="user_id")
      */
@@ -152,5 +154,17 @@ class Users implements UserInterface
         }
 
         return $this;
+    }
+
+    public function setHash($hash)
+    {
+        $this->hash = $hash;
+
+        return $this;
+    }
+
+    public function getHash()
+    {
+        return $this->hash;
     }
 }
