@@ -69,8 +69,8 @@ const Pagination = ({ type = 'catalog', max, current = 1 }) => {
 
 Pagination.propTypes = {
     type: PropTypes.string,
-    max: PropTypes.number.isRequired,
-    current: PropTypes.number.isRequired,
+    max: PropTypes.number,
+    current: PropTypes.number,
 };
 
 export default Pagination;

@@ -1,40 +1,35 @@
 import 'cross-fetch/polyfill';
 
+import path from 'path';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import Helmet from 'react-helmet';
 import { ApolloProvider, getDataFromTree } from 'react-apollo';
 import { StaticRouter } from 'react-router';
-import pathToRegexp from 'path-to-regexp';
 import knex from 'knex';
+import { ChunkExtractor, ChunkExtractorManager } from '@loadable/server';
 
-import { createClient } from './lib/apollo';
-import App from './App';
-import output from './lib/output';
-import Html from './views/Html';
+import Html from './Html';
+import config from './config';
+// import routes from './routes/index';
 
-import routes from './routes/index';
-
-// w8 db 😟
-// const db = knex({
-//     client: 'pg',
-//     connection: {
-//         host: DATABASE,
-//         port: '5432',
-//         user: process.env.DB_USER || 'symfony',
-//         password: process.env.DB_PASSWORD || 'symfony',
-//         database: process.env.DB_NAME || 'symfony',
-//     },
-// });
-
-export default output => async ctx => {
+export default async ctx => {
+    console.log(config.nodeStats, config.webStats, 'stats 🔥');
     const location = ctx.request.url;
     // get token from cookies 🍪
     const token = ctx.cookies.get('token');
-    const client = createClient({ token });
+    const client = config.client({ token });
+
+    const nodeExtractor = new ChunkExtractor({ statsFile: config.nodeStats });
+    const { default: App } = nodeExtractor.requireEntrypoint();
+    // We create an extractor from the statsFile
+    const webExtractor = new ChunkExtractor({ statsFile: config.webStats });
+
+    console.log(location, '🤔');
+    // console.log(webExtractor.getScriptElements());
 
     // let url = await db('virtualurl').where('url', location);
-    let url = null;
+    // let url = null;
 
     // check for product/catalog
     // if (!url) {
@@ -47,7 +42,6 @@ export default output => async ctx => {
     // }
 
     // TODO make redirect
-    let routerContext = {};
     // if (url) {
     //     // find route by type
     //     // const testRoute = routes.find(item => item.type && item.type === type);
@@ -58,12 +52,15 @@ export default output => async ctx => {
     //     };
     // }
 
+    let routerContext = {};
     const components = (
-        <ApolloProvider client={client}>
-            <StaticRouter location={location} context={routerContext}>
-                <App />
-            </StaticRouter>
-        </ApolloProvider>
+        <ChunkExtractorManager extractor={webExtractor}>
+            <ApolloProvider client={client}>
+                <StaticRouter location={location} context={routerContext}>
+                    <App />
+                </StaticRouter>
+            </ApolloProvider>
+        </ChunkExtractorManager>
     );
 
     // Await GraphQL data coming from the API server
@@ -74,9 +71,9 @@ export default output => async ctx => {
         console.error('Error while running `getDataFromTree`', error, location);
     }
 
-    if ([301, 302].includes(routerContext.status)) {
+    if ([301, 302].includes(routerContext.statusCode)) {
         // 301 = permanent redirect, 302 = temporary
-        ctx.status = routerContext.status;
+        ctx.statusCode = routerContext.statusCode;
 
         // Issue the new `Location:` header
         ctx.redirect(routerContext.url);
@@ -85,24 +82,23 @@ export default output => async ctx => {
         return;
     }
 
-    if (routerContext.status === 404) {
-        // By default, just set the status code to 404. You can
+    if (routerContext.statusCode === 404) {
+        // By default, just set the statusCode to 404. You can
         // modify this section to do things like log errors to a
         // third-party, or redirect users to a dedicated 404 page
 
         ctx.status = 404;
-        ctx.body = 'Not found';
+        // ctx.body = 'Not found';
 
-        return;
+        // return;
     }
 
     const html = renderToString(components);
     const reactRender = renderToString(
         <Html
-            cssFiles={output.client.main('css')}
-            helmet={Helmet.renderStatic()}
             html={html}
-            scripts={output.client.main('js')}
+            helmet={Helmet.renderStatic()}
+            bundle={webExtractor}
             window={{
                 __APOLLO__: client.extract(),
             }}

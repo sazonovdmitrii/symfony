@@ -25,6 +25,14 @@ const GET_PRODUCTS = gql`
                         id
                         name
                         url
+                        items(limit: 40, offset: 0) {
+                            edges {
+                                node {
+                                    id
+                                    name
+                                }
+                            }
+                        }
                     }
                 }
             }

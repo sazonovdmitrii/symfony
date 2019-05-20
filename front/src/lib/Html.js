@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default ({ cssFiles = [], helmet, html, scripts = [], styles, window = {} }) => (
+export default ({ bundle, helmet, html, window = {} }) => (
     <html lang="ru" {...helmet.htmlAttributes.toString()}>
         <head>
             <meta charSet="utf-8" />
@@ -8,13 +8,11 @@ export default ({ cssFiles = [], helmet, html, scripts = [], styles, window = {}
             <meta httpEquiv="Content-Language" content="ru" />
             <meta name="viewport" content="width=device-width, initial-scale=1" />
             {helmet.title.toComponent()}
-            {cssFiles.map(file => (
-                <link key={file} rel="stylesheet" href={file} />
-            ))}
+            {bundle.getLinkElements()}
+            {bundle.getStyleElements()}
 
             {helmet.meta.toComponent()}
             {helmet.link.toComponent()}
-            {styles}
             {helmet.script.toComponent()}
             {helmet.noscript.toComponent()}
         </head>
@@ -28,9 +26,7 @@ export default ({ cssFiles = [], helmet, html, scripts = [], styles, window = {}
                     ),
                 }}
             />
-            {scripts.map(script => (
-                <script key={script} src={script} />
-            ))}
+            {bundle.getScriptElements()}
         </body>
     </html>
 );

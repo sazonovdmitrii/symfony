@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { IMaskMixin } from 'react-imask';
 import classnames from 'classnames/bind';
 import nanoid from 'nanoid';
@@ -9,10 +10,15 @@ const cx = classnames.bind(styles);
 
 const MaskedInput = IMaskMixin(({ inputRef, ...props }) => <input ref={inputRef} {...props} />);
 
-export default class $Input extends Component {
+export default class Input extends Component {
+    static propTypes = {
+        type: PropTypes.string,
+        text: PropTypes.string,
+    };
     static defaultProps = {
         type: 'text',
         theme: {},
+        // errorObj: null,
     };
 
     id = `input${nanoid()}`;
@@ -20,8 +26,8 @@ export default class $Input extends Component {
     state = {
         filled: false,
         focused: false,
-        error: false,
-        text: null,
+        error: this.props.error,
+        text: this.props.text || null,
     };
 
     componentWillReceiveProps(nextProps) {
@@ -63,7 +69,7 @@ export default class $Input extends Component {
     };
 
     render() {
-        const { type, label, required, mask, min, max, value, name, onChange, theme } = this.props;
+        const { type, label, required, mask, min, max, value, name, onChange, theme, disabled } = this.props;
         const { focused, filled, error, text } = this.state;
         const labelClassName = cx(styles.label, theme.label, {
             focused,
@@ -77,7 +83,7 @@ export default class $Input extends Component {
             error,
         });
 
-        const Input = mask ? MaskedInput : 'input';
+        const $Input = mask ? MaskedInput : 'input';
 
         return (
             <div className={styles.wrapper}>
@@ -86,7 +92,7 @@ export default class $Input extends Component {
                         {required ? `${label}*` : label}
                     </label>
                 )}
-                <Input
+                <$Input
                     id={this.id}
                     className={inputClassName}
                     type={type}
@@ -100,6 +106,7 @@ export default class $Input extends Component {
                     onChange={onChange}
                     onFocus={this.handleFocus}
                     onBlur={this.handleBlur}
+                    disabled={disabled}
                 />
                 {text && <div className={textClassName}>{text}</div>}
             </div>

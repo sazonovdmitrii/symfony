@@ -16,7 +16,7 @@ const create = ({ token }) => {
     // set to an external playground at https://graphqlhub.com/graphql
     const httpLink = new createHttpLink({
         credentials: 'same-origin',
-        uri: GRAPHQL,
+        uri: process.env.GRAPHQL,
     });
 
     const authLink = setContext((_, { headers }) => {
@@ -33,7 +33,7 @@ const create = ({ token }) => {
 
     // If we're in the browser, we'd have received initial state from the
     // server. Restore it, so the client app can continue with the same data.
-    if (!SERVER) {
+    if (!process.env.SERVER) {
         cache.restore(window.__APOLLO__);
     }
 
@@ -77,7 +77,7 @@ const create = ({ token }) => {
             authLink.concat(httpLink),
         ]),
         // On the server, enable SSR mode
-        ssrMode: SERVER,
+        ssrMode: process.env.SERVER,
     });
 };
 

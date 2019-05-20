@@ -9,8 +9,7 @@
 // --------------------------------------------------------------------------
 
 @include new('benefits') {
-    float: left;
-    width: 100%;
+    @extend %clearfix;
 
     @include when('sale') {
         @include row(12);

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import Button from 'components/Button';
 
-import Loader from './Loader.js';
+import Loader from './Loader';
 import styles from './styles.css';
 
 const ProductCard = ({
@@ -20,12 +20,21 @@ const ProductCard = ({
     min_price,
     name,
     loading,
+    price,
 }) => {
-    const price = () => {
+    const myPrice = () => {
         if (min_price && min_price > 0 && cantbuy !== 1) {
             return (
                 <Fragment>
-                    от <span>{min_price}</span> руб.
+                    от{' '}
+                    <span>
+                        {
+                            items.sort((a, b) => {
+                                if (a.price > b.price) return -1;
+                            })[0].price
+                        }
+                    </span>{' '}
+                    руб.
                 </Fragment>
             );
         }
@@ -79,27 +88,28 @@ const ProductCard = ({
                     {!SEOHIDE && <h2 className="catalog__item_brand">{brand_name}</h2>}
                     <h3 className="catalog__item_name">{name}</h3>
                 </Link>
-                <p className="catalog__item_price">{price()}</p>
+                <p className="catalog__item_price">{myPrice()}</p>
                 <div className="catalog__item_prd">
-                    {cantbuy !== 1 &&
-                        items.map(item => {
-                            return (
-                                <p key={item.name} className="catalog__item_prd_type">
-                                    <span className="catalog__item_prd_type_name">{item.name}</span>
-                                    <strong className="catalog__item_prd_type_price">
-                                        {item.price}
-                                        <span className="catalog__item_prd_type_price_curren">р.</span>
-                                    </strong>
-                                </p>
-                            );
-                        })}
-                    {cantbuy !== 1 && items.length > 9 && (
+                    {items.edges.map(({ node: item }) => {
+                        if (!item.price) return null;
+
+                        return (
+                            <p key={item.name} className="catalog__item_prd_type">
+                                <span className="catalog__item_prd_type_name">{item.name}</span>
+                                <strong className="catalog__item_prd_type_price">
+                                    {item.price}
+                                    <span className="catalog__item_prd_type_price_curren">р.</span>
+                                </strong>
+                            </p>
+                        );
+                    })}
+                    {items.edges.length > 9 && (
                         <p className="catalog__item_prd_type">
-                            <small>Ещё {items.size - 9} предложений в товаре</small>
+                            <small>Ещё {items.edges.length - 9} предложений в товаре</small>
                         </p>
                     )}
                     <Button className={styles.button} href={url} kind="primary">
-                        {cantbuy === 0 ? 'КУПИТЬ' : 'ОБЗОР'}
+                        {price ? 'КУПИТЬ' : 'ОБЗОР'}
                     </Button>
                 </div>
             </div>

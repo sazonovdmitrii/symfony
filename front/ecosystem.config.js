@@ -2,9 +2,9 @@ module.exports = {
     apps: [
         {
             name: 'ssr',
-            script: 'index.js',
+            script: './serverBabel/index.js',
             exec_mode: 'cluster',
-            // watch: './dist/server.js',
+            watch: './dist/node/loadable-stats.json',
             instances: 'max',
             restart_delay: 3000,
             env: {

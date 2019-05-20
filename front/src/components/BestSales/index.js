@@ -2,18 +2,15 @@ import React, { Component } from 'react';
 
 import Products from 'components/Products';
 
-export default class BestSales extends Component {
-    constructor(props) {
-        super(props);
-    }
+const BestSales = ({ items }) => {
+    return (
+        <div className="bestsales">
+            <Products
+                limit={16}
+                title={<h2 className="editors-choice-title bestsales-title">Популярные товары</h2>}
+            />
+        </div>
+    );
+};
 
-    render() {
-        return (
-            <div className="bestsales">
-                <h2 className="editors-choice-title bestsales-title">Популярные товары</h2>
-                [% SET editor_choice = popular %]
-                <Products />
-            </div>
-        );
-    }
-}
+export default BestSales;
