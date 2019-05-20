@@ -31,13 +31,7 @@ const create = ({ token = '' }) => {
         };
     });
 
-    // If we're in the browser, we'd have received initial state from the
-    // server. Restore it, so the client app can continue with the same data.
-    if (!process.env.SERVER) {
-        cache.restore(window.__APOLLO__);
-    }
-
-    return new ApolloClient({
+    const client = new ApolloClient({
         cache,
         // mb todo use get for better cache
         // link: createPersistedQueryLink({ useGETForHashedQueries: true }).concat({
@@ -79,6 +73,24 @@ const create = ({ token = '' }) => {
         // On the server, enable SSR mode
         ssrMode: process.env.SERVER,
     });
+
+    const data = {
+        isLoggedIn: !!token,
+    };
+
+    cache.writeData({
+        data,
+    });
+
+    client.onResetStore(() => cache.writeData({ data }));
+
+    // If we're in the browser, we'd have received initial state from the
+    // server. Restore it, so the client app can continue with the same data.
+    if (!process.env.SERVER) {
+        cache.restore(window.__APOLLO__);
+    }
+
+    return client;
 };
 
 export function createClient({ token }) {

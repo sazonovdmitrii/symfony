@@ -1,17 +1,24 @@
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
+import { Query } from 'react-apollo';
+import gql from 'graphql-tag';
 
 import BasketShort from 'components/BasketShort';
 
-export default () => {
-    const auth = true;
+const IS_LOGGED_IN = gql`
+    query IsUserLoggedIn {
+        isLoggedIn @client(always: false)
+    }
+`;
+
+const UserMenu = ({ isLoggedIn }) => {
     const basket_items_count = 0;
     const email = 'test@test.ru';
 
     return (
         <ul className="usermenu">
             <li className="usermenu__item">
-                {auth ? (
+                {isLoggedIn ? (
                     <Fragment>
                         <Link className="usermenu__link" to="/user/personal/">
                             <span className="usermenu__icon flaticon-avatar" />
@@ -41,16 +48,11 @@ export default () => {
                         </ul>
                     </Fragment>
                 ) : (
-                    <button
-                        type="button"
-                        className="usermenu__link"
-                        rel="nofollow"
-                        data-handle="modal"
-                        data-target="#login-modal"
-                    >
+                    // todo modal
+                    <Link className="usermenu__link" to="/user/login">
                         <span className="usermenu__icon flaticon-avatar" />
                         <span className="usermenu__label">Войти</span>
-                    </button>
+                    </Link>
                 )}
             </li>
             <li className="usermenu__item">
@@ -62,5 +64,15 @@ export default () => {
                 <BasketShort />
             </li>
         </ul>
+    );
+};
+
+export default () => {
+    return (
+        <Query query={IS_LOGGED_IN}>
+            {({ data }) => {
+                return <UserMenu {...data} />;
+            }}
+        </Query>
     );
 };

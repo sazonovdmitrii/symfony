@@ -6,7 +6,7 @@ import ms from 'microseconds';
 // Enable cross-origin requests
 import koaCors from 'kcors';
 // Logger
-import koaLogger from 'koa-logger';
+import logger from 'koa-logger';
 
 import config from './config';
 import ssr from './ssr';
@@ -30,7 +30,7 @@ const staticMiddleware = (root, immutable = true) => async (ctx, next) => {
 
 export default app => {
     app.use(
-        koaLogger()
+        logger()
         // ((str, args) => {
         //     const [format, method, url, status, time, length] = args;
 
