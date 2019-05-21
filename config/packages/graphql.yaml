@@ -11,6 +11,7 @@ overblog_graphql:
                     class: "App\\GraphQL\\Args\\PaginatoringBuilder"
         schema:
             query: Query
+            mutation: Mutation
         mappings:
             auto_discover: false
             types:

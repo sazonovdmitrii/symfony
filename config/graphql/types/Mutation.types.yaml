@@ -1,0 +1,10 @@
+Mutation:
+  type: object
+  config:
+    fields:
+      auth:
+        type: AuthorizedUser!
+        resolve: '@=mutation("App\\GraphQL\\Mutation\\UserMutation::auth", [args])'
+        args:
+          input:
+            type: UserInput!

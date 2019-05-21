@@ -1,0 +1,14 @@
+AuthorizedUser:
+  type: object
+  config:
+    description: "Authorized User"
+    fields:
+      id:
+        type: "Int!"
+        description: "User Id."
+      email:
+        type: "String!"
+        description: "Email"
+      hash:
+        type: "String"
+        description: "Hash"
