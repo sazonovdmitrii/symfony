@@ -17,6 +17,7 @@ import LogIn from 'routes/LogIn';
 const routes = [
     { path: '/user/register', component: Register },
     { path: '/user/login', component: LogIn },
+    { path: '/user/remind-password', component: RemindPassword },
     { component: NotFound },
 ];
 
@@ -25,7 +26,6 @@ const loggedInRoutes = [
     { path: '/user/addressbook/edit/:id', component: EditAddress },
     { path: '/user/orders', component: Orders },
     { path: '/user/personal', component: Personal },
-    { path: '/user/remind-password', component: RemindPassword },
     { path: '/user/security', component: Security },
 ];
 

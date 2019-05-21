@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 
 import Register from './Register';
 
-const CREATE_USER = gql`
+const CREATE_USER_MUTATION = gql`
     mutation createUser(
         $firstname: String!
         $lastname: String!
@@ -19,6 +19,7 @@ const CREATE_USER = gql`
             password: $password
             gender: $gender
         ) {
+            id
             token
         }
     }
@@ -26,8 +27,17 @@ const CREATE_USER = gql`
 
 export default () => {
     return (
-        <Mutation mutation={CREATE_USER}>
-            {(createUser, { data }) => <Register onSubmit={createUser} {...data} />}
+        <Mutation mutation={CREATE_USER_MUTATION}>
+            {(createUser, { data }) => (
+                <div className="cabinet">
+                    <div className="page-header">
+                        <h1 className="page-header__title">Регистрация</h1>
+                    </div>
+                    <div className="cabinet-content">
+                        <Register onSubmit={createUser} {...data} />
+                    </div>
+                </div>
+            )}
         </Mutation>
     );
 };
