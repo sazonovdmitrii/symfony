@@ -2,26 +2,10 @@ import React from 'react';
 import gql from 'graphql-tag';
 import loadable from '@loadable/component';
 
+import { GET_PRODUCT } from 'query';
 import { withQuery } from 'utils';
 
 import Loader from 'components/Loader';
-
-const GET_PRODUCT = gql`
-    query Product($slug: String!) {
-        product(slug: $slug) {
-            name
-            id
-            items(limit: 40, offset: 0) {
-                edges {
-                    node {
-                        id
-                        name
-                    }
-                }
-            }
-        }
-    }
-`;
 
 const Component = loadable(() => import('./Product'), {
     fallback: Loader,

@@ -1,66 +1,40 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
 
-import Input from 'components/Input';
-import InputGroup from 'components/InputGroup';
-import Button from 'components/Button';
+import Snackbar from 'components/Snackbar';
+
+import LogIn from './LogIn';
+
+const LOGIN_MUTATION = gql`
+    mutation($input: UserInput!) {
+        auth(input: $input) {
+            hash
+        }
+    }
+`;
 
 export default props => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const handleSubmit = e => {
-        e.preventDefault();
-
-        // TODO login
-        // props.onSubmit()
+    const _confirm = data => {
+        console.log(data);
+        if (data.hash) {
+            props.history.push('/');
+        }
     };
 
     return (
-        <div class="cabinet-content__row">
-            <div class="cabinet-content__column">
-                <form onSubmit={handleSubmit}>
-                    <InputGroup>
-                        <Input
-                            name="email"
-                            type="email"
-                            label="Email"
-                            value={email}
-                            onChange={({ target: { value } }) => setEmail(value)}
-                            required
-                        />
-                    </InputGroup>
-                    <InputGroup>
-                        <Input
-                            name="password"
-                            type="password"
-                            label="Пароль"
-                            value={password}
-                            onChange={({ target: { value } }) => setPassword(value)}
-                            required
-                        />
-                    </InputGroup>
-                    <Button type="submit" kind="primary" bold uppercase>
-                        Войти
-                    </Button>
-                    <Button to="/user/remind-password" kind="secondary">
-                        Забыл пароль
-                    </Button>
-                </form>
-            </div>
-            <div class="cabinet-content__column rte">
-                <h5>Почему быть пользователем Laparfumerie.ru очень удобно?</h5>
-                <p>
-                    - создайте свой личный кабинет и управляйте своим заказами
-                    <br /> - получите возможность оставлять коментарии и оценивать товары
-                    <br /> - отслеживайте изменения цен на понравившиеся товары в своей корзине
-                    <br /> - получайте рассылку с самой актуальной и свежей информацией
-                    <br /> - будьте в курсе новостей мира парфюмерных и косметических новинок
-                </p>
-                <Button to="/user/register" kind="primary" bold uppercase>
-                    Зарегистрироваться
-                </Button>
-            </div>
-        </div>
+        <Mutation mutation={LOGIN_MUTATION} onCompleted={data => _confirm(data)}>
+            {(auth, { data, error }) => (
+                <div className="cabinet">
+                    {error && error.message}
+                    <div className="page-header">
+                        <h1 className="page-header__title">Авторизация</h1>
+                    </div>
+                    <div className="cabinet-content">
+                        <LogIn onSubmit={auth} {...data} />
+                    </div>
+                </div>
+            )}
+        </Mutation>
     );
 };

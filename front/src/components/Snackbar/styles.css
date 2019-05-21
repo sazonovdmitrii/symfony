@@ -1,0 +1,116 @@
+.overlay {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1400;
+
+    @media (--viewport-tablet) {
+        right: auto;
+        left: 24px;
+        bottom: 24px;
+    }
+}
+
+.snackbar {
+    color: var(--color-white);
+    display: flex;
+    padding: 6px 24px;
+    flex-wrap: wrap;
+    align-items: center;
+    background-color: rgb(49, 49, 49);
+    box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.14),
+        0 1px 18px 0 rgba(0, 0, 0, 0.12);
+    font-size: var(--font-size-small);
+    line-height: 1.5;
+    transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+    box-sizing: border-box;
+    transform: translateY(200px);
+
+    @media (--viewport-tablet) {
+        border-radius: 4px;
+        min-width: 288px;
+        max-width: 568px;
+    }
+
+    &.success {
+        background-color: var(--success);
+    }
+
+    &.info {
+        background-color: var(--info);
+    }
+
+    &.warning {
+        background-color: var(--warning);
+    }
+
+    &.error {
+        background-color: var(--error);
+    }
+}
+
+.overlayEnterDone {
+    & .snackbar {
+        transform: translateY(0);
+    }
+}
+
+.inner {
+    padding: 8px 0;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+}
+
+.icon {
+    opacity: 0.9;
+    margin-right: 8px;
+    fill: currentColor;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    padding-left: 24px;
+    margin-right: -8px;
+}
+
+.button {
+    border: 0;
+    background: none;
+    flex: 0 0 auto;
+    padding: 12px;
+    overflow: visible;
+    text-align: center;
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    border-radius: 50%;
+    color: inherit;
+    cursor: pointer;
+}
+
+.close {
+    width: 100%;
+    display: flex;
+    align-items: inherit;
+    justify-content: inherit;
+
+    & svg {
+        fill: currentColor;
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        user-select: none;
+        flex-shrink: 0;
+    }
+}

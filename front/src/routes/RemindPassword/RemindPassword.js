@@ -7,11 +7,11 @@ import Button from 'components/Button';
 
 const RemindPassword = props => {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const handleSubmit = () => {
+    const handleSubmit = e => {
         e.preventDefault();
 
-        //todo
+        if (!email) return;
+
         props.onSubmit({
             variables: {
                 email,
@@ -20,7 +20,7 @@ const RemindPassword = props => {
     };
 
     return (
-        <div class="cabinet-content__column--center">
+        <div className="cabinet-content__column--center">
             <form onSubmit={handleSubmit}>
                 <InputGroup>
                     <Input

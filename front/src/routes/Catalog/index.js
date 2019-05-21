@@ -1,19 +1,10 @@
 import React from 'react';
-import gql from 'graphql-tag';
 import loadable from '@loadable/component';
 
+import { GET_CATALOG } from 'query';
 import { withQuery } from 'utils';
 
 import Loader from 'components/Loader';
-
-const GET_CATALOG = gql`
-    query Catalog($slug: String!) {
-        catalog(slug: $slug) {
-            name
-            count
-        }
-    }
-`;
 
 export default props => {
     const { match, limit } = props;
