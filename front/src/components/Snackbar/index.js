@@ -94,7 +94,7 @@ class $Snackbar extends Component {
         const domNode = document.body;
 
         if (domNode) {
-            return ReactDOM.createPortal(Snackbar, domNode);
+            return createPortal(Snackbar, domNode);
         }
         return Snackbar;
     }

@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Query } from 'react-apollo';
 
@@ -60,6 +61,10 @@ const UserMenu = ({ isLoggedIn }) => {
             </li>
         </ul>
     );
+};
+
+UserMenu.propTypes = {
+    isLoggedIn: PropTypes.bool.isRequired,
 };
 
 export default () => {

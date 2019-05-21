@@ -1,5 +1,4 @@
 import React from 'react';
-import gql from 'graphql-tag';
 import loadable from '@loadable/component';
 
 import { SEARCH_PRODUCTS } from 'query';
@@ -14,7 +13,6 @@ export default props => {
 
     const rows = [40, 80, 120];
     const searchLimit = parseInt(searchParams.get('rows'), 10);
-    console.log(searchLimit);
     const limit = rows.indexOf(searchLimit) >= 0 ? searchLimit : rows[0];
 
     // return withQuery({ query: SEARCH_PRODUCTS, variables: { query } })(props => {
@@ -22,8 +20,6 @@ export default props => {
     const Component = loadable(() => import('./Search'), {
         fallback: Loader,
     });
-
-    console.log(limit, typeof limit);
 
     return <Component {...props} query={query} rows={rows} limit={limit} />;
     //     }

@@ -2,7 +2,7 @@ import React from 'react';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 
-import Snackbar from 'components/Snackbar';
+// import Snackbar from 'components/Snackbar';
 
 import LogIn from './LogIn';
 

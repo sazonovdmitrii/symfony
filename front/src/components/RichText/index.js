@@ -23,7 +23,7 @@ const RichText = ({ maxHeight, children, expanded }) => {
         const { offsetHeight } = containerNode.current;
 
         if (offsetHeight && maxHeight > offsetHeight) setState(true);
-    }, []);
+    }, [maxHeight]);
 
     return (
         <div>

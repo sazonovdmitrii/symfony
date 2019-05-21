@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Switch, Route, withRouter } from 'react-router';
 
 import Nav from 'components/Nav';
@@ -46,6 +47,11 @@ const getTitle = (params = '') => {
 };
 
 class User extends Component {
+    static propTypes = {
+        isLoggedIn: PropTypes.bool.isRequired,
+        match: PropTypes.objectOf(PropTypes.string).isRequired,
+    };
+
     constructor(props) {
         super(props);
 
