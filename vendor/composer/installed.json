@@ -1,5 +1,64 @@
 [
     {
+        "name": "assoconnect/graphql-mutation-validator-bundle",
+        "version": "v1.0.1",
+        "version_normalized": "1.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://gitlab.com/assoconnect/graphql-mutation-validator-bundle.git",
+            "reference": "5945a2c9ded6c9da28a9ae9ceb7d3de0a1893012"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://gitlab.com/api/v4/projects/assoconnect%2Fgraphql-mutation-validator-bundle/repository/archive.zip?sha=5945a2c9ded6c9da28a9ae9ceb7d3de0a1893012",
+            "reference": "5945a2c9ded6c9da28a9ae9ceb7d3de0a1893012",
+            "shasum": ""
+        },
+        "require": {
+            "doctrine/annotations": "^1.6",
+            "overblog/graphql-bundle": "^0.11",
+            "php": "^7.1",
+            "symfony/validator": "^4.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^7.0",
+            "symfony/console": "^4.0",
+            "symfony/security-bundle": "^4.0",
+            "symfony/templating": "^4.0",
+            "symfony/twig-bundle": "^4.0",
+            "symfony/yaml": "^4.0"
+        },
+        "time": "2018-08-28T18:29:57+00:00",
+        "type": "symfony-bundle",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "AssoConnect\\GraphQLMutationValidatorBundle\\": ""
+            },
+            "exclude-from-classmap": [
+                "/Tests/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Sylvain Fabre"
+            },
+            {
+                "name": "Assoconnect",
+                "homepage": "https://www.assoconnect.com"
+            }
+        ],
+        "description": "Provide a base class to validate user data sent in a GraphQL mutation and return validations errors.",
+        "keywords": [
+            "graphql",
+            "validation"
+        ]
+    },
+    {
         "name": "behat/transliterator",
         "version": "v1.2.0",
         "version_normalized": "1.2.0.0",

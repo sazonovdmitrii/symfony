@@ -232,6 +232,7 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
         ),
         'A' => 
         array (
+            'AssoConnect\\GraphQLMutationValidatorBundle\\' => 43,
             'App\\Tests\\' => 10,
             'App\\' => 4,
         ),
@@ -646,6 +647,10 @@ class ComposerStaticInit833f4c0224c0917c2c4e7db85a16614f
         'Complex\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/complex/classes/src',
+        ),
+        'AssoConnect\\GraphQLMutationValidatorBundle\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/assoconnect/graphql-mutation-validator-bundle',
         ),
         'App\\Tests\\' => 
         array (

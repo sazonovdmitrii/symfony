@@ -1,0 +1,10 @@
+Query:
+    type: object
+    config:
+        fields:
+            echo:
+                type: String
+                args:
+                    message:
+                        type: String
+                resolve: '@=resolver("Overblog\\GraphQLBundle\\Tests\\Functional\\App\\IsolatedResolver\\EchoResolver", [args["message"]])'

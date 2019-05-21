@@ -26,4 +26,5 @@ return [
     Overblog\GraphiQLBundle\OverblogGraphiQLBundle::class => ['dev' => true],
     Onurb\Bundle\ExcelBundle\OnurbExcelBundle::class => ['all' => true],
     Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle::class => ['all' => true],
+    AssoConnect\GraphQLMutationValidatorBundle\AssoConnectGraphQLMutationValidatorBundle::class => ['all' => true],
 ];

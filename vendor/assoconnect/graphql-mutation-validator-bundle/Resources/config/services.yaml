@@ -1,0 +1,16 @@
+services:
+
+  assoconnect_graphql_mutation_validator.validator:
+    class: AssoConnect\GraphQLMutationValidatorBundle\Validator\MutationValidator
+    public: true
+    arguments:
+      - "@validator"
+
+  AssoConnect\GraphQLMutationValidatorBundle\Validator\MutationValidator:
+    alias: assoconnect_graphql_mutation_validator.validator
+
+  assoconnect_graphql_mutation_validator.formatter:
+    class: AssoConnect\GraphQLMutationValidatorBundle\Formatter\Formatter
+    public: false
+    tags:
+      - { name: kernel.event_listener, event: graphql.error_formatting, method: onErrorFormatting }

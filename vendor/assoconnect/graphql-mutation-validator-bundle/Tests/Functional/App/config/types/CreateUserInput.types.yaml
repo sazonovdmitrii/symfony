@@ -1,0 +1,8 @@
+CreateUserInput:
+    type: input-object
+    config:
+        fields:
+            username:
+                type: String
+            firstname:
+                type: String

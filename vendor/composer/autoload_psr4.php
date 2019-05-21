@@ -107,6 +107,7 @@ return array(
     'Doctrine\\Bundle\\DoctrineCacheBundle\\' => array($vendorDir . '/doctrine/doctrine-cache-bundle'),
     'Doctrine\\Bundle\\DoctrineBundle\\' => array($vendorDir . '/doctrine/doctrine-bundle'),
     'Complex\\' => array($vendorDir . '/markbaker/complex/classes/src'),
+    'AssoConnect\\GraphQLMutationValidatorBundle\\' => array($vendorDir . '/assoconnect/graphql-mutation-validator-bundle'),
     'App\\Tests\\' => array($baseDir . '/tests'),
     'App\\' => array($baseDir . '/src'),
 );

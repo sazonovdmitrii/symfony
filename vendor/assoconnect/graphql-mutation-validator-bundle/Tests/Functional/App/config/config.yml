@@ -1,0 +1,43 @@
+framework:
+    test: ~
+    secret: test
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+    templating:
+        engines: ['twig']
+    profiler:
+        enabled: false
+    validation:
+        enabled: true
+        enable_annotations: true
+
+overblog_graphql:
+    errors_handler:
+        debug: false
+    definitions:
+        config_validation: true
+        auto_mapping:
+            enabled: true
+            directories: ["%kernel.root_dir%/Mutation"]
+        schema:
+            query: "Query"
+            mutation: "Mutation"
+        mappings:
+            auto_discover: false
+            types:
+                -
+                    type: yaml
+                    dir: "%kernel.root_dir%/config/types"
+    security:
+        query_max_depth: false
+        query_max_complexity: false
+
+services:
+    AssoConnect\GraphQLMutationValidatorBundle\Tests\Functional\App\:
+        autowire: true
+        autoconfigure: true
+        public: false
+        resource: "%kernel.root_dir%/*"
+    #disable twig error pages
+    twig.exception_listener:
+        class: stdClass
