@@ -15,6 +15,7 @@ export default class Input extends Component {
         type: PropTypes.string,
         text: PropTypes.string,
     };
+
     static defaultProps = {
         type: 'text',
         theme: {},

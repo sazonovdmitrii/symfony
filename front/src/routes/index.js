@@ -1,15 +1,18 @@
 import loadable from '@loadable/component';
 
+import Loader from 'components/Loader';
+
 import Product from './Product';
 import Catalog from './Catalog';
 import Search from './Search';
-import Loader from 'components/Loader';
+import User from './User';
 import NotFound from './NotFound';
 
-const getComponent = (component, async = !SERVER) =>
-    loadable(() => import(`./${component}`), {
+const getComponent = component => {
+    return loadable(() => import(`./${component}`), {
         fallback: Loader,
     });
+};
 
 export default [
     {
@@ -43,7 +46,7 @@ export default [
     {
         path: '/user/:slug?',
         exact: true,
-        component: getComponent('User'),
+        component: User,
     },
     {
         path: '/brands',

@@ -79,10 +79,20 @@ const Catalog = ({ match, slug, limit, name, count, description, subtitle, filte
 
 Catalog.defaultProps = {
     limit: 40,
+    name: 'Без имени',
+    subtitle: null,
+    description: null,
 };
 
 Catalog.propTypes = {
     limit: PropTypes.number,
+    slug: PropTypes.string.isRequired,
+    match: PropTypes.object,
+    name: PropTypes.string,
+    count: PropTypes.string.isRequired,
+    description: PropTypes.string,
+    subtitle: PropTypes.string,
+    filters: PropTypes.string,
 };
 
 export default Catalog;

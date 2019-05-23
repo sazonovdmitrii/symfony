@@ -1,18 +1,17 @@
 import React, { PureComponent } from 'react';
+import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
-
-import ReactDOM from 'react-dom';
 import { CSSTransition } from 'react-transition-group';
 import classNames from 'classnames/bind';
 
-import style from './style.css';
-import SuccessIcon from './success.svg';
-import InfoIcon from './info.svg';
-import WarningIcon from './warning.svg';
-import ErrorIcon from './error.svg';
-import CloseIcon from './close.svg';
+import styles from './styles.css';
+import SuccessIcon from './icons/success.svg';
+import InfoIcon from './icons/info.svg';
+import WarningIcon from './icons/warning.svg';
+import ErrorIcon from './icons/error.svg';
+import CloseIcon from './icons/close.svg';
 
-const cx = classNames.bind(style);
+const cx = classNames.bind(styles);
 
 const getIcon = (theme, className) => {
     switch (theme) {
@@ -29,7 +28,7 @@ const getIcon = (theme, className) => {
     }
 };
 
-class $Snackbar extends PureComponent {
+class $Snackbar extends Component {
     static propTypes = {
         onClose: PropTypes.func.isRequired,
         active: PropTypes.bool,
@@ -54,33 +53,33 @@ class $Snackbar extends PureComponent {
 
         if (!message) return null;
 
-        const className = cx(style.snackbar, {
+        const className = cx(styles.snackbar, {
             [theme]: theme,
         });
         const Snackbar = (
             <CSSTransition
                 in={active}
-                classNames={{ enterDone: style.overlayEnterDone }}
+                classNames={{ enterDone: styles.overlayEnterDone }}
                 timeout={300}
                 unmountOnExit
             >
                 {() => (
-                    <div className={style.overlay}>
+                    <div className={styles.overlay}>
                         <div className={className} role="alertdialog">
-                            <div className={style.inner}>
-                                <span className={style.row}>
-                                    {getIcon(theme, style.icon)}
-                                    {message}
-                                </span>
+                            <div className={styles.inner}>
+                                <div className={styles.row}>
+                                    {getIcon(theme, styles.icon)}
+                                    <div>{message}</div>
+                                </div>
                             </div>
-                            <div className={style.right}>
+                            <div className={styles.right}>
                                 <button
                                     type="button"
-                                    className={style.button}
+                                    className={styles.button}
                                     aria-label="Закрыть"
                                     onClick={this.handleClose}
                                 >
-                                    <span className={style.close}>
+                                    <span className={styles.close}>
                                         <CloseIcon />
                                     </span>
                                 </button>
@@ -90,12 +89,14 @@ class $Snackbar extends PureComponent {
                 )}
             </CSSTransition>
         );
+
+        // TODO fix ssr
         const domNode = document.body;
 
         if (domNode) {
-            return ReactDOM.createPortal(Snackbar, domNode);
+            return createPortal(Snackbar, domNode);
         }
-        return null;
+        return Snackbar;
     }
 }
 

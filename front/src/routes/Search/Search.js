@@ -32,7 +32,7 @@ const Search = ({ match, limit, count, query, rows }) => {
 
     let maxPages = count / limit;
     const isTest = maxPages.toString().match(/\./);
-    const redirectToIndexPage = count < offset;
+    // const redirectToIndexPage = count < offset;
 
     maxPages = parseInt(maxPages, 10);
     if (isTest) {
@@ -119,10 +119,11 @@ Search.defaultProps = {
 };
 
 Search.propTypes = {
+    match: PropTypes.objectOf(PropTypes.string).isRequired,
     limit: PropTypes.number,
     query: PropTypes.string.isRequired,
     count: PropTypes.number.isRequired,
-    rows: PropTypes.array,
+    rows: PropTypes.arrayOf(PropTypes.number),
 };
 
 export default Search;

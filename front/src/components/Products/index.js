@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 
+import { GET_PRODUCTS } from 'query';
+
 import ProductCard from 'components/ProductCard';
 import BrandSale from 'components/BrandSale';
 import Button from 'components/Button';
@@ -14,31 +16,6 @@ import classnames from 'classnames/bind';
 import styles from './styles.css';
 
 const cx = classnames.bind(styles);
-
-const GET_PRODUCTS = gql`
-    query Products($slug: String!, $offset: Int!, $limit: Int!) {
-        catalog(slug: $slug) {
-            count
-            products(limit: $limit, offset: $offset) {
-                edges {
-                    node {
-                        id
-                        name
-                        url
-                        items(limit: 40, offset: 0) {
-                            edges {
-                                node {
-                                    id
-                                    name
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-`;
 
 const Products = ({ title, page, slug, limit, offset, col, className }) => {
     const rowClassName = cx(styles.row, className);

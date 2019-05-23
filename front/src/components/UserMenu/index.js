@@ -1,15 +1,11 @@
 import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Query } from 'react-apollo';
-import gql from 'graphql-tag';
+
+import { IS_LOGGED_IN } from 'query';
 
 import BasketShort from 'components/BasketShort';
-
-const IS_LOGGED_IN = gql`
-    query IsUserLoggedIn {
-        isLoggedIn @client(always: false)
-    }
-`;
 
 const UserMenu = ({ isLoggedIn }) => {
     const basket_items_count = 0;
@@ -65,6 +61,10 @@ const UserMenu = ({ isLoggedIn }) => {
             </li>
         </ul>
     );
+};
+
+UserMenu.propTypes = {
+    isLoggedIn: PropTypes.bool.isRequired,
 };
 
 export default () => {
