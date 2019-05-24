@@ -33,6 +33,11 @@ class Address
      */
     private $orders;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Users", inversedBy="addresses")
+     */
+    private $user_id;
+
     public function __construct()
     {
         $this->orders = new ArrayCollection();
@@ -94,6 +99,18 @@ class Address
                 $order->setAddressId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUserId(): ?Users
+    {
+        return $this->user_id;
+    }
+
+    public function setUserId(?Users $user_id): self
+    {
+        $this->user_id = $user_id;
 
         return $this;
     }

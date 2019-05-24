@@ -40,13 +40,10 @@ Query:
               description: 'Products'
               type: "String"
         resolve: "@=resolver('Catalog', [args])"
-      auth:
-        type: "Auth"
+      addresses:
+        type: "Addresses"
         args:
-          email:
-            description: "Auth."
+          token:
+            description: "User Token"
             type: "String"
-          password:
-            description: "Password."
-            type: "String"
-        resolve: "@=resolver('Auth', [args])"
+        resolve: "@=resolver('Address', [args])"

@@ -91,6 +91,10 @@ easy_admin:
         Configuration:
             class: App\Entity\ProductTag
             controller: App\Controller\Admin\ConfigurationController
+        Address:
+            class: App\Entity\Address
+            list:
+                fields: ['id', 'name']
     design:
         brand_color: 'black'
         form_theme:
@@ -104,7 +108,8 @@ easy_admin:
             children: ['Catalog', 'Product', 'Items', 'ProductTag']
           - label: 'Order'
             children: ['Order', 'Delivery', 'PaymentMethod', 'ProductTag']
-          - Users
+          - label: 'User'
+            children: ['Users', 'Address']
           - ImportProduct
           - label: 'Menu'
             children: ['Menu', 'MenuItem']
