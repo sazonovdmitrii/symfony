@@ -6,7 +6,7 @@ import Input from 'components/Input';
 import InputGroup from 'components/InputGroup';
 import Button from 'components/Button';
 
-export default props => {
+const LogIn = props => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const handleSubmit = e => {
@@ -71,3 +71,5 @@ export default props => {
         </div>
     );
 };
+
+export default LogIn;

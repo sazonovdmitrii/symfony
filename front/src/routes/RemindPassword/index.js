@@ -18,7 +18,7 @@ export default () => {
             {(remindPassword, { data }) => (
                 <div className="cabinet">
                     <div className="page-header">
-                        <h1 className="page-header__title">Регистрация</h1>
+                        <h1 className="page-header__title">Напомнить пароль</h1>
                     </div>
                     <div className="cabinet-content">
                         <RemindPassword onSubmit={remindPassword} {...data} />

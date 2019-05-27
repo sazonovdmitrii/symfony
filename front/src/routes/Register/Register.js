@@ -5,7 +5,7 @@ import Input from 'components/Input';
 import InputGroup from 'components/InputGroup';
 import Button from 'components/Button';
 import RadioGroup from 'components/RadioGroup';
-import Radio from 'components/Radio';
+import RadioButton from 'components/RadioButton';
 import Checkbox from 'components/Checkbox';
 
 const Register = props => {
@@ -64,9 +64,9 @@ const Register = props => {
                     Пол:
                     <InputGroup>
                         <RadioGroup name="gender" value={gender} onChange={handleChange}>
-                            <Radio value="" label="Не указан" />
-                            <Radio value="male" label="Мужской" />
-                            <Radio value="female" label="Женский" />
+                            <RadioButton value="" label="Не указан" />
+                            <RadioButton value="male" label="Мужской" />
+                            <RadioButton value="female" label="Женский" />
                         </RadioGroup>
                     </InputGroup>
                 </div>

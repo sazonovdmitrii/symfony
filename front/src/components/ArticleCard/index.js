@@ -12,7 +12,7 @@ const ArticleCard = ({ name, author, date, url, image, loading }) => {
             <Link to={url} className="article-item__link" title={name}>
                 <div className="article-item__image-wrapper">
                     <picture className="article-item__image">
-                        <img className="article-item__image" src={image} />
+                        <img className="article-item__image" src={image} alt="" />
                     </picture>
                 </div>
                 <div className="article-item__text">
@@ -31,9 +31,9 @@ const ArticleCard = ({ name, author, date, url, image, loading }) => {
 
 ArticleCard.defaultProps = {
     name: 'Без названия',
-    url: '',
     date: null,
     loading: false,
+    author: null,
     image: 'https://placehold.it/300x300',
 };
 
@@ -43,6 +43,7 @@ ArticleCard.propTypes = {
     date: PropTypes.string,
     loading: PropTypes.bool,
     image: PropTypes.string,
+    author: PropTypes.string,
 };
 
 export default ArticleCard;

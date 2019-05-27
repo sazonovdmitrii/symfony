@@ -1,9 +1,5 @@
-/*
-    Flaticon icon font: Flaticon
-    Creation date: 27/06/2016 19:24
-    */
-
 @font-face {
+    font-display: block;
     font-family: 'Flaticon';
     src: url('./Flaticon.woff2') format('woff2'), url('./Flaticon.woff') format('woff');
     font-weight: normal;

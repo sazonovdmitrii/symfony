@@ -25,7 +25,6 @@
     line-height: 1.5;
     transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
     box-sizing: border-box;
-    transform: translateY(200px);
 
     @media (--viewport-tablet) {
         border-radius: 4px;
@@ -34,25 +33,19 @@
     }
 
     &.success {
-        background-color: var(--success);
+        background-color: var(--color-success);
     }
 
     &.info {
-        background-color: var(--info);
+        background-color: var(--color-info);
     }
 
     &.warning {
-        background-color: var(--warning);
+        background-color: var(--color-warning);
     }
 
     &.error {
-        background-color: var(--error);
-    }
-}
-
-.overlayEnterDone {
-    & .snackbar {
-        transform: translateY(0);
+        background-color: var(--color-error);
     }
 }
 

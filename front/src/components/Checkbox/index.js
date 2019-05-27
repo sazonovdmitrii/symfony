@@ -8,7 +8,7 @@ import styles from './styles.css';
 const cx = classnames.bind(styles);
 
 const Checkbox = ({
-    type,
+    checked: propChecked,
     className,
     disabled,
     isError,
@@ -16,23 +16,21 @@ const Checkbox = ({
     name,
     onChange,
     required,
-    checked: propChecked,
+    type,
 }) => {
-    const [state, setState] = useState({
-        id: `checkbox${nanoid()}`,
-        checked: propChecked || false,
-    });
-    const { checked, id } = state;
+    const [id] = useState(`checkbox${nanoid()}`);
+    const [checked, setChecked] = useState(propChecked);
+
+    const handleChange = event => {
+        if (disabled) return;
+
+        setChecked(!checked);
+        onChange(event, !checked);
+    };
     const rootClassName = cx(styles.root, className, { disabled });
     const checkboxClassName = cx(styles.checkbox, {
         checked,
     });
-    const handleChange = event => {
-        if (disabled) return;
-
-        setState({ ...state, checked: !checked });
-        onChange(event, !checked);
-    };
     useDebugValue(checked ? 'checked' : 'unchecked');
 
     return (
@@ -56,21 +54,20 @@ const Checkbox = ({
 };
 
 Checkbox.defaultProps = {
-    type: 'checkbox',
     checked: false,
+    className: null,
     disabled: false,
     isError: false,
     label: null,
-    className: null,
+    type: 'checkbox',
     onChange: () => {},
 };
 
 Checkbox.propTypes = {
-    className: PropTypes.string,
-    name: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
     checked: PropTypes.bool,
+    className: PropTypes.string,
     label: PropTypes.string,
+    name: PropTypes.string.isRequired,
     onChange: PropTypes.func,
 };
 
