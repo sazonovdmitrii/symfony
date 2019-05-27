@@ -1,0 +1,11 @@
+Address:
+  type: object
+  config:
+    description: "User Address"
+    fields:
+      id:
+        type: "Int!"
+        description: "Product Id."
+      name:
+        type: "String"
+        description: "Address Name"

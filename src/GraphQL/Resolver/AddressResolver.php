@@ -6,14 +6,19 @@ use App\Service\AuthenticatorService;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
-class AddressResolver implements ResolverInterface, AliasedInterface {
-
+class AddressResolver implements ResolverInterface, AliasedInterface
+{
     private $em;
 
     private $authenticatorService;
 
-    private $token;
+    private $request;
+
+    private $logger;
+
     /**
      * ProductResolver constructor.
      *
@@ -21,19 +26,29 @@ class AddressResolver implements ResolverInterface, AliasedInterface {
      */
     public function __construct(
         EntityManager $em,
-        AuthenticatorService $authenticatorService
+        AuthenticatorService $authenticatorService,
+        ContainerInterface $container,
+        LoggerInterface $logger
     ) {
         $this->em = $em;
         $this->authenticatorService = $authenticatorService;
+        $this->logger = $logger;
+        if ($container->has('request_stack')) {
+            $this->request = $container->get('request_stack')->getCurrentRequest();
+        }
     }
 
     /**
-     * @param Argument $args
-     * @return array
+     * @return mixed
      */
-    public function resolve(Argument $args)
+    public function resolve()
     {
-        return $this->authenticatorService->authByToken($args['token']);
+        $token = $this->request->headers->get('token');
+        if($user = $this->authenticatorService->authByToken($token)) {
+            return $this->em
+                ->getRepository('App:Address')
+                ->findByUser($user->getId());
+        }
     }
 
     /**

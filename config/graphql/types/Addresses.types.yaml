@@ -3,12 +3,9 @@ Addresses:
   config:
     description: "User Addresses"
     fields:
-      id:
-        type: "Int!"
-        description: "Product Id."
       token:
-        type: "String"
-        description: "Product Name"
-      url:
-        type: "String"
-        description: "Product Url"
+        type: "String!"
+        description: "Token"
+      data:
+          type: AddressConnection
+          argsBuilder: PaginatoringBuilder
