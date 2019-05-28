@@ -2,10 +2,8 @@ Addresses:
   type: object
   config:
     description: "User Addresses"
+    resolveField: '@=resolver("App\\GraphQL\\Resolver\\AddressField", [info, value, args])'
     fields:
-      token:
-        type: "String!"
-        description: "Token"
       data:
           type: AddressConnection
           argsBuilder: PaginatoringBuilder

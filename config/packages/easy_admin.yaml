@@ -94,7 +94,22 @@ easy_admin:
         Address:
             class: App\Entity\Address
             list:
-                fields: ['id', 'name']
+                fields: ['id', 'city', 'street']
+            form:
+                fields:
+                    - person
+                    - user_id
+                    - zip
+                    - region_id
+                    - city
+                    - street
+                    - house
+                    - corp
+                    - level
+                    - flat
+                    - code
+                    - comment
+                    - active
     design:
         brand_color: 'black'
         form_theme:
