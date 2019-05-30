@@ -1,84 +1,80 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames/bind';
+
+import { useInterval } from 'hooks';
 
 import Nav from './Nav';
 import styles from './styles.css';
 
 const cx = classnames.bind(styles);
 
-export default class Banners extends Component {
-    static defaultProps = {
-        children: [],
-        interval: 10000,
-    };
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            activeBannerIndex: 0,
-        };
-
-        this.initAutoplay();
-    }
-
-    componentWillUnmount() {
-        clearTimeout(this.timer);
-    }
-
-    initAutoplay = () => {
-        const { interval } = this.props;
-        const { activeBannerIndex } = this.state;
-
-        this.timer = setInterval(() => {
-            this.handleChange(activeBannerIndex + 1);
-        }, interval);
-    };
-
-    handleChange = activeBannerIndex => {
-        const { children } = this.props;
+const Banners = ({ children, interval }) => {
+    const [active, setActive] = useState(0);
+    const [autoPlay, setAutoplay] = useState(true);
+    const getActive = index => {
         const lastIndex = children.length - 1;
 
-        this.setState({
-            activeBannerIndex:
-                activeBannerIndex > lastIndex ? 0 : activeBannerIndex < 0 ? lastIndex : activeBannerIndex,
-        });
+        /* eslint-disable-next-line */
+        return index > lastIndex ? 0 : index < 0 ? lastIndex : index;
     };
 
-    handleHover = () => {
-        clearTimeout(this.timer);
+    useInterval(
+        () => {
+            setActive(getActive(active + 1));
+        },
+        autoPlay ? interval : null
+    );
+
+    const handleChange = index => {
+        setActive(getActive(index));
     };
 
-    render() {
-        const { children } = this.props;
-        const { activeBannerIndex } = this.state;
-        const getChildrens = React.Children.map(children, (child, index) => {
-            if (!React.isValidElement(child)) {
-                return null;
-            }
+    const handleHover = event => {
+        const eventType = event.type;
 
-            const activeBannerClassName = cx(styles.item, {
-                active: activeBannerIndex === index,
-            });
+        const events = {
+            mouseenter: false,
+            mouseleave: true,
+        };
 
-            return (
-                <li key={index} className={activeBannerClassName}>
-                    {child}
-                </li>
-            );
+        setAutoplay(events[eventType]);
+    };
+
+    const getChildrens = React.Children.map(children, (child, index) => {
+        if (!React.isValidElement(child)) {
+            return null;
+        }
+
+        const activeBannerClassName = cx(styles.item, {
+            active: active === index,
         });
 
         return (
-            <div className={styles.wrapper} onMouseEnter={this.handleHover} onMouseLeave={this.initAutoplay}>
-                <ul className={styles.items}>{getChildrens}</ul>
-                <Nav index={activeBannerIndex} onChange={this.handleChange} />
-            </div>
+            <li
+                key={index} // eslint-disable-line
+                className={activeBannerClassName}
+            >
+                {child}
+            </li>
         );
-    }
-}
+    });
 
+    return (
+        <div className={styles.wrapper} onMouseEnter={handleHover} onMouseLeave={handleHover}>
+            <ul className={styles.items}>{getChildrens}</ul>
+            <Nav index={active} onChange={handleChange} />
+        </div>
+    );
+};
+
+Banners.defaultProps = {
+    children: [],
+    interval: 10000,
+};
 Banners.propTypes = {
     children: PropTypes.node,
     interval: PropTypes.number,
 };
+
+export default Banners;

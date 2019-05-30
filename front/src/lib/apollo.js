@@ -7,10 +7,16 @@ import { createHttpLink } from 'apollo-link-http';
 // mb todo use get for better cache
 // import { createPersistedQueryLink } from 'apollo-link-persisted-queries';
 
+const isServer = process.env.SERVER;
+const isBrowser = process.browser;
+const isProd = process.env.NODE_ENV === 'production';
 let graphQLClient = null;
 
-const create = ({ token = '' }) => {
-    const cache = new InMemoryCache();
+const create = ({ token } = {}) => {
+    const cache = new InMemoryCache({
+        // https://github.com/apollographql/apollo-client/pull/4514
+        freezeResults: !isProd,
+    });
     // Create a HTTP client (both server/client). It takes the GraphQL
     // server from the `GRAPHQL` environment variable, which by default is
     // set to an external playground at https://graphqlhub.com/graphql
@@ -26,7 +32,7 @@ const create = ({ token = '' }) => {
         return {
             headers: {
                 ...headers,
-                authorization: token ? `Bearer ${token}` : '',
+                token: token ? `Token ${token}` : '',
             },
         };
     });
@@ -71,7 +77,7 @@ const create = ({ token = '' }) => {
             authLink.concat(httpLink),
         ]),
         // On the server, enable SSR mode
-        ssrMode: process.env.SERVER,
+        ssrMode: isServer,
     });
 
     const data = {
@@ -82,19 +88,22 @@ const create = ({ token = '' }) => {
         data,
     });
 
-    client.onResetStore(() => cache.writeData({ data }));
-
     // If we're in the browser, we'd have received initial state from the
     // server. Restore it, so the client app can continue with the same data.
-    if (!process.env.SERVER) {
+    if (!isServer) {
+        // client.onResetStore(() => {
+        //     // 1 check cookie
+        //     // 2 write new initial store
+        //     return cache.writeData({ data });
+        // });
         cache.restore(window.__APOLLO__);
     }
 
     return client;
 };
 
-export function createClient({ token }) {
-    if (!process.browser) return create({ token });
+export function createClient({ token = '' } = {}) {
+    if (!isBrowser) return create({ token });
 
     if (!graphQLClient) {
         graphQLClient = create({ token });

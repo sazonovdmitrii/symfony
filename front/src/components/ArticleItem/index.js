@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 const ArticleItem = ({ url, image, hasVideo, author, name }) => (
@@ -7,12 +8,12 @@ const ArticleItem = ({ url, image, hasVideo, author, name }) => (
             {image ? (
                 <div className="articles-list__image-wrapper">
                     <picture className="articles-list__image">
-                        <img className="articles-list__image" src={image} />
+                        <img className="articles-list__image" src={image} alt="" />
                     </picture>
                 </div>
             ) : (
                 <div className="articles-list__image-wrapper--placehold">
-                    {hasVideo == 1 && <i className="article-item__icon" />}
+                    {hasVideo && <i className="article-item__icon" />}
                 </div>
             )}
             <div className="articles-list__text">
@@ -28,10 +29,19 @@ const ArticleItem = ({ url, image, hasVideo, author, name }) => (
 );
 
 ArticleItem.defaultProps = {
-    url: '/articles/istoriya-brenda-jimmy-choo.htm',
+    url: null,
     image: 'https://placehold.it/200x200',
     hasVideo: false,
     name: 'Без названия',
+    author: null,
+};
+
+ArticleItem.propTypes = {
+    hasVideo: PropTypes.bool,
+    url: PropTypes.string.isRequired,
+    name: PropTypes.string,
+    image: PropTypes.string,
+    author: PropTypes.string,
 };
 
 export default ArticleItem;

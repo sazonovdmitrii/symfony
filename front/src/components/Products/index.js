@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 
 import { GET_PRODUCTS } from 'query';

@@ -1,22 +1,35 @@
 import 'cross-fetch/polyfill';
 
+import fs from 'fs';
 import path from 'path';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import Helmet from 'react-helmet';
 import { ApolloProvider, getDataFromTree } from 'react-apollo';
 import { StaticRouter } from 'react-router';
-import knex from 'knex';
+// import knex from 'knex';
 import { ChunkExtractor, ChunkExtractorManager } from '@loadable/server';
+import jwt from 'jsonwebtoken';
 
 import Html from './Html';
 import config from './config';
 // import routes from './routes/index';
 
+const checkToken = token => {
+    const pathToCert = path.join('../config/jwt/public.pem');
+    const cert = fs.readFileSync(pathToCert);
+
+    try {
+        return jwt.verify(token, cert);
+    } catch (e) {
+        return;
+    }
+};
+
 export default async ctx => {
     const location = ctx.request.url;
     // get token from cookies 🍪
-    const token = ctx.cookies.get('token');
+    const token = checkToken(ctx.cookies.get('token'));
     const client = config.client({ token });
 
     const nodeExtractor = new ChunkExtractor({ statsFile: config.nodeStats });

@@ -1,125 +1,135 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import Input from 'components/Input';
 import InputGroup from 'components/InputGroup';
-import Radio from 'components/Radio';
+import RadioButton from 'components/RadioButton';
 import RadioGroup from 'components/RadioGroup';
 import Button from 'components/Button';
 import Checkbox from 'components/Checkbox';
 
-export default class Personal extends Component {
-    constructor(props) {
-        super(props);
+const Personal = ({ onSubmit }) => {
+    const [state, setState] = useState({
+        gender: '',
+        last_name: '',
+        name: '',
+        mid_name: '',
+        phone: '',
+        email_subscription: false,
+        sms_subscription: false,
+    });
+    const handleChange = ({ target: { name, value, type } }, checked) => {
+        const newValue = type === 'checkbox' ? checked : value;
 
-        this.state = {
-            gender: '',
-            last_name: '',
-            name: '',
-            mid_name: '',
-            phone: '',
-            email_subscription: false,
-            sms_subscription: false,
-        };
-    }
+        setState(prevState => ({
+            ...prevState,
+            [name]: newValue,
+        }));
+    };
+    const handleSubmit = event => {
+        event.preventDefault();
 
-    handleChange = ({ target: { name, value } }) => {
-        this.setState({
-            [name]: value,
+        // todo validation
+
+        onSubmit({
+            variables: state,
         });
     };
 
-    handleChangeSwitch = ({ target: { name } }, checked) => {
-        this.setState({
-            [name]: checked,
-        });
-    };
+    const { gender, last_name, name, mid_name, phone, email_subscription, sms_subscription } = state;
 
-    render() {
-        const { gender, last_name, name, mid_name, phone, email_subscription, sms_subscription } = this.state;
-
-        return (
-            <form action="/user/personal/save" method="post">
-                <div className="cabinet-content__row">
-                    <div className="cabinet-content__column">
-                        <InputGroup>
-                            <Input
-                                type="text"
-                                name="last_name"
-                                label="Фамилия"
-                                value={last_name}
-                                onChange={this.handleChange}
-                                required
-                            />
-                        </InputGroup>
-                        <InputGroup>
-                            <Input
-                                type="text"
-                                name="name"
-                                label="Имя"
-                                value={name}
-                                onChange={this.handleChange}
-                                required
-                            />
-                        </InputGroup>
-                        <InputGroup>
-                            <Input
-                                type="text"
-                                name="mid_name"
-                                label="Отчество"
-                                value={mid_name}
-                                onChange={this.handleChange}
-                            />
-                        </InputGroup>
-                    </div>
-                    <div className="cabinet-content__column">
-                        Пол:
-                        <InputGroup>
-                            <RadioGroup name="gender" value={gender} onChange={this.handleChange}>
-                                <Radio value="" label="Не указан" />
-                                <Radio value="male" label="Мужской" />
-                                <Radio value="female" label="Женский" />
-                            </RadioGroup>
-                        </InputGroup>
-                        <InputGroup>
-                            <Input
-                                type="tel"
-                                name="phone"
-                                value={phone}
-                                label="Телефон"
-                                placeholder="+7 (000) 000-00-00"
-                                mask="+{7} (000) 000-00-00"
-                                onChange={this.handleChange}
-                                required
-                            />
-                        </InputGroup>
-                        <InputGroup>
-                            <Checkbox
-                                label="Получать уведомления о новых распродажах"
-                                name="email_subscription"
-                                checked={email_subscription}
-                                onChange={this.handleChangeSwitch}
-                            />
-                        </InputGroup>
-                        <InputGroup>
-                            <Checkbox
-                                label="Получать SMS-сообщения"
-                                name="sms_subscription"
-                                checked={sms_subscription}
-                                onChange={this.handleChangeSwitch}
-                            />
-                        </InputGroup>
-                    </div>
-                    <div className="cabinet-content__column cabinet-content__buttons">
-                        <Button type="submit" role="submit" kind="primary">
-                            Сохранить
-                        </Button>
-                        <Button type="reset" kind="secondary">
-                            Отменить
-                        </Button>
-                    </div>
+    return (
+        <form onSubmit={handleSubmit}>
+            <div className="cabinet-content__row">
+                <div className="cabinet-content__column">
+                    <InputGroup>
+                        <Input
+                            type="text"
+                            name="last_name"
+                            label="Фамилия"
+                            value={last_name}
+                            onChange={handleChange}
+                            required
+                        />
+                    </InputGroup>
+                    <InputGroup>
+                        <Input
+                            type="text"
+                            name="name"
+                            label="Имя"
+                            value={name}
+                            onChange={handleChange}
+                            required
+                        />
+                    </InputGroup>
+                    <InputGroup>
+                        <Input
+                            type="text"
+                            name="mid_name"
+                            label="Отчество"
+                            value={mid_name}
+                            onChange={handleChange}
+                        />
+                    </InputGroup>
                 </div>
-            </form>
-        );
-    }
-}
+                <div className="cabinet-content__column">
+                    Пол:
+                    <InputGroup>
+                        <RadioGroup name="gender" value={gender} onChange={handleChange}>
+                            <RadioButton value="" label="Не указан" />
+                            <RadioButton value="male" label="Мужской" />
+                            <RadioButton value="female" label="Женский" />
+                        </RadioGroup>
+                    </InputGroup>
+                    <InputGroup>
+                        <Input
+                            type="tel"
+                            name="phone"
+                            value={phone}
+                            label="Телефон"
+                            placeholder="+7 (000) 000-00-00"
+                            mask="+{7} (000) 000-00-00"
+                            onChange={handleChange}
+                            required
+                        />
+                    </InputGroup>
+                    <InputGroup>
+                        <Checkbox
+                            label="Получать уведомления о новых распродажах"
+                            name="email_subscription"
+                            checked={email_subscription}
+                            onChange={handleChange}
+                        />
+                    </InputGroup>
+                    <InputGroup>
+                        <Checkbox
+                            label="Получать SMS-сообщения"
+                            name="sms_subscription"
+                            checked={sms_subscription}
+                            onChange={handleChange}
+                        />
+                    </InputGroup>
+                </div>
+                <div className="cabinet-content__column cabinet-content__buttons">
+                    <Button type="submit" role="submit" kind="primary">
+                        Сохранить
+                    </Button>
+                    <Button type="reset" kind="secondary">
+                        Отменить
+                    </Button>
+                </div>
+            </div>
+        </form>
+    );
+};
+
+Personal.defaultProps = {
+    onSubmit: () => {},
+};
+
+Personal.propTypes = {
+    onSubmit: PropTypes.func,
+};
+
+export default Personal;

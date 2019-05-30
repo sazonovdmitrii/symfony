@@ -1,8 +1,8 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
-import { CSSTransition } from 'react-transition-group';
 import classNames from 'classnames/bind';
+import { useTransition, animated } from 'react-spring';
 
 import styles from './styles.css';
 import SuccessIcon from './icons/success.svg';
@@ -28,76 +28,61 @@ const getIcon = (theme, className) => {
     }
 };
 
-class $Snackbar extends Component {
-    static propTypes = {
-        onClose: PropTypes.func.isRequired,
-        active: PropTypes.bool,
-        theme: PropTypes.string,
-        message: PropTypes.string.isRequired,
-    };
+const Snackbar = ({ text, theme, active, onClose }) => {
+    const className = cx(styles.snackbar, {
+        [theme]: theme,
+    });
+    const transitions = useTransition(active, null, {
+        from: { transform: 'translateY(200px)', opacity: 0 },
+        enter: { transform: 'translateY(0)', opacity: 1 },
+        leave: { opacity: 0 },
+    });
 
-    static defaultProps = {
-        active: false,
-        theme: '',
-    };
-
-    handleClose = () => {
-        const { onClose } = this.props;
-        if (onClose) {
-            onClose();
-        }
-    };
-
-    render() {
-        const { message, theme, active } = this.props;
-
-        if (!message) return null;
-
-        const className = cx(styles.snackbar, {
-            [theme]: theme,
-        });
-        const Snackbar = (
-            <CSSTransition
-                in={active}
-                classNames={{ enterDone: styles.overlayEnterDone }}
-                timeout={300}
-                unmountOnExit
-            >
-                {() => (
-                    <div className={styles.overlay}>
-                        <div className={className} role="alertdialog">
-                            <div className={styles.inner}>
-                                <div className={styles.row}>
-                                    {getIcon(theme, styles.icon)}
-                                    <div>{message}</div>
-                                </div>
-                            </div>
-                            <div className={styles.right}>
-                                <button
-                                    type="button"
-                                    className={styles.button}
-                                    aria-label="Закрыть"
-                                    onClick={this.handleClose}
-                                >
-                                    <span className={styles.close}>
-                                        <CloseIcon />
-                                    </span>
-                                </button>
-                            </div>
+    const $Snackbar = transitions.map(
+        ({ item, key, props }) =>
+            item && (
+                <div key={key} className={styles.overlay}>
+                    <animated.div className={className} style={props} role="alertdialog">
+                        <div className={styles.inner}>
+                            <span className={styles.row}>
+                                {getIcon(theme, styles.icon)}
+                                {text}
+                            </span>
                         </div>
-                    </div>
-                )}
-            </CSSTransition>
-        );
+                        <div className={styles.right}>
+                            <button
+                                type="button"
+                                className={styles.button}
+                                aria-label="Закрыть"
+                                onClick={onClose}
+                            >
+                                <span className={styles.close}>
+                                    <CloseIcon />
+                                </span>
+                            </button>
+                        </div>
+                    </animated.div>
+                </div>
+            )
+    );
+    const domNode = document.body;
 
-        // TODO fix ssr
-        const domNode = document.body;
-
-        if (domNode) {
-            return createPortal(Snackbar, domNode);
-        }
-        return Snackbar;
+    if (domNode) {
+        return createPortal($Snackbar, domNode);
     }
-}
+    return null;
+};
 
-export default $Snackbar;
+Snackbar.defaultProps = {
+    active: false,
+    theme: '',
+};
+
+Snackbar.propTypes = {
+    onClose: PropTypes.func.isRequired,
+    active: PropTypes.bool,
+    theme: PropTypes.string,
+    text: PropTypes.string.isRequired,
+};
+
+export default Snackbar;

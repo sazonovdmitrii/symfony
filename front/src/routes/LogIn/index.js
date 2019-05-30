@@ -1,32 +1,44 @@
 import React from 'react';
-import { Mutation } from 'react-apollo';
+import { Mutation, withApollo } from 'react-apollo';
 import gql from 'graphql-tag';
+import hardtack from 'hardtack';
 
-// import Snackbar from 'components/Snackbar';
+import { IS_LOGGED_IN } from 'query';
+
+import Snackbar from 'components/Snackbar';
 
 import LogIn from './LogIn';
 
 const LOGIN_MUTATION = gql`
     mutation($input: UserInput!) {
         auth(input: $input) {
+            email
             hash
         }
     }
 `;
 
-export default props => {
-    const _confirm = data => {
-        console.log(data);
-        if (data.hash) {
+export default withApollo(props => {
+    const _confirm = ({ auth }) => {
+        if (auth && auth.hash) {
+            const date = new Date();
+            const currentYear = date.getFullYear();
+
+            date.setFullYear(currentYear + 1);
+            hardtack.set('token', auth.hash, {
+                path: '/',
+                expires: date.toUTCString(),
+            });
+            props.client.writeData({ data: { isLoggedIn: true } });
             props.history.push('/');
         }
     };
 
     return (
-        <Mutation mutation={LOGIN_MUTATION} onCompleted={data => _confirm(data)}>
+        <Mutation mutation={LOGIN_MUTATION} onCompleted={_confirm} onError={error => console.warn(error)}>
             {(auth, { data, error }) => (
                 <div className="cabinet">
-                    {error && error.message}
+                    {error && <Snackbar text={error.message} active={!!error} theme="error" />}
                     <div className="page-header">
                         <h1 className="page-header__title">Авторизация</h1>
                     </div>
@@ -37,4 +49,4 @@ export default props => {
             )}
         </Mutation>
     );
-};
+});

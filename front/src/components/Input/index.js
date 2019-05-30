@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { IMaskMixin } from 'react-imask';
 import classnames from 'classnames/bind';
@@ -10,107 +10,129 @@ const cx = classnames.bind(styles);
 
 const MaskedInput = IMaskMixin(({ inputRef, ...props }) => <input ref={inputRef} {...props} />);
 
-export default class Input extends Component {
-    static propTypes = {
-        type: PropTypes.string,
-        text: PropTypes.string,
-    };
-
-    static defaultProps = {
-        type: 'text',
-        theme: {},
-        // errorObj: null,
-    };
-
-    id = `input${nanoid()}`;
-
-    state = {
+const Input = ({
+    disabled,
+    error: errorProp,
+    label,
+    mask,
+    max,
+    min,
+    name,
+    placeholder,
+    required,
+    text,
+    theme,
+    type,
+    value,
+    onChange,
+    onBlur,
+}) => {
+    const generate = useCallback(nanoid(), []);
+    const [id] = useState(`input${generate}`);
+    const [{ focused, filled, error }, setState] = useState({
         filled: false,
         focused: false,
-        error: this.props.error,
-        text: this.props.text || null,
-    };
+        error: errorProp,
+    });
+    const labelClassName = cx(styles.label, theme.label, {
+        focused,
+        error,
+        filled: filled || !!value,
+    });
+    const inputClassName = cx(styles.input, theme.input, {
+        error,
+    });
+    const textClassName = cx(styles.text, theme.text, {
+        error,
+    });
+    const $Input = mask ? MaskedInput : 'input';
 
-    componentWillReceiveProps(nextProps) {
-        const { name } = this.props;
-        const { errorObj } = nextProps;
-        if (!errorObj) return;
-
-        const text = errorObj[name] ? errorObj[name] : null;
-
-        if (text) {
-            this.setState({
-                error: !!text,
-                text,
-            });
-        }
-    }
-
-    handleFocus = () => {
-        this.setState({
+    const handleFocus = () => {
+        setState(prevState => ({
+            ...prevState,
             filled: true,
             focused: true,
-        });
+        }));
     };
 
-    handleBlur = event => {
-        this.setState({
+    const handleBlur = event => {
+        setState(prevState => ({
+            ...prevState,
             focused: false,
-        });
+        }));
 
-        const { onBlur } = this.props;
         const elem = event.target;
-        let error = false;
+        let newError = false;
 
         if (onBlur) {
-            error = onBlur(elem);
+            newError = onBlur(elem);
         }
 
-        this.setState({ error, focused: false, filled: !!elem.value });
+        setState(prevState => ({
+            ...prevState,
+            error: newError,
+            focused: false,
+            filled: !!elem.value,
+        }));
     };
 
-    render() {
-        const { type, label, required, mask, min, max, value, name, onChange, theme, disabled } = this.props;
-        const { focused, filled, error, text } = this.state;
-        const labelClassName = cx(styles.label, theme.label, {
-            focused,
-            filled: filled || !!value,
-            error,
-        });
-        const inputClassName = cx(styles.input, theme.input, {
-            error,
-        });
-        const textClassName = cx(styles.text, theme.text, {
-            error,
-        });
+    return (
+        <div className={styles.wrapper}>
+            {label && (
+                <label className={labelClassName} htmlFor={id}>
+                    {required ? `${label}*` : label}
+                </label>
+            )}
+            <$Input
+                id={id}
+                className={inputClassName}
+                type={type}
+                name={name}
+                value={value}
+                mask={mask}
+                max={max}
+                min={min}
+                placeholder={placeholder}
+                aria-required={required}
+                required={required}
+                disabled={disabled}
+                onChange={onChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+            />
+            {text && <div className={textClassName}>{text}</div>}
+        </div>
+    );
+};
 
-        const $Input = mask ? MaskedInput : 'input';
+Input.propTypes = {
+    label: PropTypes.string,
+    mask: PropTypes.string,
+    max: PropTypes.string,
+    min: PropTypes.string,
+    name: PropTypes.string.isRequired,
+    placeholder: PropTypes.string,
+    required: PropTypes.bool,
+    text: PropTypes.string,
+    theme: PropTypes.objectOf(PropTypes.string),
+    type: PropTypes.string,
+    value: PropTypes.string,
+    onChange: PropTypes.func,
+    onBlur: PropTypes.func,
+};
 
-        return (
-            <div className={styles.wrapper}>
-                {label && (
-                    <label className={labelClassName} htmlFor={this.id}>
-                        {required ? `${label}*` : label}
-                    </label>
-                )}
-                <$Input
-                    id={this.id}
-                    className={inputClassName}
-                    type={type}
-                    name={name}
-                    value={value}
-                    mask={mask}
-                    max={max}
-                    min={min}
-                    aria-required={required}
-                    required={required}
-                    onChange={onChange}
-                    onFocus={this.handleFocus}
-                    onBlur={this.handleBlur}
-                    disabled={disabled}
-                />
-                {text && <div className={textClassName}>{text}</div>}
-            </div>
-        );
-    }
-}
+Input.defaultProps = {
+    label: null,
+    mask: '',
+    max: null,
+    min: null,
+    placeholder: null,
+    required: false,
+    value: '',
+    text: null,
+    theme: {},
+    type: 'text',
+    onBlur: () => {},
+};
+
+export default Input;

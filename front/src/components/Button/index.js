@@ -19,15 +19,17 @@ const Button = ({
     disabled,
     uppercase,
     rounded,
+    outlined,
     ...props
 }) => {
+    const newKind = `${outlined ? 'outlined-' : ''}${kind}`;
     const buttonClassName = cx(styles.button, className, {
         fullWidth,
         bold,
         disabled,
         uppercase,
         rounded,
-        [kind]: kind,
+        [newKind]: kind,
         [size]: size,
     });
     const Button = href ? 'a' : to ? Link : 'button';
@@ -54,6 +56,7 @@ Button.defaultProps = {
     size: null,
     fullWidth: false,
     className: '',
+    outlined: false,
 };
 
 Button.propTypes = {
@@ -63,6 +66,7 @@ Button.propTypes = {
     size: PropTypes.string,
     fullWidth: PropTypes.bool,
     className: PropTypes.string,
+    outlined: PropTypes.bool,
 };
 
 export default Button;

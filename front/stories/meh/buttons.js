@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
@@ -11,13 +11,22 @@ const sizes = ['large', '', 'small'];
 
 storiesOf('Button', module)
     .addDecorator((story, context) => withInfo({ inline: true })(story)(context))
-    .add('All buttons', () =>
-        kinds.map(kind => (
-            <Button onClick={action('clicked')} kind={kind}>
-                {kind} button
-            </Button>
-        ))
-    )
+    .add('All buttons', () => {
+        return (
+            <Fragment>
+                {kinds.map(kind => (
+                    <Button onClick={action('clicked')} kind={kind}>
+                        {kind} button
+                    </Button>
+                ))}
+                {kinds.map(kind => (
+                    <Button onClick={action('clicked')} kind={kind} outlined>
+                        {kind} button
+                    </Button>
+                ))}
+            </Fragment>
+        );
+    })
     .add('sizes', () =>
         sizes.map((size, index) => (
             <Button onClick={action('clicked')} size={size} kind={kinds[0]}>
