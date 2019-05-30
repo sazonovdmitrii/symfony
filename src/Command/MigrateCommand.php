@@ -33,7 +33,8 @@ class MigrateCommand extends ContainerAwareCommand
 
         $this->output = $output;
 //        $this->users();
-        $this->catalog_products();
+        $this->users_addresses();
+//        $this->catalog_products();
         die();
         $this->product_items();
         $this->catalogs();
@@ -379,6 +380,85 @@ class MigrateCommand extends ContainerAwareCommand
                 "
             );
             $this->output->writeln([$counter . '/' . count($allCatalogProducts) . '-----' . $catalogProduct['id']]);
+        }
+    }
+
+    public function users_addresses()
+    {
+        $this->output->writeln(['Migrating Users Addresses...']);
+        $usersAddresses = $this->_lpDoctrine->getConnection()->prepare(
+            "SELECT ua.*, u.email FROM users_addresses ua JOIN users u ON u.id = ua.users_id WHERE ua.users_id=9"
+        );
+        $usersAddresses->execute();
+
+        $doctrine = $this->_defaultDoctrine->getConnection();
+        $doctrine->query('DELETE FROM address');
+        $allUsersAddresses = $usersAddresses->fetchAll();
+        $counter = 0;
+        $users = $this->_defaultDoctrine->getConnection()->prepare(
+            "SELECT id, email FROM users"
+        );
+        $users->execute();
+        $allUsers = $users->fetchAll();
+        $usersIds = [];
+        foreach($allUsers as $allUser) {
+            $usersIds[$allUser['email']] = $allUser['id'];
+        }
+        foreach($allUsersAddresses as $usersAddress) {
+            $usersAddress['options'] = json_decode($usersAddress['options']);
+            if($usersAddress['options']) {
+                foreach($usersAddress['options'] as $keyOption => $valueOption) {
+                    $usersAddress[$keyOption] = $valueOption;
+                }
+            }
+
+            $userId = 0;
+            if(isset($usersIds[$usersAddress['email']])) {
+                $userId = $usersIds[$usersAddress['email']];
+            }
+            $counter++;
+            if($userId) {
+                $counter++;
+                $doctrine->exec(
+                    "
+                    INSERT INTO address (
+                        id,   
+                        name,                                             
+                        created,
+                        user_id_id, 
+                        person,
+                        zip,
+                        region_id,
+                        city,
+                        street,
+                        house,
+                        corp,
+                        level,
+                        flat,
+                        code,                        
+                        active                      
+                    ) VALUES(
+                        " .  $usersAddress['id'] . ",
+                        '" .  $usersAddress['address'] . "',
+                        '" .  $usersAddress['created'] . "',
+                        " . $userId . ", 
+                        '" .  $usersAddress['person'] . "',
+                        '" .  $usersAddress['post_code'] . "',
+                        '" .  (isset($usersAddress['region_id']) ? $usersAddress['region_id'] : 0) . "',
+                        '" .  $usersAddress['city'] . "',
+                        '" .  $usersAddress['street'] . "',
+                        '" .  (isset($usersAddress['corp']) ? $usersAddress['corp'] : '') . "',
+                        '" .  (isset($usersAddress['corp']) ? $usersAddress['corp'] : '') . "',
+                        '" .  (isset($usersAddress['level']) ? $usersAddress['level'] : '') . "',
+                        '" .  (isset($usersAddress['flat']) ? $usersAddress['flat'] : '') . "',
+                        '" .  (isset($usersAddress['code']) ? $usersAddress['code'] : '') . "',
+                        '1'
+                    )
+                "
+                );
+                $this->output->writeln([$counter . '/' . count($allUsersAddresses) . '-----' . $usersAddress['id']]);
+            }
+
         }
     }
 }
