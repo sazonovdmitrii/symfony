@@ -27,10 +27,22 @@ services:
         links:
             - postgres
             - db_lp:mysql
+            - redis
+        environment:
+            REDIS_HOST: redis
+            REDIS_PORT: 6379
         networks:
             main:
                 aliases:
                     - php
+    redis:
+        container_name: redis
+        image: redis:4-alpine
+        networks:
+            main:
+                aliases:
+                    - redis
+
     nginx:
         build: nginx
         ports:

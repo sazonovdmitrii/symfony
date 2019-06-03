@@ -1,0 +1,6 @@
+AddBasketInput:
+  type: input-object
+  config:
+    fields:
+      item_id:
+        type: "Int!"

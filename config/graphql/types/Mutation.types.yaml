@@ -8,3 +8,9 @@ Mutation:
         args:
           input:
             type: UserInput!
+      addBasket:
+        type: Basket!
+        resolve: '@=mutation("App\\GraphQL\\Mutation\\BasketMutation::add", [args])'
+        args:
+          input:
+            type: AddBasketInput!

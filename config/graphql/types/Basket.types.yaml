@@ -1,0 +1,14 @@
+Basket:
+  type: object
+  config:
+    description: "Basket Object"
+    fields:
+      id:
+        type: "Int!"
+        description: "User Id."
+      email:
+        type: "String!"
+        description: "Email"
+      hash:
+        type: "String"
+        description: "Hash"
