@@ -1,0 +1,12 @@
+mutation ($input: AddBasketInput!) {
+  addBasket(input: $input) {
+    id,
+    hash
+  }
+}
+
+{
+  "input": {
+    "item_id": 24
+  }
+}

@@ -47,3 +47,6 @@ Query:
             description: "User Token"
             type: "String"
         resolve: "@=resolver('Address', [args])"
+      basket:
+        type: "Basket"
+        resolve: "@=resolver('Basket', [args])"

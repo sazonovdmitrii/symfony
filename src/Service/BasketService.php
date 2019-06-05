@@ -35,4 +35,13 @@ class BasketService extends AbstractController
         }
         throw new Exception('No Auth key founded');
     }
+
+    public function getAll()
+    {
+        if($authKey = $this->getAuthKey()) {
+            $addingKey = 'basket::' . $this->getAuthKey();
+            return $this->redis->get($addingKey);
+        }
+        throw new Exception('No Auth key founded');
+    }
 }
