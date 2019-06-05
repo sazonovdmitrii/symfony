@@ -1,6 +1,7 @@
 <?php
 namespace App\GraphQL\Mutation;
 
+use App\Service\BasketService;
 use App\GraphQL\Input\AddBasketInput;
 use App\Service\AuthenticatorService;
 use Overblog\GraphQLBundle\Definition\Argument;
@@ -16,14 +17,13 @@ class BasketMutation extends AuthMutation
         EntityManager $em,
         Redis $redis,
         ContainerInterface $container,
-        AuthenticatorService $authenticatorService
+        AuthenticatorService $authenticatorService,
+        BasketService $basketService
     ) {
         $this->redis = $redis;
         $this->em = $em;
+        $this->basketService = $basketService;
         $this->authenticatorService = $authenticatorService;
-        if ($container->has('request_stack')) {
-            $this->request = $container->get('request_stack')->getCurrentRequest();
-        }
         parent::__construct($redis, $container, $authenticatorService);
     }
 
@@ -31,15 +31,19 @@ class BasketMutation extends AuthMutation
     {
         $input = new AddBasketInput($args);
 
-        if($input->item_id && $this->user) {
-
+        if($input->item_id) {
             $productItem = $this->em
                 ->getRepository('App:ProductItem')
                 ->find($input->item_id);
-            $key = 'basket' . $this->user->getId();
-            $this->redis->set($key, $productItem->getId());
-            var_dump($this->redis->get($key));
-            die();
+
+            $authKey = ($this->getUser()) ? $this->getUser()->getId() : $this->getSessionKey();
+
+            $this->basketService
+                ->setAuthKey($authKey)
+                ->add($productItem->getId());
         }
+        return [
+            'id' => $input->item_id
+        ];
     }
 }

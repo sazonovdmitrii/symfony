@@ -12,6 +12,8 @@ class AuthMutation implements MutationInterface
 
     private $authenticatorService;
 
+    private $request;
+
     public function __construct(
         Redis $redis,
         ContainerInterface $container,
@@ -28,5 +30,21 @@ class AuthMutation implements MutationInterface
             $this->user = $user;
             return;
         }
+    }
+
+    public function getSessionKey()
+    {
+        if($this->request) {
+            return $this->request->cookies->get('PHPSESSID');
+        }
+        return '';
+    }
+
+    public function getUser()
+    {
+        if($this->user) {
+            return $this->user;
+        }
+        return false;
     }
 }
