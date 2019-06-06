@@ -19,7 +19,9 @@ import App from './App';
 
 const history = createBrowserHistory();
 
-createSessionKey();
+const sessionKey = hardtack.get('session_key');
+if (!sessionKey) createSessionKey();
+
 // get token from cookies 🍪
 const token = hardtack.get('token');
 const client = createClient({ token });
