@@ -55,7 +55,7 @@ const Product = ({
         // const { selectedProduct } = this.state;
         // todo add to card
 
-        callback({ variables: { input: { id: selectedProduct.id } } });
+        callback({ variables: { input: { item_id: selectedProduct.id } } });
     };
 
     return (
