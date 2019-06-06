@@ -24,7 +24,7 @@ class AuthAlias implements ResolverInterface, AliasedInterface {
         if ($container->has('request_stack')) {
             $this->request = $container->get('request_stack')->getCurrentRequest();
             $token = $this->request->headers->get('token');
-            if($user = $authenticatorService->authByToken($token)) {
+            if($token && $user = $authenticatorService->authByToken($token)) {
                 $this->user = $user;
                 return;
             }
@@ -33,10 +33,19 @@ class AuthAlias implements ResolverInterface, AliasedInterface {
 
     public function getSessionKey()
     {
+        $sessionKey = '';
         if($this->request) {
-            return $this->request->cookies->get('session_key');
+            $cookies = explode('; ', $this->request->headers->get('cookie'));
+            if(count($cookies)) {
+                foreach($cookies as $cookie) {
+                    $cookie = explode('=', $cookie);
+                    if(count($cookie) == 2 && $cookie[0] == 'session_key') {
+                        $sessionKey = $cookie[1];
+                    }
+                }
+            }
         }
-        return '';
+        return $sessionKey;
     }
 
     public function getUser()
