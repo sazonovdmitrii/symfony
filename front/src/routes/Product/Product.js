@@ -1,8 +1,10 @@
 import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import { Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
 
+import { seoHead } from 'utils';
 import Button from 'components/Button';
 import Tabs from 'components/Tabs';
 import Tab from 'components/Tabs/Tab';
@@ -13,9 +15,15 @@ import RichText from 'components/RichText';
 import Select from 'components/Select';
 import ProductCarousel from 'components/ProductCarousel';
 
-import SEO from 'globalMeta';
-
 import ProductItems from './ProductItems';
+
+const ADD_TO_BASKET = gql`
+    mutation AddBasket($input: Input!) {
+        addBasket(input: $input) {
+            id
+        }
+    }
+`;
 
 const Product = ({
     name,
@@ -34,7 +42,7 @@ const Product = ({
     const [selectedProduct, setSelectedProduct] = useState(items.edges[0].node);
     const handleChangeItem = ({ id, price: itemPrice }) => {
         if (!itemPrice) return;
-        const newSelectedProduct = items.find(item => item.node.id === id);
+        const newSelectedProduct = items.edges.find(item => item.node.id === id);
 
         if (newSelectedProduct && newSelectedProduct.node.id !== selectedProduct.id) {
             setSelectedProduct(newSelectedProduct.node);
@@ -43,33 +51,29 @@ const Product = ({
     const handleChangeTab = ({ value }) => {
         setTabIndex(value);
     };
-    const handleAddToCard = () => {
+    const handleAddToCard = callback => {
         // const { selectedProduct } = this.state;
         // todo add to card
-    };
 
-    const mySeo = SEO.product(name, items.edges);
+        callback({ variables: { input: { id: selectedProduct.id } } });
+    };
 
     return (
         <Fragment>
-            <Helmet>
-                <title>{mySeo.title}</title>
-                <meta name="description" content={mySeo.description} />
-                <meta name="keywords" content={mySeo.keywords} />
-            </Helmet>
-            <div className="product" itemscope itemtype="http://schema.org/Product">
-                <meta itemprop="name" content={name} />
+            {seoHead('product', { name, items: items.edges })}
+            <div className="product" itemScope itemType="http://schema.org/Product">
+                <meta itemProp="name" content={name} />
                 <span
-                    itemprop="offers"
-                    itemscope
-                    itemtype="http://schema.org/AggregateOffer"
+                    itemProp="offers"
+                    itemScope
+                    itemType="http://schema.org/AggregateOffer"
                     style={{ display: 'none' }}
                 >
-                    <meta itemprop="offerCount" content={items.edges.length} />
-                    <meta itemprop="lowPrice" content={selectedProduct.price || 0} />
-                    <meta itemprop="priceCurrency" content="RUB" />
+                    <meta itemProp="offerCount" content={items.edges.length} />
+                    <meta itemProp="lowPrice" content={selectedProduct.price || 0} />
+                    <meta itemProp="priceCurrency" content="RUB" />
                     <link
-                        itemprop="availability"
+                        itemProp="availability"
                         href={
                             selectedProduct.price
                                 ? 'http://schema.org/InStock'
@@ -182,23 +186,35 @@ const Product = ({
                                         </div>
                                     )}
                                     <div className="product__cart-block-button">
-                                        {selectedProduct.price ? (
-                                            <div className="product__cart-block-button-form product-item__frm">
-                                                {/* <div className="left-3">
-                                                            <Select
-                                                    className="select-group"
-                                                                    items={[...new Array(10).keys()]}
-                                                                    />
-                                                </div> */}
-                                                <Button
-                                                    onClick={handleAddToCard}
-                                                    kind="primary"
-                                                    bold
-                                                    uppercase
-                                                >
-                                                    Добавить в корзину
-                                                </Button>
-                                            </div>
+                                        {1 ? (
+                                            <Mutation
+                                                mutation={ADD_TO_BASKET}
+                                                onError={error => console.warn(error)}
+                                            >
+                                                {(addToCard, { data, error }) => {
+                                                    console.log(data);
+                                                    console.warn(error);
+
+                                                    return (
+                                                        <div className="product__cart-block-button-form product-item__frm">
+                                                            {/* <div className="left-3">
+                                                                <Select
+                                                        className="select-group"
+                                                                        items={[...new Array(10).keys()]}
+                                                                        />
+                                                    </div> */}
+                                                            <Button
+                                                                onClick={() => handleAddToCard(addToCard)}
+                                                                kind="primary"
+                                                                bold
+                                                                uppercase
+                                                            >
+                                                                Добавить в корзину
+                                                            </Button>
+                                                        </div>
+                                                    );
+                                                }}
+                                            </Mutation>
                                         ) : (
                                             <Button bold uppercase disabled>
                                                 Нет в наличии
@@ -207,7 +223,7 @@ const Product = ({
                                     </div>
                                 </Fragment>
                             )}
-                            {items.length > 1 && (
+                            {items.edges.length > 1 && (
                                 <div className="product__cart-block-type">
                                     <ProductItems
                                         items={items}
@@ -335,7 +351,9 @@ Product.defaultProps = {
 Product.propTypes = {
     name: PropTypes.string,
     id: PropTypes.number.isRequired,
-    items: PropTypes.arrayOf(PropTypes.object),
+    items: PropTypes.shape({
+        edges: PropTypes.arrayOf(PropTypes.object),
+    }),
     brand_name: PropTypes.string,
     images: PropTypes.arrayOf(PropTypes.string),
     likes: PropTypes.number,

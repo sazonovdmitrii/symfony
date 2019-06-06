@@ -9,9 +9,9 @@ import styles from './styles.css';
 
 const cx = classnames.bind(styles);
 
-const Banners = ({ children, interval }) => {
+const Banners = ({ children, interval, autoPlay: autoPlayProp }) => {
     const [active, setActive] = useState(0);
-    const [autoPlay, setAutoplay] = useState(true);
+    const [autoPlay, setAutoplay] = useState(autoPlayProp);
     const getActive = index => {
         const lastIndex = children.length - 1;
 
@@ -51,18 +51,18 @@ const Banners = ({ children, interval }) => {
         });
 
         return (
-            <li
+            <div
                 key={index} // eslint-disable-line
                 className={activeBannerClassName}
             >
                 {child}
-            </li>
+            </div>
         );
     });
 
     return (
         <div className={styles.wrapper} onMouseEnter={handleHover} onMouseLeave={handleHover}>
-            <ul className={styles.items}>{getChildrens}</ul>
+            <div className={styles.items}>{getChildrens}</div>
             <Nav index={active} onChange={handleChange} />
         </div>
     );
@@ -71,10 +71,12 @@ const Banners = ({ children, interval }) => {
 Banners.defaultProps = {
     children: [],
     interval: 10000,
+    autoPlay: true,
 };
 Banners.propTypes = {
     children: PropTypes.node,
     interval: PropTypes.number,
+    autoPlay: PropTypes.bool,
 };
 
 export default Banners;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Switch, Route, withRouter } from 'react-router';
+import { Helmet } from 'react-helmet';
 
 import Nav from 'components/Nav';
 
@@ -69,6 +70,9 @@ const User = ({
 
     return (
         <div className="cabinet">
+            <Helmet>
+                <title>{title}</title>
+            </Helmet>
             <div className="page-header">
                 <h1 className="page-header__title">{title}</h1>
                 <Nav />

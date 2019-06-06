@@ -21,7 +21,6 @@
 
     @include has('item') {
         display: inline-block;
-        width: 40%;
         text-align: center;
         position: relative;
         box-sizing: border-box;
@@ -129,7 +128,7 @@
     @include has('link') {
         text-decoration: none;
         color: $color-grey;
-        display: inline-block;
+        display: block;
         position: relative;
     }
 

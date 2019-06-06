@@ -248,18 +248,7 @@ const getConfig = target => {
             entrypoints: false,
         },
         performance: false,
-        // node: !isNode
-        //     ? {
-        //           setImmediate: false,
-        //           process: !isProd,
-        //           module: 'empty',
-        //           dgram: 'empty',
-        //           fs: 'empty',
-        //           net: 'empty',
-        //           tls: 'empty',
-        //           child_process: 'empty',
-        //       }
-        //     : undefined,
+        node: isNode ? undefined : isProd ? false : undefined,
     };
 };
 

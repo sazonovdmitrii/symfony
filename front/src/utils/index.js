@@ -1,6 +1,9 @@
 import React, { Fragment } from 'react';
 import { Query } from 'react-apollo';
 import { Route } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+
+import SEO from 'globalMeta';
 
 import NotFound from 'routes/NotFound';
 
@@ -22,9 +25,6 @@ export const withQuery = ({ query, variables }) => Component => {
                         </Fragment>
                     );
                 }
-                // const notFound = values.every(item => !item);
-                // if (!data) return <NotFound />;
-                // // console.log(data);
                 const newData = Object.values(data).reduce((obj, item) => {
                     return { ...obj, ...item };
                 }, {});
@@ -52,3 +52,15 @@ export const RouteStatus = props => (
         }}
     />
 );
+
+export const seoHead = (type, props) => {
+    const { title, description, keywords } = SEO[type](props);
+
+    return (
+        <Helmet>
+            {title && <title>{title}</title>}
+            {description && <meta name="description" content={description} />}
+            {keywords && <meta name="keywords" content={keywords} />}
+        </Helmet>
+    );
+};

@@ -1,11 +1,5 @@
-import $Dialog from './Dialog';
-import $DialogActions from './DialogActions';
-import $DialogContent from './DialogContent';
-import $DialogContentText from './DialogContentText';
-import $DialogTitle from './DialogTitle';
-
-export const Dialog = $Dialog;
-export const DialogActions = $DialogActions;
-export const DialogContent = $DialogContent;
-export const DialogContentText = $DialogContentText;
-export const DialogTitle = $DialogTitle;
+export { default as Dialog } from './Dialog';
+export { default as DialogActions } from './DialogActions';
+export { default as DialogContent } from './DialogContent';
+export { default as DialogContentText } from './DialogContentText';
+export { default as DialogTitle } from './DialogTitle';

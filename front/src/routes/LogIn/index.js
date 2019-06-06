@@ -1,25 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Mutation, withApollo } from 'react-apollo';
 import gql from 'graphql-tag';
 import hardtack from 'hardtack';
 
-import { IS_LOGGED_IN } from 'query';
-
-import Snackbar from 'components/Snackbar';
-
-import LogIn from './LogIn';
-
-const LOGIN_MUTATION = gql`
-    mutation($input: UserInput!) {
-        auth(input: $input) {
-            email
-            hash
-        }
-    }
-`;
+import LoginForm from 'components/LoginForm';
+import Button from 'components/Button';
 
 export default withApollo(props => {
-    const _confirm = ({ auth }) => {
+    const handleCompleted = ({ auth }) => {
         if (auth && auth.hash) {
             const date = new Date();
             const currentYear = date.getFullYear();
@@ -35,18 +23,30 @@ export default withApollo(props => {
     };
 
     return (
-        <Mutation mutation={LOGIN_MUTATION} onCompleted={_confirm} onError={error => console.warn(error)}>
-            {(auth, { data, error }) => (
-                <div className="cabinet">
-                    {error && <Snackbar text={error.message} active={!!error} theme="error" />}
-                    <div className="page-header">
-                        <h1 className="page-header__title">Авторизация</h1>
+        <div className="cabinet">
+            <div className="page-header">
+                <h1 className="page-header__title">Авторизация</h1>
+            </div>
+            <div className="cabinet-content">
+                <div className="cabinet-content__row">
+                    <div className="cabinet-content__column">
+                        <LoginForm onCompleted={handleCompleted} />
                     </div>
-                    <div className="cabinet-content">
-                        <LogIn onSubmit={auth} {...data} />
+                    <div className="cabinet-content__column rte">
+                        <h5>Почему быть пользователем Laparfumerie.ru очень удобно?</h5>
+                        <p>
+                            - создайте свой личный кабинет и управляйте своим заказами
+                            <br /> - получите возможность оставлять коментарии и оценивать товары
+                            <br /> - отслеживайте изменения цен на понравившиеся товары в своей корзине
+                            <br /> - получайте рассылку с самой актуальной и свежей информацией
+                            <br /> - будьте в курсе новостей мира парфюмерных и косметических новинок
+                        </p>
+                        <Button to="/user/register" kind="primary" bold uppercase>
+                            Зарегистрироваться
+                        </Button>
                     </div>
                 </div>
-            )}
-        </Mutation>
+            </div>
+        </div>
     );
 });

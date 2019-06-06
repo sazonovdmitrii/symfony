@@ -1,13 +1,8 @@
 const isProd = process.env.NODE_ENV === 'production';
 const isServer = !!process.env.SERVER;
 
-function isWebTarget(caller) {
-    return Boolean(caller && caller.target === 'web');
-}
-
-function isWebpack(caller) {
-    return Boolean(caller && caller.name === 'babel-loader');
-}
+const isWebTarget = (caller) => Boolean(caller && caller.target === 'web');
+const isWebpack = (caller) => Boolean(caller && caller.name === 'babel-loader');
 
 // todo try ejsx for ssr
 module.exports = api => {

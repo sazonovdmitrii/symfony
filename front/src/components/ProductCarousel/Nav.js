@@ -14,20 +14,15 @@ const Nav = ({ items, onChange, active }) => {
     };
 
     return (
-        <div class={styles.nav}>
+        <div className={styles.nav}>
             {items.map((item, index) => {
                 const imageClassName = cx(styles.navItem, {
                     active: active === index,
                 });
 
                 return (
-                    <div key={item} class={imageClassName} onClick={() => handleClick(index)}>
-                        <img
-                            className={styles.image}
-                            src={item}
-                            class="product__image-imgs-ul-li-img"
-                            alt=""
-                        />
+                    <div key={item} className={imageClassName} onClick={() => handleClick(index)}>
+                        <img className={styles.image} src={item} alt="" />
                     </div>
                 );
             })}

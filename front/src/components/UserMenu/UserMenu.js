@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -6,69 +6,100 @@ import hardtack from 'hardtack';
 
 import BasketShort from 'components/BasketShort';
 import Button from 'components/Button';
+import LoginForm from 'components/LoginForm';
+import { Dialog, DialogTitle, DialogContent } from 'components/Dialog';
+
+import styles from './styles.css';
 
 const UserMenu = ({ client, isLoggedIn, history }) => {
+    const [openModal, setOpenModal] = useState(false);
     const basket_items_count = 0;
-    const handleLogOut = () => {
+    const handleLogOut = async () => {
         hardtack.remove('token', { path: '/' });
-        // client.resetStore();
-        client.writeData({ data: { isLoggedIn: false } });
+        await client.resetStore();
+
         history.push('/');
+    };
+    const handleCloseModal = () => {
+        setOpenModal(false);
+    };
+    const handleCompleted = ({ auth }) => {
+        if (auth && auth.hash) {
+            const date = new Date();
+            const currentYear = date.getFullYear();
+
+            date.setFullYear(currentYear + 1);
+            hardtack.set('token', auth.hash, {
+                path: '/',
+                expires: date.toUTCString(),
+            });
+            client.writeData({ data: { isLoggedIn: true } });
+            handleCloseModal();
+        }
     };
 
     return (
-        <ul className="usermenu">
-            <li className="usermenu__item">
-                {isLoggedIn ? (
-                    <Fragment>
-                        <Link className="usermenu__link" to="/user/personal/">
-                            <span className="usermenu__icon flaticon-avatar" />
-                            <span className="usermenu__label">Ваш кабинет</span>
-                        </Link>
-                        <ul className="usermenu__submenu">
-                            <li className="usermenu__subitem">
-                                <Link className="usermenu__sublink" to="/user/personal">
-                                    Персональная информация
-                                </Link>
-                            </li>
-                            <li className="usermenu__subitem">
-                                <Link className="usermenu__sublink" to="/user/orders">
-                                    Ваши заказы
-                                </Link>
-                            </li>
-                            <li className="usermenu__subitem">
-                                <Link className="usermenu__sublink" to="/basket">
-                                    Корзина
-                                </Link>
-                            </li>
-                            <li className="usermenu__subitem">
-                                <Button
-                                    className="usermenu__sublink"
-                                    kind="primary"
-                                    size="small"
-                                    onClick={handleLogOut}
-                                    outlined
-                                >
-                                    Выход
-                                </Button>
-                            </li>
-                        </ul>
-                    </Fragment>
-                ) : (
-                    // todo modal
-                    <Link className="usermenu__link" to="/user/login">
-                        <span className="usermenu__icon flaticon-avatar" />
-                        <span className="usermenu__label">Войти</span>
+        <ul className={styles.root}>
+            {isLoggedIn ? (
+                <li className={styles.item}>
+                    <Link className={styles.link} to="/user/personal/">
+                        <span className={`${styles.icon} flaticon-avatar`} />
+                        <span className={styles.label}>Ваш кабинет</span>
                     </Link>
-                )}
-            </li>
-            <li className="usermenu__item">
-                <Link className="usermenu__link" to="/basket">
-                    <span className="usermenu__icon flaticon-shopping-bag" />
+                    <ul className={styles.submenu}>
+                        <li className="usermenu__subitem">
+                            <Link className="usermenu__sublink" to="/user/personal">
+                                Персональные данные
+                            </Link>
+                        </li>
+                        <li className="usermenu__subitem">
+                            <Link className="usermenu__sublink" to="/user/addressbook">
+                                Адресная книга
+                            </Link>
+                        </li>
+                        <li className="usermenu__subitem">
+                            <Link className="usermenu__sublink" to="/user/orders">
+                                Ваши заказы
+                            </Link>
+                        </li>
+                        <li className="usermenu__subitem">
+                            <Button
+                                className="usermenu__sublink"
+                                kind="primary"
+                                size="small"
+                                onClick={handleLogOut}
+                                outlined
+                            >
+                                Выход
+                            </Button>
+                        </li>
+                    </ul>
+                </li>
+            ) : (
+                <li className={styles.item}>
+                    <button type="button" className={styles.link} onClick={() => setOpenModal(true)}>
+                        <span className={`${styles.icon} flaticon-avatar`} />
+                        <span className={styles.label}>Войти</span>
+                    </button>
+                    {openModal && (
+                        <Dialog open={openModal} onClose={handleCloseModal}>
+                            <DialogTitle>
+                                Добро пожаловать на LaParfumerie.ru! Присоединяйтесь к нам!
+                            </DialogTitle>
+                            <DialogContent>
+                                <LoginForm onCompleted={handleCompleted} />
+                            </DialogContent>
+                        </Dialog>
+                    )}
+                </li>
+            )}
+            <li className={styles.item}>
+                <Link className={styles.link} to="/basket">
+                    <span className={`${styles.icon} flaticon-shopping-bag`} />
                     <span className="usermenu__labebasketcount">{basket_items_count || 0}</span>
-                    <span className="usermenu__label">Корзина</span>
+                    <span className={styles.label}>Корзина</span>
                 </Link>
-                <BasketShort />
+                <BasketShort className={styles.dropdown} />
             </li>
         </ul>
     );

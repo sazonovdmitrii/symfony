@@ -24,10 +24,12 @@ $correction: 0.5 / $min-width * 100 * 1%;
     margin: 0 -15px;
 }
 
-@mixin column($x, $columns: $columns) {
+$gap: 15px;
+
+@mixin column($x, $columns: $columns, $gap: $gap) {
     flex: 0 0 make-col($x);
     max-width: make-col($x);
-    padding: 0 15px;
+    padding: 0 $gap;
 }
 
 @mixin column-alpha($x, $columns: $columns) {
