@@ -27,8 +27,7 @@ const Input = ({
     onChange,
     onBlur,
 }) => {
-    const generate = useCallback(nanoid(), []);
-    const [id] = useState(`input${generate}`);
+    const [id] = useState(`input${nanoid()}`);
     const [{ focused, filled, error }, setState] = useState({
         filled: false,
         focused: false,

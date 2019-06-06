@@ -17,6 +17,20 @@ export const GET_CATALOG = gql`
     }
 `;
 
+export const GET_USER = gql`
+    query User($id: Int!) {
+        user(id: $id) {
+            email
+            session @client {
+                isAdmin
+                isLoggedIn
+                connectionCount
+                errors
+            }
+        }
+    }
+`;
+
 export const GET_PRODUCT = gql`
     query Product($slug: String!) {
         product(slug: $slug) {
@@ -63,6 +77,29 @@ export const GET_PRODUCTS = gql`
                     }
                 }
             }
+        }
+    }
+`;
+
+export const GET_ADDRESSES = gql`
+    {
+        addresses {
+            data(limit: 40, offset: 0) {
+                edges {
+                    node {
+                        id
+                        name
+                    }
+                }
+            }
+        }
+    }
+`;
+
+export const GET_BASKET = gql`
+    {
+        basket {
+            id
         }
     }
 `;

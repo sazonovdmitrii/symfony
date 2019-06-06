@@ -1,10 +1,12 @@
 import React, { Component, Fragment } from 'react';
+import { Query } from 'react-apollo';
 
+import { GET_BASKET } from 'query';
 import Button from 'components/Button';
 
-const BasketShort = ({ items = [], basket = {} }) => {
+const BasketShort = ({ items = [], className, delivery, currency, total_sum }) => {
     return (
-        <div className="basket-short">
+        <div className={`basket-short ${className}`}>
             {items.length ? (
                 <Fragment>
                     <ul className="basket-short__list">
@@ -42,16 +44,12 @@ const BasketShort = ({ items = [], basket = {} }) => {
                         <div className="basket-short__row">
                             <div className="basket-short__column">
                                 Стоимость доставки:
-                                <p>
-                                    {basket.delivery
-                                        ? `${basket.delivery}&nbsp;${basket.currency}`
-                                        : 'Бесплатно'}
-                                </p>
+                                <p>{delivery ? `${delivery}&nbsp;${currency}` : 'Бесплатно'}</p>
                             </div>
                             <div className="basket-short__column--right">
                                 Итого:&nbsp;
-                                <span className="basket-short__total-sum">{basket.total_sum || 0}</span>
-                                &nbsp;{basket.currency || 'руб.'}
+                                <span className="basket-short__total-sum">{total_sum || 0}</span>
+                                &nbsp;{currency || 'руб.'}
                             </div>
                         </div>
                         <Button to="/basket/#adress" className="basket-short__btn" kind="primary" fullWidth>
@@ -66,4 +64,14 @@ const BasketShort = ({ items = [], basket = {} }) => {
     );
 };
 
-export default BasketShort;
+export default props => {
+    return (
+        <Query query={GET_BASKET}>
+            {({ loading, error, data }) => {
+                if (loading) return null;
+
+                return <BasketShort {...props} {...data} />;
+            }}
+        </Query>
+    );
+};

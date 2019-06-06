@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 import classnames from 'classnames/bind';
@@ -10,17 +10,30 @@ import styles from './styles.css';
 const cx = classnames.bind(styles);
 
 const Dialog = ({ children, open, onClose, fullWidth, maxWidth }) => {
-    const overlayNode = useRef(null);
-    const rootClassName = cx(styles.root, {
-        open,
-    });
+    const rootClassName = cx(styles.root);
     const innerClassName = cx(styles.inner, {
         fullWidth,
         [maxWidth]: !!maxWidth,
     });
-    useOnClickOutside(overlayNode, () => onClose());
 
-    if (!open) return null;
+    if (SERVER) return null;
+
+    const overlayNode = useRef(null);
+    const domNode = document.body;
+    useEffect(() => {
+        if (open) {
+            if (window.innerWidth !== overlayNode.current.clientWidth) domNode.style.paddingRight = '15px';
+            domNode.style.overflow = 'hidden';
+        }
+
+        return () => {
+            domNode.style = null;
+        };
+    }, [open]);
+
+    useOnClickOutside(overlayNode, () => {
+        onClose();
+    });
 
     const $Dialog = (
         <div role="dialog" className={rootClassName}>
@@ -33,11 +46,7 @@ const Dialog = ({ children, open, onClose, fullWidth, maxWidth }) => {
         </div>
     );
 
-    const domNode = document.body;
-
-    if (domNode) return createPortal($Dialog, domNode);
-
-    return null;
+    return createPortal($Dialog, domNode);
 };
 
 Dialog.defaultProps = {};

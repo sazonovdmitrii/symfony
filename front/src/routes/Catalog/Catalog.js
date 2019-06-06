@@ -3,6 +3,8 @@ import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 
+import { seoHead } from 'utils';
+
 import Sidebar from 'components/Sidebar';
 import Pagination from 'components/Pagination';
 import Filters from 'components/Filters';
@@ -40,13 +42,10 @@ const Catalog = ({ match, slug, limit, name, count, description, subtitle, filte
     if (redirectToIndexPage) {
         return <Redirect to=".." />;
     }
+
     return (
         <div className="catalogpage">
-            <Helmet>
-                <title>{`${name} - купить с доставкой по Москве и России - фото, цена, отзывы в интернет-магазине Laparfumerie.ru!${
-                    currentPage > 1 ? ` Cтраница ${currentPage}` : ''
-                }`}</title>
-            </Helmet>
+            {seoHead('catalog', { name, currentPage })}
             <Sidebar />
             <div className="catalogpage__content">
                 <div className="brand-info">
@@ -89,7 +88,7 @@ Catalog.propTypes = {
     slug: PropTypes.string.isRequired,
     match: PropTypes.object,
     name: PropTypes.string,
-    count: PropTypes.string.isRequired,
+    count: PropTypes.number.isRequired,
     description: PropTypes.string,
     subtitle: PropTypes.string,
     filters: PropTypes.string,

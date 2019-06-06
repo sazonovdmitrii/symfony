@@ -65,11 +65,11 @@
     }
 
     @include has('row') {
-        @include row(12);
+        display: flex;
     }
 
     @include has('phone') {
-        @include column(4, 12);
+        @include column(4, 12, 7.5px);
 
         text-align: left;
         display: none;
@@ -167,7 +167,7 @@
     }
 
     @include has('mobilemenu') {
-        @include column(2, 12);
+        @include column(2, 12, 7.5px);
 
         @include breakpoint($screen-md) {
             display: none;
@@ -175,7 +175,7 @@
     }
 
     @include has('logo') {
-        @include column(8, 12);
+        @include column(8, 12, 7.5px);
 
         text-align: center;
         height: 50px;
@@ -184,7 +184,7 @@
         justify-content: center;
 
         @include breakpoint($screen-md) {
-            @include column(4, 12);
+            @include column(4, 12, 7.5px);
 
             text-align: center;
             display: inline-block;
@@ -208,12 +208,12 @@
     }
 
     @include has('icons') {
-        @include column(2, 12);
+        @include column(2, 12, 7.5px);
 
         text-align: center;
 
         @include breakpoint($screen-md) {
-            @include column(4, 12);
+            @include column(4, 12, 7.5px);
         }
     }
 }

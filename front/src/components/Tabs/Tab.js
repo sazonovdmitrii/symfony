@@ -6,23 +6,16 @@ import styles from './styles.css';
 
 const cx = classnames.bind(styles);
 
-export default class Tab extends Component {
-    handleClick = () => {
-        const { onClick, value } = this.props;
+const Tab = ({ onClick, value, selected, children, className }) => {
+    const buttonClassName = cx(styles.tab, className, {
+        active: selected,
+    });
 
-        onClick({ value });
-    };
+    return (
+        <button className={buttonClassName} type="button" onClick={() => onClick({ value })}>
+            {children}
+        </button>
+    );
+};
 
-    render() {
-        const { selected, children, className } = this.props;
-        const buttonClassName = cx(styles.tab, className, {
-            active: selected,
-        });
-
-        return (
-            <button className={buttonClassName} type="button" onClick={this.handleClick}>
-                {children}
-            </button>
-        );
-    }
-}
+export default Tab;
