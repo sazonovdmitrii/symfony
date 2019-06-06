@@ -19,7 +19,7 @@ export const createSessionKey = () => {
     const currentYear = date.getFullYear();
 
     date.setFullYear(currentYear + 1);
-    hardtack.set('session', nanoid(), {
+    hardtack.set('session_key', nanoid(), {
         path: '/',
         expires: date.toUTCString(),
     });
