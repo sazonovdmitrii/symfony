@@ -2,6 +2,8 @@ import React, { Fragment } from 'react';
 import { Query } from 'react-apollo';
 import { Route } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import nanoid from 'nanoid';
+import hardtack from 'hardtack';
 
 import SEO from 'globalMeta';
 
@@ -11,6 +13,17 @@ import Loader from 'components/Loader';
 import ErrorMessage from 'components/Error';
 
 export const isProd = process.env.NODE_ENV === 'production';
+
+export const createSessionKey = () => {
+    const date = new Date();
+    const currentYear = date.getFullYear();
+
+    date.setFullYear(currentYear + 1);
+    hardtack.set('session', nanoid(), {
+        path: '/',
+        expires: date.toUTCString(),
+    });
+};
 
 export const withQuery = ({ query, variables }) => Component => {
     return (

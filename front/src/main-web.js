@@ -13,15 +13,16 @@ import { createBrowserHistory } from 'history';
 import hardtack from 'hardtack';
 import { loadableReady } from '@loadable/component';
 
+import { isProd, createSessionKey } from 'utils';
 import { createClient } from './lib/apollo';
 import App from './App';
 
 const history = createBrowserHistory();
 
+createSessionKey();
 // get token from cookies 🍪
 const token = hardtack.get('token');
 const client = createClient({ token });
-
 const HotApp = hot(App);
 
 loadableReady(() => {

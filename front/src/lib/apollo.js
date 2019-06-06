@@ -12,6 +12,10 @@ const isBrowser = process.browser;
 const isProd = process.env.NODE_ENV === 'production';
 let graphQLClient = null;
 
+const initialStore = {
+    isLoggedIn: false,
+};
+
 const create = ({ token } = {}) => {
     const cache = new InMemoryCache({
         // https://github.com/apollographql/apollo-client/pull/4514
@@ -23,18 +27,6 @@ const create = ({ token } = {}) => {
     const httpLink = new createHttpLink({
         credentials: 'same-origin',
         uri: process.env.GRAPHQL,
-    });
-
-    const authLink = setContext((_, { headers }) => {
-        // get the authentication token from cookie if it exists
-
-        // return the headers to the context so httpLink can read them
-        return {
-            headers: {
-                ...headers,
-                token: token ? `Token ${token}` : '',
-            },
-        };
     });
 
     const client = new ApolloClient({
@@ -74,13 +66,14 @@ const create = ({ token } = {}) => {
                     console.log(`[Network error]: ${networkError}`);
                 }
             }),
-            authLink.concat(httpLink),
+            httpLink,
         ]),
         // On the server, enable SSR mode
         ssrMode: isServer,
     });
 
     const data = {
+        ...initialStore,
         isLoggedIn: !!token,
     };
 
@@ -91,11 +84,7 @@ const create = ({ token } = {}) => {
     // If we're in the browser, we'd have received initial state from the
     // server. Restore it, so the client app can continue with the same data.
     if (!isServer) {
-        // client.onResetStore(() => {
-        //     // 1 check cookie
-        //     // 2 write new initial store
-        //     return cache.writeData({ data });
-        // });
+        client.onResetStore(() => cache.writeData({ data: initialStore }));
         cache.restore(window.__APOLLO__);
     }
 
