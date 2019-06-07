@@ -18,7 +18,7 @@ import ProductCarousel from 'components/ProductCarousel';
 import ProductItems from './ProductItems';
 
 const ADD_TO_BASKET = gql`
-    mutation AddBasket($input: Input!) {
+    mutation AddBasket($input: AddBasketInput!) {
         addBasket(input: $input) {
             id
         }
