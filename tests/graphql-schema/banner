@@ -1,0 +1,9 @@
+{
+  banner{
+    data {
+      id
+      path
+      link
+    }
+  }
+}

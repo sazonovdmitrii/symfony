@@ -1,0 +1,21 @@
+Banner:
+  type: object
+  config:
+    description: "Banners"
+    fields:
+      data:
+       type: "[BannerItem]"
+BannerItem:
+  type: object
+  config:
+    description: "Banner Item"
+    fields:
+      id:
+        type: "Int!"
+        description: "Banner Id."
+      path:
+        type: "String"
+        description: "Path"
+      link:
+        type: "String"
+        description: "Link"

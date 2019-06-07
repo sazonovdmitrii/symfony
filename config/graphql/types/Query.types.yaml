@@ -50,3 +50,6 @@ Query:
       basket:
         type: "Basket"
         resolve: "@=resolver('Basket', [args])"
+      banner:
+        type: "Banner"
+        resolve: "@=resolver('Banner', [args])"
