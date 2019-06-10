@@ -1,0 +1,108 @@
+version: '2'
+volumes:
+    symfony-sync:
+        external: true
+services:
+    postgres:
+        image: postgres
+        container_name: postgres
+        environment:
+        - POSTGRES_DB=symfony
+        - POSTGRES_USER=symfony
+        - POSTGRES_PASSWORD=symfony
+        - PGDATA=/var/lib/postgresql/data/db-files/
+#        volumes:
+#        - db-data:/var/lib/postgresql/data:rw
+        ports:
+        - "5432:5432"
+        networks:
+            main:
+                aliases:
+                    - postgres
+    php:
+        build: php-fpm
+        ports:
+            - '9002:9000'
+        volumes:
+            - symfony-sync:/var/www/symfony
+#            - ./vendor:/var/www/symfony/vendor
+            - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+            - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+        links:
+            - postgres
+            - db_lp:mysql
+            - redis
+        environment:
+            REDIS_HOST: redis
+            REDIS_PORT: 6379
+        networks:
+            main:
+                aliases:
+                    - php
+    redis:
+        container_name: redis
+        image: redis:4-alpine
+        networks:
+            main:
+                aliases:
+                    - redis
+
+    nginx:
+        build: nginx
+        ports:
+            - '8081:80'
+            - '1337:1337'
+        volumes_from:
+            - php
+        volumes:
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+#            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+            - ./logs/nginx/:/var/log/nginx:cached
+            - symfony-sync:/var/www/symfony
+#            - ./vendor:/var/wwwsymfony/vendor
+        networks:
+            main:
+                aliases:
+                    - nginx
+    db_lp:
+        image: mariadb:latest
+        restart: on-failure
+        ports:
+          - "3310:3306"
+        volumes:
+          - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+          - ./db:/var/lib/mysql
+        environment:
+          - MYSQL_ROOT_PASSWORD=root
+          - MYSQL_DATABASE=lp
+          - MYSQL_USER=root
+        networks:
+            main:
+                aliases:
+                    - db_lp:mysql
+    memcached:
+        image: memcached:1.4
+        ports:
+          - "11212:11211"
+        networks:
+            main:
+                aliases:
+                    - memcached
+    # node:
+    #     image: "node:lts"
+    #     restart: on-failure
+    #     working_dir: /home/node/app
+    #     volumes:
+    #         - ./front:/home/node/app
+    #     environment:
+    #         - GRAPHQL=http://nginx:1337/graphql/
+    #         - DATABASE=postgres
+    #     command: "sh node.sh"
+    #     expose:
+    #         - "3000"
+    #     networks:
+    #         main:
+    #             aliases:
+    #                 - node
+networks:
+    main:

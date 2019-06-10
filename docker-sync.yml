@@ -1,0 +1,13 @@
+version: "2"
+options:
+  compose-file-path: './docker-compose.yaml'
+  compose-dev-file-path: './docker-compose-dev.yml'
+  verbose: true
+syncs:
+  symfony-sync:
+    src: './'
+    sync_strategy: 'rsync'
+    sync_host_port: 10871
+    sync_excludes:
+      - '.git'
+      - 'composer.lock'
