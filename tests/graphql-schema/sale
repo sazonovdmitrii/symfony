@@ -1,0 +1,9 @@
+{
+  sale{
+    data {
+      id,
+      category,
+      enabled
+    }
+  }
+}

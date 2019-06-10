@@ -21,8 +21,8 @@ SaleItem:
         type: "String"
         description: "Finish"
       category:
-        type: "Int!"
-        description: "Category Id."
+        type: "String"
+        description: "Category"
       discount:
         type: "Int!"
         description: "Discount"
