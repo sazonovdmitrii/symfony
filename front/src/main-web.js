@@ -1,8 +1,8 @@
 import './polyfills';
 // import 'destyle.css';
 import './fonts';
-import './globalStyles.css';
 import './styles/index.scss';
+import './globalStyles.css';
 
 import React from 'react';
 import { render, hydrate } from 'react-dom';
