@@ -66,7 +66,7 @@ const BasketShort = ({ items = [], className, delivery, currency, total_sum }) =
 
 export default props => {
     return (
-        <Query query={GET_BASKET}>
+        <Query query={GET_BASKET} ssr={false} partialRefetch>
             {({ loading, error, data }) => {
                 if (loading) return null;
 
