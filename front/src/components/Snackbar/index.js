@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
@@ -67,7 +67,7 @@ const Snackbar = ({ text, theme, active, onClose }) => {
     );
     const domNode = document.body;
 
-    if (domNode) {
+    if (typeof document !== 'undefined' && domNode) {
         return createPortal($Snackbar, domNode);
     }
     return null;

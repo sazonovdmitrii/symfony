@@ -15,9 +15,6 @@ const Dialog = ({ children, open, onClose, fullWidth, maxWidth }) => {
         fullWidth,
         [maxWidth]: !!maxWidth,
     });
-
-    if (SERVER) return null;
-
     const overlayNode = useRef(null);
     const domNode = document.body;
     useEffect(() => {
@@ -29,7 +26,7 @@ const Dialog = ({ children, open, onClose, fullWidth, maxWidth }) => {
         return () => {
             domNode.style = null;
         };
-    }, [open]);
+    }, [domNode.style, open]);
 
     useOnClickOutside(overlayNode, () => {
         onClose();
@@ -46,11 +43,24 @@ const Dialog = ({ children, open, onClose, fullWidth, maxWidth }) => {
         </div>
     );
 
-    return createPortal($Dialog, domNode);
+    if (typeof document !== 'undefined' && domNode) return createPortal($Dialog, domNode);
+
+    return null;
 };
 
-Dialog.defaultProps = {};
+Dialog.defaultProps = {
+    open: false,
+    onClose: () => {},
+    fullWidth: false,
+    maxWidth: null,
+};
 
-Dialog.propTypes = {};
+Dialog.propTypes = {
+    children: PropTypes.node.isRequired,
+    open: PropTypes.bool,
+    onClose: PropTypes.func,
+    fullWidth: PropTypes.bool,
+    maxWidth: PropTypes.string,
+};
 
 export default Dialog;

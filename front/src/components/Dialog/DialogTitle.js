@@ -7,6 +7,8 @@ const DialogTitle = ({ children }) => <h6 className={styles.title}>{children}</h
 
 DialogTitle.defaultProps = {};
 
-DialogTitle.propTypes = {};
+DialogTitle.propTypes = {
+    children: PropTypes.oneOfType([PropTypes.node, PropTypes.string]).isRequired,
+};
 
 export default DialogTitle;
