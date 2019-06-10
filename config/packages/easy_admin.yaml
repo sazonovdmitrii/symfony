@@ -121,6 +121,20 @@ easy_admin:
                 fields:
                     - { property: 'pathFile', type: 'App\Form\Type\MultipleImage', type_options: { multiple: true, block_name: 'custom_title' } }
                     - link
+        Sale:
+            class: App\Entity\Sale
+            form:
+                fields:
+                    - start
+                    - finish
+                    - category
+                    - discount
+                    - enabled
+                    - featured
+                    - type
+                    - prior
+                    - { property: 'imagePath', type: 'App\Form\Type\MultipleImage', type_options: { multiple: true, block_name: 'custom_image' } }
+                    - created
     design:
         brand_color: 'black'
         form_theme:
@@ -140,4 +154,5 @@ easy_admin:
           - label: 'Menu'
             children: ['Menu', 'MenuItem']
           - Banner
+          - Sale
           - Configuration

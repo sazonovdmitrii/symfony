@@ -58,10 +58,16 @@ class Catalog
      */
     private $catalogUrls;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Sale", mappedBy="category")
+     */
+    private $sales;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
         $this->catalogUrls = new ArrayCollection();
+        $this->sales = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -199,6 +205,37 @@ class Catalog
             // set the owning side to null (unless already changed)
             if ($catalogUrl->getEntity() === $this) {
                 $catalogUrl->setEntity(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Sale[]
+     */
+    public function getSales(): Collection
+    {
+        return $this->sales;
+    }
+
+    public function addSale(Sale $sale): self
+    {
+        if (!$this->sales->contains($sale)) {
+            $this->sales[] = $sale;
+            $sale->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSale(Sale $sale): self
+    {
+        if ($this->sales->contains($sale)) {
+            $this->sales->removeElement($sale);
+            // set the owning side to null (unless already changed)
+            if ($sale->getCategory() === $this) {
+                $sale->setCategory(null);
             }
         }
 

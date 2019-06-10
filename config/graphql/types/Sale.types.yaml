@@ -1,0 +1,44 @@
+Sale:
+  type: object
+  config:
+    description: "Sale"
+    fields:
+      data:
+       type: "[SaleItem]"
+
+SaleItem:
+  type: object
+  config:
+    description: "Sale Item"
+    fields:
+      id:
+        type: "Int!"
+        description: "Banner Id."
+      start:
+        type: "String"
+        description: "Start"
+      finish:
+        type: "String"
+        description: "Finish"
+      category:
+        type: "Int!"
+        description: "Category Id."
+      discount:
+        type: "Int!"
+        description: "Discount"
+      enabled:
+        type: "String"
+        description: "Enabled"
+      featured:
+        type: "String"
+        description: "Featured"
+      type:
+        type: "String"
+        description: "Type"
+      prior:
+        type: "Int!"
+        description: "Prior"
+      created:
+        type: "Int!"
+        description: "Created"
+
