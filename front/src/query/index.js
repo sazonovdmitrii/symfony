@@ -103,3 +103,15 @@ export const GET_BASKET = gql`
         }
     }
 `;
+
+export const GET_BANNERS = gql`
+    query Banners {
+        banner {
+            data {
+                id
+                path
+                link
+            }
+        }
+    }
+`;
