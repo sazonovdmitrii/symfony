@@ -14,6 +14,7 @@ import Comment from 'components/Comment';
 import RichText from 'components/RichText';
 import Select from 'components/Select';
 import ProductCarousel from 'components/ProductCarousel';
+import Snackbar from 'components/Snackbar';
 
 import ProductItems from './ProductItems';
 
@@ -39,6 +40,7 @@ const Product = ({
     description,
 }) => {
     const [tabIndex, setTabIndex] = useState(0);
+    const [error, setError] = useState(null);
     const [selectedProduct, setSelectedProduct] = useState(items.edges[0].node);
     const handleChangeItem = ({ id, price: itemPrice }) => {
         if (!itemPrice) return;
@@ -57,10 +59,18 @@ const Product = ({
 
         callback({ variables: { input: { item_id: selectedProduct.id } } });
     };
+    const handleCompleted = ({ id }) => {
+        console.warn('product added to basket');
+
+        if (id) {
+            history.push('/basket');
+        }
+    };
 
     return (
         <Fragment>
             {seoHead('product', { name, items: items.edges })}
+            {error && <Snackbar theme="error" text={error} active={!!error} onClose={() => setError(null)} />}
             <div className="product" itemScope itemType="http://schema.org/Product">
                 <meta itemProp="name" content={name} />
                 <span
@@ -186,14 +196,18 @@ const Product = ({
                                         </div>
                                     )}
                                     <div className="product__cart-block-button">
-                                        {1 ? (
+                                        {1 || selectedProduct.price ? (
                                             <Mutation
                                                 mutation={ADD_TO_BASKET}
-                                                onError={error => console.warn(error)}
+                                                onCompleted={handleCompleted}
+                                                onError={error => setError(error.message)}
                                             >
-                                                {(addToCard, { data, error }) => {
-                                                    console.log(data);
-                                                    console.warn(error);
+                                                {(addToCard, { loading, data }) => {
+                                                    if (data && data.id) {
+                                                        return (
+                                                            <Button to="/basket">Перейти в корзину</Button>
+                                                        );
+                                                    }
 
                                                     return (
                                                         <div className="product__cart-block-button-form product-item__frm">
@@ -206,6 +220,7 @@ const Product = ({
                                                             <Button
                                                                 onClick={() => handleAddToCard(addToCard)}
                                                                 kind="primary"
+                                                                loading={loading}
                                                                 bold
                                                                 uppercase
                                                             >
@@ -247,7 +262,7 @@ const Product = ({
                         {description && (
                             <div>
                                 <h3 className="product-element__label--thick-inner">Описание товара</h3>
-                                <div className="product-element__textlist rte" itemprop="description">
+                                <div className="product-element__textlist rte" itemProp="description">
                                     <RichText>{description}</RichText>
                                 </div>
                             </div>
