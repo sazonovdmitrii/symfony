@@ -35,7 +35,7 @@ export default () => (
         <ul className="share__list">
             {defaultSocials.map(({ icon, url }) => (
                 <li key={url} className="share__item">
-                    <a href={url} target="_blank" rel="noopener">
+                    <a href={url} target="_blank" rel="noopener noreferrer">
                         <img src={icon} alt="" />
                     </a>
                 </li>
