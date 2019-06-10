@@ -1,0 +1,16 @@
+{
+    "name": "Laparfumerie",
+    "short_name": "Laparfumerie",
+    "description": "Продаем элитную парфюмерию и косметику для женщин и мужчин с доставкой",
+    "theme_color": "#fff",
+    "background_color": "#fff",
+    "orientation": "portrait",
+    "start_url": "?utm_source=homescreen",
+    "icons": [
+        {
+            "src": "/android-icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ]
+}
