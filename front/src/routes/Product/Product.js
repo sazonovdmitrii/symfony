@@ -15,8 +15,16 @@ import RichText from 'components/RichText';
 import Select from 'components/Select';
 import ProductCarousel from 'components/ProductCarousel';
 import Snackbar from 'components/Snackbar';
+import ArticlesPreview from 'components/ArticlesPreview';
 
 import ProductItems from './ProductItems';
+
+import bankReceiptIcon from './payments/bank-receipt.jpg';
+import mastercardIcon from './payments/mc.jpg';
+import cashIcon from './payments/cash.jpg';
+import codIcon from './payments/cod.jpg';
+import visaIcon from './payments/visa.jpg';
+import yandexMoneyIcon from './payments/yandex.jpg';
 
 const ADD_TO_BASKET = gql`
     mutation AddBasket($input: AddBasketInput!) {
@@ -122,37 +130,100 @@ const Product = ({
                                 <i className="product-element__star--active" />
                             </div>
                             <span className="product__brand-stat-review">
-                                <Link to="#review">
-                                    <i>{comments.length}</i> отзыва
-                                </Link>
+                                <Link to="#review">{comments.length} отзыв</Link>
                             </span>
                             <div className="product__brand-stat-like">
                                 <i className="product__brand-stat-like-img" />
-                                <span className="product__brand-stat-like-num">
-                                    <i>{likes}</i> нравится
-                                </span>
+                                <span className="product__brand-stat-like-num">{likes} нравится</span>
                             </div>
                         </div>
                         <div className="product__brand-info">
                             <Tabs value={tabIndex} onChange={handleChangeTab}>
-                                <Tab className="product__brand-info-li" selected>
+                                <Tab className="product__brand-info-li" active>
                                     Доставка
                                 </Tab>
                                 <Tab className="product__brand-info-li">
                                     Подарки к заказу
-                                    <span className="gifts-json__count">2</span>
+                                    <small className="gifts-json__count">2</small>
                                 </Tab>
                                 <Tab className="product__brand-info-li">Оплата</Tab>
                             </Tabs>
                             <TabsView index={tabIndex}>
                                 <div className="product__brand-info-shipp product__brand-info-block">
-                                    tab1
+                                    <p className="product__brand-info-shipp-p">
+                                        Стоимость:{' '}
+                                        <span data-render="minDelivery" data-price="[% need_delivery %]">
+                                            Бесплатно от 666 руб
+                                        </span>
+                                    </p>
+                                    <p className="product__brand-info-shipp-p">
+                                        Доставка по Москве:{' '}
+                                        <span
+                                            data-render="delivery_string"
+                                            className="product__brand-info-shipp-p-date"
+                                        >
+                                            666-666 дня
+                                        </span>
+                                    </p>
+                                    <ul className="product__brand-info-shipp-ul">
+                                        <p className="product__brand-info-shipp-ul-p">Способ доставки: </p>
+                                        <li className="product__brand-info-shipp-ul-post">
+                                            <Link to="/info/dostavka-pochta-rossii.htm">Почта России</Link>,
+                                        </li>
+                                        <li className="product__brand-info-shipp-ul-post">
+                                            <Link to="http://laparfumerie.ru/info/delivery-and-payment.htm">
+                                                Собственная курьерская служба
+                                            </Link>
+                                        </li>
+                                    </ul>
                                 </div>
                                 <div className="product__brand-info-shipp product__brand-info-block">
-                                    tab2
+                                    gifts
                                 </div>
                                 <div className="product__brand-info-shipp product__brand-info-block">
-                                    tab3
+                                    <p className="product__brand-info-pay-name">Способы оплаты online:</p>
+                                    {/* TODO lazyload */}
+                                    <div className="product__brand-info-pay-imgs">
+                                        <img
+                                            className="product__brand-info-pay-icon"
+                                            src={visaIcon}
+                                            alt="visa"
+                                            title="visa"
+                                        />
+                                        <img
+                                            className="product__brand-info-pay-icon"
+                                            src={mastercardIcon}
+                                            alt="mastercard"
+                                            title="mastercard"
+                                        />
+                                        <img
+                                            className="product__brand-info-pay-icon"
+                                            src={yandexMoneyIcon}
+                                            alt="яндекс.деньги"
+                                            title="яндекс.деньги"
+                                        />
+                                    </div>
+                                    <p className="product__brand-info-pay-name">Способы оплаты наличными:</p>
+                                    <div className="product__brand-info-pay-imgs">
+                                        <img
+                                            className="product__brand-info-pay-icon"
+                                            src={codIcon}
+                                            alt="наложенный платеж"
+                                            title="наложенный платеж"
+                                        />
+                                        <img
+                                            className="product__brand-info-pay-icon"
+                                            src={bankReceiptIcon}
+                                            alt="банковская квитанция"
+                                            title="банковская квитанция"
+                                        />
+                                        <img
+                                            className="product__brand-info-pay-icon"
+                                            src={cashIcon}
+                                            alt="оплата курьеру"
+                                            title="оплата курьеру"
+                                        />
+                                    </div>
                                 </div>
                             </TabsView>
                         </div>
@@ -332,6 +403,7 @@ const Product = ({
                         <CommentForm />
                     </div>
                 </div>
+                <ArticlesPreview />
             </div>
         </Fragment>
     );

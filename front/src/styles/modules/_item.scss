@@ -213,7 +213,7 @@
                 margin-top: -1 * $PADDINGS / 15;
                 min-height: $container-width / 15;
                 font-size: $PADDINGS;
-                height: 2 * $HEADERHEAD;
+                // height: 2 * $HEADERHEAD;
             }
 
             &-shipp {
@@ -289,7 +289,7 @@
                 line-height: 1;
 
                 &-imgs {
-                    display: inline-block;
+                    margin-bottom: 5px;
                 }
 
                 &-name {

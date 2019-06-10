@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import classnames from 'classnames/bind';
 
+import Loader from 'components/Loader';
+
 import styles from './styles.css';
 
 const cx = classnames.bind(styles);
@@ -20,6 +22,8 @@ const Button = ({
     uppercase,
     rounded,
     outlined,
+    loading,
+    children,
     ...props
 }) => {
     const newKind = `${outlined ? 'outlined-' : ''}${kind}`;
@@ -45,7 +49,9 @@ const Button = ({
             to={to}
             disabled={disabled}
             {...props}
-        />
+        >
+            {loading ? <Loader /> : children}
+        </Button>
     );
 };
 

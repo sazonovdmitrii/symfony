@@ -9,14 +9,14 @@ export default ({ children: childrenProp, index }) => {
 
         const childProps = child.props;
         const childValue = childProps.value || childIndex;
-        const selected = childValue === index;
+        const active = childValue === index;
 
         childIndex += 1;
 
-        if (!selected) return null;
+        if (!active) return null;
 
         return React.cloneElement(child, {
-            selected,
+            active,
             value: childValue,
         });
     });

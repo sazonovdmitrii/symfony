@@ -8,24 +8,22 @@ const ArticleCard = ({ name, author, date, url, image, loading }) => {
     if (loading) return <Loader />;
 
     return (
-        <div className="article-item">
-            <Link to={url} className="article-item__link" title={name}>
-                <div className="article-item__image-wrapper">
-                    <picture className="article-item__image">
-                        <img className="article-item__image" src={image} alt="" />
-                    </picture>
-                </div>
-                <div className="article-item__text">
-                    <h2 className="article-item__title">{name}</h2>
-                    {(author || date) && (
-                        <div className="article-item__meta">
-                            {author && <div className="article-item__author">{author}</div>}
-                            {date && <div className="article-item__date">{date}</div>}
-                        </div>
-                    )}
-                </div>
-            </Link>
-        </div>
+        <Link to={url} className="article-item__link" title={name}>
+            <div className="article-item__image-wrapper">
+                <picture className="article-item__image">
+                    <img className="article-item__image" src={image} alt="" />
+                </picture>
+            </div>
+            <div className="article-item__text">
+                <h2 className="article-item__title">{name}</h2>
+                {(author || date) && (
+                    <div className="article-item__meta">
+                        {author && <div className="article-item__author">{author}</div>}
+                        {date && <div className="article-item__date">{date}</div>}
+                    </div>
+                )}
+            </div>
+        </Link>
     );
 };
 
