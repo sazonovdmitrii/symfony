@@ -7,11 +7,10 @@ import styles from './styles.css';
 
 const cx = classnames.bind(styles);
 
-const RadioButton = ({ checked, className, label, name, value, onChange }) => {
+const Star = ({ checked, label, name, value, onChange }) => {
     const [id] = useState(`radio${nanoid()}`);
-    const labelClassName = cx(styles.label, className);
-    const radioClassName = cx(styles.radio, {
-        checked,
+    const labelClassName = cx(styles.label, {
+        active: checked,
     });
 
     return (
@@ -25,31 +24,24 @@ const RadioButton = ({ checked, className, label, name, value, onChange }) => {
                 checked={checked}
                 onChange={onChange}
             />
-            <span className={styles.radioWrapper}>
-                <span className={radioClassName} />
-            </span>
             {label}
         </label>
     );
 };
 
-RadioButton.defaultProps = {
+Star.defaultProps = {
     name: null,
     checked: false,
-    className: null,
-    required: false,
     value: null,
     onChange: () => {},
 };
 
-RadioButton.propTypes = {
+Star.propTypes = {
     checked: PropTypes.bool,
-    className: PropTypes.string,
     label: PropTypes.string.isRequired,
     name: PropTypes.string,
     value: PropTypes.string,
     onChange: PropTypes.func,
-    required: PropTypes.bool,
 };
 
-export default RadioButton;
+export default Star;
