@@ -66,6 +66,11 @@ class Sale
      */
     private $image;
 
+    public function __construct()
+    {
+        $this->created = new \DateTime();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -167,7 +172,7 @@ class Sale
         return $this;
     }
 
-    public function getCreated(): ?\DateTimeInterface
+    public function getCreated()
     {
         return $this->created;
     }

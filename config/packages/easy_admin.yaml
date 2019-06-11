@@ -134,7 +134,6 @@ easy_admin:
                     - type
                     - prior
                     - { property: 'imagePath', type: 'App\Form\Type\MultipleImage', type_options: { multiple: true, block_name: 'custom_image' } }
-                    - created
     design:
         brand_color: 'black'
         form_theme:

@@ -55,4 +55,14 @@ Query:
         resolve: "@=resolver('Banner', [args])"
       sale:
         type: "Sale"
+        args:
+            limit:
+              description: "Sale Limit"
+              type: "Int"
         resolve: "@=resolver('Sales', [args])"
+DateTime:
+    type: custom-scalar
+    config:
+        serialize: ["App\\GraphQL\\Type\\DateTimeType", "serialize"]
+        parseValue: ["App\\GraphQL\\Type\\DateTimeType", "parseValue"]
+        parseLiteral: ["App\\GraphQL\\Type\\DateTimeType", "parseLiteral"]

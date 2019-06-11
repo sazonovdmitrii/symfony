@@ -4,6 +4,7 @@ namespace App\GraphQL\Resolver;
 use Doctrine\ORM\EntityManager;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Argument;
 
 class SalesResolver implements ResolverInterface, AliasedInterface
 {
@@ -14,9 +15,10 @@ class SalesResolver implements ResolverInterface, AliasedInterface
         $this->em = $entityManager;
     }
 
-    public function resolve()
+    public function resolve(Argument $args)
     {
-        $banners = $this->em->getRepository('App:Sale')->findAll();
+        $limit = (isset($args['limit'])) ? $args['limit'] : null;
+        $banners = $this->em->getRepository('App:Sale')->findBy([], [], $limit);
         return [
             'data' => $banners
         ];

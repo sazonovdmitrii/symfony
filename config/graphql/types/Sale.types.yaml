@@ -39,6 +39,6 @@ SaleItem:
         type: "Int!"
         description: "Prior"
       created:
-        type: "Int!"
+        type: "DateTime"
         description: "Created"
 
