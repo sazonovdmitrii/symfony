@@ -44,6 +44,7 @@ easy_admin:
 
         Items:
             class: App\Entity\ProductItem
+            controller: App\Controller\Admin\ItemsController
             list:
                 fields:
                     - id
@@ -57,6 +58,7 @@ easy_admin:
 
         Product:
             class: App\Entity\Product
+            controller: App\Controller\Admin\ProductController
             list:
                 fields: ['id', 'name', 'visible']
             form:
@@ -72,6 +74,8 @@ easy_admin:
                     - { property: 'productItems', type: 'easyadmin_autocomplete' }
                     - { type: 'tab', label: 'Virtual Urls' }
                     - { property: 'productUrls', type: 'easyadmin_autocomplete' }
+                    - { type: 'tab', label: 'Tags' }
+                    - { property: 'productTags', type_options: { block_name: 'products_tags' }}
         Order:
             class: App\Entity\Orders
             list:
@@ -86,6 +90,7 @@ easy_admin:
                 fields: ['id', 'name']
         ImportProduct:
             class: App\Entity\ImportProduct
+            controller: App\Controller\Admin\ImportProductController
         ProductTag:
             class: App\Entity\ProductTag
         Configuration:
@@ -140,6 +145,7 @@ easy_admin:
             - 'admin/form/bootstrap_3_layout.html.twig'
             - 'admin/form/bootstrap_3_horizontal_layout.html.twig'
             - 'admin/form/images.html.twig'
+            - 'admin/form/tags.html.twig'
         menu:
           - label: 'Urls'
             children: ['ProductUrl', 'CatalogUrl']
