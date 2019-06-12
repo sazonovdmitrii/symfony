@@ -60,29 +60,21 @@ const ProductCard = ({
                         {secondary_image && primary_image ? (
                             <Fragment>
                                 <img
-                                    src={`${primary_image}.product.jpg`}
+                                    src={'https://placehold.it/213x239/000' || primary_image}
                                     className="catalog__item_img-im--first"
                                     alt=""
                                 />
                                 <img
-                                    src={`${secondary_image}.product.jpg`}
+                                    src={'https://placehold.it/213x239' || secondary_image}
                                     className="catalog__item_img-im--second"
                                     alt=""
                                 />
                             </Fragment>
                         ) : (
-                            <Fragment>
-                                <img
-                                    src={'https://placehold.it/213x239/000' || `${primary_image}.product.jpg`}
-                                    className="catalog__item_img-im--first"
-                                    alt=""
-                                />
-                                <img
-                                    src={'https://placehold.it/213x239' || `${primary_image}.product.jpg`}
-                                    className="catalog__item_img-im--second"
-                                    alt=""
-                                />
-                            </Fragment>
+                            <img
+                                src={'https://placehold.it/213x239/000' || primary_image}
+                                className="catalog__item_img-im"
+                            />
                         )}
                     </div>
                     {!SEOHIDE && <h2 className="catalog__item_brand">{brand_name}</h2>}
@@ -90,24 +82,28 @@ const ProductCard = ({
                 </Link>
                 <p className="catalog__item_price">{myPrice()}</p>
                 <div className="catalog__item_prd">
-                    {items.edges.map(({ node: item }) => {
-                        if (!item.price) return null;
+                    {items.edges.length ? (
+                        <Fragment>
+                            {items.edges.map(({ node: item }) => {
+                                if (!item.price) return null;
 
-                        return (
-                            <p key={item.name} className="catalog__item_prd_type">
-                                <span className="catalog__item_prd_type_name">{item.name}</span>
-                                <strong className="catalog__item_prd_type_price">
-                                    {item.price}
-                                    <span className="catalog__item_prd_type_price_curren">р.</span>
-                                </strong>
-                            </p>
-                        );
-                    })}
-                    {items.edges.length > 9 && (
-                        <p className="catalog__item_prd_type">
-                            <small>Ещё {items.edges.length - 9} предложений в товаре</small>
-                        </p>
-                    )}
+                                return (
+                                    <p key={item.name} className="catalog__item_prd_type">
+                                        <span className="catalog__item_prd_type_name">{item.name}</span>
+                                        <strong className="catalog__item_prd_type_price">
+                                            {item.price}
+                                            <span className="catalog__item_prd_type_price_curren">р.</span>
+                                        </strong>
+                                    </p>
+                                );
+                            })}
+                            {items.edges.length > 9 && (
+                                <p className="catalog__item_prd_type">
+                                    <small>Ещё {items.edges.length - 9} предложений в товаре</small>
+                                </p>
+                            )}
+                        </Fragment>
+                    ) : null}
                     <Button className={styles.button} href={url} kind="primary">
                         {price ? 'КУПИТЬ' : 'ОБЗОР'}
                     </Button>
@@ -118,15 +114,11 @@ const ProductCard = ({
 };
 
 ProductCard.defaultProps = {
-    id: 0,
     url: '',
-    items: [
-        {
-            name: 'Сыворотка против выпадения волос не смываемый 300 мл',
-            price: 666,
-        },
-    ],
-    sale: false,
+    items: {
+        edges: [],
+    },
+    sale: null,
     secondary_image: null,
     primary_image: null,
     brand_name: '',
@@ -137,7 +129,12 @@ ProductCard.defaultProps = {
 };
 
 ProductCard.propTypes = {
+    id: PropTypes.number.isRequired,
     url: PropTypes.string.isRequired,
+    items: PropTypes.shape({
+        edges: PropTypes.arrayOf(PropTypes.object),
+    }),
+    sale: PropTypes.objectOf(PropTypes.string),
 };
 
 export default ProductCard;

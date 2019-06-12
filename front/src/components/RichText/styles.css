@@ -8,10 +8,6 @@
     pointer-events: none;
 }
 
-.expanded {
-    max-height: none !important;
-}
-
 .button {
     border: 0;
     padding: 0;

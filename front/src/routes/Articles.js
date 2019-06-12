@@ -36,7 +36,11 @@ const Articles = ({ limit, match }) => {
 
                 const { articles } = data;
 
-                return articles.map(item => <ArticleCard key={item.id} {...item} />);
+                return articles.map(item => (
+                    <div className="article-item">
+                        <ArticleCard key={item.id} {...item} />
+                    </div>
+                ));
             }}
         </Query>
     );

@@ -1,4 +1,4 @@
-import React, { useState, useDebugValue, useEffect, useMemo } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import nanoid from 'nanoid';
 import classnames from 'classnames/bind';
@@ -49,6 +49,7 @@ RadioButton.propTypes = {
     name: PropTypes.string,
     value: PropTypes.string,
     onChange: PropTypes.func,
+    required: PropTypes.bool,
 };
 
 export default RadioButton;

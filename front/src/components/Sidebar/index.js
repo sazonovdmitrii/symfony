@@ -1,9 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import ArticleSidebar from './ArticleSidebar';
 import CatalogSidebar from './CatalogSidebar';
 
-export default ({ type = 'catalog' }) => {
+const Sidebar = ({ type = 'catalog' }) => {
     switch (type) {
         case 'news':
         case 'article':
@@ -13,3 +14,13 @@ export default ({ type = 'catalog' }) => {
             return <CatalogSidebar />;
     }
 };
+
+Sidebar.defaultProps = {
+    type: '',
+};
+
+Sidebar.propTypes = {
+    type: PropTypes.string,
+};
+
+export default Sidebar;

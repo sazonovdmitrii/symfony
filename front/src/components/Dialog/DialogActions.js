@@ -5,8 +5,8 @@ import styles from './styles.css';
 
 const DialogActions = ({ children }) => <div className={styles.actions}>{children}</div>;
 
-DialogActions.defaultProps = {};
-
-DialogActions.propTypes = {};
+DialogActions.propTypes = {
+    children: PropTypes.node.isRequired,
+};
 
 export default DialogActions;

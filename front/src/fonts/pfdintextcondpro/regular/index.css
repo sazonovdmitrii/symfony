@@ -1,7 +1,7 @@
 @font-face {
     font-display: swap;
     font-family: 'PFDinTextCondPro';
-    src: url('./pfdintextcondpro-regular.woff') format('woff'),
+    src: url('./pfdintextcondpro-regular.woff2') format('woff2'),
         url('./pfdintextcondpro-regular.woff') format('woff');
     font-weight: normal;
     font-style: normal;

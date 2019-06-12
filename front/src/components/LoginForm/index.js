@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Mutation, withApollo } from 'react-apollo';
+import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
-import hardtack from 'hardtack';
 
 import LoginForm from './LoginForm';
 
@@ -15,9 +14,15 @@ const LOGIN_MUTATION = gql`
 `;
 
 export default ({ onCompleted }) => {
+    const [error, setError] = useState(null);
+
     return (
-        <Mutation mutation={LOGIN_MUTATION} onCompleted={onCompleted} onError={error => console.warn(error)}>
-            {(auth, { data, error }) => <LoginForm onSubmit={auth} {...data} />}
+        <Mutation
+            mutation={LOGIN_MUTATION}
+            onCompleted={onCompleted}
+            onError={error => setError(error.message)}
+        >
+            {(auth, { data }) => <LoginForm onSubmit={auth} {...data} error={error} />}
         </Mutation>
     );
 };

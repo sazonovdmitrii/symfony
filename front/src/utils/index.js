@@ -67,13 +67,20 @@ export const RouteStatus = props => (
 );
 
 export const seoHead = (type, props) => {
-    const { title, description, keywords } = SEO[type](props);
+    const { url } = props;
+    const { title, description, keywords, locale = 'ru_RU', ogType = 'website' } = SEO[type](props);
 
     return (
         <Helmet>
             {title && <title>{title}</title>}
             {description && <meta name="description" content={description} />}
             {keywords && <meta name="keywords" content={keywords} />}
+            <meta property="og:title" content={title} />
+            <meta property="og:description" content={description} />
+            <meta property="og:type" content={ogType} />
+            <meta property="og:url" content={`https://laparfumerie.ru${url}`} />
+            <meta property="og:site_name" content={SEO.fullSiteName} />
+            <meta property="og:locale" content={locale} />
         </Helmet>
     );
 };

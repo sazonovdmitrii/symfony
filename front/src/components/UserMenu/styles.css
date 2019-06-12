@@ -1,7 +1,6 @@
 .root {
     display: flex;
     list-style: none;
-    line-height: 1;
 
     @media (--viewport-tablet) {
         justify-content: flex-end;

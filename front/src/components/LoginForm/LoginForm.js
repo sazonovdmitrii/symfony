@@ -1,6 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 
 import Input from 'components/Input';
 import InputGroup from 'components/InputGroup';
@@ -8,19 +7,18 @@ import Button from 'components/Button';
 import ButtonGroup from 'components/ButtonGroup';
 import Snackbar from 'components/Snackbar';
 
-const LogIn = ({ onSubmit, error }) => {
+const LoginForm = ({ onSubmit, error }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [notify, setNotify] = useState(error);
 
     useEffect(() => {
-        setNotify(error);
+        if (error) setNotify(error);
     }, [error]);
 
     const handleSubmit = e => {
         e.preventDefault();
 
-        // TODO login
         onSubmit({
             variables: {
                 input: {
@@ -74,4 +72,13 @@ const LogIn = ({ onSubmit, error }) => {
     );
 };
 
-export default LogIn;
+LoginForm.defaultProps = {
+    error: null,
+};
+
+LoginForm.propTypes = {
+    onSubmit: PropTypes.func.isRequired,
+    error: PropTypes.string,
+};
+
+export default LoginForm;

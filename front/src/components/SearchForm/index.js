@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 
 import Input from 'components/Input';
 
-const SearchForm = props => {
+const SearchForm = ({ history }) => {
     const [search, setSearch] = useState('');
     const handleSubmit = e => {
         e.preventDefault();
 
         if (!search) return;
 
-        props.history.push(`/search/?search=${search}`);
+        history.push(`/search/?search=${search}`);
     };
 
     return (
@@ -25,6 +26,10 @@ const SearchForm = props => {
             <button type="submit" className="searchform__icon flaticon-magnifying-glass" />
         </form>
     );
+};
+
+SearchForm.propTypes = {
+    history: PropTypes.object.isRequired,
 };
 
 export default withRouter(SearchForm);

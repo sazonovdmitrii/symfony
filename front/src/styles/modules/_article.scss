@@ -5,10 +5,6 @@
 
     @include breakpoint($DESCKTOP) {
         @include column(3, 12);
-
-        &:nth-child(4n + 1) {
-            clear: both;
-        }
     }
 
     @include has('link') {
