@@ -1,6 +1,11 @@
 easy_admin:
     site_name: 'Laparfumerie'
     entities:
+        Tags:
+            class: App\Entity\Tags
+            form:
+                fields:
+                    - guid
         Urls:
             class: App\Entity\Urls
             list:
@@ -93,6 +98,9 @@ easy_admin:
             controller: App\Controller\Admin\ImportProductController
         ProductTag:
             class: App\Entity\ProductTag
+            form:
+              fields:
+                - { property: 'type', type: 'choice', type_options: {multiple: false, choices: {bool: '', string: '', int: '', float: '', enum: ''}} }
         Configuration:
             class: App\Entity\ProductTag
             controller: App\Controller\Admin\ConfigurationController
@@ -161,3 +169,4 @@ easy_admin:
           - Banner
           - Sale
           - Configuration
+          - Tags
