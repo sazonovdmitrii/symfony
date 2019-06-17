@@ -1,0 +1,34 @@
+.root {
+    display: inline-flex;
+
+    &:hover .label::before {
+        color: var(--color-primary);
+    }
+}
+
+.input {
+    display: none;
+
+    &:checked ~ .active {
+        color: var(--color-font);
+    }
+
+    &:hover ~ .label::before {
+        color: var(--color-font);
+    }
+}
+
+.label {
+    cursor: pointer;
+    height: 13px;
+    width: 13px;
+    padding: 0 1px;
+    font-size: 0;
+    color: var(--color-primary);
+
+    &::before {
+        content: '\2606';
+        cursor: pointer;
+        font-size: 18px;
+    }
+}

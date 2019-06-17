@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { IMaskMixin } from 'react-imask';
 import classnames from 'classnames/bind';
@@ -24,6 +24,9 @@ const Input = ({
     theme,
     type,
     value,
+    multiline,
+    rows,
+    rowsMax,
     onChange,
     onBlur,
 }) => {
@@ -33,18 +36,35 @@ const Input = ({
         focused: false,
         error: errorProp,
     });
+    const [height, setHeight] = useState(null);
+    const textAreaNode = useRef(null);
+
     const labelClassName = cx(styles.label, theme.label, {
         focused,
         error,
         filled: filled || !!value,
     });
     const inputClassName = cx(styles.input, theme.input, {
+        multiline,
         error,
     });
     const textClassName = cx(styles.text, theme.text, {
         error,
     });
     const $Input = mask ? MaskedInput : 'input';
+
+    // TODO autoheight
+    // useEffect(() => {
+    //     if (textAreaNode.current) {
+    //         const { scrollHeight } = textAreaNode.current;
+    //         const currentHeight = textAreaNode.current.clientHeight;
+
+    //         if (scrollHeight > currentHeight) {
+    //             console.log('resize', currentHeight + meh, scrollHeight);
+    //             setHeight(currentHeight + meh);
+    //         }
+    //     }
+    // }, [textAreaNode, value]);
 
     const handleFocus = () => {
         setState(prevState => ({
@@ -74,6 +94,35 @@ const Input = ({
             filled: !!elem.value,
         }));
     };
+
+    if (multiline)
+        return (
+            <div className={styles.wrapper}>
+                {label && (
+                    <label className={labelClassName} htmlFor={id}>
+                        {required ? `${label}*` : label}
+                    </label>
+                )}
+                <textarea
+                    ref={textAreaNode}
+                    id={id}
+                    className={inputClassName}
+                    type={type}
+                    name={name}
+                    value={value}
+                    placeholder={placeholder}
+                    aria-required={required}
+                    required={required}
+                    disabled={disabled}
+                    rows={rows}
+                    onChange={onChange}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                    style={{ height }}
+                />
+                {text && <div className={textClassName}>{text}</div>}
+            </div>
+        );
 
     return (
         <div className={styles.wrapper}>
@@ -113,24 +162,31 @@ Input.propTypes = {
     placeholder: PropTypes.string,
     required: PropTypes.bool,
     text: PropTypes.string,
+    rows: PropTypes.string,
+    rowsMax: PropTypes.string,
     theme: PropTypes.objectOf(PropTypes.string),
     type: PropTypes.string,
     value: PropTypes.string,
+    disabled: PropTypes.bool,
     onChange: PropTypes.func,
     onBlur: PropTypes.func,
 };
 
 Input.defaultProps = {
     label: null,
-    mask: '',
+    mask: null,
     max: null,
     min: null,
     placeholder: null,
-    required: false,
+    required: null,
     value: '',
     text: null,
     theme: {},
+    rows: null,
+    rowsMax: null,
     type: 'text',
+    disabled: false,
+    onChange: () => {},
     onBlur: () => {},
 };
 

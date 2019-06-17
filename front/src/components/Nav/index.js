@@ -35,6 +35,8 @@ Nav.defaultProps = {
     ],
 };
 
-Nav.propTypes = {};
+Nav.propTypes = {
+    items: PropTypes.arrayOf(PropTypes.object),
+};
 
 export default Nav;

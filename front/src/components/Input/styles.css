@@ -68,6 +68,11 @@
     }
 }
 
+.multiline {
+    resize: none;
+    height: 52px;
+}
+
 .text {
     color: rgba(0, 0, 0, 0.54);
     font-size: 13px;

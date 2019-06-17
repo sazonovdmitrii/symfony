@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 import styles from './styles.css';
 
-const RadioGroup = ({ name, value, children, onChange }) => {
-    return React.Children.map(children, child => {
+const RadioGroup = ({ className, name, value, children, onChange }) => {
+    const childrens = React.Children.map(children, child => {
         if (!React.isValidElement(child)) {
             return null;
         }
@@ -18,6 +18,8 @@ const RadioGroup = ({ name, value, children, onChange }) => {
             className: styles.item,
         });
     });
+
+    return <div className={className}>{childrens}</div>;
 };
 
 RadioGroup.defaultProps = {

@@ -1,58 +1,75 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Button from 'components/Button';
 import Input from 'components/Input';
 import InputGroup from 'components/InputGroup';
+import Stars from 'components/Stars';
 
-class CommentForm extends Component {
-    static propTypes = {};
+const CommentForm = () => {
+    const [values, setValues] = useState({
+        comment: '',
+        email: '',
+        name: '',
+        star: '0',
+    });
+    const handleChange = ({ target: { name, value, type } }, checked) => {
+        const newValue = type === 'checkbox' ? checked : value;
 
-    constructor(props) {
-        super(props);
-    }
+        setValues(prevState => ({
+            ...prevState,
+            [name]: newValue,
+        }));
+    };
 
-    render() {
-        return (
-            <form action="/product/comment/add/24" method="post" className="comments-form">
-                <div className="comments-notification" data-render="notification" />
-                <div>
-                    <div className="comments-stars1">
-                        Оценка: &nbsp;
-                        <input id="star-5" type="radio" name="star" value="5" />
-                        <label htmlFor="star-5" className="comments-stars__item" />
-                        <input id="star-4" type="radio" name="star" value="4" />
-                        <label htmlFor="star-4" className="comments-stars__item" />
-                        <input id="star-3" type="radio" name="star" value="3" />
-                        <label htmlFor="star-3" className="comments-stars__item" />
-                        <input id="star-2" type="radio" name="star" value="2" />
-                        <label htmlFor="star-2" className="comments-stars__item" />
-                        <input id="star-1" type="radio" name="star" value="1" />
-                        <label htmlFor="star-1" className="comments-stars__item" />
-                    </div>
-                </div>
+    const { star, name, email, comment } = values;
+
+    return (
+        <form className="comments-form">
+            <div>
+                Оценка:
                 <InputGroup>
-                    <Input type="text" name="nick" label="Имя" className="input-text" required />
+                    <Stars value={star} onChange={handleChange} />
                 </InputGroup>
-                <InputGroup>
-                    <Input
-                        type="text"
-                        name="nick"
-                        label="E-mail"
-                        className="input-text"
-                        pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}"
-                        required
-                    />
-                </InputGroup>
-                <InputGroup>
-                    <Input type="textarea" name="comment" label="Коментарий" required />
-                </InputGroup>
-                <Button type="submit" className="product-element__feedbackbutton1" kind="primary">
-                    Опубликовать
-                </Button>
-            </form>
-        );
-    }
-}
+            </div>
+            <InputGroup>
+                <Input
+                    name="name"
+                    label="Имя"
+                    className="input-text"
+                    value={name}
+                    onChange={handleChange}
+                    required
+                />
+            </InputGroup>
+            <InputGroup>
+                <Input
+                    name="email"
+                    label="E-mail"
+                    value={email}
+                    className="input-text"
+                    pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}"
+                    onChange={handleChange}
+                    required
+                />
+            </InputGroup>
+            <InputGroup>
+                <Input
+                    type="textarea"
+                    name="comment"
+                    label="Коментарий"
+                    value={comment}
+                    onChange={handleChange}
+                    rows="4"
+                    multiline
+                    required
+                />
+            </InputGroup>
+            <Button type="submit" kind="primary">
+                Опубликовать
+            </Button>
+        </form>
+    );
+};
 
 export default CommentForm;

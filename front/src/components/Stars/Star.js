@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import nanoid from 'nanoid';
 import classnames from 'classnames/bind';
@@ -7,25 +7,44 @@ import styles from './styles.css';
 
 const cx = classnames.bind(styles);
 
-const Star = ({ checked, label, name, value, onChange }) => {
+const Star = ({ checked, label, name, value, hidden, disabled, onChange }) => {
     const [id] = useState(`radio${nanoid()}`);
     const labelClassName = cx(styles.label, {
         active: checked,
     });
 
+    if (hidden) {
+        return (
+            <input
+                id={id}
+                type="radio"
+                name={name}
+                value={value}
+                className={styles.input}
+                hidden={hidden}
+                disabled={disabled}
+                checked={checked}
+            />
+        );
+    }
+
     return (
-        <label className={labelClassName} htmlFor={id}>
+        <Fragment>
             <input
                 className={styles.input}
                 id={id}
                 type="radio"
                 name={name}
                 value={value}
+                hidden={hidden}
                 checked={checked}
+                disabled={disabled}
                 onChange={onChange}
             />
-            {label}
-        </label>
+            <label className={labelClassName} htmlFor={id}>
+                {label}
+            </label>
+        </Fragment>
     );
 };
 
