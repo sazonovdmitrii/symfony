@@ -31,7 +31,7 @@ export default ({ carousel }) => (
         <section className="homepage__slider">
             <Query query={GET_BANNERS}>
                 {({ loading, error, data: { banner } }) => {
-                    if (loading) return null;
+                    if (loading || !banner) return null;
 
                     return (
                         <Banners interval={5000}>

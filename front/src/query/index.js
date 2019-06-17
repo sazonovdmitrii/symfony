@@ -115,3 +115,21 @@ export const GET_BANNERS = gql`
         }
     }
 `;
+
+export const GET_SALES = gql`
+    query Sales($limit: Int) {
+        sale(limit: $limit) {
+            data {
+                id
+                start
+                finish
+                category
+                discount
+                enabled
+                featured
+                type
+                prior
+            }
+        }
+    }
+`;

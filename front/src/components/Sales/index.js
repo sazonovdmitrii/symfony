@@ -1,31 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { Query } from 'react-apollo';
 
-const Sales = ({ description, name }) => (
+import { GET_SALES } from 'query';
+
+import SaleCard from 'components/SaleCard';
+
+const Sales = ({ limit }) => (
     <div className="homesale">
-        <div className="homesale__sale">
-            <Link className="homesale__picture" to="/sales/nina-ricci-na-14-marta/">
-                <picture className="homesale__image">
-                    <img className="homesale__image-img" src="https://placehold.it/290x290" alt="" />
-                </picture>
-                <h3 className="homesale__label-head">{name}</h3>
-                <div className="homesale__label">
-                    <span className="homesale__label-text">{description}</span>
-                </div>
-            </Link>
-        </div>
+        <Query query={GET_SALES} variabler={{ limit }}>
+            {({ loading, error, data: { sale } }) => {
+                if (loading) return 'loading';
+                if (error) return 'erorr';
+
+                return sale.data.map(item => (
+                    <div className="homesale__sale">
+                        <SaleCard key={item.id} {...item} />
+                    </div>
+                ));
+            }}
+        </Query>
     </div>
 );
 
 Sales.defaultProps = {
-    name: 'Без именни',
-    description: 'test',
+    limit: null,
 };
 
-Sales.propTypes = {
-    name: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-};
+Sales.propTypes = {};
 
 export default Sales;

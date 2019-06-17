@@ -24,9 +24,7 @@ $correction: 0.5 / $min-width * 100 * 1%;
     margin: 0 -15px;
 }
 
-$gap: 15px;
-
-@mixin column($x, $columns: $columns, $gap: $gap) {
+@mixin column($x: 12, $columns: $columns, $gap: 15px) {
     flex: 0 0 make-col($x);
     max-width: make-col($x);
     padding: 0 $gap;
@@ -71,10 +69,7 @@ $gap: 15px;
 }
 
 @mixin no-column {
-    display: block;
-    margin: 0 auto;
-    float: none;
-    width: 100%;
+    @include column();
 }
 
 @mixin columns-indent($cols, $push, $pull) {

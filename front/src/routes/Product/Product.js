@@ -171,7 +171,7 @@ const Product = ({
                                             <Link to="/info/dostavka-pochta-rossii.htm">Почта России</Link>,
                                         </li>
                                         <li className="product__brand-info-shipp-ul-post">
-                                            <Link to="http://laparfumerie.ru/info/delivery-and-payment.htm">
+                                            <Link to="/info/delivery-and-payment.htm">
                                                 Собственная курьерская служба
                                             </Link>
                                         </li>
@@ -274,7 +274,7 @@ const Product = ({
                                                 onError={error => setError(error.message)}
                                             >
                                                 {(addToCard, { loading, data }) => {
-                                                    if (data && data.id) {
+                                                    if (data && data.addBasket.id) {
                                                         return (
                                                             <Button to="/basket">Перейти в корзину</Button>
                                                         );
