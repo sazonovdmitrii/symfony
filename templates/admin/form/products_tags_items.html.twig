@@ -1,0 +1,20 @@
+{% block _producttag_products_tags_items_widget %}
+    <div class="row">
+        <a class="btn btn-default" onclick="add_option()"><span class="glyphicon glyphicon-plus">+</span></a>
+    </div>
+    {% for row in form.parent.vars.data.productTagItems %}
+        {{ dump(row.id) }}
+        {{ dump(row.name) }}
+    {% endfor %}
+    {% if form.parent.vars.data.type == 'enum' %}
+
+    {% endif %}
+    <script type="text/javascript">
+        function add_option() {
+            var value = prompt("Новая опция...");
+            $.post("/mng/tags/add/option.json", {'name': value, 'pid': 1}, function (data) {
+                alert();
+            }, 'json');
+        }
+    </script>
+{% endblock %}

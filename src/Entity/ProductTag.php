@@ -29,16 +29,6 @@ class ProductTag
     private $created;
 
     /**
-     * @ORM\Column(type="array", nullable=true)
-     */
-    private $type = [];
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $visible;
-
-    /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Product", inversedBy="productTags")
      */
     private $entity_id;
@@ -48,10 +38,21 @@ class ProductTag
      */
     private $productTagItems;
 
+    /**
+     * @ORM\Column(type="string", length=10, nullable=true)
+     */
+    private $type;
+
+    /**
+     * @ORM\Column(type="string", length=3, nullable=true)
+     */
+    private $visible;
+
     public function __construct()
     {
         $this->entity_id = new ArrayCollection();
         $this->productTagItems = new ArrayCollection();
+        $this->created = new \DateTime('now');
     }
 
     public function getId(): ?int
@@ -82,31 +83,7 @@ class ProductTag
 
         return $this;
     }
-
-    public function getType(): ?array
-    {
-        return $this->type;
-    }
-
-    public function setType(?array $type): self
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    public function getVisible(): ?bool
-    {
-        return $this->visible;
-    }
-
-    public function setVisible(?bool $visible): self
-    {
-        $this->visible = $visible;
-
-        return $this;
-    }
-
+    
     /**
      * @return Collection|Product[]
      */
@@ -162,5 +139,34 @@ class ProductTag
         }
 
         return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(?string $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getVisible(): ?string
+    {
+        return $this->visible;
+    }
+
+    public function setVisible(?string $visible): self
+    {
+        $this->visible = $visible;
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return self::class;
     }
 }
