@@ -6,5 +6,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AdminController as BaseAdminContr
 
 class AdminController extends BaseAdminController
 {
+    public function repository($className)
+    {
+        return $this->getDoctrine()->getRepository($className);
+    }
+
 
 }

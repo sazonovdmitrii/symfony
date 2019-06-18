@@ -1,20 +1,43 @@
 {% block _producttag_products_tags_items_widget %}
+
     <div class="row">
         <a class="btn btn-default" onclick="add_option()"><span class="glyphicon glyphicon-plus">+</span></a>
     </div>
-    {% for row in form.parent.vars.data.productTagItems %}
-        {{ dump(row.id) }}
-        {{ dump(row.name) }}
-    {% endfor %}
-    {% if form.parent.vars.data.type == 'enum' %}
 
+    {% if form.parent.vars.data.type == 'enum' %}
+        <ul class="list-inline ui-sortable" id="options">
+            {% for row in form.parent.vars.data.productTagItems %}
+                <li class="col-xs-12 col-sm-6 col-md-3" eid="{{ row.id }}">
+                    <div class="thumbnail">
+                        <a class="btn pull-right" onclick="remove_option(this)">
+                            <span class="glyphicon glyphicon-remove">x</span>
+                        </a>
+                        <div class="list-option">{{ row.name }}</div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
     {% endif %}
+
     <script type="text/javascript">
         function add_option() {
             var value = prompt("Новая опция...");
-            $.post("/mng/tags/add/option.json", {'name': value, 'pid': 1}, function (data) {
-                alert();
+            $.post("/admin/?" + $.param({'entity' : 'ProductTag', 'action' : 'add'}), {
+                'option': value,
+                'tag_id': {{ form.parent.vars.data.id }}
+            }, function (data) {
+                window.location.reload();
             }, 'json');
         }
+        function remove_option(e) {
+            if(confirm('Удалить?')) {
+                $.post("/admin/?" + $.param({'entity' : 'ProductTag', 'action' : 'remove'}), {
+                    'tag_id': $(e).parent().parent().attr('eid')
+                }, function (data) {
+                    window.location.reload();
+                });
+            }
+        }
     </script>
+
 {% endblock %}

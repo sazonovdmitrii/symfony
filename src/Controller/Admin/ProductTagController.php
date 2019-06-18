@@ -2,67 +2,70 @@
 
 namespace App\Controller\Admin;
 
-use EasyCorp\Bundle\EasyAdminBundle\Event\EasyAdminEvents;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AdminController as BaseAdminController;
+use App\Controller\AdminController;
+use App\Entity\ProductTagItem;
+use App\Entity\ProductTag;
+use Doctrine\ORM\EntityManager;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
-class ProductTagController extends BaseAdminController
+class ProductTagController extends AdminController
 {
     private $_template = 'admin/ProductTag/edit%s%.html.twig';
 
-    protected function editProductTagAction()
-    {
-        $this->dispatch(EasyAdminEvents::PRE_EDIT);
+    private $entityManager;
 
-        $id        = $this->request->query->get('id');
-        $easyadmin = $this->request->attributes->get('easyadmin');
-        $entity    = $easyadmin['item'];
-
-        if ($this->request->isXmlHttpRequest() && $property = $this->request->query->get('property')) {
-            $newValue       = 'true' === mb_strtolower($this->request->query->get('newValue'));
-            $fieldsMetadata = $this->entity['list']['fields'];
-
-            if (!isset($fieldsMetadata[$property]) || 'toggle' !== $fieldsMetadata[$property]['dataType']) {
-                throw new \RuntimeException(sprintf('The type of the "%s" property is not "toggle".', $property));
-            }
-
-            $this->updateEntityProperty($entity, $property, $newValue);
-
-            // cast to integer instead of string to avoid sending empty responses for 'false'
-            return new Response((int)$newValue);
-        }
-
-        $fields = $this->entity['edit']['fields'];
-
-        $editForm   = $this->executeDynamicMethod('create<EntityName>EditForm', array($entity, $fields));
-        $deleteForm = $this->createDeleteForm($this->entity['name'], $id);
-
-        $editForm->handleRequest($this->request);
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $this->dispatch(EasyAdminEvents::PRE_UPDATE, array('entity' => $entity));
-
-            $this->executeDynamicMethod('preUpdate<EntityName>Entity', array($entity, true));
-            $this->executeDynamicMethod('update<EntityName>Entity', array($entity, $editForm));
-
-            $this->dispatch(EasyAdminEvents::POST_UPDATE, array('entity' => $entity));
-
-            return $this->redirectToReferrer();
-        }
-
-        $this->dispatch(EasyAdminEvents::POST_EDIT);
-
-        $parameters = array(
-            'form'          => $editForm->createView(),
-            'entity_fields' => $fields,
-            'entity'        => $entity,
-            'delete_form'   => $deleteForm->createView(),
-        );
-
-        return $this->executeDynamicMethod('render<EntityName>Template', array('edit', $this->entity['templates']['edit'], $parameters));
+    public function __construct(
+        EntityManager $entityManager
+    ) {
+        $this->entityManager = $entityManager;
     }
 
-    protected function renderTemplate($actionName, $templatePath, array $parameters = array())
+    protected function renderProductTagTemplate($actionName, $templatePath, array $parameters = array())
     {
-        $template = str_replace('%s%', '_' . $parameters['entity']->getType(), $this->_template);
-        return $this->render($template, $parameters);
+        if($actionName == 'edit') {
+            $templatePath = str_replace('%s%', '_' . $parameters['entity']->getType(), $this->_template);
+        }
+        return $this->render($templatePath, $parameters);
+
+    }
+
+    protected function addAction()
+    {
+        $requestData = $this->request->request;
+        if($requestData->has('option') && $requestData->has('tag_id')) {
+
+            $productTag = $this->_getProductTag($requestData->get('tag_id'));
+
+            $tagItem = new ProductTagItem();
+            $tagItem->setEntityId($productTag);
+            $tagItem->setName($requestData->get('option'));
+
+            $this->entityManager->persist($tagItem);
+            $this->entityManager->flush();
+        }
+        return new JsonResponse(['response' => 200]);
+    }
+
+    protected function removeAction()
+    {
+        $requestData = $this->request->request;
+        if($requestData->has('tag_id')) {
+            $tagItem = $this->_getProductTagItem($requestData->get('tag_id'));
+            $this->entityManager->remove($tagItem);
+            $this->entityManager->flush();
+        }
+        return new JsonResponse(['response' => 200]);
+    }
+
+    private function _getProductTag($tagId)
+    {
+        return $this->repository(ProductTag::class)
+            ->find($tagId);
+    }
+
+    private function _getProductTagItem($tagItemId)
+    {
+        return $this->repository(ProductTagItem::class)
+            ->find($tagItemId);
     }
 }
