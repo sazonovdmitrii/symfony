@@ -176,3 +176,6 @@ easy_admin:
           - Sale
           - Configuration
           - Tags
+        assets:
+            css:
+                - '/bundles/lp/css/lp.css'

@@ -1,10 +1,12 @@
 {% block _producttag_products_tags_items_widget %}
 
-    <div class="row">
-        <a class="btn btn-default" onclick="add_option()"><span class="glyphicon glyphicon-plus">+</span></a>
-    </div>
-
     {% if form.parent.vars.data.type == 'enum' %}
+        <div class="row">
+            <a class="btn btn-default" onclick="add_option()">
+                <span class="glyphicon glyphicon-plus">+</span>
+            </a>
+        </div>
+
         <ul class="list-inline ui-sortable" id="options">
             {% for row in form.parent.vars.data.productTagItems %}
                 <li class="col-xs-12 col-sm-6 col-md-3" eid="{{ row.id }}">
