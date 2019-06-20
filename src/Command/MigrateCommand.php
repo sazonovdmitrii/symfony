@@ -32,6 +32,7 @@ class MigrateCommand extends ContainerAwareCommand
         $this->_defaultDoctrine = $doctrine->getManager();
 
         $this->output = $output;
+        $this->tags();
 //        $this->users();
         $this->users_addresses();
 //        $this->catalog_products();
@@ -41,6 +42,78 @@ class MigrateCommand extends ContainerAwareCommand
         $this->catalog_urls();
         $this->products();
         $this->product_urls();
+    }
+
+    protected function tags()
+    {
+        $this->output->writeln(['Migrating Tags...']);
+
+        $doctrine = $this->_defaultDoctrine->getConnection();
+
+        $tags = $this->_lpDoctrine->getConnection()->prepare(
+            "SELECT t.id, tr.value, t.left_key, t.right_key, t.created FROM tags t JOIN translations tr ON tr.eid=t.id AND tr.type=15 WHERE t.level = 1"
+        );
+        $tags->execute();
+
+        $doctrine->query('DELETE FROM producttagitem');
+        $doctrine->query('DELETE FROM producttag');
+        $allTags = $tags->fetchAll();
+
+        $counter = 0;
+        $allTagsItemsIds = [];
+        foreach($allTags as $tag) {
+            $leftKey = $tag['left_key'];
+            $rightKey = $tag['right_key'];
+            $tagsItems = $this->_lpDoctrine->getConnection()->prepare("
+                SELECT tr.value, t.id, t.created FROM tags t JOIN translations tr ON tr.eid=t.id AND tr.type = 15 WHERE t.left_key > " . $leftKey . " AND t.level = 2 AND t.right_key < " . $rightKey . " AND t.id <> " . $rightKey . " AND t.id <> " . $leftKey
+            );
+            $tagsItems->execute();
+            $allTagsItems = $tagsItems->fetchAll();
+            $counter++;
+            $doctrine->exec(
+                "
+                    INSERT INTO producttag (
+                        id,                          
+                        name,
+                        created,
+                        type,
+                        visible
+                    ) VALUES(
+                        " . $tag['id'] . ", 
+                        '" . $tag['value'] . "',
+                         '" . $tag['created'] . "',
+                        'enum',
+                        'Yes'
+                    )
+                "
+            );
+
+            foreach($allTagsItems as $allTagsItem) {
+                if(in_array($allTagsItem['id'], $allTagsItemsIds)) {
+                    $allTagsItem['id'] += 10000;
+                }
+                $allTagsItemsIds[] = $allTagsItem['id'];
+                        $doctrine->exec(
+                            "
+                                INSERT INTO producttagitem (
+                                    id,                          
+                                    entity_id_id,
+                                    name,
+                                    created                        
+                                ) VALUES(
+                                    " . $allTagsItem['id'] . ", 
+                                    '" . $tag['id'] . "',
+                                    '" . str_replace("'", "", $allTagsItem['value']) . "',
+                                     '" . $allTagsItem['created'] . "'                        
+                                )
+                            "
+                        );
+                    $result[] = $allTagsItem['id'];
+            }
+            print_r($tag);
+            $this->output->writeln([$counter . '/' . count($allTags)]);
+        }
+        $this->output->writeln(['Tags migration have done!']);
     }
 
     protected function users()
