@@ -80,7 +80,7 @@ easy_admin:
                     - { type: 'tab', label: 'Virtual Urls' }
                     - { property: 'productUrls', type: 'easyadmin_autocomplete' }
                     - { type: 'tab', label: 'Tags' }
-                    - { property: 'productTags', type_options: { block_name: 'products_tags' }}
+                    - { property: 'producttagitem', type_options: { block_name: 'products_tags_items' }}
         Order:
             class: App\Entity\Orders
             list:

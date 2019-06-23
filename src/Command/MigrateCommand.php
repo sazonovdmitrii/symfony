@@ -32,7 +32,8 @@ class MigrateCommand extends ContainerAwareCommand
         $this->_defaultDoctrine = $doctrine->getManager();
 
         $this->output = $output;
-        $this->tags();
+//        $this->tags();
+        $this->tags_to_products();
 //        $this->users();
         $this->users_addresses();
 //        $this->catalog_products();
@@ -42,6 +43,52 @@ class MigrateCommand extends ContainerAwareCommand
         $this->catalog_urls();
         $this->products();
         $this->product_urls();
+    }
+
+    protected function tags_to_products()
+    {
+        $this->output->writeln(['Migrating Products To Tags...']);
+
+        $doctrine = $this->_defaultDoctrine->getConnection();
+
+        $tags = $this->_lpDoctrine->getConnection()->prepare(
+            "SELECT * FROM tags_to WHERE type = 1 AND eid IN (SELECT id FROM products) AND tag_id IN (SELECT id FROM tags WHERE level = 2)"
+        );
+        $tags->execute();
+
+        $doctrine->query('DELETE FROM product_producttagitem');
+
+        $statement = $this->_defaultDoctrine->getConnection()->prepare('SELECT id FROM producttagitem');
+        $statement->execute();
+        $allCurrentTags = $statement->fetchAll();
+        $allCurrentTagsIds = [];
+        foreach($allCurrentTags as $allCurrentTag) {
+            $allCurrentTagsIds[] = $allCurrentTag['id'];
+        }
+        $allTags = $tags->fetchAll();
+        $counter = 0;
+        $wrongTagsIds = [];
+        foreach($allTags as $tag) {
+            if(in_array($tag['tag_id'], $allCurrentTagsIds)) {
+                $counter++;
+                $doctrine->exec(
+                    "
+                    INSERT INTO product_producttagitem (
+                        producttagitem_id,                          
+                        product_id
+                    ) VALUES(
+                        " . $tag['tag_id'] . ", 
+                        '" . $tag['eid'] . "'
+                    )
+                "
+                );
+                $this->output->writeln([$counter . '/' . count($allTags)]);
+            } else {
+                $wrongTagsIds[] = $tag['tag_id'];
+            }
+        }
+        print_r($wrongTagsIds);
+        $this->output->writeln(['Tags To Products migration have done!']);
     }
 
     protected function tags()

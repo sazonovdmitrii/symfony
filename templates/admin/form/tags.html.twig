@@ -1,3 +1,23 @@
-{% block _product_products_tags_widget %}
-
+{% block _product_products_tags_items_widget %}
+    {% set currentTags = [] %} 
+    {% for key, tag_item in form.parent.vars.data.producttagitem %}
+        {% set currentTags = currentTags|merge([tag_item.id]) %}
+    {% endfor %}
+    {% for key, tag in tags.getTree() %}
+        <div class="form-group row">
+            <label for="tag{{ tag.id }}" class="col-sm-2 col-form-label">{{ tag.name }}</label>
+            <div class="col-sm-10">
+                <select id="tag{{ tag.id }}" class="select2 form-control">
+                    {% for key_tag_item, tag_item in tag.getProductTagItems() %}
+                        <option id="{{ tag_item.id }}" {% if tag_item.id in currentTags %} selected {% endif %}>{{ tag_item.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    {% endfor %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.select2').select2();
+        });
+    </script>
 {% endblock %}

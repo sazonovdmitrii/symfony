@@ -63,6 +63,11 @@ class Product
      */
     private $productTags;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\ProductTagItem", inversedBy="products")
+     */
+    private $producttagitem;
+
     public function __construct()
     {
         $this->catalog = new ArrayCollection();
@@ -70,6 +75,7 @@ class Product
         $this->productUrls = new ArrayCollection();
         $this->productItems = new ArrayCollection();
         $this->productTags = new ArrayCollection();
+        $this->producttagitem = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -252,6 +258,32 @@ class Product
         if ($this->productTags->contains($productTag)) {
             $this->productTags->removeElement($productTag);
             $productTag->removeEntityId($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductTagItem[]
+     */
+    public function getProducttagitem(): Collection
+    {
+        return $this->producttagitem;
+    }
+
+    public function addProducttagitem(ProductTagItem $producttagitem): self
+    {
+        if (!$this->producttagitem->contains($producttagitem)) {
+            $this->producttagitem[] = $producttagitem;
+        }
+
+        return $this;
+    }
+
+    public function removeProducttagitem(ProductTagItem $producttagitem): self
+    {
+        if ($this->producttagitem->contains($producttagitem)) {
+            $this->producttagitem->removeElement($producttagitem);
         }
 
         return $this;
