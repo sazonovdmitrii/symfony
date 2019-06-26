@@ -16,3 +16,18 @@ Product:
       items:
         type: ItemConnection
         argsBuilder: PaginatoringBuilder
+      tags:
+        type: "[ProductFilters]"
+        description: "Product Filter"
+
+ProductFilters:
+  type: object
+  config:
+    description: "Product Filter Item"
+    fields:
+      name:
+        type: "String"
+        description: "Product Filter Name."
+      value:
+        type: "String"
+        description: "Product Filter Value"

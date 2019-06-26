@@ -4,6 +4,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Redis;
 use Doctrine\ORM\EntityManager;
 use App\Entity\ProductTag;
+use App\Entity\ProductTagItem;
 
 class TagManager extends AbstractController
 {
@@ -26,7 +27,7 @@ class TagManager extends AbstractController
         return [];
     }
 
-    public function getProductTagFilters()
+    public function getCatalogFilters()
     {
         $allTags = $this->em
             ->getRepository(ProductTag::class)
@@ -65,6 +66,29 @@ class TagManager extends AbstractController
             $tag['childrens'] = $tagChildrens;
             $tags[] = $tag;
         }
+        return $tags;
+    }
+
+    public function getProductFilters()
+    {
+        $productTags = [];
+        foreach($this->getEntity()->getProducttagitem() as $productTag) {
+            $productTags[] = $productTag->getId();
+        }
+
+        $tagsItems = $this->em->getRepository(ProductTagItem::class)
+            ->findBy( ['id' => $productTags], ['id' => 'DESC'] );
+
+        $tags = [];
+        foreach($tagsItems as $tag) {
+            if($tag->getName()) {
+                $tags[] = [
+                    'name' => $tag->getEntityId()->getName(),
+                    'value' => $tag->getName()
+                ];
+            }
+        }
+        
         return $tags;
     }
 }

@@ -9,6 +9,7 @@ use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Paginator;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
+use App\Service\TagService;
 
 class ProductFieldResolver implements ResolverInterface
 {
@@ -20,9 +21,12 @@ class ProductFieldResolver implements ResolverInterface
      *
      * @param EntityManager $em
      */
-    public function __construct(EntityManager $em)
-    {
+    public function __construct(
+        EntityManager $em,
+        TagService $tagService
+    ) {
         $this->em = $em;
+        $this->tagService = $tagService;
     }
 
     public function __invoke(ResolveInfo $info, $value, Argument $args)
@@ -66,6 +70,14 @@ class ProductFieldResolver implements ResolverInterface
     public function id(Product $product)
     {
         return $product->getId();
+    }
+
+    public function tags(Product $product)
+    {
+        return $this->tagService
+            ->setEntityType(Product::class)
+            ->setEntity($product)
+            ->getFilters();
     }
 
     public function items(Product $product, Argument $args) :Connection
