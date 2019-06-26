@@ -63,11 +63,17 @@ class Catalog
      */
     private $sales;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\CatalogTag", mappedBy="entity")
+     */
+    private $catalogTags;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
         $this->catalogUrls = new ArrayCollection();
         $this->sales = new ArrayCollection();
+        $this->catalogTags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -237,6 +243,34 @@ class Catalog
             if ($sale->getCategory() === $this) {
                 $sale->setCategory(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CatalogTag[]
+     */
+    public function getCatalogTags(): Collection
+    {
+        return $this->catalogTags;
+    }
+
+    public function addCatalogTag(CatalogTag $catalogTag): self
+    {
+        if (!$this->catalogTags->contains($catalogTag)) {
+            $this->catalogTags[] = $catalogTag;
+            $catalogTag->addEntity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCatalogTag(CatalogTag $catalogTag): self
+    {
+        if ($this->catalogTags->contains($catalogTag)) {
+            $this->catalogTags->removeElement($catalogTag);
+            $catalogTag->removeEntity($this);
         }
 
         return $this;

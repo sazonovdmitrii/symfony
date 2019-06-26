@@ -16,3 +16,36 @@ Catalog:
       count:
         type: "Int!"
         description: "Count of products"
+      tags:
+        type: "[CatalogFilters]"
+        description: "Catalog Filter"
+
+CatalogFilters:
+  type: object
+  config:
+    description: "Catalog Filter Item"
+    fields:
+      id:
+        type: "Int!"
+        description: "Catalog Id."
+      name:
+        type: "String"
+        description: "Catalog Filter Item Name"
+      childrens:
+        type: "[CatalogFilterItem]"
+        description: "Catalog Filter Items Childrens"
+
+CatalogFilterItem:
+  type: object
+  config:
+    description: "Catalog Filter Item"
+    fields:
+      id:
+        type: "Int!"
+        description: "Catalog Filter Item Id."
+      name:
+        type: "String"
+        description: "Catalog Filter Item Name"
+      count:
+        type: "Int"
+        description: "Count products in selected filter"

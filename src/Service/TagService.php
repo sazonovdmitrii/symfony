@@ -4,7 +4,22 @@ use App\Service\Manager\TagManager;
 
 class TagService extends TagManager
 {
+    private $entityType;
+
     private $entity;
+
+    public function getEntityType()
+    {
+        return $this->entityType;
+    }
+
+    public function setEntityType($entityType)
+    {
+        $reflection = new \ReflectionClass($entityType);
+        $entityType = $reflection->getShortName();
+        $this->entityType = $entityType;
+        return $this;
+    }
 
     public function getEntity()
     {
@@ -13,8 +28,6 @@ class TagService extends TagManager
 
     public function setEntity($entity)
     {
-        $reflection = new \ReflectionClass($entity);
-        $entity = $reflection->getShortName();
         $this->entity = $entity;
         return $this;
     }

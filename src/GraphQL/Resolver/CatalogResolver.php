@@ -8,6 +8,8 @@ use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Paginator;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
+use App\Service\TagService;
+use App\Entity\ProductTag;
 
 class CatalogResolver implements ResolverInterface, AliasedInterface {
 
@@ -18,9 +20,12 @@ class CatalogResolver implements ResolverInterface, AliasedInterface {
      *
      * @param EntityManager $em
      */
-    public function __construct(EntityManager $em)
-    {
+    public function __construct(
+        EntityManager $em,
+        TagService $tagService
+    ) {
         $this->em = $em;
+        $this->tagService = $tagService;
     }
 
     public function __invoke(ResolveInfo $info, $value, Argument $args)
@@ -67,6 +72,14 @@ class CatalogResolver implements ResolverInterface, AliasedInterface {
         }
 
         return [];
+    }
+
+    public function tags(Catalog $catalog)
+    {
+        return $this->tagService
+            ->setEntityType(ProductTag::class)
+            ->setEntity($catalog)
+            ->getFilters();
     }
 
     /**

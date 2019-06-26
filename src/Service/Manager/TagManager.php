@@ -19,7 +19,7 @@ class TagManager extends AbstractController
 
     public function getFilters()
     {
-        $method = 'get' . $this->getEntity() . 'Filters';
+        $method = 'get' . $this->getEntityType() . 'Filters';
         if (method_exists($this, $method)) {
             return $this->$method();
         }
@@ -33,7 +33,18 @@ class TagManager extends AbstractController
             ->findAll();
 
         $tags = [];
+        $productTags = [];
 
+        foreach($this->getEntity()->getProducts() as $product) {
+            foreach($product->getProducttagitem() as $productTag) {
+                $tagId = $productTag->getId();
+                if(isset($productTags[$tagId])) {
+                    $productTags[$tagId] += 1;
+                } else {
+                    $productTags[$tagId] = 1;
+                }
+            }
+        }
         foreach($allTags as $allTag) {
             $tag = [
                 'name' => $allTag->getName(),
