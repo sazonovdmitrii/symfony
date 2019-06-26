@@ -105,6 +105,15 @@ easy_admin:
                 - { property: 'type', type: 'choice', type_options: {multiple: false, choices: {bool: 'bool', string: 'string', int: 'int', float: 'float', enum: 'enum'}} }
                 - { property: 'visible', type: 'choice', type_options: {multiple: false, choices: {No: 'No', Yes: 'Yes'}}}
                 - { property: 'productTagItems', type_options: { block_name: 'products_tags_items' }}
+        CatalogTag:
+            class: App\Entity\CatalogTag
+            controller: App\Controller\Admin\ProductTagController
+            form:
+              fields:
+                - name
+                - { property: 'type', type: 'choice', type_options: {multiple: false, choices: {bool: 'bool', string: 'string', int: 'int', float: 'float', enum: 'enum'}} }
+                - { property: 'visible', type: 'choice', type_options: {multiple: false, choices: {No: 'No', Yes: 'Yes'}}}
+                - { property: 'catalogTagItems', type_options: { block_name: 'catalogs_tags_items' }}
 
         Configuration:
             class: App\Entity\ProductTag
@@ -164,7 +173,7 @@ easy_admin:
           - label: 'Urls'
             children: ['ProductUrl', 'CatalogUrl']
           - label: 'Catalog'
-            children: ['Catalog', 'Product', 'Items', 'ProductTag']
+            children: ['Catalog', 'CatalogTag', 'Product', 'Items', 'ProductTag']
           - label: 'Order'
             children: ['Order', 'Delivery', 'PaymentMethod', 'ProductTag']
           - label: 'User'
