@@ -46,6 +46,7 @@ const Product = ({
     vendor_code,
     match,
     description,
+    tags,
 }) => {
     const [tabIndex, setTabIndex] = useState(0);
     const [error, setError] = useState(null);
@@ -323,13 +324,21 @@ const Product = ({
                 </div>
                 <div className="product__row">
                     <div className="product__options">
-                        <h3 className="product-element__label">Характеристики товара</h3>
-                        <ul className="product-element__datalist">
-                            <li className="product-element__datalist--data">Бренд:</li>
-                            <li className="product-element__datalist--data__last">
-                                <Link to="/duhi-armand-basi/">Armand Basi</Link>
-                            </li>
-                        </ul>
+                        {tags.length ? (
+                            <Fragment>
+                                <h3 className="product-element__label">Характеристики товара</h3>
+                                <ul className="product-element__datalist">
+                                    {tags.map(({ name, value, url }) => (
+                                        <Fragment>
+                                            <li className="product-element__datalist--data">{name}:</li>
+                                            <li className="product-element__datalist--data__last">
+                                                {url ? <Link to={url}>{value}</Link> : value}
+                                            </li>
+                                        </Fragment>
+                                    ))}
+                                </ul>
+                            </Fragment>
+                        ) : null}
                         {description && (
                             <div>
                                 <h3 className="product-element__label--thick-inner">Описание товара</h3>
@@ -447,6 +456,7 @@ Product.propTypes = {
     name_translit: PropTypes.string,
     vendor_code: PropTypes.string,
     comments: PropTypes.arrayOf(PropTypes.object),
+    tags: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default Product;

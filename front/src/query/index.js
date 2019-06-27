@@ -53,6 +53,10 @@ export const GET_PRODUCT = gql`
                     }
                 }
             }
+            tags {
+                name
+                value
+            }
         }
     }
 `;
