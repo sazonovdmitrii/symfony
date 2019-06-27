@@ -15,9 +15,9 @@ const styles = {
 };
 const cx = classnames.bind(styles);
 
-const Select = ({ label, active, items }) => {
+const Select = ({ label, active, items: itemsProp }) => {
     const ref = useRef();
-
+    const [items, setItems] = useState(itemsProp);
     const [openList, setList] = useState(false);
     const [selectedValue, setValue] = useState(active);
     const wrapperClassName = cx(styles.wrapper, {
@@ -27,6 +27,12 @@ const Select = ({ label, active, items }) => {
         activeLabel: openList || selectedValue.id,
     });
     useOnClickOutside(ref, () => setList(false));
+    const handleAutocomplite = event => {
+        const { value } = event.target;
+        if (!value) setItems(itemsProp);
+
+        setItems(itemsProp.filter(item => item.name.indexOf(value) >= 0));
+    };
 
     return (
         <div className={wrapperClassName} ref={ref}>
@@ -36,7 +42,12 @@ const Select = ({ label, active, items }) => {
                 <img src={downIcon} />
             </div>
             <div className="filtertiles__dropmenu">
-                <input className="filtertiles__dropmenu-search" placeholder="Найти" />
+                <input
+                    type="text"
+                    className="filtertiles__dropmenu-search"
+                    placeholder="Найти"
+                    onChange={handleAutocomplite}
+                />
                 <ul data-render="taglist" className="filtertiles__dropmenu_list list">
                     {items.map(item => {
                         const itemClassName = cx('filtertiles__dropmenu_item', {
@@ -46,7 +57,7 @@ const Select = ({ label, active, items }) => {
                         return (
                             <li key={item.id} className="filtertiles__dropmenu_item active-0">
                                 <Link to={item.url} className="js-filter">
-                                    {item.value}
+                                    {item.name}
                                 </Link>
                             </li>
                         );

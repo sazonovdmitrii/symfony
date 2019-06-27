@@ -10,28 +10,15 @@ import Pagination from 'components/Pagination';
 import Filters from 'components/Filters';
 import Products from 'components/Products';
 
-const Catalog = ({ match, slug, limit, name, count, description, subtitle, filters = [] }) => {
-    const isPage = match.url.match(/(\/page-)(?<index>\d+)/);
-    let offset = 0;
-    let currentPage = 1;
+const Catalog = ({ match, slug, limit, name, count, description, subtitle, tags = [] }) => {
+    const {
+        groups: { index },
+    } = match.url.match(/(\/page-)(?<index>\d+)/) || { groups: { index: null } };
+    const maxPages = parseInt(count / limit, 10) + 1;
+    const currentPage = index ? parseInt(index, 10) : 1;
+    const offset = currentPage > 1 ? (currentPage - 1) * limit : 0;
+    const redirectToIndexPage = count < offset || parseInt(index, 10) === 0 || parseInt(index, 10) === 1;
 
-    if (isPage) {
-        const {
-            groups: { index },
-        } = isPage;
-
-        currentPage = parseInt(index, 10);
-        offset = (currentPage - 1) * limit;
-    }
-
-    let maxPages = count / limit;
-    const isTest = maxPages.toString().match(/\./);
-    const redirectToIndexPage = count < offset;
-
-    maxPages = parseInt(maxPages, 10);
-    if (isTest) {
-        maxPages += 1;
-    }
     const pagination = count > limit && (
         <div className="catalog__pager">
             <div className="catalog__search-counts">Мы нашли {count} товара</div>
@@ -66,8 +53,7 @@ const Catalog = ({ match, slug, limit, name, count, description, subtitle, filte
                         </Fragment>
                     )}
                 </div>
-                {filters.length ? <Filters items={filters} /> : null}
-                <Filters items={[...new Array(10).keys()]} />
+                {tags.length ? <Filters items={tags} /> : null}
                 {pagination}
                 <Products slug={slug} limit={limit} offset={offset} count={count} />
                 {pagination}
@@ -91,7 +77,7 @@ Catalog.propTypes = {
     count: PropTypes.number.isRequired,
     description: PropTypes.string,
     subtitle: PropTypes.string,
-    filters: PropTypes.string,
+    tags: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default Catalog;

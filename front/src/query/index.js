@@ -13,6 +13,15 @@ export const GET_CATALOG = gql`
         catalog(slug: $slug) {
             name
             count
+            tags {
+                id
+                name
+                childrens {
+                    id
+                    name
+                    count
+                }
+            }
         }
     }
 `;
@@ -97,7 +106,7 @@ export const GET_ADDRESSES = gql`
 `;
 
 export const GET_BASKET = gql`
-    {
+    query Basket {
         basket {
             id
         }

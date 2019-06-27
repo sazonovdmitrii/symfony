@@ -6,6 +6,10 @@ import { withQuery } from 'utils';
 
 import Loader from 'components/Loader';
 
+const Component = loadable(() => import('./Catalog'), {
+    fallback: Loader,
+});
+
 export default props => {
     const { match, limit } = props;
 
@@ -22,15 +26,7 @@ export default props => {
         .filter(Boolean)
         .join('/');
 
-    return withQuery({ query: GET_CATALOG, variables: { slug } })(props => {
-        if (props) {
-            const Component = loadable(() => import('./Catalog'), {
-                fallback: Loader,
-            });
-
-            return <Component {...props} match={match} slug={slug} />;
-        }
-
-        return <Loader />;
-    });
+    return withQuery({ query: GET_CATALOG, variables: { slug } })(props => (
+        <Component {...props} match={match} slug={slug} />
+    ));
 };

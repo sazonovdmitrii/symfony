@@ -1,5 +1,7 @@
 import React, { Component, Fragment } from 'react';
 
+import { seoHead } from 'utils';
+
 import Input from 'components/Input';
 import Products from 'components/Products';
 
@@ -11,8 +13,11 @@ export default class Sale extends Component {
     }
 
     render() {
+        const { location } = this.props;
+
         return (
             <Fragment>
+                {seoHead('sale', { name: 'Lorem', url: location.pathname })}
                 <div className="sale-info">
                     <img className="sale-info__image" src="https://placehold.it/503x290" alt="" />
                     <div className="sale-info__body rte">
