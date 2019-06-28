@@ -21,10 +21,17 @@ class TagManager extends AbstractController
     public function getFilters()
     {
         $method = 'get' . $this->getEntityType() . 'Filters';
-        if (method_exists($this, $method)) {
-            return $this->$method();
+        $cacheKey = $method . $this->getEntity()->getId();
+
+        $cacheItem = json_decode($this->redis->get($cacheKey));
+        if(!$cacheItem) {
+            if (method_exists($this, $method)) {
+                $cacheItem = $this->$method();
+                $this->redis->set($cacheKey, json_encode($cacheItem));
+                return $cacheItem;
+            }
         }
-        return [];
+        return $cacheItem;
     }
 
     public function getCatalogFilters()
@@ -88,7 +95,7 @@ class TagManager extends AbstractController
                 ];
             }
         }
-        
+
         return $tags;
     }
 }
