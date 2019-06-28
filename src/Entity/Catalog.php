@@ -68,6 +68,8 @@ class Catalog
      */
     private $catalogTags;
 
+    private $parsed;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -274,5 +276,16 @@ class Catalog
         }
 
         return $this;
+    }
+
+    public function setParsed($parsed)
+    {
+        $this->parsed = $parsed;
+        return $this;
+    }
+
+    public function getParsed()
+    {
+        return $this->parsed;
     }
 }

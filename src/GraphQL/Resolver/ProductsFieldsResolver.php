@@ -4,6 +4,7 @@ use Doctrine\ORM\EntityManager;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use App\Service\UrlParseService;
 
 class ProductsFieldsResolver implements ResolverInterface, AliasedInterface {
 
@@ -14,9 +15,12 @@ class ProductsFieldsResolver implements ResolverInterface, AliasedInterface {
      *
      * @param EntityManager $em
      */
-    public function __construct(EntityManager $em)
-    {
+    public function __construct(
+        EntityManager $em,
+        UrlParseService $urlParseService
+    ) {
         $this->em = $em;
+        $this->urlParseService = $urlParseService;
     }
 
     /**
@@ -27,12 +31,15 @@ class ProductsFieldsResolver implements ResolverInterface, AliasedInterface {
     {
 //        var_dump($args);
 //        die();
+        $parsed = $this->urlParseService->parse($args['slug']);
+
         $catalogUrl = $this->em
             ->getRepository('App:CatalogUrl')
-            ->findByUrl($args['slug']);
+            ->findByUrl($parsed['path']);
 
         if($catalogUrl) {
             $catalog = $catalogUrl->getEntity();
+            $catalog->setParsed($parsed);
             return $catalog;
         }
 

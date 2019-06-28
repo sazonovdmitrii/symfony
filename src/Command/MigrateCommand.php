@@ -111,6 +111,14 @@ class MigrateCommand extends ContainerAwareCommand
         foreach($allTags as $tag) {
             $leftKey = $tag['left_key'];
             $rightKey = $tag['right_key'];
+
+
+            $tagSlug = $this->_lpDoctrine->getConnection()->prepare(
+                "SELECT * FROM translations WHERE eid=" . $tag['id'] . " AND type=35"
+            );
+            $tagSlug->execute();
+            $tagSlug = $tagSlug->fetch();
+
             $tagsItems = $this->_lpDoctrine->getConnection()->prepare("
                 SELECT tr.value, t.id, t.created FROM tags t JOIN translations tr ON tr.eid=t.id AND tr.type = 15 WHERE t.left_key > " . $leftKey . " AND t.level = 2 AND t.right_key < " . $rightKey . " AND t.id <> " . $rightKey . " AND t.id <> " . $leftKey
             );
@@ -124,12 +132,14 @@ class MigrateCommand extends ContainerAwareCommand
                         name,
                         created,
                         type,
+                        slug,
                         visible
                     ) VALUES(
                         " . $tag['id'] . ", 
                         '" . $tag['value'] . "',
                          '" . $tag['created'] . "',
                         'enum',
+                        '" . $tagSlug['value'] . "',
                         'Yes'
                     )
                 "
@@ -139,6 +149,11 @@ class MigrateCommand extends ContainerAwareCommand
                 if(in_array($allTagsItem['id'], $allTagsItemsIds)) {
                     $allTagsItem['id'] += 10000;
                 }
+                $tagSlug = $this->_lpDoctrine->getConnection()->prepare(
+                    "SELECT * FROM translations WHERE eid=" . $allTagsItem['id'] . " AND type=35"
+                );
+                $tagSlug->execute();
+                $tagSlug = $tagSlug->fetch();
                 $allTagsItemsIds[] = $allTagsItem['id'];
                         $doctrine->exec(
                             "
@@ -146,11 +161,13 @@ class MigrateCommand extends ContainerAwareCommand
                                     id,                          
                                     entity_id_id,
                                     name,
+                                    slug,
                                     created                        
                                 ) VALUES(
                                     " . $allTagsItem['id'] . ", 
                                     '" . $tag['id'] . "',
                                     '" . str_replace("'", "", $allTagsItem['value']) . "',
+                                    '" . $tagSlug['value'] . "',
                                      '" . $allTagsItem['created'] . "'                        
                                 )
                             "

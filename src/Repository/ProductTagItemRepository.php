@@ -19,6 +19,15 @@ class ProductTagItemRepository extends ServiceEntityRepository
         parent::__construct($registry, ProductTagItem::class);
     }
 
+    public function findBySlug(string $slug)
+    {
+        $tag = $this->findBy( ['slug' => $slug] );
+        if(count($tag)) {
+            return $tag[0];
+        }
+        return false;
+    }
+
     // /**
     //  * @return ProductTagItem[] Returns an array of ProductTagItem objects
     //  */

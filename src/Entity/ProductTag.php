@@ -48,6 +48,11 @@ class ProductTag
      */
     private $visible;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $slug;
+
     public function __construct()
     {
         $this->entity_id = new ArrayCollection();
@@ -168,5 +173,17 @@ class ProductTag
     public function __toString()
     {
         return self::class;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
     }
 }
