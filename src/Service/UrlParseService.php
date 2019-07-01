@@ -1,6 +1,7 @@
 <?php
 namespace App\Service;
 use App\Entity\ProductTagItem;
+use Overblog\GraphQLBundle\Definition\Argument;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManager;
 use App\Entity\ProductTag;
@@ -15,8 +16,9 @@ class UrlParseService extends AbstractController
         $this->em = $em;
     }
 
-    function parse(string $url)
+    function parse(Argument $args)
     {
+        $url = isset($args['slug']) ? $args['slug'] : '';
         $urlComponents = explode('/', $url);
         $tagsLib = [
             'path' => $url,
@@ -46,6 +48,21 @@ class UrlParseService extends AbstractController
                     'tag' => $tag,
                     'value' => $value
                 ];
+            }
+        }
+
+        if(isset($args['tags'])) {
+            foreach($args['tags'] as $filterTagId) {
+                $value = $this->em
+                    ->getRepository(ProductTagItem::class)
+                    ->find($filterTagId);
+                if($value) {
+                    $tag = $value->getEntityId();
+                    $tagsLib['filters'][] = [
+                        'tag' => $tag,
+                        'value' => $value
+                    ];
+                }
             }
         }
         return $tagsLib;

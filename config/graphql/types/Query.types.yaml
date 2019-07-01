@@ -39,6 +39,9 @@ Query:
             products:
               description: 'Products'
               type: "String"
+            tags:
+              description: 'Tags'
+              type: "[Int]"
         resolve: "@=resolver('Catalog', [args])"
       addresses:
         type: "Addresses"

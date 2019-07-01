@@ -29,10 +29,7 @@ class ProductsFieldsResolver implements ResolverInterface, AliasedInterface {
      */
     public function resolve(Argument $args)
     {
-//        var_dump($args);
-//        die();
-        $parsed = $this->urlParseService->parse($args['slug']);
-
+        $parsed = $this->urlParseService->parse($args);
         $catalogUrl = $this->em
             ->getRepository('App:CatalogUrl')
             ->findByUrl($parsed['path']);

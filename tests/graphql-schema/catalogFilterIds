@@ -1,0 +1,25 @@
+{
+  catalog(slug: "parfumeriya-dlja-zhenshhin", tags: [3921, 3920, 1298]) {
+    id
+    name
+    count
+    products(limit: 40, offset:0) {
+      edges {
+        node {
+          id
+          name
+          url
+        }
+      }
+    }
+    tags {
+      id
+      name
+      childrens{
+        id
+        name
+        count
+      }
+    }
+  }
+}
