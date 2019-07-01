@@ -1,16 +1,18 @@
 <?php
 namespace App\Service;
-use Dompdf\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Redis;
+use Doctrine\ORM\EntityManager;
 
 class BasketService extends AbstractController
 {
     private $authKey;
 
     public function __construct(
+        EntityManager $em,
         Redis $redis
     ) {
+        $this->em = $em;
         $this->redis = $redis;
     }
 
@@ -29,19 +31,46 @@ class BasketService extends AbstractController
     public function add(int $itemId)
     {
         if($authKey = $this->getAuthKey()) {
-            $addingKey = 'basket::' . $this->getAuthKey();
-            $this->redis->set($addingKey, $itemId);
+            $key = 'basket::' . $this->getAuthKey();
+            $oldBasket = $this->redis->get($key);
+            if($oldBasket) {
+                $basket = json_decode($oldBasket, true);
+                if(!isset($basket[$itemId])) {
+                    $basket[$itemId] = [
+                        'item_id' => $itemId,
+                        'qty' => 1
+                    ];
+                } else {
+                    $basket[$itemId]['qty'] += 1;
+                }
+            }
+            $this->redis->set($key, json_encode($basket));
             return $itemId;
         }
-        throw new Exception('No Auth key founded');
+        return 0;
     }
 
     public function getAll()
     {
         if($authKey = $this->getAuthKey()) {
-            $addingKey = 'basket::' . $this->getAuthKey();
-            return $this->redis->get($addingKey);
+            $key = 'basket::' . $this->getAuthKey();
+            $basket = json_decode($this->redis->get($key), true);
+            foreach($basket as $basketItem) {
+                $productItem = $this->em
+                    ->getRepository('App:ProductItem')
+                    ->find($basketItem['item_id']);
+                if($productItem) {
+                    $basket[$basketItem['item_id']] = array_merge(
+                        $basketItem,
+                        [
+                            'name' => $productItem->getName(),
+                            'product_name' => $productItem->getEntity()->getName()
+                        ]
+                    );
+                }
+            }
+            return $basket;
         }
-        throw new Exception('No Auth key founded');
+        return 0;
     }
 }

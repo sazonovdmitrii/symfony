@@ -28,7 +28,7 @@ class BasketResolver extends AuthAlias
             ->setAuthKey($authKey)
             ->getAll();
         return [
-            'id' => $basket
+            'products' => $basket
         ];
     }
 

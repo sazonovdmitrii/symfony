@@ -1,0 +1,13 @@
+mutation ($input: UserInput!) {
+  auth(input: $input) {
+    id,
+    hash
+  }
+}
+
+{
+  "input": {
+    "email": "ai@robo.ru",
+    "password": "fa8a150a09"
+  }
+}
