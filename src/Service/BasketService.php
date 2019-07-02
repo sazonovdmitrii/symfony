@@ -45,9 +45,43 @@ class BasketService extends AbstractController
                 }
             }
             $this->redis->set($key, json_encode($basket));
-            return $itemId;
+            return $basket;
         }
-        return 0;
+        return [
+            'products' => null
+        ];
+    }
+
+    public function remove(int $itemId)
+    {
+        if($authKey = $this->getAuthKey()) {
+            $key       = 'basket::' . $this->getAuthKey();
+            $basket = json_decode($this->redis->get($key), true);
+            if(isset($basket[$itemId])) {
+                unset($basket[$itemId]);
+            }
+            $this->redis->set($key, json_encode($basket));
+            return $basket;
+        }
+        return [
+            'products' => null
+        ];
+    }
+
+    public function update(int $itemId, int $qty)
+    {
+        if($authKey = $this->getAuthKey()) {
+            $key       = 'basket::' . $this->getAuthKey();
+            $basket = json_decode($this->redis->get($key), true);
+            if(isset($basket[$itemId])) {
+                $basket[$itemId]['qty'] = $qty;
+            }
+            $this->redis->set($key, json_encode($basket));
+            return $basket;
+        }
+        return [
+            'products' => null
+        ];
     }
 
     public function getAll()
@@ -71,6 +105,8 @@ class BasketService extends AbstractController
             }
             return $basket;
         }
-        return 0;
+        return [
+            'products' => null
+        ];
     }
 }

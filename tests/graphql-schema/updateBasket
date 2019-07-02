@@ -1,0 +1,14 @@
+mutation ($input: UpdateBasketInput!) {
+  updateBasket(input: $input) {
+    products {
+      item_id
+    }
+  }
+}
+
+{
+  "input": {
+    "item_id": 24,
+    "qty":58
+  }
+}

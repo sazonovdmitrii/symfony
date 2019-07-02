@@ -14,3 +14,15 @@ Mutation:
         args:
           input:
             type: AddBasketInput!
+      removeBasket:
+        type: Basket!
+        resolve: '@=mutation("App\\GraphQL\\Mutation\\BasketMutation::remove", [args])'
+        args:
+          input:
+            type: AddBasketInput!
+      updateBasket:
+        type: Basket!
+        resolve: '@=mutation("App\\GraphQL\\Mutation\\BasketMutation::update", [args])'
+        args:
+          input:
+            type: UpdateBasketInput!

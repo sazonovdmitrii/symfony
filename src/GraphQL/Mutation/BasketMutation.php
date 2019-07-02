@@ -3,6 +3,7 @@ namespace App\GraphQL\Mutation;
 
 use App\Service\BasketService;
 use App\GraphQL\Input\AddBasketInput;
+use App\GraphQL\Input\UpdateBasketInput;
 use App\Service\AuthenticatorService;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Doctrine\ORM\EntityManager;
@@ -36,14 +37,36 @@ class BasketMutation extends AuthMutation
                 ->getRepository('App:ProductItem')
                 ->find($input->item_id);
 
-            $authKey = ($this->getUser()) ? $this->getUser()->getId() : $this->getSessionKey();
-
-            $this->basketService
-                ->setAuthKey($authKey)
+            return $this->basketService
+                ->setAuthKey($this->_authKey())
                 ->add($productItem->getId());
         }
-        return [
-            'id' => $input->item_id
-        ];
+    }
+
+    public function remove(Argument $args)
+    {
+        $input = new AddBasketInput($args);
+
+        if($input->item_id) {
+            return $this->basketService
+                ->setAuthKey($this->_authKey())
+                ->remove($input->item_id);
+        }
+    }
+
+    public function update(Argument $args)
+    {
+        $input = new UpdateBasketInput($args);
+
+        if($input->item_id) {
+            return $this->basketService
+                ->setAuthKey($this->_authKey())
+                ->update($input->item_id, $input->qty);
+        }
+    }
+
+    private function _authKey()
+    {
+        return ($this->getUser()) ? $this->getUser()->getId() : $this->getSessionKey();
     }
 }
