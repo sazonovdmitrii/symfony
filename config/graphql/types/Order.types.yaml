@@ -1,0 +1,8 @@
+Order:
+  type: object
+  config:
+    description: "Order"
+    fields:
+      id:
+        type: "Int"
+        description: "Order Id."

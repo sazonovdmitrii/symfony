@@ -26,3 +26,6 @@ Mutation:
         args:
           input:
             type: UpdateBasketInput!
+      order:
+        type: Order!
+        resolve: '@=mutation("App\\GraphQL\\Mutation\\OrderMutation::create", [args])'

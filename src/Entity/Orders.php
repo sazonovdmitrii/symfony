@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -40,6 +42,17 @@ class Orders
      * @ORM\ManyToOne(targetEntity="App\Entity\Address", inversedBy="orders")
      */
     private $address_id;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\OrderItem", mappedBy="entity")
+     */
+    private $orderItems;
+
+    public function __construct()
+    {
+        $this->orderItems = new ArrayCollection();
+        $this->created = new \DateTime('now');
+    }
 
     public function getId(): ?int
     {
@@ -102,6 +115,37 @@ class Orders
     public function setAddressId(?Address $address_id): self
     {
         $this->address_id = $address_id;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|OrderItem[]
+     */
+    public function getOrderItems(): Collection
+    {
+        return $this->orderItems;
+    }
+
+    public function addOrderItem(OrderItem $orderItem): self
+    {
+        if (!$this->orderItems->contains($orderItem)) {
+            $this->orderItems[] = $orderItem;
+            $orderItem->setEntity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderItem(OrderItem $orderItem): self
+    {
+        if ($this->orderItems->contains($orderItem)) {
+            $this->orderItems->removeElement($orderItem);
+            // set the owning side to null (unless already changed)
+            if ($orderItem->getEntity() === $this) {
+                $orderItem->setEntity(null);
+            }
+        }
 
         return $this;
     }

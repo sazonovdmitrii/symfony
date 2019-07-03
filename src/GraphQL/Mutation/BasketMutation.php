@@ -38,7 +38,7 @@ class BasketMutation extends AuthMutation
                 ->find($input->item_id);
 
             return $this->basketService
-                ->setAuthKey($this->_authKey())
+                ->setAuthKey($this->getAuthKey())
                 ->add($productItem->getId());
         }
     }
@@ -49,7 +49,7 @@ class BasketMutation extends AuthMutation
 
         if($input->item_id) {
             return $this->basketService
-                ->setAuthKey($this->_authKey())
+                ->setAuthKey($this->getAuthKey())
                 ->remove($input->item_id);
         }
     }
@@ -60,13 +60,8 @@ class BasketMutation extends AuthMutation
 
         if($input->item_id) {
             return $this->basketService
-                ->setAuthKey($this->_authKey())
+                ->setAuthKey($this->getAuthKey())
                 ->update($input->item_id, $input->qty);
         }
-    }
-
-    private function _authKey()
-    {
-        return ($this->getUser()) ? $this->getUser()->getId() : $this->getSessionKey();
     }
 }

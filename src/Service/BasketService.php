@@ -43,8 +43,16 @@ class BasketService extends AbstractController
                 } else {
                     $basket[$itemId]['qty'] += 1;
                 }
+            } else {
+                $basket[$itemId] = [
+                    'item_id' => $itemId,
+                    'qty' => 1
+                ];
             }
-            $this->redis->set($key, json_encode($basket));
+
+            if($basket) {
+                $this->redis->set($key, json_encode($basket));
+            }
             return $basket;
         }
         return [
@@ -89,24 +97,34 @@ class BasketService extends AbstractController
         if($authKey = $this->getAuthKey()) {
             $key = 'basket::' . $this->getAuthKey();
             $basket = json_decode($this->redis->get($key), true);
-            foreach($basket as $basketItem) {
-                $productItem = $this->em
-                    ->getRepository('App:ProductItem')
-                    ->find($basketItem['item_id']);
-                if($productItem) {
-                    $basket[$basketItem['item_id']] = array_merge(
-                        $basketItem,
-                        [
-                            'name' => $productItem->getName(),
-                            'product_name' => $productItem->getEntity()->getName()
-                        ]
-                    );
+            if($basket) {
+                foreach($basket as $basketItem) {
+                    $productItem = $this->em
+                        ->getRepository('App:ProductItem')
+                        ->find($basketItem['item_id']);
+                    if($productItem) {
+                        $basket[$basketItem['item_id']] = array_merge(
+                            $basketItem,
+                            [
+                                'name' => $productItem->getName(),
+                                'product_name' => $productItem->getEntity()->getName()
+                            ]
+                        );
+                    }
                 }
+                return $basket;
             }
-            return $basket;
         }
         return [
             'products' => null
         ];
+    }
+
+    public function delete()
+    {
+        if($authKey = $this->getAuthKey()) {
+            $key = 'basket::' . $this->getAuthKey();
+            $this->redis->delete($key);
+        }
     }
 }
