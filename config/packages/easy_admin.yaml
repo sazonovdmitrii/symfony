@@ -83,6 +83,7 @@ easy_admin:
                     - { property: 'producttagitem', type_options: { block_name: 'products_tags_items' }}
         Order:
             class: App\Entity\Orders
+            controller: App\Controller\Admin\OrderController
             list:
                 fields: ['id', 'name', 'visible']
         Delivery:
