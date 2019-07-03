@@ -16,7 +16,6 @@ class BasketService extends AbstractController
         $this->redis = $redis;
     }
 
-
     public function setAuthKey(string $authKey)
     {
         $this->authKey = $authKey;

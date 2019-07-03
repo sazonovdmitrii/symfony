@@ -1,0 +1,15 @@
+{
+  users_orders {
+    orders {
+      id, 
+      orderItems {
+        id,
+        qty,
+        item {
+          id,
+          name
+        }
+      }
+    }
+  }
+}

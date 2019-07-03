@@ -1,0 +1,32 @@
+UsersOrders:
+  type: object
+  config:
+    description: "Users Orders"
+    fields:
+      orders:
+       type: "[UserOrder]"
+UserOrder:
+  type: object
+  config:
+    description: "User Order"
+    fields:
+      id:
+        type: "Int"
+        description: "Order Id"
+      orderItems:
+        type: "[OrderItem]"
+        description: "Order Item Id."
+OrderItem:
+  type: object
+  config:
+    description: "Order Item"
+    fields:
+      id:
+        type: "Int"
+        description: "Order Item Id"
+      qty:
+        type: "Int"
+        description: "Order Item Qty"
+      item:
+        type: "ProductItem"
+        description: "Order Item Product Item"

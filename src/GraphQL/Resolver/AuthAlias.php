@@ -57,6 +57,11 @@ class AuthAlias implements ResolverInterface, AliasedInterface {
         return false;
     }
 
+    public function getAuthKey()
+    {
+        return ($this->getUser()) ? $this->getUser()->getId() : $this->getSessionKey();
+    }
+
     public static function getAliases()
     {
         return [
