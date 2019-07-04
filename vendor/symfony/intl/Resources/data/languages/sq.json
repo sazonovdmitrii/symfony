@@ -1,5 +1,5 @@
 {
-    "Version": "2.1.43.50",
+    "Version": "2.1.48.42",
     "Names": {
         "aa": "afarisht",
         "ab": "abkazisht",
@@ -47,6 +47,7 @@
         "bug": "buginezisht",
         "byn": "blinisht",
         "ca": "katalonisht",
+        "ccp": "çakmaisht",
         "ce": "çeçenisht",
         "ceb": "sebuanisht",
         "cgg": "çigisht",
@@ -237,7 +238,6 @@
         "ms": "malajisht",
         "mt": "maltisht",
         "mua": "mundangisht",
-        "mul": "gjuhë të shumëfishta",
         "mus": "krikisht",
         "mwl": "mirandisht",
         "my": "birmanisht",
@@ -371,7 +371,6 @@
         "ug": "ujgurisht",
         "uk": "ukrainisht",
         "umb": "umbunduisht",
-        "und": "E panjohur",
         "ur": "urduisht",
         "uz": "uzbekisht",
         "vai": "vaisht",
@@ -399,7 +398,6 @@
         "zh_Hant": "kinezishte tradicionale",
         "zu": "zuluisht",
         "zun": "zunisht",
-        "zxx": "nuk ka përmbajtje gjuhësore",
         "zza": "zazaisht"
     }
 }

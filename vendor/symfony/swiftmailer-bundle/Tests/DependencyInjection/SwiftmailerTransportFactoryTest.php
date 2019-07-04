@@ -162,6 +162,29 @@ class SwiftmailerTransportFactoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The Swiftmailer URL "smtp://localhost:25&auth_mode=cra-md5" is not valid.
+     */
+    public function testCreateTransportWithBadURLFormat()
+    {
+        $options = [
+            'url' => 'smtp://localhost:25&auth_mode=cra-md5',
+            'transport' => 'smtp',
+            'username' => null,
+            'password' => null,
+            'host' => 'localhost',
+            'port' => null,
+            'timeout' => 30,
+            'source_ip' => null,
+            'local_domain' => null,
+            'encryption' => null,
+            'auth_mode' => null,
+        ];
+
+        SwiftmailerTransportFactory::createTransport($options, null, new \Swift_Events_SimpleEventDispatcher());
+    }
+
+    /**
      * @dataProvider optionsAndResultExpected
      */
     public function testResolveOptions($options, $expected)

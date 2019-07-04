@@ -11,13 +11,17 @@
 
 namespace Symfony\Component\Routing\Generator\Dumper;
 
-use Symfony\Component\Routing\Matcher\Dumper\PhpMatcherDumper;
+@trigger_error(sprintf('The "%s" class is deprecated since Symfony 4.3, use "CompiledUrlGeneratorDumper" instead.', PhpGeneratorDumper::class), E_USER_DEPRECATED);
+
+use Symfony\Component\Routing\Matcher\Dumper\CompiledUrlMatcherDumper;
 
 /**
  * PhpGeneratorDumper creates a PHP class able to generate URLs for a given set of routes.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Tobias Schultze <http://tobion.de>
+ *
+ * @deprecated since Symfony 4.3, use CompiledUrlGeneratorDumper instead.
  */
 class PhpGeneratorDumper extends GeneratorDumper
 {
@@ -92,7 +96,7 @@ EOF;
             $properties[] = $compiledRoute->getHostTokens();
             $properties[] = $route->getSchemes();
 
-            $routes .= sprintf("        '%s' => %s,\n", $name, PhpMatcherDumper::export($properties));
+            $routes .= sprintf("        '%s' => %s,\n", $name, CompiledUrlMatcherDumper::export($properties));
         }
         $routes .= '    ]';
 
@@ -113,10 +117,17 @@ EOF;
             ?? $this->context->getParameter('_locale')
             ?: $this->defaultLocale;
 
-        if (null !== $locale && (self::$declaredRoutes[$name.'.'.$locale][1]['_canonical_route'] ?? null) === $name && null !== $name) {
-            unset($parameters['_locale']);
-            $name .= '.'.$locale;
-        } elseif (!isset(self::$declaredRoutes[$name])) {
+        if (null !== $locale && null !== $name) {
+            do {
+                if ((self::$declaredRoutes[$name.'.'.$locale][1]['_canonical_route'] ?? null) === $name) {
+                    unset($parameters['_locale']);
+                    $name .= '.'.$locale;
+                    break;
+                }
+            } while (false !== $locale = strstr($locale, '_', true));
+        }
+
+        if (!isset(self::$declaredRoutes[$name])) {
             throw new RouteNotFoundException(sprintf('Unable to generate a URL for the named route "%s" as such route does not exist.', $name));
         }
 

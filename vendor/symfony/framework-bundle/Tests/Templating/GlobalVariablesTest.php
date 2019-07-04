@@ -15,6 +15,9 @@ use Symfony\Bundle\FrameworkBundle\Templating\GlobalVariables;
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 use Symfony\Component\DependencyInjection\Container;
 
+/**
+ * @group legacy
+ */
 class GlobalVariablesTest extends TestCase
 {
     private $container;
@@ -47,7 +50,7 @@ class GlobalVariablesTest extends TestCase
         $tokenStorage
             ->expects($this->once())
             ->method('getToken')
-            ->will($this->returnValue('token'));
+            ->willReturn('token');
 
         $this->assertSame('token', $this->globals->getToken());
     }
@@ -77,12 +80,12 @@ class GlobalVariablesTest extends TestCase
         $token
             ->expects($this->once())
             ->method('getUser')
-            ->will($this->returnValue($user));
+            ->willReturn($user);
 
         $tokenStorage
             ->expects($this->once())
             ->method('getToken')
-            ->will($this->returnValue($token));
+            ->willReturn($token);
 
         $this->assertSame($expectedUser, $this->globals->getUser());
     }

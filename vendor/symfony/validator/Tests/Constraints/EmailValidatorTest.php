@@ -63,7 +63,7 @@ class EmailValidatorTest extends ConstraintValidatorTestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
+     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedValueException
      */
     public function testExpectsStringCompatibleType()
     {
@@ -91,6 +91,28 @@ class EmailValidatorTest extends ConstraintValidatorTestCase
             ['example@example.co..uk'],
             ['example@-example.com'],
             [sprintf('example@%s.com', str_repeat('a', 64))],
+        ];
+    }
+
+    /**
+     * @dataProvider getValidEmailsWithWhitespaces
+     */
+    public function testValidNormalizedEmails($email)
+    {
+        $this->validator->validate($email, new Email(['normalizer' => 'trim']));
+
+        $this->assertNoViolation();
+    }
+
+    public function getValidEmailsWithWhitespaces()
+    {
+        return [
+            ["\x20example@example.co.uk\x20"],
+            ["\x09\x09example@example.co..uk\x09\x09"],
+            ["\x0A{}~!@!@£$%%^&*().!@£$%^&*()\x0A"],
+            ["\x0D\x0Dexample@example.co..uk\x0D\x0D"],
+            ["\x00example@-example.com"],
+            ["example@example.com\x0B\x0B"],
         ];
     }
 
@@ -146,12 +168,10 @@ class EmailValidatorTest extends ConstraintValidatorTestCase
      */
     public function testInvalidHtml5Emails($email)
     {
-        $constraint = new Email(
-            [
-                'message' => 'myMessage',
-                'mode' => Email::VALIDATION_MODE_HTML5,
-            ]
-        );
+        $constraint = new Email([
+            'message' => 'myMessage',
+            'mode' => Email::VALIDATION_MODE_HTML5,
+        ]);
 
         $this->validator->validate($email, $constraint);
 
@@ -317,6 +337,7 @@ class EmailValidatorTest extends ConstraintValidatorTestCase
     /**
      * @dataProvider getDnsChecks
      * @requires function Symfony\Bridge\PhpUnit\DnsMock::withMockedHosts
+     * @group legacy
      */
     public function testDnsChecks($type, $violation)
     {
@@ -353,6 +374,7 @@ class EmailValidatorTest extends ConstraintValidatorTestCase
 
     /**
      * @requires function Symfony\Bridge\PhpUnit\DnsMock::withMockedHosts
+     * @group legacy
      */
     public function testHostnameIsProperlyParsed()
     {
@@ -368,6 +390,7 @@ class EmailValidatorTest extends ConstraintValidatorTestCase
 
     /**
      * @dataProvider provideCheckTypes
+     * @group legacy
      */
     public function testEmptyHostIsNotValid($checkType, $violation)
     {

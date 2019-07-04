@@ -1,6 +1,19 @@
 CHANGELOG
 =========
 
+4.3.0
+-----
+
+ * added `ConsoleCommandProcessor`: monolog processor that adds command name and arguments
+ * added `RouteProcessor`: monolog processor that adds route name, controller::action and route params
+
+4.2.0
+-----
+
+ * The methods `DebugProcessor::getLogs()`, `DebugProcessor::countErrors()`, `Logger::getLogs()`
+   and `Logger::countErrors()` will have a new `$request` argument in version 5.0, not defining
+   it is deprecated
+
 4.1.0
 -----
 

@@ -17,6 +17,7 @@ use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass;
 use Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 class ResolveInstanceofConditionalsPassTest extends TestCase
 {
@@ -270,7 +271,30 @@ class ResolveInstanceofConditionalsPassTest extends TestCase
         $this->assertTrue($abstract->isAbstract());
     }
 
-    public function testBindings()
+    public function testProcessForAutoconfiguredBindings()
+    {
+        $container = new ContainerBuilder();
+
+        $container->registerForAutoconfiguration(self::class)
+            ->setBindings([
+                '$foo' => new BoundArgument(234, false),
+                parent::class => new BoundArgument(new Reference('foo'), false),
+            ]);
+
+        $container->register('foo', self::class)
+            ->setAutoconfigured(true)
+            ->setBindings(['$foo' => new BoundArgument(123, false)]);
+
+        (new ResolveInstanceofConditionalsPass())->process($container);
+
+        $expected = [
+            '$foo' => new BoundArgument(123, false),
+            parent::class => new BoundArgument(new Reference('foo'), false),
+        ];
+        $this->assertEquals($expected, $container->findDefinition('foo')->getBindings());
+    }
+
+    public function testBindingsOnInstanceofConditionals()
     {
         $container = new ContainerBuilder();
         $def = $container->register('foo', self::class)->setBindings(['$toto' => 123]);
@@ -282,5 +306,27 @@ class ResolveInstanceofConditionalsPassTest extends TestCase
         $this->assertSame(['$toto'], array_keys($bindings));
         $this->assertInstanceOf(BoundArgument::class, $bindings['$toto']);
         $this->assertSame(123, $bindings['$toto']->getValues()[0]);
+    }
+
+    public function testDecoratorsAreNotAutomaticallyTagged()
+    {
+        $container = new ContainerBuilder();
+
+        $decorator = $container->register('decorator', self::class);
+        $decorator->setDecoratedService('decorated');
+        $decorator->setInstanceofConditionals([
+            parent::class => (new ChildDefinition(''))->addTag('tag'),
+        ]);
+        $decorator->setAutoconfigured(true);
+        $decorator->addTag('manual');
+
+        $container->registerForAutoconfiguration(parent::class)
+            ->addTag('tag')
+        ;
+
+        (new ResolveInstanceofConditionalsPass())->process($container);
+        (new ResolveChildDefinitionsPass())->process($container);
+
+        $this->assertSame(['manual' => [[]]], $container->getDefinition('decorator')->getTags());
     }
 }

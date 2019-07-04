@@ -19,11 +19,6 @@ class ProjectServiceContainer extends Container
     private $parameters;
     private $targetDirs = [];
 
-    /**
-     * @internal but protected for BC on cache:clear
-     */
-    protected $privates = [];
-
     public function __construct()
     {
         $this->services = $this->privates = [];
@@ -33,12 +28,6 @@ class ProjectServiceContainer extends Container
         $this->aliases = [
             'TSantos\\Serializer\\SerializerInterface' => 'tsantos_serializer',
         ];
-    }
-
-    public function reset()
-    {
-        $this->privates = [];
-        parent::reset();
     }
 
     public function compile()

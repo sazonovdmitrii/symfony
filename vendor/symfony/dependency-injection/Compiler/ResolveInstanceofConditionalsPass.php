@@ -62,6 +62,7 @@ class ResolveInstanceofConditionalsPass implements CompilerPassInterface
         $parent = $shared = null;
         $instanceofTags = [];
         $instanceofCalls = [];
+        $instanceofBindings = [];
 
         foreach ($conditionals as $interface => $instanceofDefs) {
             if ($interface !== $class && (!$container->getReflectionClass($class, false))) {
@@ -79,6 +80,7 @@ class ResolveInstanceofConditionalsPass implements CompilerPassInterface
                 $parent = '.instanceof.'.$interface.'.'.$key.'.'.$id;
                 $container->setDefinition($parent, $instanceofDef);
                 $instanceofTags[] = $instanceofDef->getTags();
+                $instanceofBindings = $instanceofDef->getBindings() + $instanceofBindings;
 
                 foreach ($instanceofDef->getMethodCalls() as $methodCall) {
                     $instanceofCalls[] = $methodCall;
@@ -86,6 +88,7 @@ class ResolveInstanceofConditionalsPass implements CompilerPassInterface
 
                 $instanceofDef->setTags([]);
                 $instanceofDef->setMethodCalls([]);
+                $instanceofDef->setBindings([]);
 
                 if (isset($instanceofDef->getChanges()['shared'])) {
                     $shared = $instanceofDef->isShared();
@@ -110,20 +113,23 @@ class ResolveInstanceofConditionalsPass implements CompilerPassInterface
                 $definition->setShared($shared);
             }
 
-            $i = \count($instanceofTags);
-            while (0 <= --$i) {
-                foreach ($instanceofTags[$i] as $k => $v) {
-                    foreach ($v as $v) {
-                        if ($definition->hasTag($k) && \in_array($v, $definition->getTag($k))) {
-                            continue;
+            // Don't add tags to service decorators
+            if (null === $definition->getDecoratedService()) {
+                $i = \count($instanceofTags);
+                while (0 <= --$i) {
+                    foreach ($instanceofTags[$i] as $k => $v) {
+                        foreach ($v as $v) {
+                            if ($definition->hasTag($k) && \in_array($v, $definition->getTag($k))) {
+                                continue;
+                            }
+                            $definition->addTag($k, $v);
                         }
-                        $definition->addTag($k, $v);
                     }
                 }
             }
 
             $definition->setMethodCalls(array_merge($instanceofCalls, $definition->getMethodCalls()));
-            $definition->setBindings($bindings);
+            $definition->setBindings($bindings + $instanceofBindings);
 
             // reset fields with "merge" behavior
             $abstract

@@ -54,11 +54,7 @@ class ProfilerController
      */
     public function homeAction()
     {
-        if (null === $this->profiler) {
-            throw new NotFoundHttpException('The profiler must be enabled.');
-        }
-
-        $this->profiler->disable();
+        $this->denyAccessIfProfilerDisabled();
 
         return new RedirectResponse($this->generator->generate('_profiler_search_results', ['token' => 'empty', 'limit' => 10]), 302, ['Content-Type' => 'text/html']);
     }
@@ -75,11 +71,7 @@ class ProfilerController
      */
     public function panelAction(Request $request, $token)
     {
-        if (null === $this->profiler) {
-            throw new NotFoundHttpException('The profiler must be enabled.');
-        }
-
-        $this->profiler->disable();
+        $this->denyAccessIfProfilerDisabled();
 
         if (null !== $this->cspHandler) {
             $this->cspHandler->disableCsp();
@@ -146,7 +138,7 @@ class ProfilerController
 
         $url = null;
         try {
-            $url = $this->generator->generate('_profiler', ['token' => $token]);
+            $url = $this->generator->generate('_profiler', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL);
         } catch (\Exception $e) {
             // the profiler is not enabled
         }
@@ -170,11 +162,7 @@ class ProfilerController
      */
     public function searchBarAction(Request $request)
     {
-        if (null === $this->profiler) {
-            throw new NotFoundHttpException('The profiler must be enabled.');
-        }
-
-        $this->profiler->disable();
+        $this->denyAccessIfProfilerDisabled();
 
         if (null !== $this->cspHandler) {
             $this->cspHandler->disableCsp();
@@ -231,11 +219,7 @@ class ProfilerController
      */
     public function searchResultsAction(Request $request, $token)
     {
-        if (null === $this->profiler) {
-            throw new NotFoundHttpException('The profiler must be enabled.');
-        }
-
-        $this->profiler->disable();
+        $this->denyAccessIfProfilerDisabled();
 
         if (null !== $this->cspHandler) {
             $this->cspHandler->disableCsp();
@@ -276,13 +260,9 @@ class ProfilerController
      */
     public function searchAction(Request $request)
     {
-        if (null === $this->profiler) {
-            throw new NotFoundHttpException('The profiler must be enabled.');
-        }
+        $this->denyAccessIfProfilerDisabled();
 
-        $this->profiler->disable();
-
-        $ip = preg_replace('/[^:\d\.]/', '', $request->query->get('ip'));
+        $ip = $request->query->get('ip');
         $method = $request->query->get('method');
         $statusCode = $request->query->get('status_code');
         $url = $request->query->get('url');
@@ -331,11 +311,7 @@ class ProfilerController
      */
     public function phpinfoAction()
     {
-        if (null === $this->profiler) {
-            throw new NotFoundHttpException('The profiler must be enabled.');
-        }
-
-        $this->profiler->disable();
+        $this->denyAccessIfProfilerDisabled();
 
         if (null !== $this->cspHandler) {
             $this->cspHandler->disableCsp();
@@ -393,6 +369,15 @@ class ProfilerController
         }
 
         return $this->templateManager;
+    }
+
+    private function denyAccessIfProfilerDisabled()
+    {
+        if (null === $this->profiler) {
+            throw new NotFoundHttpException('The profiler must be enabled.');
+        }
+
+        $this->profiler->disable();
     }
 
     private function renderWithCspNonces(Request $request, $template, $variables, $code = 200, $headers = ['Content-Type' => 'text/html'])

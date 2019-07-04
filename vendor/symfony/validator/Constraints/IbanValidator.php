@@ -14,6 +14,7 @@ namespace Symfony\Component\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 /**
  * @author Manuel Reinhard <manu@sprain.ch>
@@ -150,7 +151,7 @@ class IbanValidator extends ConstraintValidator
         }
 
         if (!is_scalar($value) && !(\is_object($value) && method_exists($value, '__toString'))) {
-            throw new UnexpectedTypeException($value, 'string');
+            throw new UnexpectedValueException($value, 'string');
         }
 
         $value = (string) $value;
@@ -181,7 +182,7 @@ class IbanValidator extends ConstraintValidator
         }
 
         // ...have a format available
-        if (!array_key_exists($countryCode, self::$formats)) {
+        if (!\array_key_exists($countryCode, self::$formats)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ value }}', $this->formatValue($value))
                 ->setCode(Iban::NOT_SUPPORTED_COUNTRY_CODE_ERROR)

@@ -69,6 +69,19 @@ abstract class AbstractDescriptorTest extends TestCase
         return $this->getContainerBuilderDescriptionTestData(ObjectsProvider::getContainerBuilders());
     }
 
+    /**
+     * @dataProvider getDescribeContainerExistingClassDefinitionTestData
+     */
+    public function testDescribeContainerExistingClassDefinition(Definition $definition, $expectedDescription)
+    {
+        $this->assertDescription($expectedDescription, $definition);
+    }
+
+    public function getDescribeContainerExistingClassDefinitionTestData()
+    {
+        return $this->getDescriptionTestData(ObjectsProvider::getContainerDefinitionsWithExistingClasses());
+    }
+
     /** @dataProvider getDescribeContainerDefinitionTestData */
     public function testDescribeContainerDefinition(Definition $definition, $expectedDescription)
     {
@@ -182,12 +195,29 @@ abstract class AbstractDescriptorTest extends TestCase
         return $this->getDescriptionTestData(ObjectsProvider::getCallables());
     }
 
+    /** @dataProvider getClassDescriptionTestData */
+    public function testGetClassDecription($object, $expectedDescription)
+    {
+        $this->assertEquals($expectedDescription, $this->getDescriptor()->getClassDescription($object));
+    }
+
+    public function getClassDescriptionTestData()
+    {
+        return [
+            [ClassWithDocCommentOnMultipleLines::class, 'This is the first line of the description. This is the second line.'],
+            [ClassWithDocCommentWithoutInitialSpace::class, 'Foo.'],
+            [ClassWithoutDocComment::class, ''],
+            [ClassWithDocComment::class, 'This is a class with a doc comment.'],
+        ];
+    }
+
     abstract protected function getDescriptor();
 
     abstract protected function getFormat();
 
     private function assertDescription($expectedDescription, $describedObject, array $options = [])
     {
+        $options['is_debug'] = false;
         $options['raw_output'] = true;
         $options['raw_text'] = true;
         $output = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true);

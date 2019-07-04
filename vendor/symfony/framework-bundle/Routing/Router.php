@@ -43,7 +43,7 @@ class Router extends BaseRouter implements WarmableInterface, ServiceSubscriberI
      * @param ContainerInterface|null $parameters A ContainerInterface instance allowing to fetch parameters
      * @param LoggerInterface|null    $logger
      */
-    public function __construct(ContainerInterface $container, $resource, array $options = [], RequestContext $context = null, ContainerInterface $parameters = null, LoggerInterface $logger = null)
+    public function __construct(ContainerInterface $container, $resource, array $options = [], RequestContext $context = null, ContainerInterface $parameters = null, LoggerInterface $logger = null, string $defaultLocale = null)
     {
         $this->container = $container;
         $this->resource = $resource;
@@ -58,6 +58,8 @@ class Router extends BaseRouter implements WarmableInterface, ServiceSubscriberI
         } else {
             throw new \LogicException(sprintf('You should either pass a "%s" instance or provide the $parameters argument of the "%s" method.', SymfonyContainerInterface::class, __METHOD__));
         }
+
+        $this->defaultLocale = $defaultLocale;
     }
 
     /**
@@ -163,6 +165,10 @@ class Router extends BaseRouter implements WarmableInterface, ServiceSubscriberI
             }
 
             $resolved = ($this->paramFetcher)($match[1]);
+
+            if (\is_bool($resolved)) {
+                $resolved = (string) (int) $resolved;
+            }
 
             if (\is_string($resolved) || is_numeric($resolved)) {
                 $this->collectedParameters[$match[1]] = $resolved;

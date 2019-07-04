@@ -66,8 +66,9 @@ class NoTemplatingEntryKernel extends Kernel
                     'secret' => '$ecret',
                     'form' => ['enabled' => false],
                 ])
-                ->loadFromExtension('twig', [ // to be removed in 5.0 relying on default
-                    'strict_variables' => false,
+                ->loadFromExtension('twig', [
+                    'strict_variables' => false, // to be removed in 5.0 relying on default
+                    'default_path' => __DIR__.'/templates',
                 ])
             ;
         });

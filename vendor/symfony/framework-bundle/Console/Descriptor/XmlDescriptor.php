@@ -11,9 +11,11 @@
 
 namespace Symfony\Bundle\FrameworkBundle\Console\Descriptor;
 
+use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
 use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
+use Symfony\Component\DependencyInjection\Argument\ServiceLocatorArgument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
@@ -111,7 +113,7 @@ class XmlDescriptor extends Descriptor
      */
     protected function describeEventDispatcherListeners(EventDispatcherInterface $eventDispatcher, array $options = [])
     {
-        $this->writeDocument($this->getEventDispatcherListenersDocument($eventDispatcher, array_key_exists('event', $options) ? $options['event'] : null));
+        $this->writeDocument($this->getEventDispatcherListenersDocument($eventDispatcher, \array_key_exists('event', $options) ? $options['event'] : null));
     }
 
     /**
@@ -128,6 +130,14 @@ class XmlDescriptor extends Descriptor
     protected function describeContainerParameter($parameter, array $options = [])
     {
         $this->writeDocument($this->getContainerParameterDocument($parameter, $options));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function describeContainerEnvVars(array $envs, array $options = [])
+    {
+        throw new LogicException('Using the XML format to debug environment variables is not supported.');
     }
 
     /**
@@ -212,6 +222,11 @@ class XmlDescriptor extends Descriptor
                 $optionXML->setAttribute('key', $name);
                 $optionXML->appendChild(new \DOMText($this->formatValue($value)));
             }
+        }
+
+        if ('' !== $route->getCondition()) {
+            $routeXML->appendChild($conditionXML = $dom->createElement('condition'));
+            $conditionXML->appendChild(new \DOMText($route->getCondition()));
         }
 
         return $dom;
@@ -303,6 +318,11 @@ class XmlDescriptor extends Descriptor
             $serviceXML->setAttribute('id', $id);
         }
 
+        if ('' !== $classDescription = $this->getClassDescription((string) $definition->getClass())) {
+            $serviceXML->appendChild($descriptionXML = $dom->createElement('description'));
+            $descriptionXML->appendChild($dom->createCDATASection($classDescription));
+        }
+
         $serviceXML->setAttribute('class', $definition->getClass());
 
         if ($factory = $definition->getFactory()) {
@@ -337,6 +357,9 @@ class XmlDescriptor extends Descriptor
             foreach ($calls as $callData) {
                 $callsXML->appendChild($callXML = $dom->createElement('call'));
                 $callXML->setAttribute('method', $callData[0]);
+                if ($callData[2] ?? false) {
+                    $callXML->setAttribute('returns-clone', 'true');
+                }
             }
         }
 
@@ -387,8 +410,8 @@ class XmlDescriptor extends Descriptor
             if ($argument instanceof Reference) {
                 $argumentXML->setAttribute('type', 'service');
                 $argumentXML->setAttribute('id', (string) $argument);
-            } elseif ($argument instanceof IteratorArgument) {
-                $argumentXML->setAttribute('type', 'iterator');
+            } elseif ($argument instanceof IteratorArgument || $argument instanceof ServiceLocatorArgument) {
+                $argumentXML->setAttribute('type', $argument instanceof IteratorArgument ? 'iterator' : 'service_locator');
 
                 foreach ($this->getArgumentNodes($argument->getValues(), $dom) as $childArgumentXML) {
                     $argumentXML->appendChild($childArgumentXML);

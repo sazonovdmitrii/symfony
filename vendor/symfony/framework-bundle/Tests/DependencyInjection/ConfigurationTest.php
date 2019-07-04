@@ -11,12 +11,15 @@
 
 namespace Symfony\Bundle\FrameworkBundle\Tests\DependencyInjection;
 
+use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\DependencyInjection\Configuration;
 use Symfony\Bundle\FullStack;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Lock\Store\SemaphoreStore;
+use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class ConfigurationTest extends TestCase
@@ -185,6 +188,31 @@ class ConfigurationTest extends TestCase
         yield [$createPackageConfig($config), 'You cannot use both "version" and "json_manifest_path" at the same time under "assets" packages.'];
     }
 
+    public function testItShowANiceMessageIfTwoMessengerBusesAreConfiguredButNoDefaultBus()
+    {
+        $expectedMessage = 'You must specify the "default_bus" if you define more than one bus.';
+        if (method_exists($this, 'expectException')) {
+            $this->expectException(InvalidConfigurationException::class);
+            $this->expectExceptionMessage($expectedMessage);
+        } else {
+            $this->setExpectedException(InvalidConfigurationException::class, $expectedMessage);
+        }
+        $processor = new Processor();
+        $configuration = new Configuration(true);
+
+        $processor->processConfiguration($configuration, [
+            'framework' => [
+                'messenger' => [
+                    'default_bus' => null,
+                    'buses' => [
+                        'first_bus' => [],
+                        'second_bus' => [],
+                    ],
+                ],
+            ],
+        ]);
+    }
+
     protected static function getBundleDefaultConfig()
     {
         return [
@@ -206,6 +234,7 @@ class ConfigurationTest extends TestCase
             'fragments' => [
                 'enabled' => false,
                 'path' => '/_fragment',
+                'hinclude_default_template' => null,
             ],
             'profiler' => [
                 'enabled' => false,
@@ -230,6 +259,11 @@ class ConfigurationTest extends TestCase
                 'mapping' => [
                     'paths' => [],
                 ],
+                'auto_mapping' => [],
+                'not_compromised_password' => [
+                    'enabled' => true,
+                    'endpoint' => null,
+                ],
             ],
             'annotations' => [
                 'cache' => 'php_array',
@@ -245,6 +279,7 @@ class ConfigurationTest extends TestCase
             'property_access' => [
                 'magic_call' => false,
                 'throw_exception_on_invalid_index' => false,
+                'throw_exception_on_invalid_property_path' => true,
             ],
             'property_info' => [
                 'enabled' => !class_exists(FullStack::class),
@@ -254,15 +289,17 @@ class ConfigurationTest extends TestCase
                 'http_port' => 80,
                 'https_port' => 443,
                 'strict_requirements' => true,
+                'utf8' => false,
             ],
             'session' => [
                 'enabled' => false,
                 'storage_id' => 'session.storage.native',
                 'handler_id' => 'session.handler.native_file',
                 'cookie_httponly' => true,
+                'cookie_samesite' => null,
                 'gc_probability' => 1,
                 'save_path' => '%kernel.cache_dir%/sessions',
-                'metadata_update_threshold' => '0',
+                'metadata_update_threshold' => 0,
             ],
             'request' => [
                 'enabled' => false,
@@ -294,6 +331,7 @@ class ConfigurationTest extends TestCase
                 'directory' => '%kernel.cache_dir%/pools',
                 'default_redis_provider' => 'redis://localhost',
                 'default_memcached_provider' => 'memcached://localhost',
+                'default_pdo_provider' => class_exists(Connection::class) ? 'database_connection' : null,
             ],
             'workflows' => [
                 'enabled' => false,
@@ -318,15 +356,25 @@ class ConfigurationTest extends TestCase
                 'enabled' => !class_exists(FullStack::class) && interface_exists(MessageBusInterface::class),
                 'routing' => [],
                 'transports' => [],
+                'failure_transport' => null,
                 'serializer' => [
-                    'enabled' => !class_exists(FullStack::class),
-                    'format' => 'json',
-                    'context' => [],
+                    'default_serializer' => 'messenger.transport.native_php_serializer',
+                    'symfony_serializer' => [
+                        'format' => 'json',
+                        'context' => [],
+                    ],
                 ],
-                'encoder' => 'messenger.transport.serializer',
-                'decoder' => 'messenger.transport.serializer',
                 'default_bus' => null,
                 'buses' => ['messenger.bus.default' => ['default_middleware' => true, 'middleware' => []]],
+            ],
+            'disallow_search_engine_index' => true,
+            'http_client' => [
+                'enabled' => !class_exists(FullStack::class) && class_exists(HttpClient::class),
+                'scoped_clients' => [],
+            ],
+            'mailer' => [
+                'dsn' => 'smtp://null',
+                'enabled' => !class_exists(FullStack::class) && class_exists(Mailer::class),
             ],
         ];
     }

@@ -74,8 +74,13 @@ abstract class AbstractDescriptorTest extends TestCase
         $options['extensions'] = ['Symfony\Component\Form\Extension\Csrf\Type\FormTypeCsrfExtension'];
         $options['guessers'] = ['Symfony\Component\Form\Extension\Validator\ValidatorTypeGuesser'];
         $options['decorated'] = false;
-
+        $options['show_deprecated'] = false;
         yield [null, $options, 'defaults_1'];
+
+        $options['core_types'] = [];
+        $options['service_types'] = [FooType::class];
+        $options['show_deprecated'] = true;
+        yield [null, $options, 'types_with_deprecated_options'];
     }
 
     public function getDescribeResolvedFormTypeTestData()
@@ -83,14 +88,16 @@ abstract class AbstractDescriptorTest extends TestCase
         $typeExtensions = [new FormTypeCsrfExtension(new CsrfTokenManager())];
         $parent = new ResolvedFormType(new FormType(), $typeExtensions);
 
-        yield [new ResolvedFormType(new ChoiceType(), [], $parent), ['decorated' => false], 'resolved_form_type_1'];
-        yield [new ResolvedFormType(new FormType()), ['decorated' => false], 'resolved_form_type_2'];
+        yield [new ResolvedFormType(new ChoiceType(), [], $parent), ['decorated' => false, 'show_deprecated' => false], 'resolved_form_type_1'];
+        yield [new ResolvedFormType(new FormType()), ['decorated' => false, 'show_deprecated' => false], 'resolved_form_type_2'];
+        yield [new ResolvedFormType(new FooType(), [], $parent), ['decorated' => false, 'show_deprecated' => true], 'deprecated_options_of_type'];
     }
 
     public function getDescribeOptionTestData()
     {
         $parent = new ResolvedFormType(new FormType());
         $options['decorated'] = false;
+        $options['show_deprecated'] = false;
 
         $resolvedType = new ResolvedFormType(new ChoiceType(), [], $parent);
         $options['type'] = $resolvedType->getInnerType();
@@ -104,6 +111,12 @@ abstract class AbstractDescriptorTest extends TestCase
 
         $options['option'] = 'empty_data';
         yield [$resolvedType->getOptionsResolver(), $options, 'overridden_option_with_default_closures'];
+
+        $resolvedType = new ResolvedFormType(new FooType(), [], $parent);
+        $options['type'] = $resolvedType->getInnerType();
+        $options['option'] = 'bar';
+        $options['show_deprecated'] = true;
+        yield [$resolvedType->getOptionsResolver(), $options, 'deprecated_option'];
     }
 
     abstract protected function getDescriptor();
@@ -136,6 +149,8 @@ class FooType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired('foo');
+        $resolver->setDefined('bar');
+        $resolver->setDeprecated('bar');
         $resolver->setDefault('empty_data', function (Options $options, $value) {
             $foo = $options['foo'];
 

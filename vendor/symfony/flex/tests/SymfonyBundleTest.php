@@ -20,14 +20,18 @@ class SymfonyBundleTest extends TestCase
     /**
      * @dataProvider getNamespaces
      */
-    public function testGetClassNamesForInstall($package, $autoload, $classes)
+    public function testGetClassNamesForInstall($package, $autoload, $classes, $type = null)
     {
         $config = $this->getMockBuilder('Composer\Config')->getMock();
-        $config->expects($this->any())->method('get')->will($this->returnValue(__DIR__.'/Fixtures/vendor'));
+        $config->expects($this->any())->method('get')->willReturn(__DIR__.'/Fixtures/vendor');
         $composer = $this->getMockBuilder('Composer\Composer')->getMock();
-        $composer->expects($this->once())->method('getConfig')->will($this->returnValue($config));
+        $composer->expects($this->once())->method('getConfig')->willReturn($config);
         $package = new Package($package, '1.0', '1.0');
         $package->setAutoload($autoload);
+        if ($type) {
+            $package->setType($type);
+        }
+
         $bundle = new SymfonyBundle($composer, $package, 'install');
         $this->assertSame($classes, $bundle->getClassNames());
     }
@@ -79,6 +83,18 @@ class SymfonyBundleTest extends TestCase
                 'web-token/jwt-bundle',
                 ['psr-4' => ['Jose\\Bundle\\JoseFramework\\' => ['']]],
                 ['Jose\\Bundle\\JoseFramework\\JoseFrameworkBundle'],
+            ],
+            [
+                'sylius/shop-api-plugin',
+                ['psr-4' => ['Sylius\\ShopApiPlugin\\' => 'src/']],
+                ['Sylius\\ShopApiPlugin\\ShopApiPlugin'],
+                'sylius-plugin',
+            ],
+            [
+                'dunglas/sylius-acme-plugin',
+                ['psr-4' => ['Dunglas\\SyliusAcmePlugin\\' => 'src/']],
+                ['Dunglas\\SyliusAcmePlugin\\DunglasSyliusAcmePlugin'],
+                'sylius-plugin',
             ],
         ];
     }

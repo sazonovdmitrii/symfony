@@ -67,7 +67,7 @@ abstract class FileValidatorTest extends ConstraintValidatorTestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
+     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedValueException
      */
     public function testExpectsStringCompatibleTypeOrFile()
     {
@@ -177,6 +177,7 @@ abstract class FileValidatorTest extends ConstraintValidatorTestCase
             ->setParameter('{{ size }}', $sizeAsString)
             ->setParameter('{{ suffix }}', $suffix)
             ->setParameter('{{ file }}', '"'.$this->path.'"')
+            ->setParameter('{{ name }}', '"'.basename($this->path).'"')
             ->setCode(File::TOO_LARGE_ERROR)
             ->assertRaised();
     }
@@ -279,6 +280,7 @@ abstract class FileValidatorTest extends ConstraintValidatorTestCase
             ->setParameter('{{ size }}', $sizeAsString)
             ->setParameter('{{ suffix }}', $suffix)
             ->setParameter('{{ file }}', '"'.$this->path.'"')
+            ->setParameter('{{ name }}', '"'.basename($this->path).'"')
             ->setCode(File::TOO_LARGE_ERROR)
             ->assertRaised();
     }
@@ -292,11 +294,11 @@ abstract class FileValidatorTest extends ConstraintValidatorTestCase
         $file
             ->expects($this->once())
             ->method('getPathname')
-            ->will($this->returnValue($this->path));
+            ->willReturn($this->path);
         $file
             ->expects($this->once())
             ->method('getMimeType')
-            ->will($this->returnValue('image/jpg'));
+            ->willReturn('image/jpg');
 
         $constraint = new File([
             'mimeTypes' => ['image/png', 'image/jpg'],
@@ -316,11 +318,11 @@ abstract class FileValidatorTest extends ConstraintValidatorTestCase
         $file
             ->expects($this->once())
             ->method('getPathname')
-            ->will($this->returnValue($this->path));
+            ->willReturn($this->path);
         $file
             ->expects($this->once())
             ->method('getMimeType')
-            ->will($this->returnValue('image/jpg'));
+            ->willReturn('image/jpg');
 
         $constraint = new File([
             'mimeTypes' => ['image/*'],
@@ -340,11 +342,11 @@ abstract class FileValidatorTest extends ConstraintValidatorTestCase
         $file
             ->expects($this->once())
             ->method('getPathname')
-            ->will($this->returnValue($this->path));
+            ->willReturn($this->path);
         $file
             ->expects($this->once())
             ->method('getMimeType')
-            ->will($this->returnValue('application/pdf'));
+            ->willReturn('application/pdf');
 
         $constraint = new File([
             'mimeTypes' => ['image/png', 'image/jpg'],
@@ -357,6 +359,7 @@ abstract class FileValidatorTest extends ConstraintValidatorTestCase
             ->setParameter('{{ type }}', '"application/pdf"')
             ->setParameter('{{ types }}', '"image/png", "image/jpg"')
             ->setParameter('{{ file }}', '"'.$this->path.'"')
+            ->setParameter('{{ name }}', '"'.basename($this->path).'"')
             ->setCode(File::INVALID_MIME_TYPE_ERROR)
             ->assertRaised();
     }
@@ -370,11 +373,11 @@ abstract class FileValidatorTest extends ConstraintValidatorTestCase
         $file
             ->expects($this->once())
             ->method('getPathname')
-            ->will($this->returnValue($this->path));
+            ->willReturn($this->path);
         $file
             ->expects($this->once())
             ->method('getMimeType')
-            ->will($this->returnValue('application/pdf'));
+            ->willReturn('application/pdf');
 
         $constraint = new File([
             'mimeTypes' => ['image/*', 'image/jpg'],
@@ -387,6 +390,7 @@ abstract class FileValidatorTest extends ConstraintValidatorTestCase
             ->setParameter('{{ type }}', '"application/pdf"')
             ->setParameter('{{ types }}', '"image/*", "image/jpg"')
             ->setParameter('{{ file }}', '"'.$this->path.'"')
+            ->setParameter('{{ name }}', '"'.basename($this->path).'"')
             ->setCode(File::INVALID_MIME_TYPE_ERROR)
             ->assertRaised();
     }
@@ -403,6 +407,7 @@ abstract class FileValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation('myMessage')
             ->setParameter('{{ file }}', '"'.$this->path.'"')
+            ->setParameter('{{ name }}', '"'.basename($this->path).'"')
             ->setCode(File::EMPTY_ERROR)
             ->assertRaised();
     }

@@ -11,6 +11,7 @@
 
 namespace Symfony\Bundle\FrameworkBundle\Console\Descriptor;
 
+use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -59,6 +60,10 @@ class MarkdownDescriptor extends Descriptor
             ."\n".'- Defaults: '.$this->formatRouterConfig($route->getDefaults())
             ."\n".'- Requirements: '.($route->getRequirements() ? $this->formatRouterConfig($route->getRequirements()) : 'NO CUSTOM')
             ."\n".'- Options: '.$this->formatRouterConfig($route->getOptions());
+
+        if ('' !== $route->getCondition()) {
+            $output .= "\n".'- Condition: '.$route->getCondition();
+        }
 
         $this->write(isset($options['name'])
             ? $options['name']."\n".str_repeat('-', \strlen($options['name']))."\n\n".$output
@@ -181,7 +186,13 @@ class MarkdownDescriptor extends Descriptor
      */
     protected function describeContainerDefinition(Definition $definition, array $options = [])
     {
-        $output = '- Class: `'.$definition->getClass().'`'
+        $output = '';
+
+        if ('' !== $classDescription = $this->getClassDescription((string) $definition->getClass())) {
+            $output .= '- Description: `'.$classDescription.'`'."\n";
+        }
+
+        $output .= '- Class: `'.$definition->getClass().'`'
             ."\n".'- Public: '.($definition->isPublic() && !$definition->isPrivate() ? 'yes' : 'no')
             ."\n".'- Synthetic: '.($definition->isSynthetic() ? 'yes' : 'no')
             ."\n".'- Lazy: '.($definition->isLazy() ? 'yes' : 'no')
@@ -266,9 +277,17 @@ class MarkdownDescriptor extends Descriptor
     /**
      * {@inheritdoc}
      */
+    protected function describeContainerEnvVars(array $envs, array $options = [])
+    {
+        throw new LogicException('Using the markdown format to debug environment variables is not supported.');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function describeEventDispatcherListeners(EventDispatcherInterface $eventDispatcher, array $options = [])
     {
-        $event = array_key_exists('event', $options) ? $options['event'] : null;
+        $event = \array_key_exists('event', $options) ? $options['event'] : null;
 
         $title = 'Registered listeners';
         if (null !== $event) {

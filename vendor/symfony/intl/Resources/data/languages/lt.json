@@ -1,5 +1,5 @@
 {
-    "Version": "2.1.44.91",
+    "Version": "2.1.48.42",
     "Names": {
         "aa": "afarų",
         "ab": "abchazų",
@@ -87,6 +87,7 @@
         "car": "karibų",
         "cay": "kaijūgų",
         "cch": "atsamų",
+        "ccp": "Čakma",
         "ce": "čečėnų",
         "ceb": "sebuanų",
         "cgg": "čigų",
@@ -366,7 +367,6 @@
         "ms": "malajiečių",
         "mt": "maltiečių",
         "mua": "mundangų",
-        "mul": "kelios kalbos",
         "mus": "krykų",
         "mwl": "mirandezų",
         "mwr": "marvari",
@@ -569,7 +569,6 @@
         "uga": "ugaritų",
         "uk": "ukrainiečių",
         "umb": "umbundu",
-        "und": "nežinoma kalba",
         "ur": "urdų",
         "uz": "uzbekų",
         "vai": "vai",
@@ -614,7 +613,6 @@
         "zh_Hant": "tradicinė kinų",
         "zu": "zulų",
         "zun": "Zuni",
-        "zxx": "nėra kalbinio turinio",
         "zza": "zaza"
     }
 }

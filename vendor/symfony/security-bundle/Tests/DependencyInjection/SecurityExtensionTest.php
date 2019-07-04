@@ -12,6 +12,7 @@
 namespace Symfony\Bundle\SecurityBundle\Tests\DependencyInjection;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\DependencyInjection\FrameworkExtension;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\SecurityBundle\Tests\DependencyInjection\Fixtures\UserProvider\DummyProvider;
@@ -343,9 +344,64 @@ class SecurityExtensionTest extends TestCase
         $this->assertFalse($container->has(UserProviderInterface::class));
     }
 
+    /**
+     * @dataProvider sessionConfigurationProvider
+     */
+    public function testRememberMeCookieInheritFrameworkSessionCookie($config, $samesite, $secure)
+    {
+        $container = $this->getRawContainer();
+
+        $container->registerExtension(new FrameworkExtension());
+        $container->setParameter('kernel.bundles_metadata', []);
+        $container->setParameter('kernel.project_dir', __DIR__);
+        $container->setParameter('kernel.root_dir', __DIR__);
+        $container->setParameter('kernel.cache_dir', __DIR__);
+
+        $container->loadFromExtension('security', [
+            'firewalls' => [
+                'default' => [
+                    'form_login' => null,
+                    'remember_me' => ['secret' => 'baz'],
+                ],
+            ],
+        ]);
+        $container->loadFromExtension('framework', [
+            'session' => $config,
+        ]);
+
+        $container->compile();
+
+        $definition = $container->getDefinition('security.authentication.rememberme.services.simplehash.default');
+
+        $this->assertEquals($samesite, $definition->getArgument(3)['samesite']);
+        $this->assertEquals($secure, $definition->getArgument(3)['secure']);
+    }
+
+    public function sessionConfigurationProvider()
+    {
+        return [
+            [
+                false,
+                null,
+                false,
+            ],
+            [
+                [
+                    'cookie_secure' => true,
+                    'cookie_samesite' => 'lax',
+                    'save_path' => null,
+                ],
+                'lax',
+                true,
+            ],
+        ];
+    }
+
     protected function getRawContainer()
     {
         $container = new ContainerBuilder();
+        $container->setParameter('kernel.debug', false);
+
         $security = new SecurityExtension();
         $container->registerExtension($security);
 

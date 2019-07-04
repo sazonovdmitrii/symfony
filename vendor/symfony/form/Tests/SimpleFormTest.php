@@ -54,6 +54,26 @@ class SimpleFormTest_Traversable implements \IteratorAggregate
 
 class SimpleFormTest extends AbstractFormTest
 {
+    /**
+     * @dataProvider provideFormNames
+     */
+    public function testGetPropertyPath($name, $propertyPath)
+    {
+        $config = new FormConfigBuilder($name, null, $this->dispatcher);
+        $form = new Form($config);
+
+        $this->assertEquals($propertyPath, $form->getPropertyPath());
+    }
+
+    public function provideFormNames()
+    {
+        yield [null, null];
+        yield ['', null];
+        yield ['0', new PropertyPath('0')];
+        yield [0, new PropertyPath('0')];
+        yield ['name', new PropertyPath('name')];
+    }
+
     public function testDataIsInitializedToConfiguredValue()
     {
         $model = new FixedDataTransformer([
@@ -76,7 +96,7 @@ class SimpleFormTest extends AbstractFormTest
 
     /**
      * @expectedException        \Symfony\Component\Form\Exception\TransformationFailedException
-     * @expectedExceptionMessage Unable to transform value for property path "name": No mapping for value "arg"
+     * @expectedExceptionMessage Unable to transform data for property path "name": No mapping for value "arg"
      */
     public function testDataTransformationFailure()
     {
@@ -702,7 +722,7 @@ class SimpleFormTest extends AbstractFormTest
         $type->expects($this->once())
             ->method('createView')
             ->with($form)
-            ->will($this->returnValue($view));
+            ->willReturn($view);
 
         $this->assertSame($view, $form->createView());
     }
@@ -719,12 +739,12 @@ class SimpleFormTest extends AbstractFormTest
 
         $parentType->expects($this->once())
             ->method('createView')
-            ->will($this->returnValue($parentView));
+            ->willReturn($parentView);
 
         $type->expects($this->once())
             ->method('createView')
             ->with($form, $parentView)
-            ->will($this->returnValue($view));
+            ->willReturn($view);
 
         $this->assertSame($view, $form->createView());
     }
@@ -739,7 +759,7 @@ class SimpleFormTest extends AbstractFormTest
         $type->expects($this->once())
             ->method('createView')
             ->with($form, $parentView)
-            ->will($this->returnValue($view));
+            ->willReturn($view);
 
         $this->assertSame($view, $form->createView($parentView));
     }

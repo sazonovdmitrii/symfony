@@ -197,4 +197,46 @@ class MemcachedAdapterTest extends AdapterTestCase
     {
         $this->assertTrue($this->createCachePool()->clear());
     }
+
+    public function testMultiServerDsn()
+    {
+        $dsn = 'memcached:?host[localhost]&host[localhost:12345]&host[/some/memcached.sock:]=3';
+        $client = MemcachedAdapter::createConnection($dsn);
+
+        $expected = [
+            0 => [
+                'host' => 'localhost',
+                'port' => 11211,
+                'type' => 'TCP',
+            ],
+            1 => [
+                'host' => 'localhost',
+                'port' => 12345,
+                'type' => 'TCP',
+            ],
+            2 => [
+                'host' => '/some/memcached.sock',
+                'port' => 0,
+                'type' => 'SOCKET',
+            ],
+        ];
+        $this->assertSame($expected, $client->getServerList());
+
+        $dsn = 'memcached://localhost?host[foo.bar]=3';
+        $client = MemcachedAdapter::createConnection($dsn);
+
+        $expected = [
+            0 => [
+                'host' => 'localhost',
+                'port' => 11211,
+                'type' => 'TCP',
+            ],
+            1 => [
+                'host' => 'foo.bar',
+                'port' => 11211,
+                'type' => 'TCP',
+            ],
+        ];
+        $this->assertSame($expected, $client->getServerList());
+    }
 }

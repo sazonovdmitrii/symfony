@@ -21,6 +21,7 @@ use Symfony\Component\Validator\Context\ExecutionContext;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Mapping\PropertyMetadata;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * A test case to ease testing Constraint Validators.
@@ -29,6 +30,8 @@ use Symfony\Component\Validator\Mapping\PropertyMetadata;
  */
 abstract class ConstraintValidatorTestCase extends TestCase
 {
+    use TestCaseSetUpTearDownTrait;
+
     /**
      * @var ExecutionContextInterface
      */
@@ -48,7 +51,7 @@ abstract class ConstraintValidatorTestCase extends TestCase
     protected $constraint;
     protected $defaultTimezone;
 
-    protected function setUp()
+    private function doSetUp()
     {
         $this->group = 'MyGroup';
         $this->metadata = null;
@@ -70,7 +73,7 @@ abstract class ConstraintValidatorTestCase extends TestCase
         $this->setDefaultTimezone('UTC');
     }
 
-    protected function tearDown()
+    private function doTearDown()
     {
         $this->restoreDefaultTimezone();
     }
@@ -95,7 +98,7 @@ abstract class ConstraintValidatorTestCase extends TestCase
 
     protected function createContext()
     {
-        $translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')->getMock();
+        $translator = $this->getMockBuilder(TranslatorInterface::class)->getMock();
         $validator = $this->getMockBuilder('Symfony\Component\Validator\Validator\ValidatorInterface')->getMock();
         $contextualValidator = $this->getMockBuilder('Symfony\Component\Validator\Validator\ContextualValidatorInterface')->getMock();
 
@@ -107,7 +110,7 @@ abstract class ConstraintValidatorTestCase extends TestCase
         $validator->expects($this->any())
             ->method('inContext')
             ->with($context)
-            ->will($this->returnValue($contextualValidator));
+            ->willReturn($contextualValidator);
 
         return $context;
     }
@@ -172,7 +175,7 @@ abstract class ConstraintValidatorTestCase extends TestCase
         $validator->expects($this->at(2 * $i))
             ->method('atPath')
             ->with($propertyPath)
-            ->will($this->returnValue($validator));
+            ->willReturn($validator);
         $validator->expects($this->at(2 * $i + 1))
             ->method('validate')
             ->with($value, $this->logicalOr(null, [], $this->isInstanceOf('\Symfony\Component\Validator\Constraints\Valid')), $group);
@@ -184,7 +187,7 @@ abstract class ConstraintValidatorTestCase extends TestCase
         $contextualValidator->expects($this->at(2 * $i))
             ->method('atPath')
             ->with($propertyPath)
-            ->will($this->returnValue($contextualValidator));
+            ->willReturn($contextualValidator);
         $contextualValidator->expects($this->at(2 * $i + 1))
             ->method('validate')
             ->with($value, $constraints, $group);

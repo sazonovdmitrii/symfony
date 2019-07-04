@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Bridge\Twig\Translation\TwigExtractor;
 use Symfony\Component\Translation\MessageCatalogue;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use Twig\Error\Error;
 use Twig\Loader\ArrayLoader;
@@ -33,7 +34,7 @@ class TwigExtractorTest extends TestCase
             'cache' => false,
             'autoescape' => false,
         ]);
-        $twig->addExtension(new TranslationExtension($this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')->getMock()));
+        $twig->addExtension(new TranslationExtension($this->getMockBuilder(TranslatorInterface::class)->getMock()));
 
         $extractor = new TwigExtractor($twig);
         $extractor->setPrefix('prefix');
@@ -49,15 +50,21 @@ class TwigExtractorTest extends TestCase
         }
     }
 
+    /**
+     * @group legacy
+     * @dataProvider getLegacyExtractData
+     */
+    public function testLegacyExtract($template, $messages)
+    {
+        $this->testExtract($template, $messages);
+    }
+
     public function getExtractData()
     {
         return [
             ['{{ "new key" | trans() }}', ['new key' => 'messages']],
             ['{{ "new key" | trans() | upper }}', ['new key' => 'messages']],
             ['{{ "new key" | trans({}, "domain") }}', ['new key' => 'domain']],
-            ['{{ "new key" | transchoice(1) }}', ['new key' => 'messages']],
-            ['{{ "new key" | transchoice(1) | upper }}', ['new key' => 'messages']],
-            ['{{ "new key" | transchoice(1, {}, "domain") }}', ['new key' => 'domain']],
             ['{% trans %}new key{% endtrans %}', ['new key' => 'messages']],
             ['{% trans %}  new key  {% endtrans %}', ['new key' => 'messages']],
             ['{% trans from "domain" %}new key{% endtrans %}', ['new key' => 'domain']],
@@ -66,11 +73,27 @@ class TwigExtractorTest extends TestCase
 
             // make sure 'trans_default_domain' tag is supported
             ['{% trans_default_domain "domain" %}{{ "new key"|trans }}', ['new key' => 'domain']],
-            ['{% trans_default_domain "domain" %}{{ "new key"|transchoice }}', ['new key' => 'domain']],
             ['{% trans_default_domain "domain" %}{% trans %}new key{% endtrans %}', ['new key' => 'domain']],
 
             // make sure this works with twig's named arguments
             ['{{ "new key" | trans(domain="domain") }}', ['new key' => 'domain']],
+        ];
+    }
+
+    /**
+     * @group legacy
+     */
+    public function getLegacyExtractData()
+    {
+        return [
+            ['{{ "new key" | transchoice(1) }}', ['new key' => 'messages']],
+            ['{{ "new key" | transchoice(1) | upper }}', ['new key' => 'messages']],
+            ['{{ "new key" | transchoice(1, {}, "domain") }}', ['new key' => 'domain']],
+
+            // make sure 'trans_default_domain' tag is supported
+            ['{% trans_default_domain "domain" %}{{ "new key"|transchoice }}', ['new key' => 'domain']],
+
+            // make sure this works with twig's named arguments
             ['{{ "new key" | transchoice(domain="domain", count=1) }}', ['new key' => 'domain']],
         ];
     }
@@ -82,7 +105,7 @@ class TwigExtractorTest extends TestCase
     public function testExtractSyntaxError($resources)
     {
         $twig = new Environment($this->getMockBuilder('Twig\Loader\LoaderInterface')->getMock());
-        $twig->addExtension(new TranslationExtension($this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')->getMock()));
+        $twig->addExtension(new TranslationExtension($this->getMockBuilder(TranslatorInterface::class)->getMock()));
 
         $extractor = new TwigExtractor($twig);
 
@@ -124,7 +147,7 @@ class TwigExtractorTest extends TestCase
             'cache' => false,
             'autoescape' => false,
         ]);
-        $twig->addExtension(new TranslationExtension($this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')->getMock()));
+        $twig->addExtension(new TranslationExtension($this->getMockBuilder(TranslatorInterface::class)->getMock()));
 
         $extractor = new TwigExtractor($twig);
         $catalogue = new MessageCatalogue('en');

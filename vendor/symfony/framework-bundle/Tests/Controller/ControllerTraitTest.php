@@ -11,6 +11,7 @@
 
 namespace Symfony\Bundle\FrameworkBundle\Tests\Controller;
 
+use Fig\Link\Link;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 use Symfony\Component\DependencyInjection\Container;
@@ -43,9 +44,9 @@ abstract class ControllerTraitTest extends TestCase
         $requestStack->push($request);
 
         $kernel = $this->getMockBuilder('Symfony\Component\HttpKernel\HttpKernelInterface')->getMock();
-        $kernel->expects($this->once())->method('handle')->will($this->returnCallback(function (Request $request) {
+        $kernel->expects($this->once())->method('handle')->willReturnCallback(function (Request $request) {
             return new Response($request->getRequestFormat().'--'.$request->getLocale());
-        }));
+        });
 
         $container = new Container();
         $container->set('request_stack', $requestStack);
@@ -110,7 +111,7 @@ abstract class ControllerTraitTest extends TestCase
         $tokenStorage
             ->expects($this->once())
             ->method('getToken')
-            ->will($this->returnValue($token));
+            ->willReturn($token);
 
         $container = new Container();
         $container->set('security.token_storage', $tokenStorage);
@@ -137,7 +138,7 @@ abstract class ControllerTraitTest extends TestCase
             ->expects($this->once())
             ->method('serialize')
             ->with([], 'json', ['json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS])
-            ->will($this->returnValue('[]'));
+            ->willReturn('[]');
 
         $container->set('serializer', $serializer);
 
@@ -158,7 +159,7 @@ abstract class ControllerTraitTest extends TestCase
             ->expects($this->once())
             ->method('serialize')
             ->with([], 'json', ['json_encode_options' => 0, 'other' => 'context'])
-            ->will($this->returnValue('[]'));
+            ->willReturn('[]');
 
         $container->set('serializer', $serializer);
 
@@ -438,6 +439,9 @@ abstract class ControllerTraitTest extends TestCase
         $this->assertSame(301, $response->getStatusCode());
     }
 
+    /**
+     * @group legacy
+     */
     public function testRenderViewTemplating()
     {
         $templating = $this->getMockBuilder('Symfony\Bundle\FrameworkBundle\Templating\EngineInterface')->getMock();
@@ -452,6 +456,9 @@ abstract class ControllerTraitTest extends TestCase
         $this->assertEquals('bar', $controller->renderView('foo'));
     }
 
+    /**
+     * @group legacy
+     */
     public function testRenderTemplating()
     {
         $templating = $this->getMockBuilder('Symfony\Bundle\FrameworkBundle\Templating\EngineInterface')->getMock();
@@ -466,6 +473,9 @@ abstract class ControllerTraitTest extends TestCase
         $this->assertEquals('bar', $controller->render('foo')->getContent());
     }
 
+    /**
+     * @group legacy
+     */
     public function testStreamTemplating()
     {
         $templating = $this->getMockBuilder('Symfony\Bundle\FrameworkBundle\Templating\EngineInterface')->getMock();
@@ -530,6 +540,21 @@ abstract class ControllerTraitTest extends TestCase
 
         $this->assertEquals($doctrine, $controller->getDoctrine());
     }
+
+    public function testAddLink()
+    {
+        $request = new Request();
+        $link1 = new Link('mercure', 'https://demo.mercure.rocks');
+        $link2 = new Link('self', 'https://example.com/foo');
+
+        $controller = $this->createController();
+        $controller->addLink($request, $link1);
+        $controller->addLink($request, $link2);
+
+        $links = $request->attributes->get('_links')->getLinks();
+        $this->assertContains($link1, $links);
+        $this->assertContains($link2, $links);
+    }
 }
 
 trait TestControllerTrait
@@ -554,5 +579,6 @@ trait TestControllerTrait
         createForm as public;
         createFormBuilder as public;
         getDoctrine as public;
+        addLink as public;
     }
 }

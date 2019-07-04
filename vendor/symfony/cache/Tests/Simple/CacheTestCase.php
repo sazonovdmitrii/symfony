@@ -21,7 +21,7 @@ abstract class CacheTestCase extends SimpleCacheTest
     {
         parent::setUp();
 
-        if (!array_key_exists('testPrune', $this->skippedTests) && !$this->createSimpleCache() instanceof PruneableInterface) {
+        if (!\array_key_exists('testPrune', $this->skippedTests) && !$this->createSimpleCache() instanceof PruneableInterface) {
             $this->skippedTests['testPrune'] = 'Not a pruneable cache pool.';
         }
     }
@@ -132,14 +132,9 @@ abstract class CacheTestCase extends SimpleCacheTest
     }
 }
 
-class NotUnserializable implements \Serializable
+class NotUnserializable
 {
-    public function serialize()
-    {
-        return serialize(123);
-    }
-
-    public function unserialize($ser)
+    public function __wakeup()
     {
         throw new \Exception(__CLASS__);
     }

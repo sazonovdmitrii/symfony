@@ -23,6 +23,8 @@ use Symfony\Component\Config\Resource\ResourceInterface;
 use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
 use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
 use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
+use Symfony\Component\DependencyInjection\Argument\ServiceLocator;
+use Symfony\Component\DependencyInjection\Argument\ServiceLocatorArgument;
 use Symfony\Component\DependencyInjection\Compiler\Compiler;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
@@ -121,6 +123,8 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     private $autoconfiguredInstanceof = [];
 
     private $removedIds = [];
+
+    private $removedBindingIds = [];
 
     private static $internalTypes = [
         'int' => true,
@@ -577,7 +581,13 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         }
 
         if (!isset($this->definitions[$id]) && isset($this->aliasDefinitions[$id])) {
-            return $this->doGet((string) $this->aliasDefinitions[$id], $invalidBehavior, $inlineServices, $isConstructorArgument);
+            $alias = $this->aliasDefinitions[$id];
+
+            if ($alias->isDeprecated()) {
+                @trigger_error($alias->getDeprecationMessage($id), E_USER_DEPRECATED);
+            }
+
+            return $this->doGet((string) $alias, $invalidBehavior, $inlineServices, $isConstructorArgument);
         }
 
         try {
@@ -590,7 +600,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
             throw $e;
         }
 
-        if ($e = $definition->getErrors()) {
+        if ($definition->hasErrors() && $e = $definition->getErrors()) {
             throw new RuntimeException(reset($e));
         }
 
@@ -824,6 +834,10 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     {
         $alias = (string) $alias;
 
+        if ('' === $alias || '\\' === $alias[-1] || \strlen($alias) !== strcspn($alias, "\0\r\n'")) {
+            throw new InvalidArgumentException(sprintf('Invalid alias id: "%s"', $alias));
+        }
+
         if (\is_string($id)) {
             $id = new Alias($id);
         } elseif (!$id instanceof Alias) {
@@ -977,6 +991,10 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
 
         $id = (string) $id;
 
+        if ('' === $id || '\\' === $id[-1] || \strlen($id) !== strcspn($id, "\0\r\n'")) {
+            throw new InvalidArgumentException(sprintf('Invalid service id: "%s"', $id));
+        }
+
         unset($this->aliasDefinitions[$id], $this->removedIds[$id]);
 
         return $this->definitions[$id] = $definition;
@@ -1112,7 +1130,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         }
 
         if (null !== $factory) {
-            $service = \call_user_func_array($factory, $arguments);
+            $service = $factory(...$arguments);
 
             if (!$definition->isDeprecated() && \is_array($factory) && \is_string($factory[0])) {
                 $r = new \ReflectionClass($factory[0]);
@@ -1131,8 +1149,15 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
             }
         }
 
-        if ($tryProxy || !$definition->isLazy()) {
-            // share only if proxying failed, or if not a proxy
+        $lastWitherIndex = null;
+        foreach ($definition->getMethodCalls() as $k => $call) {
+            if ($call[2] ?? false) {
+                $lastWitherIndex = $k;
+            }
+        }
+
+        if (null === $lastWitherIndex && ($tryProxy || !$definition->isLazy())) {
+            // share only if proxying failed, or if not a proxy, and if no withers are found
             $this->shareService($definition, $service, $id, $inlineServices);
         }
 
@@ -1141,8 +1166,13 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
             $service->$name = $value;
         }
 
-        foreach ($definition->getMethodCalls() as $call) {
-            $this->callMethod($service, $call, $inlineServices);
+        foreach ($definition->getMethodCalls() as $k => $call) {
+            $service = $this->callMethod($service, $call, $inlineServices);
+
+            if ($lastWitherIndex === $k && ($tryProxy || !$definition->isLazy())) {
+                // share only if proxying failed, or if not a proxy, and this is the last wither
+                $this->shareService($definition, $service, $id, $inlineServices);
+            }
         }
 
         if ($callable = $definition->getConfigurator()) {
@@ -1225,6 +1255,15 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
 
                 return $count;
             });
+        } elseif ($value instanceof ServiceLocatorArgument) {
+            $refs = $types = [];
+            foreach ($value->getValues() as $k => $v) {
+                if ($v) {
+                    $refs[$k] = [$v];
+                    $types[$k] = $v instanceof TypedReference ? $v->getType() : '?';
+                }
+            }
+            $value = new ServiceLocator(\Closure::fromCallable([$this, 'resolveServices']), $refs, $types);
         } elseif ($value instanceof Reference) {
             $value = $this->doGet((string) $value, $value->getInvalidBehavior(), $inlineServices, $isConstructorArgument);
         } elseif ($value instanceof Definition) {
@@ -1328,6 +1367,25 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     }
 
     /**
+     * Registers an autowiring alias that only binds to a specific argument name.
+     *
+     * The argument name is derived from $name if provided (from $id otherwise)
+     * using camel case: "foo.bar" or "foo_bar" creates an alias bound to
+     * "$fooBar"-named arguments with $type as type-hint. Such arguments will
+     * receive the service $id when autowiring is used.
+     */
+    public function registerAliasForArgument(string $id, string $type, string $name = null): Alias
+    {
+        $name = lcfirst(str_replace(' ', '', ucwords(preg_replace('/[^a-zA-Z0-9\x7f-\xff]++/', ' ', $name ?? $id))));
+
+        if (!preg_match('/^[a-zA-Z_\x7f-\xff]/', $name)) {
+            throw new InvalidArgumentException(sprintf('Invalid argument name "%s" for service "%s": the first character must be a letter.', $name, $id));
+        }
+
+        return $this->setAlias($type.' $'.$name, $id);
+    }
+
+    /**
      * Returns an array of ChildDefinition[] keyed by interface.
      *
      * @return ChildDefinition[]
@@ -1357,6 +1415,10 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         $bag = $this->getParameterBag();
         if (true === $format) {
             $value = $bag->resolveValue($value);
+        }
+
+        if ($value instanceof Definition) {
+            $value = (array) $value;
         }
 
         if (\is_array($value)) {
@@ -1429,6 +1491,35 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     public function log(CompilerPassInterface $pass, string $message)
     {
         $this->getCompiler()->log($pass, $this->resolveEnvPlaceholders($message));
+    }
+
+    /**
+     * Gets removed binding ids.
+     *
+     * @return array
+     *
+     * @internal
+     */
+    public function getRemovedBindingIds()
+    {
+        return $this->removedBindingIds;
+    }
+
+    /**
+     * Removes bindings for a service.
+     *
+     * @param string $id The service identifier
+     *
+     * @internal
+     */
+    public function removeBindings($id)
+    {
+        if ($this->hasDefinition($id)) {
+            foreach ($this->getDefinition($id)->getBindings() as $key => $binding) {
+                list(, $bindingId) = $binding->getValues();
+                $this->removedBindingIds[(int) $bindingId] = true;
+            }
+        }
     }
 
     /**
@@ -1505,11 +1596,15 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
             return $value;
         }
 
-        foreach ($bag->getEnvPlaceholders() as $env => $placeholders) {
-            if (isset($placeholders[$value])) {
-                $bag = new ParameterBag($bag->all());
+        $envPlaceholders = $bag->getEnvPlaceholders();
+        if (isset($envPlaceholders[$name][$value])) {
+            $bag = new ParameterBag($bag->all());
 
-                return $bag->unescapeValue($bag->get("env($name)"));
+            return $bag->unescapeValue($bag->get("env($name)"));
+        }
+        foreach ($envPlaceholders as $env => $placeholders) {
+            if (isset($placeholders[$value])) {
+                return $this->getEnv($env);
             }
         }
 
@@ -1525,16 +1620,18 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     {
         foreach (self::getServiceConditionals($call[1]) as $s) {
             if (!$this->has($s)) {
-                return;
+                return $service;
             }
         }
         foreach (self::getInitializedConditionals($call[1]) as $s) {
             if (!$this->doGet($s, ContainerInterface::IGNORE_ON_UNINITIALIZED_REFERENCE, $inlineServices)) {
-                return;
+                return $service;
             }
         }
 
-        \call_user_func_array([$service, $call[0]], $this->doResolveServices($this->getParameterBag()->unescapeValue($this->getParameterBag()->resolveValue($call[1])), $inlineServices));
+        $result = $service->{$call[0]}(...$this->doResolveServices($this->getParameterBag()->unescapeValue($this->getParameterBag()->resolveValue($call[1])), $inlineServices));
+
+        return empty($call[2]) ? $service : $result;
     }
 
     /**
@@ -1558,7 +1655,7 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     {
         if (null === $this->expressionLanguage) {
             if (!class_exists('Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
-                throw new RuntimeException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed.');
+                throw new LogicException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed.');
             }
             $this->expressionLanguage = new ExpressionLanguage(null, $this->expressionLanguageProviders);
         }

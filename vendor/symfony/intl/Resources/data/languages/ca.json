@@ -1,5 +1,5 @@
 {
-    "Version": "2.1.43.65",
+    "Version": "2.1.48.42",
     "Names": {
         "aa": "àfar",
         "ab": "abkhaz",
@@ -79,6 +79,7 @@
         "car": "carib",
         "cay": "cayuga",
         "cch": "atsam",
+        "ccp": "chakma",
         "ce": "txetxè",
         "ceb": "cebuà",
         "cgg": "chiga",
@@ -343,7 +344,6 @@
         "ms": "malai",
         "mt": "maltès",
         "mua": "mundang",
-        "mul": "llengües vàries",
         "mus": "creek",
         "mwl": "mirandès",
         "mwr": "marwari",
@@ -529,7 +529,6 @@
         "uga": "ugarític",
         "uk": "ucraïnès",
         "umb": "umbundu",
-        "und": "idioma desconegut",
         "ur": "urdú",
         "uz": "uzbek",
         "vai": "vai",
@@ -571,7 +570,6 @@
         "zh_Hant": "xinès tradicional",
         "zu": "zulu",
         "zun": "zuni",
-        "zxx": "sense contingut lingüístic",
         "zza": "zaza"
     }
 }

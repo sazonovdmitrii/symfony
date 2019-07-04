@@ -1,5 +1,5 @@
 {
-    "Version": "2.1.44.86",
+    "Version": "2.1.48.42",
     "Names": {
         "aa": "afar",
         "ab": "abcaso",
@@ -88,6 +88,7 @@
         "car": "caribico",
         "cay": "cayuga",
         "cch": "atsam",
+        "ccp": "chakma",
         "ce": "ceceno",
         "ceb": "cebuano",
         "cgg": "chiga",
@@ -363,7 +364,6 @@
         "ms": "malese",
         "mt": "maltese",
         "mua": "mundang",
-        "mul": "multilingua",
         "mus": "creek",
         "mwl": "mirandese",
         "mwr": "marwari",
@@ -565,7 +565,6 @@
         "uga": "ugaritico",
         "uk": "ucraino",
         "umb": "mbundu",
-        "und": "lingua imprecisata",
         "ur": "urdu",
         "uz": "uzbeco",
         "vai": "vai",
@@ -609,7 +608,6 @@
         "zh_Hant": "cinese tradizionale",
         "zu": "zulu",
         "zun": "zuni",
-        "zxx": "nessun contenuto linguistico",
         "zza": "zaza"
     }
 }

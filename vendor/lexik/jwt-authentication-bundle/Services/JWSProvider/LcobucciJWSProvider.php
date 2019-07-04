@@ -143,7 +143,7 @@ class LcobucciJWSProvider implements JWSProviderInterface
         if ($this->signer instanceof Hmac) {
             return $jws->sign($this->signer, $this->keyLoader->loadKey(RawKeyLoader::TYPE_PRIVATE));
         }
-        
+
         return $jws->sign(
             $this->signer,
             new Key($this->keyLoader->loadKey(RawKeyLoader::TYPE_PRIVATE), $this->keyLoader->getPassphrase())

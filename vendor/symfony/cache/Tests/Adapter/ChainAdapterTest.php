@@ -24,8 +24,12 @@ use Symfony\Component\Cache\Tests\Fixtures\ExternalAdapter;
  */
 class ChainAdapterTest extends AdapterTestCase
 {
-    public function createCachePool($defaultLifetime = 0)
+    public function createCachePool($defaultLifetime = 0, $testMethod = null)
     {
+        if ('testGetMetadata' === $testMethod) {
+            return new ChainAdapter([new FilesystemAdapter('', $defaultLifetime)], $defaultLifetime);
+        }
+
         return new ChainAdapter([new ArrayAdapter($defaultLifetime), new ExternalAdapter(), new FilesystemAdapter('', $defaultLifetime)], $defaultLifetime);
     }
 
@@ -80,7 +84,7 @@ class ChainAdapterTest extends AdapterTestCase
         $pruneable
             ->expects($this->atLeastOnce())
             ->method('prune')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         return $pruneable;
     }
@@ -97,7 +101,7 @@ class ChainAdapterTest extends AdapterTestCase
         $pruneable
             ->expects($this->atLeastOnce())
             ->method('prune')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         return $pruneable;
     }

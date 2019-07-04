@@ -98,8 +98,6 @@ class QueryDepth extends QuerySecurityRule
 
     /**
      * Set max query depth. If equal to 0 no check is done. Must be greater or equal to 0.
-     *
-     * @param int $maxQueryDepth
      */
     public function setMaxQueryDepth($maxQueryDepth)
     {
@@ -115,6 +113,6 @@ class QueryDepth extends QuerySecurityRule
 
     protected function isEnabled()
     {
-        return $this->getMaxQueryDepth() !== static::DISABLED;
+        return $this->getMaxQueryDepth() !== self::DISABLED;
     }
 }

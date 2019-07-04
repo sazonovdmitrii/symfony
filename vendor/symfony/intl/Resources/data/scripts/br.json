@@ -1,5 +1,5 @@
 {
-    "Version": "2.1.44.91",
+    "Version": "2.1.48.86",
     "Names": {
         "Adlm": "adlam",
         "Arab": "arabek",
@@ -78,7 +78,6 @@
         "Zsye": "fromlunioù",
         "Zsym": "arouezioù",
         "Zxxx": "anskrivet",
-        "Zyyy": "boutin",
-        "Zzzz": "skritur dianav"
+        "Zyyy": "boutin"
     }
 }

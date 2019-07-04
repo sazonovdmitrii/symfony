@@ -19,6 +19,9 @@ use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Filesystem\Filesystem;
 
+/**
+ * @group legacy
+ */
 class TemplatePathsCacheWarmerTest extends TestCase
 {
     /** @var Filesystem */
@@ -68,13 +71,13 @@ class TemplatePathsCacheWarmerTest extends TestCase
         $this->templateFinder
             ->expects($this->once())
             ->method('findAllTemplates')
-            ->will($this->returnValue([$template]));
+            ->willReturn([$template]);
 
         $this->fileLocator
             ->expects($this->once())
             ->method('locate')
             ->with($template->getPath())
-            ->will($this->returnValue(\dirname($this->tmpDir).'/path/to/template.html.twig'));
+            ->willReturn(\dirname($this->tmpDir).'/path/to/template.html.twig');
 
         $warmer = new TemplatePathsCacheWarmer($this->templateFinder, $this->templateLocator);
         $warmer->warmUp($this->tmpDir);
@@ -87,7 +90,7 @@ class TemplatePathsCacheWarmerTest extends TestCase
         $this->templateFinder
             ->expects($this->once())
             ->method('findAllTemplates')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $this->fileLocator
             ->expects($this->never())

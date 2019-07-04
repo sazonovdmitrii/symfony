@@ -1,5 +1,5 @@
 {
-    "Version": "2.1.43.65",
+    "Version": "2.1.48.17",
     "Names": {
         "aa": "isi-Afar",
         "ab": "isi-Abkhazian",
@@ -48,6 +48,7 @@
         "bug": "isi-Buginese",
         "byn": "isi-Blin",
         "ca": "isi-Catalan",
+        "ccp": "i-Chakma",
         "ce": "isi-Chechen",
         "ceb": "isi-Cebuano",
         "cgg": "isi-Chiga",
@@ -242,7 +243,6 @@
         "ms": "isi-Malay",
         "mt": "isi-Maltese",
         "mua": "isi-Mundang",
-        "mul": "izilimi ezehlukene",
         "mus": "isi-Creek",
         "mwl": "isi-Mirandese",
         "my": "isi-Burmese",
@@ -377,7 +377,6 @@
         "ug": "isi-Uighur",
         "uk": "isi-Ukrainian",
         "umb": "isi-Umbundu",
-        "und": "ulimi olungaziwa",
         "ur": "isi-Urdu",
         "uz": "isi-Uzbek",
         "vai": "isi-Vai",
@@ -406,7 +405,6 @@
         "zh_Hant": "isi-Chinese (Okosiko)",
         "zu": "isiZulu",
         "zun": "isi-Zuni",
-        "zxx": "akukho okuqukethwe kolimi",
         "zza": "isi-Zaza"
     }
 }

@@ -118,7 +118,7 @@ class SwiftmailerExtension extends Extension
 
             $container->setParameter(sprintf('swiftmailer.mailer.%s.transport.name', $name), $transport);
 
-            $transportId = in_array($transport, ['smtp', 'sendmail', 'null'])
+            $transportId = \in_array($transport, ['smtp', 'sendmail', 'null'])
                 ? sprintf('swiftmailer.mailer.%s.transport.%s', $name, $transport)
                 : $transport;
 
@@ -214,6 +214,7 @@ class SwiftmailerExtension extends Extension
                     new Reference(sprintf('swiftmailer.mailer.%s.transport.buffer', $name)),
                     new Reference(sprintf('swiftmailer.mailer.%s.transport.eventdispatcher', $name)),
                 ])
+                ->addMethodCall('setCommand', [$mailer['command']])
                 ->setConfigurator([new Reference(sprintf('swiftmailer.transport.configurator.%s', $name)), 'configure'])
             ;
 
@@ -221,7 +222,7 @@ class SwiftmailerExtension extends Extension
         } elseif ('null' === $transport) {
             $definitionDecorator = $this->createChildDefinition('swiftmailer.transport.null.abstract');
             $container
-                ->setDefinition(sprintf('swiftmailer.mailer.%s.transport.null', $name, $transport), $definitionDecorator)
+                ->setDefinition(sprintf('swiftmailer.mailer.%s.transport.null', $name), $definitionDecorator)
                 ->setArguments([
                     new Reference(sprintf('swiftmailer.mailer.%s.transport.eventdispatcher', $name)),
                 ])
@@ -333,7 +334,7 @@ class SwiftmailerExtension extends Extension
 
     protected function configureMailerDeliveryAddress($name, array $mailer, ContainerBuilder $container, $isDefaultMailer = false)
     {
-        if (count($mailer['delivery_addresses']) > 0) {
+        if (\count($mailer['delivery_addresses']) > 0) {
             $container->setParameter(sprintf('swiftmailer.mailer.%s.single_address', $name), $mailer['delivery_addresses'][0]);
             $container->setParameter(sprintf('swiftmailer.mailer.%s.delivery_addresses', $name), $mailer['delivery_addresses']);
             $container->setParameter(sprintf('swiftmailer.mailer.%s.delivery_whitelist', $name), $mailer['delivery_whitelist']);

@@ -32,7 +32,7 @@ class OptionsResolverIntrospector
                 throw new UndefinedOptionsException(sprintf('The option "%s" does not exist.', $option));
             }
 
-            if (!array_key_exists($option, $this->{$property})) {
+            if (!\array_key_exists($option, $this->{$property})) {
                 throw new NoConfigurationException($message);
             }
 
@@ -85,6 +85,24 @@ class OptionsResolverIntrospector
      */
     public function getNormalizer(string $option): \Closure
     {
+        return current($this->getNormalizers($option));
+    }
+
+    /**
+     * @throws NoConfigurationException when no normalizer is configured
+     */
+    public function getNormalizers(string $option): array
+    {
         return ($this->get)('normalizers', $option, sprintf('No normalizer was set for the "%s" option.', $option));
+    }
+
+    /**
+     * @return string|\Closure
+     *
+     * @throws NoConfigurationException on no configured deprecation
+     */
+    public function getDeprecationMessage(string $option)
+    {
+        return ($this->get)('deprecated', $option, sprintf('No deprecation was set for the "%s" option.', $option));
     }
 }

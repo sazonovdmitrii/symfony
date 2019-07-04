@@ -1,5 +1,5 @@
 {
-    "Version": "2.1.44.91",
+    "Version": "2.1.48.42",
     "Names": {
         "aa": "afarščina",
         "ab": "abhaščina",
@@ -61,6 +61,7 @@
         "ca": "katalonščina",
         "cad": "kadoščina",
         "car": "karibski jezik",
+        "ccp": "chakma",
         "ce": "čečenščina",
         "ceb": "sebuanščina",
         "cgg": "čigajščina",
@@ -303,7 +304,6 @@
         "ms": "malajščina",
         "mt": "malteščina",
         "mua": "mundang",
-        "mul": "več jezikov",
         "mus": "creekovščina",
         "mwl": "mirandeščina",
         "mwr": "marvarščina",
@@ -471,7 +471,6 @@
         "uga": "ugaritski jezik",
         "uk": "ukrajinščina",
         "umb": "umbundščina",
-        "und": "neznan jezik",
         "ur": "urdujščina",
         "uz": "uzbeščina",
         "vai": "vajščina",
@@ -506,7 +505,6 @@
         "zh_Hant": "tradicionalna kitajščina",
         "zu": "zulujščina",
         "zun": "zunijščina",
-        "zxx": "brez jezikoslovne vsebine",
         "zza": "zazajščina"
     }
 }

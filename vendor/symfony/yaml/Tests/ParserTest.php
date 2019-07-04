@@ -525,6 +525,20 @@ EOF;
         $this->parser->parse($yaml, Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
     }
 
+    /**
+     * @group legacy
+     * @expectedDeprecation Support for mapping keys in multi-line blocks is deprecated since Symfony 4.3 and will throw a ParseException in 5.0.
+     */
+    public function testMappingKeyInMultiLineStringTriggersDeprecationNotice()
+    {
+        $yaml = <<<'EOF'
+data:
+    dbal:wrong
+        default_connection: monolith
+EOF;
+        $this->parser->parse($yaml);
+    }
+
     public function testCanParseContentWithTrailingSpaces()
     {
         $yaml = "items:  \n  foo: bar";
@@ -788,7 +802,7 @@ EOF
      *
      * > It is an error for two equal keys to appear in the same mapping node.
      * > In such a case the YAML processor may continue, ignoring the second
-     * > `key: value` pair and issuing an appropriate warning. This strategy
+     * > "key: value" pair and issuing an appropriate warning. This strategy
      * > preserves a consistent information model for one-pass and random access
      * > applications.
      *
@@ -1698,7 +1712,7 @@ YAML
 
     /**
      * @expectedException \Symfony\Component\Yaml\Exception\ParseException
-     * @expectedExceptionMessage Tags support is not enabled. Enable the `Yaml::PARSE_CUSTOM_TAGS` flag to use "!iterator" at line 1 (near "!iterator [foo]").
+     * @expectedExceptionMessage Tags support is not enabled. Enable the "Yaml::PARSE_CUSTOM_TAGS" flag to use "!iterator" at line 1 (near "!iterator [foo]").
      */
     public function testCustomTagsDisabled()
     {
@@ -1707,7 +1721,7 @@ YAML
 
     /**
      * @expectedException \Symfony\Component\Yaml\Exception\ParseException
-     * @expectedExceptionMessage Tags support is not enabled. Enable the `Yaml::PARSE_CUSTOM_TAGS` flag to use "!iterator" at line 1 (near "!iterator foo").
+     * @expectedExceptionMessage Tags support is not enabled. Enable the "Yaml::PARSE_CUSTOM_TAGS" flag to use "!iterator" at line 1 (near "!iterator foo").
      */
     public function testUnsupportedTagWithScalar()
     {

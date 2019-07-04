@@ -15,6 +15,9 @@ use Symfony\Bundle\FrameworkBundle\Templating\Loader\TemplateLocator;
 use Symfony\Bundle\FrameworkBundle\Templating\TemplateReference;
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 
+/**
+ * @group legacy
+ */
 class TemplateLocatorTest extends TestCase
 {
     public function testLocateATemplate()
@@ -27,7 +30,7 @@ class TemplateLocatorTest extends TestCase
             ->expects($this->once())
             ->method('locate')
             ->with($template->getPath())
-            ->will($this->returnValue('/path/to/template'))
+            ->willReturn('/path/to/template')
         ;
 
         $locator = new TemplateLocator($fileLocator);

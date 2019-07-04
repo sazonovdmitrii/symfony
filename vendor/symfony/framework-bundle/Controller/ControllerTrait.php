@@ -12,6 +12,8 @@
 namespace Symfony\Bundle\FrameworkBundle\Controller;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Fig\Link\GenericLinkProvider;
+use Fig\Link\Link;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,14 +21,17 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\WebLink\EventListener\AddLinkHeaderListener;
 
 /**
  * Common features needed in controllers.
@@ -201,6 +206,8 @@ trait ControllerTrait
     protected function renderView(string $view, array $parameters = []): string
     {
         if ($this->container->has('templating')) {
+            @trigger_error('Using the "templating" service is deprecated since version 4.3 and will be removed in 5.0; use Twig instead.', E_USER_DEPRECATED);
+
             return $this->container->get('templating')->render($view, $parameters);
         }
 
@@ -219,6 +226,8 @@ trait ControllerTrait
     protected function render(string $view, array $parameters = [], Response $response = null): Response
     {
         if ($this->container->has('templating')) {
+            @trigger_error('Using the "templating" service is deprecated since version 4.3 and will be removed in 5.0; use Twig instead.', E_USER_DEPRECATED);
+
             $content = $this->container->get('templating')->render($view, $parameters);
         } elseif ($this->container->has('twig')) {
             $content = $this->container->get('twig')->render($view, $parameters);
@@ -243,6 +252,8 @@ trait ControllerTrait
     protected function stream(string $view, array $parameters = [], StreamedResponse $response = null): StreamedResponse
     {
         if ($this->container->has('templating')) {
+            @trigger_error('Using the "templating" service is deprecated since version 4.3 and will be removed in 5.0; use Twig instead.', E_USER_DEPRECATED);
+
             $templating = $this->container->get('templating');
 
             $callback = function () use ($templating, $view, $parameters) {
@@ -386,16 +397,39 @@ trait ControllerTrait
     /**
      * Dispatches a message to the bus.
      *
-     * @param object $message The message to dispatch
+     * @param object|Envelope $message The message or the message pre-wrapped in an envelope
      *
      * @final
      */
-    protected function dispatchMessage($message)
+    protected function dispatchMessage($message): Envelope
     {
-        if (!$this->container->has('message_bus')) {
-            throw new \LogicException('The message bus is not enabled in your application. Try running "composer require symfony/messenger".');
+        if (!$this->container->has('messenger.default_bus')) {
+            $message = class_exists(Envelope::class) ? 'You need to define the "messenger.default_bus" configuration option.' : 'Try running "composer require symfony/messenger".';
+            throw new \LogicException('The message bus is not enabled in your application. '.$message);
         }
 
-        return $this->container->get('message_bus')->dispatch($message);
+        return $this->container->get('messenger.default_bus')->dispatch($message);
+    }
+
+    /**
+     * Adds a Link HTTP header to the current response.
+     *
+     * @see https://tools.ietf.org/html/rfc5988
+     *
+     * @final
+     */
+    protected function addLink(Request $request, Link $link)
+    {
+        if (!class_exists(AddLinkHeaderListener::class)) {
+            throw new \LogicException('You can not use the "addLink" method if the WebLink component is not available. Try running "composer require symfony/web-link".');
+        }
+
+        if (null === $linkProvider = $request->attributes->get('_links')) {
+            $request->attributes->set('_links', new GenericLinkProvider([$link]));
+
+            return;
+        }
+
+        $request->attributes->set('_links', $linkProvider->withLink($link));
     }
 }

@@ -47,7 +47,7 @@ class HttpFoundationRequestHandlerTest extends AbstractRequestHandlerTest
         return new HttpFoundationRequestHandler($this->serverParams);
     }
 
-    protected function getMockFile($suffix = '')
+    protected function getUploadedFile($suffix = '')
     {
         return new UploadedFile(__DIR__.'/../../Fixtures/foo'.$suffix, 'foo'.$suffix);
     }
@@ -55,5 +55,16 @@ class HttpFoundationRequestHandlerTest extends AbstractRequestHandlerTest
     protected function getInvalidFile()
     {
         return 'file:///etc/passwd';
+    }
+
+    protected function getFailedUploadedFile($errorCode)
+    {
+        $class = new \ReflectionClass(UploadedFile::class);
+
+        if (5 === $class->getConstructor()->getNumberOfParameters()) {
+            return new UploadedFile(__DIR__.'/../../Fixtures/foo', 'foo', null, $errorCode, true);
+        }
+
+        return new UploadedFile(__DIR__.'/../../Fixtures/foo', 'foo', null, null, $errorCode, true);
     }
 }

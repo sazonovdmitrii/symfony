@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\Migrations\Version;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\Migrations\Configuration\Configuration;
 use Doctrine\Migrations\Events;
@@ -192,19 +193,17 @@ final class Executor implements ExecutorInterface
 
         $version->setState(State::PRE);
 
-        $fromSchema = $this->schemaProvider->createFromSchema();
+        $fromSchema = $this->getFromSchema($migratorConfiguration);
 
         $migration->{'pre' . ucfirst($direction)}($fromSchema);
 
-        if ($direction === Direction::UP) {
-            $this->outputWriter->write("\n" . sprintf('  <info>++</info> migrating <comment>%s</comment>', $version->getVersion()) . "\n");
-        } else {
-            $this->outputWriter->write("\n" . sprintf('  <info>--</info> reverting <comment>%s</comment>', $version->getVersion()) . "\n");
-        }
+        $this->outputWriter->write("\n" . $this->getMigrationHeader($version, $migration, $direction) . "\n");
 
         $version->setState(State::EXEC);
 
         $toSchema = $this->schemaProvider->createToSchema($fromSchema);
+
+        $versionExecutionResult->setToSchema($toSchema);
 
         $migration->$direction($toSchema);
 
@@ -269,6 +268,22 @@ final class Executor implements ExecutorInterface
         );
 
         return $versionExecutionResult;
+    }
+
+    private function getMigrationHeader(Version $version, AbstractMigration $migration, string $direction) : string
+    {
+        $versionInfo = $version->getVersion();
+        $description = $migration->getDescription();
+
+        if ($description !== '') {
+            $versionInfo .= ' (' . $description . ')';
+        }
+
+        if ($direction === Direction::UP) {
+            return sprintf('  <info>++</info> migrating <comment>%s</comment>', $versionInfo);
+        }
+
+        return sprintf('  <info>--</info> reverting <comment>%s</comment>', $versionInfo);
     }
 
     private function skipMigration(
@@ -367,5 +382,15 @@ final class Executor implements ExecutorInterface
             $query,
             $params
         )));
+    }
+
+    private function getFromSchema(MigratorConfiguration $migratorConfiguration) : Schema
+    {
+        // if we're in a dry run, use the from Schema instead of reading the schema from the database
+        if ($migratorConfiguration->isDryRun() && $migratorConfiguration->getFromSchema() !== null) {
+            return $migratorConfiguration->getFromSchema();
+        }
+
+        return $this->schemaProvider->createFromSchema();
     }
 }

@@ -15,8 +15,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use const E_USER_DEPRECATED;
 use function implode;
+use function method_exists;
 use function sprintf;
+use function trigger_error;
 
 /**
  * Load data fixtures from bundles.
@@ -26,9 +29,18 @@ class LoadDataFixturesDoctrineCommand extends DoctrineCommand
     /** @var SymfonyFixturesLoader */
     private $fixturesLoader;
 
-    public function __construct(SymfonyFixturesLoader $fixturesLoader)
+    public function __construct(SymfonyFixturesLoader $fixturesLoader, ?ManagerRegistry $doctrine = null)
     {
-        parent::__construct();
+        if ($doctrine === null) {
+            @trigger_error(sprintf(
+                'The "%s" constructor expects a "%s" instance as second argument, not passing it will throw a \TypeError in DoctrineFixturesBundle 4.0.',
+                static::class,
+                ManagerRegistry::class
+            ), E_USER_DEPRECATED);
+        }
+
+        // @todo The method_exists call can be removed once the DoctrineBundle dependency has been bumped to at least 1.10
+        parent::__construct(method_exists($this, 'getDoctrine') ? $doctrine : null);
 
         $this->fixturesLoader = $fixturesLoader;
     }
@@ -73,9 +85,15 @@ EOT
     {
         $ui = new SymfonyStyle($input, $output);
 
-        /** @var ManagerRegistry $doctrine */
-        $doctrine = $this->getContainer()->get('doctrine');
-        $em       = $doctrine->getManager($input->getOption('em'));
+        // @todo The method_exists call can be removed once the DoctrineBundle dependency has been bumped to at least 1.10
+        if (method_exists($this, 'getDoctrine')) {
+            $doctrine = $this->getDoctrine();
+        } else {
+            /** @var ManagerRegistry $doctrine */
+            $doctrine = $this->getContainer()->get('doctrine');
+        }
+
+        $em = $doctrine->getManager($input->getOption('em'));
 
         if (! $input->getOption('append')) {
             if (! $ui->confirm(sprintf('Careful, database "%s" will be purged. Do you want to continue?', $em->getConnection()->getDatabase()), ! $input->isInteractive())) {

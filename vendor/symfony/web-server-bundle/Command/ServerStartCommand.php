@@ -31,13 +31,15 @@ class ServerStartCommand extends Command
 {
     private $documentRoot;
     private $environment;
+    private $pidFileDirectory;
 
     protected static $defaultName = 'server:start';
 
-    public function __construct(string $documentRoot = null, string $environment = null)
+    public function __construct(string $documentRoot = null, string $environment = null, string $pidFileDirectory = null)
     {
         $this->documentRoot = $documentRoot;
         $this->environment = $environment;
+        $this->pidFileDirectory = $pidFileDirectory;
 
         parent::__construct();
     }
@@ -133,9 +135,9 @@ EOF
         $this->getApplication()->setDispatcher(new EventDispatcher());
 
         try {
-            $server = new WebServer();
+            $server = new WebServer($this->pidFileDirectory);
             if ($server->isRunning($input->getOption('pidfile'))) {
-                $io->error(sprintf('The web server is already running (listening on http://%s).', $server->getAddress($input->getOption('pidfile'))));
+                $io->error(sprintf('The web server has already been started. It is currently listening on http://%s. Please stop the web server before you try to start it again.', $server->getAddress($input->getOption('pidfile'))));
 
                 return 1;
             }
@@ -143,7 +145,14 @@ EOF
             $config = new WebServerConfig($documentRoot, $env, $input->getArgument('addressport'), $input->getOption('router'));
 
             if (WebServer::STARTED === $server->start($config, $input->getOption('pidfile'))) {
-                $io->success(sprintf('Server listening on http://%s', $config->getAddress()));
+                $message = sprintf('Server listening on http://%s', $config->getAddress());
+                if ('' !== $displayAddress = $config->getDisplayAddress()) {
+                    $message = sprintf('Server listening on all interfaces, port %s -- see http://%s', $config->getPort(), $displayAddress);
+                }
+                $io->success($message);
+                if (ini_get('xdebug.profiler_enable_trigger')) {
+                    $io->comment('Xdebug profiler trigger enabled.');
+                }
             }
         } catch (\Exception $e) {
             $io->error($e->getMessage());

@@ -13,7 +13,7 @@ namespace Symfony\Bridge\Doctrine\Form;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\Mapping\MappingException;
-use Doctrine\Common\Util\ClassUtils;
+use Doctrine\Common\Persistence\Proxy;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\ORM\Mapping\MappingException as LegacyMappingException;
@@ -53,6 +53,7 @@ class DoctrineOrmTypeGuesser implements FormTypeGuesserInterface
 
         switch ($metadata->getTypeOfField($property)) {
             case Type::TARRAY:
+            case Type::SIMPLE_ARRAY:
                 return new TypeGuess('Symfony\Component\Form\Extension\Core\Type\CollectionType', [], Guess::MEDIUM_CONFIDENCE);
             case Type::BOOLEAN:
                 return new TypeGuess('Symfony\Component\Form\Extension\Core\Type\CheckboxType', [], Guess::HIGH_CONFIDENCE);
@@ -74,6 +75,7 @@ class DoctrineOrmTypeGuesser implements FormTypeGuesserInterface
             case 'time_immutable':
                 return new TypeGuess('Symfony\Component\Form\Extension\Core\Type\TimeType', ['input' => 'datetime_immutable'], Guess::HIGH_CONFIDENCE);
             case Type::DECIMAL:
+                return new TypeGuess('Symfony\Component\Form\Extension\Core\Type\NumberType', ['input' => 'string'], Guess::MEDIUM_CONFIDENCE);
             case Type::FLOAT:
                 return new TypeGuess('Symfony\Component\Form\Extension\Core\Type\NumberType', [], Guess::MEDIUM_CONFIDENCE);
             case Type::INTEGER:
@@ -162,9 +164,9 @@ class DoctrineOrmTypeGuesser implements FormTypeGuesserInterface
     protected function getMetadata($class)
     {
         // normalize class name
-        $class = ClassUtils::getRealClass(ltrim($class, '\\'));
+        $class = self::getRealClass(ltrim($class, '\\'));
 
-        if (array_key_exists($class, $this->cache)) {
+        if (\array_key_exists($class, $this->cache)) {
             return $this->cache[$class];
         }
 
@@ -178,5 +180,14 @@ class DoctrineOrmTypeGuesser implements FormTypeGuesserInterface
                 // not an entity or mapped super class, using Doctrine ORM 2.2
             }
         }
+    }
+
+    private static function getRealClass(string $class): string
+    {
+        if (false === $pos = strrpos($class, '\\'.Proxy::MARKER.'\\')) {
+            return $class;
+        }
+
+        return substr($class, $pos + Proxy::MARKER_LENGTH + 2);
     }
 }

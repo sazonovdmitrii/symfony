@@ -19,11 +19,6 @@ class ProjectServiceContainer extends Container
     private $parameters;
     private $targetDirs = [];
 
-    /**
-     * @internal but protected for BC on cache:clear
-     */
-    protected $privates = [];
-
     public function __construct()
     {
         $this->services = $this->privates = [];
@@ -33,12 +28,6 @@ class ProjectServiceContainer extends Container
         ];
 
         $this->aliases = [];
-    }
-
-    public function reset()
-    {
-        $this->privates = [];
-        parent::reset();
     }
 
     public function compile()
@@ -66,7 +55,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getFooService()
     {
-        return $this->services['Bar\Foo'] = new \Bar\Foo();
+        return $this->services['Bar\\Foo'] = new \Bar\Foo();
     }
 
     /**
@@ -76,6 +65,6 @@ class ProjectServiceContainer extends Container
      */
     protected function getFoo2Service()
     {
-        return $this->services['Foo\Foo'] = new \Foo\Foo();
+        return $this->services['Foo\\Foo'] = new \Foo\Foo();
     }
 }

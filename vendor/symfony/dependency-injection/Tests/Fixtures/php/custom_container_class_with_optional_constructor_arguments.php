@@ -21,11 +21,6 @@ class ProjectServiceContainer extends \Symfony\Component\DependencyInjection\Tes
     private $parameters;
     private $targetDirs = [];
 
-    /**
-     * @internal but protected for BC on cache:clear
-     */
-    protected $privates = [];
-
     public function __construct()
     {
         parent::__construct();
@@ -34,12 +29,6 @@ class ProjectServiceContainer extends \Symfony\Component\DependencyInjection\Tes
         $this->services = $this->privates = [];
 
         $this->aliases = [];
-    }
-
-    public function reset()
-    {
-        $this->privates = [];
-        parent::reset();
     }
 
     public function compile()

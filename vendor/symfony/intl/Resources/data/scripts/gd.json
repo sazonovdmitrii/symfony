@@ -1,5 +1,5 @@
 {
-    "Version": "2.1.44.91",
+    "Version": "2.1.49.82",
     "Names": {
         "Adlm": "Adlam",
         "Afak": "Afaka",
@@ -176,7 +176,6 @@
         "Zsye": "Emoji",
         "Zsym": "Samhlaidhean",
         "Zxxx": "Gun sgrìobhadh",
-        "Zyyy": "Coitcheann",
-        "Zzzz": "Litreadh neo-aithnichte"
+        "Zyyy": "Coitcheann"
     }
 }

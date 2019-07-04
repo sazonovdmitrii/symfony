@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\DependencyInjection\Compiler\DataCollectorTranslatorPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DataCollectorTranslatorPassTest extends TestCase
 {
@@ -109,18 +109,6 @@ class DataCollectorTranslatorPassTest extends TestCase
 class TranslatorWithTranslatorBag implements TranslatorInterface
 {
     public function trans($id, array $parameters = [], $domain = null, $locale = null)
-    {
-    }
-
-    public function transChoice($id, $number, array $parameters = [], $domain = null, $locale = null)
-    {
-    }
-
-    public function setLocale($locale)
-    {
-    }
-
-    public function getLocale()
     {
     }
 }

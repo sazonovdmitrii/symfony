@@ -35,7 +35,7 @@ class ConstraintTest extends TestCase
 
     public function testSetNotExistingPropertyThrowsException()
     {
-        $this->{method_exists($this, $_ = 'expectException') ? $_ : 'setExpectedException'}('Symfony\Component\Validator\Exception\InvalidOptionsException');
+        $this->expectException('Symfony\Component\Validator\Exception\InvalidOptionsException');
 
         new ConstraintA([
             'foo' => 'bar',
@@ -46,14 +46,14 @@ class ConstraintTest extends TestCase
     {
         $constraint = new ConstraintA();
 
-        $this->{method_exists($this, $_ = 'expectException') ? $_ : 'setExpectedException'}('Symfony\Component\Validator\Exception\InvalidOptionsException');
+        $this->expectException('Symfony\Component\Validator\Exception\InvalidOptionsException');
 
         $constraint->foo = 'bar';
     }
 
     public function testInvalidAndRequiredOptionsPassed()
     {
-        $this->{method_exists($this, $_ = 'expectException') ? $_ : 'setExpectedException'}('Symfony\Component\Validator\Exception\InvalidOptionsException');
+        $this->expectException('Symfony\Component\Validator\Exception\InvalidOptionsException');
 
         new ConstraintC([
             'option1' => 'default',
@@ -101,14 +101,14 @@ class ConstraintTest extends TestCase
 
     public function testSetUndefinedDefaultProperty()
     {
-        $this->{method_exists($this, $_ = 'expectException') ? $_ : 'setExpectedException'}('Symfony\Component\Validator\Exception\ConstraintDefinitionException');
+        $this->expectException('Symfony\Component\Validator\Exception\ConstraintDefinitionException');
 
         new ConstraintB('foo');
     }
 
     public function testRequiredOptionsMustBeDefined()
     {
-        $this->{method_exists($this, $_ = 'expectException') ? $_ : 'setExpectedException'}('Symfony\Component\Validator\Exception\MissingOptionsException');
+        $this->expectException('Symfony\Component\Validator\Exception\MissingOptionsException');
 
         new ConstraintC();
     }
@@ -225,7 +225,7 @@ class ConstraintTest extends TestCase
 
     /**
      * @expectedException \Symfony\Component\Validator\Exception\InvalidOptionsException
-     * @expectedExceptionMessage The options "0", "5" do not exist
+     * @expectedExceptionMessage The options "0", "5" do not exist in constraint "Symfony\Component\Validator\Tests\Fixtures\ConstraintA".
      */
     public function testInvalidOptions()
     {
@@ -241,5 +241,14 @@ class ConstraintTest extends TestCase
         $constraint = new ConstraintA($options);
 
         $this->assertEquals('foo', $constraint->property1);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Validator\Exception\ConstraintDefinitionException
+     * @expectedExceptionMessage No default option is configured for constraint "Symfony\Component\Validator\Tests\Fixtures\ConstraintB".
+     */
+    public function testAnnotationSetUndefinedDefaultOption()
+    {
+        new ConstraintB(['value' => 1]);
     }
 }

@@ -38,7 +38,7 @@ class ChoiceValidatorTest extends ConstraintValidatorTestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
+     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedValueException
      */
     public function testExpectArrayIfMultipleIsTrue()
     {
@@ -54,11 +54,9 @@ class ChoiceValidatorTest extends ConstraintValidatorTestCase
     {
         $this->validator->validate(
             null,
-            new Choice(
-                [
-                    'choices' => ['foo', 'bar'],
-                ]
-            )
+            new Choice([
+                'choices' => ['foo', 'bar'],
+            ])
         );
 
         $this->assertNoViolation();
@@ -100,13 +98,11 @@ class ChoiceValidatorTest extends ConstraintValidatorTestCase
 
     public function testValidChoiceCallbackClosure()
     {
-        $constraint = new Choice(
-            [
-                'callback' => function () {
-                    return ['foo', 'bar'];
-                },
-            ]
-        );
+        $constraint = new Choice([
+            'callback' => function () {
+                return ['foo', 'bar'];
+            },
+        ]);
 
         $this->validator->validate('bar', $constraint);
 
@@ -169,6 +165,7 @@ class ChoiceValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation('myMessage')
             ->setParameter('{{ value }}', '"baz"')
+            ->setParameter('{{ choices }}', '"foo", "bar"')
             ->setCode(Choice::NO_SUCH_CHOICE_ERROR)
             ->assertRaised();
     }
@@ -186,6 +183,7 @@ class ChoiceValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation('myMessage')
             ->setParameter('{{ value }}', '"baz"')
+            ->setParameter('{{ choices }}', '')
             ->setCode(Choice::NO_SUCH_CHOICE_ERROR)
             ->assertRaised();
     }
@@ -202,6 +200,7 @@ class ChoiceValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation('myMessage')
             ->setParameter('{{ value }}', '"baz"')
+            ->setParameter('{{ choices }}', '"foo", "bar"')
             ->setInvalidValue('baz')
             ->setCode(Choice::NO_SUCH_CHOICE_ERROR)
             ->assertRaised();
@@ -275,6 +274,7 @@ class ChoiceValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation('myMessage')
             ->setParameter('{{ value }}', '"2"')
+            ->setParameter('{{ choices }}', '1, 2')
             ->setCode(Choice::NO_SUCH_CHOICE_ERROR)
             ->assertRaised();
     }
@@ -291,6 +291,7 @@ class ChoiceValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation('myMessage')
             ->setParameter('{{ value }}', '"3"')
+            ->setParameter('{{ choices }}', '1, 2, 3')
             ->setInvalidValue('3')
             ->setCode(Choice::NO_SUCH_CHOICE_ERROR)
             ->assertRaised();

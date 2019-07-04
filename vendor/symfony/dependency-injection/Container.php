@@ -14,11 +14,13 @@ namespace Symfony\Component\DependencyInjection;
 use Symfony\Component\DependencyInjection\Exception\EnvNotFoundException;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Exception\ParameterCircularReferenceException;
+use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag;
 use Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
 /**
  * Container is a dependency injection container.
@@ -41,6 +43,7 @@ class Container implements ResettableContainerInterface
 {
     protected $parameterBag;
     protected $services = [];
+    protected $privates = [];
     protected $fileMap = [];
     protected $methodMap = [];
     protected $factories = [];
@@ -135,7 +138,7 @@ class Container implements ResettableContainerInterface
     /**
      * Sets a service.
      *
-     * Setting a service to null resets the service: has() returns false and get()
+     * Setting a synthetic service to null resets it: has() returns false and get()
      * behaves in the same way as if the service was never created.
      *
      * @param string $id      The service identifier
@@ -300,7 +303,18 @@ class Container implements ResettableContainerInterface
      */
     public function reset()
     {
-        $this->services = $this->factories = [];
+        $services = $this->services + $this->privates;
+        $this->services = $this->factories = $this->privates = [];
+
+        foreach ($services as $service) {
+            try {
+                if ($service instanceof ResetInterface) {
+                    $service->reset();
+                }
+            } catch (\Throwable $e) {
+                continue;
+            }
+        }
     }
 
     /**
@@ -371,7 +385,7 @@ class Container implements ResettableContainerInterface
         if (isset($this->resolving[$envName = "env($name)"])) {
             throw new ParameterCircularReferenceException(array_keys($this->resolving));
         }
-        if (isset($this->envCache[$name]) || array_key_exists($name, $this->envCache)) {
+        if (isset($this->envCache[$name]) || \array_key_exists($name, $this->envCache)) {
             return $this->envCache[$name];
         }
         if (!$this->has($id = 'container.env_var_processors_locator')) {
@@ -399,6 +413,30 @@ class Container implements ResettableContainerInterface
         } finally {
             unset($this->resolving[$envName]);
         }
+    }
+
+    /**
+     * @internal
+     */
+    final protected function getService($registry, $id, $method, $load)
+    {
+        if ('service_container' === $id) {
+            return $this;
+        }
+        if (\is_string($load)) {
+            throw new RuntimeException($load);
+        }
+        if (null === $method) {
+            return false !== $registry ? $this->{$registry}[$id] ?? null : null;
+        }
+        if (false !== $registry) {
+            return $this->{$registry}[$id] ?? $this->{$registry}[$id] = $load ? $this->load($method) : $this->{$method}();
+        }
+        if (!$load) {
+            return $this->{$method}();
+        }
+
+        return ($factory = $this->factories[$id] ?? $this->factories['service_container'][$id] ?? null) ? $factory() : $this->load($method);
     }
 
     private function __clone()

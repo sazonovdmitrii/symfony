@@ -22,8 +22,13 @@ $container->loadFromExtension('security', [
             'key_length' => 30,
         ],
         'JMS\FooBundle\Entity\User6' => [
-            'algorithm' => 'bcrypt',
+            'algorithm' => 'native',
+            'time_cost' => 8,
+            'memory_cost' => 100,
             'cost' => 15,
+        ],
+        'JMS\FooBundle\Entity\User7' => [
+            'algorithm' => 'auto',
         ],
     ],
     'providers' => [
@@ -87,15 +92,10 @@ $container->loadFromExtension('security', [
             'anonymous' => true,
             'http_basic' => true,
         ],
-        'simple_auth' => [
-            'provider' => 'default',
-            'anonymous' => true,
-            'simple_form' => ['authenticator' => 'simple_authenticator'],
-        ],
     ],
 
     'access_control' => [
-        ['path' => '/blog/524', 'role' => 'ROLE_USER', 'requires_channel' => 'https', 'methods' => ['get', 'POST']],
+        ['path' => '/blog/524', 'role' => 'ROLE_USER', 'requires_channel' => 'https', 'methods' => ['get', 'POST'], 'port' => 8000],
         ['path' => '/blog/.*', 'role' => 'IS_AUTHENTICATED_ANONYMOUSLY'],
         ['path' => '/blog/524', 'role' => 'IS_AUTHENTICATED_ANONYMOUSLY', 'allow_if' => "token.getUsername() matches '/^admin/'"],
     ],

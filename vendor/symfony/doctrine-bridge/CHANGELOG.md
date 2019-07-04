@@ -1,6 +1,22 @@
 CHANGELOG
 =========
 
+4.3.0
+-----
+
+ * changed guessing of DECIMAL to set the `input` option of `NumberType` to string
+ * deprecated not passing an `IdReader` to the `DoctrineChoiceLoader` when query can be optimized with a single id field
+ * deprecated passing an `IdReader` to the `DoctrineChoiceLoader` when entities have a composite id
+ * added two Messenger middleware: `DoctrinePingConnectionMiddleware` and `DoctrineCloseConnectionMiddleware`
+
+4.2.0
+-----
+
+ * deprecated injecting `ClassMetadataFactory` in `DoctrineExtractor`,
+   an instance of `EntityManagerInterface` should be injected instead
+ * added support for `simple_array` type
+ * the `DoctrineTransactionMiddlewareFactory` class has been removed
+
 4.1.0
 -----
 

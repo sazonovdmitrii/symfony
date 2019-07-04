@@ -11,6 +11,7 @@
 
 namespace Symfony\Bundle\SecurityBundle\DependencyInjection;
 
+use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\RememberMeFactory;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\SecurityFactoryInterface;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\UserProvider\UserProviderFactoryInterface;
 use Symfony\Bundle\SecurityBundle\SecurityUserValueResolver;
@@ -22,14 +23,18 @@ use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Parameter;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\Encoder\Argon2iPasswordEncoder;
+use Symfony\Component\Security\Core\Encoder\NativePasswordEncoder;
+use Symfony\Component\Security\Core\Encoder\SodiumPasswordEncoder;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Controller\UserValueResolver;
+use Symfony\Component\Templating\PhpEngine;
 
 /**
  * SecurityExtension.
@@ -37,7 +42,7 @@ use Symfony\Component\Security\Http\Controller\UserValueResolver;
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class SecurityExtension extends Extension
+class SecurityExtension extends Extension implements PrependExtensionInterface
 {
     private $requestMatchers = [];
     private $expressions = [];
@@ -51,6 +56,32 @@ class SecurityExtension extends Extension
     {
         foreach ($this->listenerPositions as $position) {
             $this->factories[$position] = [];
+        }
+    }
+
+    public function prepend(ContainerBuilder $container)
+    {
+        $rememberMeSecureDefault = false;
+        $rememberMeSameSiteDefault = null;
+
+        if (!isset($container->getExtensions()['framework'])) {
+            return;
+        }
+        foreach ($container->getExtensionConfig('framework') as $config) {
+            if (isset($config['session']) && \is_array($config['session'])) {
+                $rememberMeSecureDefault = $config['session']['cookie_secure'] ?? $rememberMeSecureDefault;
+                $rememberMeSameSiteDefault = \array_key_exists('cookie_samesite', $config['session']) ? $config['session']['cookie_samesite'] : $rememberMeSameSiteDefault;
+            }
+        }
+        foreach ($this->listenerPositions as $position) {
+            foreach ($this->factories[$position] as $factory) {
+                if ($factory instanceof RememberMeFactory) {
+                    \Closure::bind(function () use ($rememberMeSecureDefault, $rememberMeSameSiteDefault) {
+                        $this->options['secure'] = $rememberMeSecureDefault;
+                        $this->options['samesite'] = $rememberMeSameSiteDefault;
+                    }, $factory, $factory)();
+                }
+            }
         }
     }
 
@@ -69,7 +100,9 @@ class SecurityExtension extends Extension
         $loader->load('security.xml');
         $loader->load('security_listeners.xml');
         $loader->load('security_rememberme.xml');
-        $loader->load('templating_php.xml');
+        if (class_exists(PhpEngine::class)) {
+            $loader->load('templating_php.xml');
+        }
         $loader->load('templating_twig.xml');
         $loader->load('collectors.xml');
         $loader->load('guard.xml');
@@ -144,6 +177,7 @@ class SecurityExtension extends Extension
                 $container,
                 $access['path'],
                 $access['host'],
+                $access['port'],
                 $access['methods'],
                 $access['ips']
             );
@@ -247,7 +281,7 @@ class SecurityExtension extends Extension
             $pattern = isset($firewall['pattern']) ? $firewall['pattern'] : null;
             $host = isset($firewall['host']) ? $firewall['host'] : null;
             $methods = isset($firewall['methods']) ? $firewall['methods'] : [];
-            $matcher = $this->createRequestMatcher($container, $pattern, $host, $methods);
+            $matcher = $this->createRequestMatcher($container, $pattern, $host, null, $methods);
         }
 
         $config->replaceArgument(2, $matcher ? (string) $matcher : null);
@@ -383,7 +417,7 @@ class SecurityExtension extends Extension
         foreach ($this->factories as $position) {
             foreach ($position as $factory) {
                 $key = str_replace('-', '_', $factory->getKey());
-                if (array_key_exists($key, $firewall)) {
+                if (\array_key_exists($key, $firewall)) {
                     $listenerKeys[] = $key;
                 }
             }
@@ -524,16 +558,24 @@ class SecurityExtension extends Extension
 
         // bcrypt encoder
         if ('bcrypt' === $config['algorithm']) {
+            @trigger_error('Configuring an encoder with "bcrypt" as algorithm is deprecated since Symfony 4.3, use "auto" instead.', E_USER_DEPRECATED);
+
             return [
                 'class' => 'Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder',
-                'arguments' => [$config['cost']],
+                'arguments' => [$config['cost'] ?? 13],
             ];
         }
 
         // Argon2i encoder
         if ('argon2i' === $config['algorithm']) {
+            @trigger_error('Configuring an encoder with "argon2i" as algorithm is deprecated since Symfony 4.3, use "auto" instead.', E_USER_DEPRECATED);
+
             if (!Argon2iPasswordEncoder::isSupported()) {
-                throw new InvalidConfigurationException('Argon2i algorithm is not supported. Please install the libsodium extension or upgrade to PHP 7.2+.');
+                if (\extension_loaded('sodium') && !\defined('SODIUM_CRYPTO_PWHASH_SALTBYTES')) {
+                    throw new InvalidConfigurationException('The installed libsodium version does not have support for Argon2i. Use "auto" instead.');
+                }
+
+                throw new InvalidConfigurationException('Argon2i algorithm is not supported. Install the libsodium extension or use "auto" instead.');
             }
 
             return [
@@ -542,6 +584,31 @@ class SecurityExtension extends Extension
                     $config['memory_cost'],
                     $config['time_cost'],
                     $config['threads'],
+                ],
+            ];
+        }
+
+        if ('native' === $config['algorithm']) {
+            return [
+                'class' => NativePasswordEncoder::class,
+                'arguments' => [
+                    $config['time_cost'],
+                    (($config['memory_cost'] ?? 0) << 10) ?: null,
+                    $config['cost'],
+                ],
+            ];
+        }
+
+        if ('sodium' === $config['algorithm']) {
+            if (!SodiumPasswordEncoder::isSupported()) {
+                throw new InvalidConfigurationException('Libsodium is not available. Install the sodium extension or use "auto" instead.');
+            }
+
+            return [
+                'class' => SodiumPasswordEncoder::class,
+                'arguments' => [
+                    $config['time_cost'],
+                    (($config['memory_cost'] ?? 0) << 10) ?: null,
                 ],
             ];
         }
@@ -664,20 +731,32 @@ class SecurityExtension extends Extension
         return $this->expressions[$id] = new Reference($id);
     }
 
-    private function createRequestMatcher($container, $path = null, $host = null, $methods = [], $ip = null, array $attributes = [])
+    private function createRequestMatcher(ContainerBuilder $container, $path = null, $host = null, int $port = null, $methods = [], array $ips = null, array $attributes = [])
     {
         if ($methods) {
             $methods = array_map('strtoupper', (array) $methods);
         }
 
-        $id = '.security.request_matcher.'.ContainerBuilder::hash([$path, $host, $methods, $ip, $attributes]);
+        if (null !== $ips) {
+            foreach ($ips as $ip) {
+                $container->resolveEnvPlaceholders($ip, null, $usedEnvs);
+
+                if (!$usedEnvs && !$this->isValidIp($ip)) {
+                    throw new \LogicException(sprintf('The given value "%s" in the "security.access_control" config option is not a valid IP address.', $ip));
+                }
+
+                $usedEnvs = null;
+            }
+        }
+
+        $id = '.security.request_matcher.'.ContainerBuilder::hash([$path, $host, $port, $methods, $ips, $attributes]);
 
         if (isset($this->requestMatchers[$id])) {
             return $this->requestMatchers[$id];
         }
 
         // only add arguments that are necessary
-        $arguments = [$path, $host, $methods, $ip, $attributes];
+        $arguments = [$path, $host, $methods, $ips, $attributes, null, $port];
         while (\count($arguments) > 0 && !end($arguments)) {
             array_pop($arguments);
         }
@@ -720,5 +799,31 @@ class SecurityExtension extends Extension
     {
         // first assemble the factories
         return new MainConfiguration($this->factories, $this->userProviderFactories);
+    }
+
+    private function isValidIp(string $cidr): bool
+    {
+        $cidrParts = explode('/', $cidr);
+
+        if (1 === \count($cidrParts)) {
+            return false !== filter_var($cidrParts[0], FILTER_VALIDATE_IP);
+        }
+
+        $ip = $cidrParts[0];
+        $netmask = $cidrParts[1];
+
+        if (!ctype_digit($netmask)) {
+            return false;
+        }
+
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            return $netmask <= 32;
+        }
+
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            return $netmask <= 128;
+        }
+
+        return false;
     }
 }

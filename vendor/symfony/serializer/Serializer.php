@@ -64,6 +64,10 @@ class Serializer implements SerializerInterface, ContextAwareNormalizerInterface
     private $denormalizerCache = [];
     private $normalizerCache = [];
 
+    /**
+     * @param (NormalizerInterface|DenormalizerInterface)[] $normalizers
+     * @param (EncoderInterface|DecoderInterface)[]         $encoders
+     */
     public function __construct(array $normalizers = [], array $encoders = [])
     {
         foreach ($normalizers as $normalizer) {
@@ -77,6 +81,11 @@ class Serializer implements SerializerInterface, ContextAwareNormalizerInterface
 
             if ($normalizer instanceof NormalizerAwareInterface) {
                 $normalizer->setNormalizer($this);
+            }
+
+            if (!($normalizer instanceof NormalizerInterface || $normalizer instanceof DenormalizerInterface)) {
+                @trigger_error(sprintf('Passing normalizers ("%s") which do not implement either "%s" or "%s" has been deprecated since Symfony 4.2.', \get_class($normalizer), NormalizerInterface::class, DenormalizerInterface::class), E_USER_DEPRECATED);
+                // throw new \InvalidArgumentException(\sprintf('The class "%s" does not implement "%s" or "%s".', \get_class($normalizer), NormalizerInterface::class, DenormalizerInterface::class));
             }
         }
         $this->normalizers = $normalizers;
@@ -92,6 +101,11 @@ class Serializer implements SerializerInterface, ContextAwareNormalizerInterface
             }
             if ($encoder instanceof EncoderInterface) {
                 $realEncoders[] = $encoder;
+            }
+
+            if (!($encoder instanceof EncoderInterface || $encoder instanceof DecoderInterface)) {
+                @trigger_error(sprintf('Passing encoders ("%s") which do not implement either "%s" or "%s" has been deprecated since Symfony 4.2.', \get_class($encoder), EncoderInterface::class, DecoderInterface::class), E_USER_DEPRECATED);
+                // throw new \InvalidArgumentException(\sprintf('The class "%s" does not implement "%s" or "%s".', \get_class($normalizer), EncoderInterface::class, DecoderInterface::class));
             }
         }
         $this->encoder = new ChainEncoder($realEncoders);
@@ -223,7 +237,7 @@ class Serializer implements SerializerInterface, ContextAwareNormalizerInterface
 
                 if (!$normalizer instanceof CacheableSupportsMethodInterface || !$normalizer->hasCacheableSupportsMethod()) {
                     $this->normalizerCache[$format][$type][$k] = false;
-                } elseif ($normalizer->supportsNormalization($data, $format)) {
+                } elseif ($normalizer->supportsNormalization($data, $format, $context)) {
                     $this->normalizerCache[$format][$type][$k] = true;
                     break;
                 }
@@ -264,7 +278,7 @@ class Serializer implements SerializerInterface, ContextAwareNormalizerInterface
 
                 if (!$normalizer instanceof CacheableSupportsMethodInterface || !$normalizer->hasCacheableSupportsMethod()) {
                     $this->denormalizerCache[$format][$class][$k] = false;
-                } elseif ($normalizer->supportsDenormalization(null, $class, $format)) {
+                } elseif ($normalizer->supportsDenormalization(null, $class, $format, $context)) {
                     $this->denormalizerCache[$format][$class][$k] = true;
                     break;
                 }

@@ -1,6 +1,22 @@
 CHANGELOG
 =========
 
+4.3.0
+-----
+
+ * added the `form_parent()` function that allows to reliably retrieve the parent form in Twig templates
+ * added the `workflow_transition_blockers()` function
+ * deprecated the `$requestStack` and `$requestContext` arguments of the 
+   `HttpFoundationExtension`, pass a `Symfony\Component\HttpFoundation\UrlHelper`
+   instance as the only argument instead
+
+4.2.0
+-----
+
+ * add bundle name suggestion on wrongly overridden templates paths
+ * added `name` argument in `debug:twig` command and changed `filter` argument as `--filter` option
+ * deprecated the `transchoice` tag and filter, use the `trans` ones instead with a `%count%` parameter
+
 4.1.0
 -----
 

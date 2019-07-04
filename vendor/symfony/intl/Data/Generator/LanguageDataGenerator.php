@@ -11,8 +11,8 @@
 
 namespace Symfony\Component\Intl\Data\Generator;
 
-use Symfony\Component\Intl\Data\Bundle\Compiler\GenrbCompiler;
-use Symfony\Component\Intl\Data\Bundle\Reader\BundleReaderInterface;
+use Symfony\Component\Intl\Data\Bundle\Compiler\BundleCompilerInterface;
+use Symfony\Component\Intl\Data\Bundle\Reader\BundleEntryReaderInterface;
 use Symfony\Component\Intl\Data\Util\ArrayAccessibleResourceBundle;
 use Symfony\Component\Intl\Data\Util\LocaleScanner;
 use Symfony\Component\Intl\Exception\RuntimeException;
@@ -39,6 +39,7 @@ class LanguageDataGenerator extends AbstractDataGenerator
         'cs' => 'ces',
         'cy' => 'cym',
         'de' => 'deu',
+        'dz' => 'dzo',
         'el' => 'ell',
         'et' => 'est',
         'eu' => 'eus',
@@ -82,6 +83,12 @@ class LanguageDataGenerator extends AbstractDataGenerator
         'za' => 'zha',
         'zh' => 'zho',
     ];
+    private static $blacklist = [
+        'mul' => true, // Multiple languages
+        'mis' => true, // Uncoded language
+        'und' => true, // Unknown language
+        'zxx' => true, // No linguistic content
+    ];
 
     /**
      * Collects all available language codes.
@@ -101,7 +108,7 @@ class LanguageDataGenerator extends AbstractDataGenerator
     /**
      * {@inheritdoc}
      */
-    protected function compileTemporaryBundles(GenrbCompiler $compiler, $sourceDir, $tempDir)
+    protected function compileTemporaryBundles(BundleCompilerInterface $compiler, $sourceDir, $tempDir)
     {
         $compiler->compile($sourceDir.'/lang', $tempDir);
         $compiler->compile($sourceDir.'/misc/metadata.txt', $tempDir);
@@ -118,7 +125,7 @@ class LanguageDataGenerator extends AbstractDataGenerator
     /**
      * {@inheritdoc}
      */
-    protected function generateDataForLocale(BundleReaderInterface $reader, $tempDir, $displayLocale)
+    protected function generateDataForLocale(BundleEntryReaderInterface $reader, $tempDir, $displayLocale)
     {
         $localeBundle = $reader->read($tempDir, $displayLocale);
 
@@ -126,7 +133,7 @@ class LanguageDataGenerator extends AbstractDataGenerator
         if (isset($localeBundle['Languages']) && null !== $localeBundle['Languages']) {
             $data = [
                 'Version' => $localeBundle['Version'],
-                'Names' => iterator_to_array($localeBundle['Languages']),
+                'Names' => self::generateLanguageNames($localeBundle),
             ];
 
             $this->languageCodes = array_merge($this->languageCodes, array_keys($data['Names']));
@@ -138,14 +145,14 @@ class LanguageDataGenerator extends AbstractDataGenerator
     /**
      * {@inheritdoc}
      */
-    protected function generateDataForRoot(BundleReaderInterface $reader, $tempDir)
+    protected function generateDataForRoot(BundleEntryReaderInterface $reader, $tempDir)
     {
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function generateDataForMeta(BundleReaderInterface $reader, $tempDir)
+    protected function generateDataForMeta(BundleEntryReaderInterface $reader, $tempDir)
     {
         $rootBundle = $reader->read($tempDir, 'root');
         $metadataBundle = $reader->read($tempDir, 'metadata');
@@ -160,6 +167,11 @@ class LanguageDataGenerator extends AbstractDataGenerator
             'Aliases' => array_column(iterator_to_array($metadataBundle['alias']['language']), 'replacement'),
             'Alpha2ToAlpha3' => $this->generateAlpha2ToAlpha3Mapping($metadataBundle),
         ];
+    }
+
+    private static function generateLanguageNames(ArrayAccessibleResourceBundle $localeBundle): array
+    {
+        return array_diff_key(iterator_to_array($localeBundle['Languages']), self::$blacklist);
     }
 
     private function generateAlpha2ToAlpha3Mapping(ArrayAccessibleResourceBundle $metadataBundle)

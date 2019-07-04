@@ -53,6 +53,10 @@ class ResolveNamedArgumentsPass extends AbstractRecursivePass
                     $parameters = $r->getParameters();
                 }
 
+                if (isset($key[0]) && '$' !== $key[0] && !class_exists($key)) {
+                    throw new InvalidArgumentException(sprintf('Invalid service "%s": did you forget to add the "$" prefix to argument "%s"?', $this->currentId, $key));
+                }
+
                 if (isset($key[0]) && '$' === $key[0]) {
                     foreach ($parameters as $j => $p) {
                         if ($key === '$'.$p->name) {
@@ -77,7 +81,7 @@ class ResolveNamedArgumentsPass extends AbstractRecursivePass
 
                 $typeFound = false;
                 foreach ($parameters as $j => $p) {
-                    if (!array_key_exists($j, $resolvedArguments) && ProxyHelper::getTypeHint($r, $p, true) === $key) {
+                    if (!\array_key_exists($j, $resolvedArguments) && ProxyHelper::getTypeHint($r, $p, true) === $key) {
                         $resolvedArguments[$j] = $argument;
                         $typeFound = true;
                     }

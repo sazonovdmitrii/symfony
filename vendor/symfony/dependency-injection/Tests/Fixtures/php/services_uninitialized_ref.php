@@ -19,11 +19,6 @@ class Symfony_DI_PhpDumper_Test_Uninitialized_Reference extends Container
     private $parameters;
     private $targetDirs = [];
 
-    /**
-     * @internal but protected for BC on cache:clear
-     */
-    protected $privates = [];
-
     public function __construct()
     {
         $this->services = $this->privates = [];
@@ -34,12 +29,6 @@ class Symfony_DI_PhpDumper_Test_Uninitialized_Reference extends Container
         ];
 
         $this->aliases = [];
-    }
-
-    public function reset()
-    {
-        $this->privates = [];
-        parent::reset();
     }
 
     public function compile()

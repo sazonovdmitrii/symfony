@@ -16,6 +16,9 @@ use Symfony\Bundle\FrameworkBundle\Templating\TemplateReference;
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 use Symfony\Component\Templating\TemplateReference as BaseTemplateReference;
 
+/**
+ * @group legacy
+ */
 class TemplateNameParserTest extends TestCase
 {
     protected $parser;
@@ -26,13 +29,13 @@ class TemplateNameParserTest extends TestCase
         $kernel
             ->expects($this->any())
             ->method('getBundle')
-            ->will($this->returnCallback(function ($bundle) {
+            ->willReturnCallback(function ($bundle) {
                 if (\in_array($bundle, ['SensioFooBundle', 'SensioCmsFooBundle', 'FooBundle'])) {
                     return true;
                 }
 
                 throw new \InvalidArgumentException();
-            }))
+            })
         ;
         $this->parser = new TemplateNameParser($kernel);
     }

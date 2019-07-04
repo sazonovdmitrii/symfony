@@ -139,8 +139,16 @@ abstract class AnnotationClassLoader implements LoaderInterface
         }
         $name = $globals['name'].$name;
 
+        $requirements = $annot->getRequirements();
+
+        foreach ($requirements as $placeholder => $requirement) {
+            if (\is_int($placeholder)) {
+                @trigger_error(sprintf('A placeholder name must be a string (%d given). Did you forget to specify the placeholder key for the requirement "%s" of route "%s" in "%s::%s()"?', $placeholder, $requirement, $name, $class->getName(), $method->getName()), E_USER_DEPRECATED);
+            }
+        }
+
         $defaults = array_replace($globals['defaults'], $annot->getDefaults());
-        $requirements = array_replace($globals['requirements'], $annot->getRequirements());
+        $requirements = array_replace($globals['requirements'], $requirements);
         $options = array_replace($globals['options'], $annot->getOptions());
         $schemes = array_merge($globals['schemes'], $annot->getSchemes());
         $methods = array_merge($globals['methods'], $annot->getMethods());
@@ -188,7 +196,7 @@ abstract class AnnotationClassLoader implements LoaderInterface
                 continue;
             }
             foreach ($paths as $locale => $path) {
-                if (false !== strpos($path, sprintf('{%s}', $param->name))) {
+                if (preg_match(sprintf('/\{%s(?:<.*?>)?\}/', preg_quote($param->name)), $path)) {
                     $defaults[$param->name] = $param->getDefaultValue();
                     break;
                 }
@@ -240,7 +248,8 @@ abstract class AnnotationClassLoader implements LoaderInterface
      */
     protected function getDefaultRouteName(\ReflectionClass $class, \ReflectionMethod $method)
     {
-        $name = strtolower(str_replace('\\', '_', $class->name).'_'.$method->name);
+        $name = str_replace('\\', '_', $class->name).'_'.$method->name;
+        $name = \function_exists('mb_strtolower') && preg_match('//u', $name) ? mb_strtolower($name, 'UTF-8') : strtolower($name);
         if ($this->defaultRouteIndex > 0) {
             $name .= '_'.$this->defaultRouteIndex;
         }
@@ -290,6 +299,12 @@ abstract class AnnotationClassLoader implements LoaderInterface
 
             if (null !== $annot->getCondition()) {
                 $globals['condition'] = $annot->getCondition();
+            }
+
+            foreach ($globals['requirements'] as $placeholder => $requirement) {
+                if (\is_int($placeholder)) {
+                    @trigger_error(sprintf('A placeholder name must be a string (%d given). Did you forget to specify the placeholder key for the requirement "%s" in "%s"?', $placeholder, $requirement, $class->getName()), E_USER_DEPRECATED);
+                }
             }
         }
 

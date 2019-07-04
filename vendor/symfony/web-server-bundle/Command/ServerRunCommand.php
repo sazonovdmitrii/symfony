@@ -31,13 +31,15 @@ class ServerRunCommand extends Command
 {
     private $documentRoot;
     private $environment;
+    private $pidFileDirectory;
 
     protected static $defaultName = 'server:run';
 
-    public function __construct(string $documentRoot = null, string $environment = null)
+    public function __construct(string $documentRoot = null, string $environment = null, string $pidFileDirectory = null)
     {
         $this->documentRoot = $documentRoot;
         $this->environment = $environment;
+        $this->pidFileDirectory = $pidFileDirectory;
 
         parent::__construct();
     }
@@ -129,10 +131,17 @@ EOF
         }
 
         try {
-            $server = new WebServer();
+            $server = new WebServer($this->pidFileDirectory);
             $config = new WebServerConfig($documentRoot, $env, $input->getArgument('addressport'), $input->getOption('router'));
 
-            $io->success(sprintf('Server listening on http://%s', $config->getAddress()));
+            $message = sprintf('Server listening on http://%s', $config->getAddress());
+            if ('' !== $displayAddress = $config->getDisplayAddress()) {
+                $message = sprintf('Server listening on all interfaces, port %s -- see http://%s', $config->getPort(), $displayAddress);
+            }
+            $io->success($message);
+            if (ini_get('xdebug.profiler_enable_trigger')) {
+                $io->comment('Xdebug profiler trigger enabled.');
+            }
             $io->comment('Quit the server with CONTROL-C.');
 
             $exitCode = $server->run($config, $disableOutput, $callback);

@@ -15,7 +15,7 @@ use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
-use Symfony\Component\Serializer\Exception\RuntimeException;
+use Symfony\Component\Serializer\Exception\LogicException;
 use Symfony\Component\Serializer\Mapping\AttributeMetadata;
 use Symfony\Component\Serializer\Mapping\ClassDiscriminatorResolverInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
@@ -32,15 +32,21 @@ class ObjectNormalizer extends AbstractObjectNormalizer
 
     private $discriminatorCache = [];
 
-    public function __construct(ClassMetadataFactoryInterface $classMetadataFactory = null, NameConverterInterface $nameConverter = null, PropertyAccessorInterface $propertyAccessor = null, PropertyTypeExtractorInterface $propertyTypeExtractor = null, ClassDiscriminatorResolverInterface $classDiscriminatorResolver = null)
+    private $objectClassResolver;
+
+    public function __construct(ClassMetadataFactoryInterface $classMetadataFactory = null, NameConverterInterface $nameConverter = null, PropertyAccessorInterface $propertyAccessor = null, PropertyTypeExtractorInterface $propertyTypeExtractor = null, ClassDiscriminatorResolverInterface $classDiscriminatorResolver = null, callable $objectClassResolver = null, array $defaultContext = [])
     {
-        if (!\class_exists(PropertyAccess::class)) {
-            throw new RuntimeException('The ObjectNormalizer class requires the "PropertyAccess" component. Install "symfony/property-access" to use it.');
+        if (!class_exists(PropertyAccess::class)) {
+            throw new LogicException('The ObjectNormalizer class requires the "PropertyAccess" component. Install "symfony/property-access" to use it.');
         }
 
-        parent::__construct($classMetadataFactory, $nameConverter, $propertyTypeExtractor, $classDiscriminatorResolver);
+        parent::__construct($classMetadataFactory, $nameConverter, $propertyTypeExtractor, $classDiscriminatorResolver, $objectClassResolver, $defaultContext);
 
         $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::createPropertyAccessor();
+
+        $this->objectClassResolver = $objectClassResolver ?? function ($class) {
+            return \is_object($class) ? \get_class($class) : $class;
+        };
     }
 
     /**
@@ -60,7 +66,9 @@ class ObjectNormalizer extends AbstractObjectNormalizer
         $attributes = [];
 
         // methods
-        $reflClass = new \ReflectionClass($object);
+        $class = ($this->objectClassResolver)($object);
+        $reflClass = new \ReflectionClass($class);
+
         foreach ($reflClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $reflMethod) {
             if (
                 0 !== $reflMethod->getNumberOfRequiredParameters() ||
@@ -113,7 +121,7 @@ class ObjectNormalizer extends AbstractObjectNormalizer
     protected function getAttributeValue($object, $attribute, $format = null, array $context = [])
     {
         $cacheKey = \get_class($object);
-        if (!array_key_exists($cacheKey, $this->discriminatorCache)) {
+        if (!\array_key_exists($cacheKey, $this->discriminatorCache)) {
             $this->discriminatorCache[$cacheKey] = null;
             if (null !== $this->classDiscriminatorResolver) {
                 $mapping = $this->classDiscriminatorResolver->getMappingForMappedObject($object);

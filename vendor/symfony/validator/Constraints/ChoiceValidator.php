@@ -15,6 +15,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 /**
  * ChoiceValidator validates that the value is one of the expected values.
@@ -43,7 +44,7 @@ class ChoiceValidator extends ConstraintValidator
         }
 
         if ($constraint->multiple && !\is_array($value)) {
-            throw new UnexpectedTypeException($value, 'array');
+            throw new UnexpectedValueException($value, 'array');
         }
 
         if ($constraint->callback) {
@@ -67,6 +68,7 @@ class ChoiceValidator extends ConstraintValidator
                 if (!\in_array($_value, $choices, true)) {
                     $this->context->buildViolation($constraint->multipleMessage)
                         ->setParameter('{{ value }}', $this->formatValue($_value))
+                        ->setParameter('{{ choices }}', $this->formatValues($choices))
                         ->setCode(Choice::NO_SUCH_CHOICE_ERROR)
                         ->setInvalidValue($_value)
                         ->addViolation();
@@ -99,6 +101,7 @@ class ChoiceValidator extends ConstraintValidator
         } elseif (!\in_array($value, $choices, true)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ value }}', $this->formatValue($value))
+                ->setParameter('{{ choices }}', $this->formatValues($choices))
                 ->setCode(Choice::NO_SUCH_CHOICE_ERROR)
                 ->addViolation();
         }

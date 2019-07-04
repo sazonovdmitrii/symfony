@@ -13,11 +13,11 @@ namespace Symfony\Component\Intl\Tests\Data\Provider;
 
 use Symfony\Component\Intl\Data\Provider\ScriptDataProvider;
 use Symfony\Component\Intl\Intl;
-use Symfony\Component\Intl\Locale;
 
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
  * @group intl-data
+ * @group legacy
  */
 abstract class AbstractScriptDataProviderTest extends AbstractDataProviderTest
 {
@@ -62,6 +62,7 @@ abstract class AbstractScriptDataProviderTest extends AbstractDataProviderTest
         'Egyh',
         'Egyp',
         'Elba',
+        'Elym',
         'Ethi',
         'Geok',
         'Geor',
@@ -84,6 +85,7 @@ abstract class AbstractScriptDataProviderTest extends AbstractDataProviderTest
         'Hira',
         'Hluw',
         'Hmng',
+        'Hmnp',
         'Hrkt',
         'Hung',
         'Inds',
@@ -132,6 +134,7 @@ abstract class AbstractScriptDataProviderTest extends AbstractDataProviderTest
         'Mtei',
         'Mult',
         'Mymr',
+        'Nand',
         'Narb',
         'Nbat',
         'Newa',
@@ -154,6 +157,7 @@ abstract class AbstractScriptDataProviderTest extends AbstractDataProviderTest
         'Phnx',
         'Plrd',
         'Prti',
+        'Qaag',
         'Rjng',
         'Rohg',
         'Roro',
@@ -197,6 +201,7 @@ abstract class AbstractScriptDataProviderTest extends AbstractDataProviderTest
         'Vaii',
         'Visp',
         'Wara',
+        'Wcho',
         'Wole',
         'Xpeo',
         'Xsux',
@@ -208,7 +213,6 @@ abstract class AbstractScriptDataProviderTest extends AbstractDataProviderTest
         'Zsym',
         'Zxxx',
         'Zyyy',
-        'Zzzz',
     ];
 
     /**
@@ -250,7 +254,7 @@ abstract class AbstractScriptDataProviderTest extends AbstractDataProviderTest
 
     public function testGetNamesDefaultLocale()
     {
-        Locale::setDefault('de_AT');
+        \Locale::setDefault('de_AT');
 
         $this->assertSame(
             $this->dataProvider->getNames('de_AT'),
@@ -286,7 +290,7 @@ abstract class AbstractScriptDataProviderTest extends AbstractDataProviderTest
 
     public function testGetNameDefaultLocale()
     {
-        Locale::setDefault('de_AT');
+        \Locale::setDefault('de_AT');
 
         $names = $this->dataProvider->getNames('de_AT');
 

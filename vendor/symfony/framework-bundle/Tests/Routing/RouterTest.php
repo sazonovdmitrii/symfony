@@ -27,7 +27,7 @@ class RouterTest extends TestCase
      */
     public function testConstructThrowsOnNonSymfonyNorPsr11Container()
     {
-        new Router($this->getMockBuilder(ContainerInterface::class)->getMock(), 'foo');
+        new Router($this->createMock(ContainerInterface::class), 'foo');
     }
 
     public function testGenerateWithServiceParam()
@@ -80,6 +80,32 @@ class RouterTest extends TestCase
         $this->assertSame('/en', $router->generate('foo', ['_locale' => 'en']));
         $this->assertSame('/', $router->generate('foo', ['_locale' => 'es']));
         $this->assertSame('"bar" == "bar"', $router->getRouteCollection()->get('foo')->getCondition());
+    }
+
+    public function testGenerateWithDefaultLocale()
+    {
+        $routes = new RouteCollection();
+
+        $route = new Route('');
+
+        $name = 'testFoo';
+
+        foreach (['hr' => '/test-hr', 'en' => '/test-en'] as $locale => $path) {
+            $localizedRoute = clone $route;
+            $localizedRoute->setDefault('_locale', $locale);
+            $localizedRoute->setDefault('_canonical_route', $name);
+            $localizedRoute->setPath($path);
+            $routes->add($name.'.'.$locale, $localizedRoute);
+        }
+
+        $sc = $this->getServiceContainer($routes);
+
+        $router = new Router($sc, '', [], null, null, null, 'hr');
+
+        $this->assertSame('/test-hr', $router->generate($name));
+
+        $this->assertSame('/test-en', $router->generate($name, ['_locale' => 'en']));
+        $this->assertSame('/test-hr', $router->generate($name, ['_locale' => 'hr']));
     }
 
     public function testDefaultsPlaceholders()
@@ -447,6 +473,24 @@ class RouterTest extends TestCase
         $this->assertEquals([new ContainerParametersResource(['locale' => 'en'])], $routeCollection->getResources());
     }
 
+    public function testBooleanContainerParametersWithinRouteCondition()
+    {
+        $routes = new RouteCollection();
+
+        $route = new Route('foo');
+        $route->setCondition('%parameter.true% or %parameter.false%');
+
+        $routes->add('foo', $route);
+
+        $sc = $this->getPsr11ServiceContainer($routes);
+        $parameters = $this->getParameterBag(['parameter.true' => true, 'parameter.false' => false]);
+
+        $router = new Router($sc, 'foo', [], null, $parameters);
+        $route = $router->getRouteCollection()->get('foo');
+
+        $this->assertSame('1 or 0', $route->getCondition());
+    }
+
     public function getNonStringValues()
     {
         return [[null], [false], [true], [new \stdClass()], [['foo', 'bar']], [[[]]]];
@@ -462,7 +506,7 @@ class RouterTest extends TestCase
         $loader
             ->expects($this->any())
             ->method('load')
-            ->will($this->returnValue($routes))
+            ->willReturn($routes)
         ;
 
         $sc = $this->getMockBuilder('Symfony\\Component\\DependencyInjection\\Container')->setMethods(['get'])->getMock();
@@ -470,7 +514,7 @@ class RouterTest extends TestCase
         $sc
             ->expects($this->once())
             ->method('get')
-            ->will($this->returnValue($loader))
+            ->willReturn($loader)
         ;
 
         return $sc;
@@ -483,7 +527,7 @@ class RouterTest extends TestCase
         $loader
             ->expects($this->any())
             ->method('load')
-            ->will($this->returnValue($routes))
+            ->willReturn($routes)
         ;
 
         $sc = $this->getMockBuilder(ContainerInterface::class)->getMock();
@@ -491,7 +535,7 @@ class RouterTest extends TestCase
         $sc
             ->expects($this->once())
             ->method('get')
-            ->will($this->returnValue($loader))
+            ->willReturn($loader)
         ;
 
         return $sc;
@@ -503,9 +547,9 @@ class RouterTest extends TestCase
         $bag
             ->expects($this->any())
             ->method('get')
-            ->will($this->returnCallback(function ($key) use ($params) {
+            ->willReturnCallback(function ($key) use ($params) {
                 return isset($params[$key]) ? $params[$key] : null;
-            }))
+            })
         ;
 
         return $bag;

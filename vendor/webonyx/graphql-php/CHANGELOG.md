@@ -1,4 +1,17 @@
 # Changelog
+#### v0.13.5
+- Fix coroutine executor when using with promise (#486) 
+
+#### v0.13.4
+- Force int when setting max query depth (#477)
+
+#### v0.13.3
+- Reverted minor possible breaking change (#476)
+
+#### v0.13.2
+- Added QueryPlan support (#436)
+- Fixed an issue with NodeList iteration over missing keys (#475)
+
 #### v0.13.1
 - Better validation of field/directive arguments
 - Support for apollo client/server persisted queries

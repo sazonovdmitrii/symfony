@@ -38,7 +38,7 @@ class FormType extends BaseType
     {
         parent::buildForm($builder, $options);
 
-        $isDataOptionSet = array_key_exists('data', $options);
+        $isDataOptionSet = \array_key_exists('data', $options);
 
         $builder
             ->setRequired($options['required'])
@@ -68,6 +68,7 @@ class FormType extends BaseType
         parent::buildView($view, $form, $options);
 
         $name = $form->getName();
+        $helpTranslationParameters = $options['help_translation_parameters'];
 
         if ($view->parent) {
             if ('' === $name) {
@@ -78,6 +79,8 @@ class FormType extends BaseType
             if (!isset($view->vars['attr']['readonly']) && isset($view->parent->vars['attr']['readonly']) && false !== $view->parent->vars['attr']['readonly']) {
                 $view->vars['attr']['readonly'] = true;
             }
+
+            $helpTranslationParameters = array_merge($view->parent->vars['help_translation_parameters'], $helpTranslationParameters);
         }
 
         $formConfig = $form->getConfig();
@@ -90,6 +93,9 @@ class FormType extends BaseType
             'size' => null,
             'label_attr' => $options['label_attr'],
             'help' => $options['help'],
+            'help_attr' => $options['help_attr'],
+            'help_html' => $options['help_html'],
+            'help_translation_parameters' => $helpTranslationParameters,
             'compound' => $formConfig->getCompound(),
             'method' => $formConfig->getMethod(),
             'action' => $formConfig->getAction(),
@@ -181,11 +187,16 @@ class FormType extends BaseType
             'upload_max_size_message' => $uploadMaxSizeMessage, // internal
             'allow_file_upload' => false,
             'help' => null,
+            'help_attr' => [],
+            'help_html' => false,
+            'help_translation_parameters' => [],
         ]);
 
         $resolver->setAllowedTypes('label_attr', 'array');
         $resolver->setAllowedTypes('upload_max_size_message', ['callable']);
         $resolver->setAllowedTypes('help', ['string', 'null']);
+        $resolver->setAllowedTypes('help_attr', 'array');
+        $resolver->setAllowedTypes('help_html', 'bool');
     }
 
     /**

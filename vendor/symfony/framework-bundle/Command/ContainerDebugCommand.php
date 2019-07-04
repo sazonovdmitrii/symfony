@@ -22,6 +22,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
@@ -57,6 +58,8 @@ class ContainerDebugCommand extends Command
                 new InputOption('parameter', null, InputOption::VALUE_REQUIRED, 'Displays a specific parameter for an application'),
                 new InputOption('parameters', null, InputOption::VALUE_NONE, 'Displays parameters for an application'),
                 new InputOption('types', null, InputOption::VALUE_NONE, 'Displays types (classes/interfaces) available in the container'),
+                new InputOption('env-var', null, InputOption::VALUE_REQUIRED, 'Displays a specific environment variable used in the container'),
+                new InputOption('env-vars', null, InputOption::VALUE_NONE, 'Displays environment variables used in the container'),
                 new InputOption('format', null, InputOption::VALUE_REQUIRED, 'The output format (txt, xml, json, or md)', 'txt'),
                 new InputOption('raw', null, InputOption::VALUE_NONE, 'To output raw description'),
             ])
@@ -73,6 +76,14 @@ To get specific information about a service, specify its name:
 To see available types that can be used for autowiring, use the <info>--types</info> flag:
 
   <info>php %command.full_name% --types</info>
+
+To see environment variables used by the container, use the <info>--env-vars</info> flag:
+
+  <info>php %command.full_name% --env-vars</info>
+
+Display a specific environment variable by specifying its name with the <info>--env-var</info> option:
+
+  <info>php %command.full_name% --env-var=APP_ENV</info>
 
 Use the --tags option to display tagged <comment>public</comment> services grouped by tag:
 
@@ -115,7 +126,11 @@ EOF
         $this->validateInput($input);
         $object = $this->getContainerBuilder();
 
-        if ($input->getOption('types')) {
+        if ($input->getOption('env-vars')) {
+            $options = ['env-vars' => true];
+        } elseif ($envVar = $input->getOption('env-var')) {
+            $options = ['env-vars' => true, 'name' => $envVar];
+        } elseif ($input->getOption('types')) {
             $options = [];
             $options['filter'] = [$this, 'filterToServiceTypes'];
         } elseif ($input->getOption('parameters')) {
@@ -144,9 +159,19 @@ EOF
         $options['show_hidden'] = $input->getOption('show-hidden');
         $options['raw_text'] = $input->getOption('raw');
         $options['output'] = $io;
-        $helper->describe($io, $object, $options);
+        $options['is_debug'] = $this->getApplication()->getKernel()->isDebug();
 
-        if (!$input->getArgument('name') && !$input->getOption('tag') && !$input->getOption('parameter') && $input->isInteractive()) {
+        try {
+            $helper->describe($io, $object, $options);
+        } catch (ServiceNotFoundException $e) {
+            if ('' !== $e->getId() && '@' === $e->getId()[0]) {
+                throw new ServiceNotFoundException($e->getId(), $e->getSourceId(), null, [substr($e->getId(), 1)]);
+            }
+
+            throw $e;
+        }
+
+        if (!$input->getArgument('name') && !$input->getOption('tag') && !$input->getOption('parameter') && !$input->getOption('env-vars') && !$input->getOption('env-var') && $input->isInteractive()) {
             if ($input->getOption('tags')) {
                 $errorIo->comment('To search for a specific tag, re-run this command with a search term. (e.g. <comment>debug:container --tag=form.type</comment>)');
             } elseif ($input->getOption('parameters')) {
@@ -210,6 +235,8 @@ EOF
 
     private function findProperServiceName(InputInterface $input, SymfonyStyle $io, ContainerBuilder $builder, string $name, bool $showHidden)
     {
+        $name = ltrim($name, '\\');
+
         if ($builder->has($name) || !$input->isInteractive()) {
             return $name;
         }
@@ -219,26 +246,30 @@ EOF
             throw new InvalidArgumentException(sprintf('No services found that match "%s".', $name));
         }
 
-        $default = 1 === \count($matchingServices) ? $matchingServices[0] : null;
+        if (1 === \count($matchingServices)) {
+            return $matchingServices[0];
+        }
 
-        return $io->choice('Select one of the following services to display its information', $matchingServices, $default);
+        return $io->choice('Select one of the following services to display its information', $matchingServices);
     }
 
     private function findServiceIdsContaining(ContainerBuilder $builder, string $name, bool $showHidden)
     {
         $serviceIds = $builder->getServiceIds();
-        $foundServiceIds = [];
+        $foundServiceIds = $foundServiceIdsIgnoringBackslashes = [];
         foreach ($serviceIds as $serviceId) {
             if (!$showHidden && 0 === strpos($serviceId, '.')) {
                 continue;
             }
-            if (false === stripos($serviceId, $name)) {
-                continue;
+            if (false !== stripos(str_replace('\\', '', $serviceId), $name)) {
+                $foundServiceIdsIgnoringBackslashes[] = $serviceId;
             }
-            $foundServiceIds[] = $serviceId;
+            if (false !== stripos($serviceId, $name)) {
+                $foundServiceIds[] = $serviceId;
+            }
         }
 
-        return $foundServiceIds;
+        return $foundServiceIds ?: $foundServiceIdsIgnoringBackslashes;
     }
 
     /**
@@ -247,7 +278,7 @@ EOF
     public function filterToServiceTypes($serviceId)
     {
         // filter out things that could not be valid class names
-        if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+(?:\\\\[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+)*+$/', $serviceId)) {
+        if (!preg_match('/(?(DEFINE)(?<V>[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+))^(?&V)(?:\\\\(?&V))*+(?: \$(?&V))?$/', $serviceId)) {
             return false;
         }
 
@@ -256,13 +287,6 @@ EOF
             return true;
         }
 
-        try {
-            new \ReflectionClass($serviceId);
-
-            return true;
-        } catch (\ReflectionException $e) {
-            // the service id is not a valid class/interface
-            return false;
-        }
+        return class_exists($serviceId) || interface_exists($serviceId, false);
     }
 }

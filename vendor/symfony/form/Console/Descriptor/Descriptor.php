@@ -108,7 +108,10 @@ abstract class Descriptor implements DescriptorInterface
 
     protected function getOptionDefinition(OptionsResolver $optionsResolver, $option)
     {
-        $definition = ['required' => $optionsResolver->isRequired($option)];
+        $definition = [
+            'required' => $optionsResolver->isRequired($option),
+            'deprecated' => $optionsResolver->isDeprecated($option),
+        ];
 
         $introspector = new OptionsResolverIntrospector($optionsResolver);
 
@@ -117,7 +120,8 @@ abstract class Descriptor implements DescriptorInterface
             'lazy' => 'getLazyClosures',
             'allowedTypes' => 'getAllowedTypes',
             'allowedValues' => 'getAllowedValues',
-            'normalizer' => 'getNormalizer',
+            'normalizers' => 'getNormalizers',
+            'deprecationMessage' => 'getDeprecationMessage',
         ];
 
         foreach ($map as $key => $method) {
@@ -128,7 +132,39 @@ abstract class Descriptor implements DescriptorInterface
             }
         }
 
+        if (isset($definition['deprecationMessage']) && \is_string($definition['deprecationMessage'])) {
+            $definition['deprecationMessage'] = strtr($definition['deprecationMessage'], ['%name%' => $option]);
+        }
+
         return $definition;
+    }
+
+    protected function filterOptionsByDeprecated(ResolvedFormTypeInterface $type)
+    {
+        $deprecatedOptions = [];
+        $resolver = $type->getOptionsResolver();
+        foreach ($resolver->getDefinedOptions() as $option) {
+            if ($resolver->isDeprecated($option)) {
+                $deprecatedOptions[] = $option;
+            }
+        }
+
+        $filterByDeprecated = function (array $options) use ($deprecatedOptions) {
+            foreach ($options as $class => $opts) {
+                if ($deprecated = array_intersect($deprecatedOptions, $opts)) {
+                    $options[$class] = $deprecated;
+                } else {
+                    unset($options[$class]);
+                }
+            }
+
+            return $options;
+        };
+
+        $this->ownOptions = array_intersect($deprecatedOptions, $this->ownOptions);
+        $this->overriddenOptions = $filterByDeprecated($this->overriddenOptions);
+        $this->parentOptions = $filterByDeprecated($this->parentOptions);
+        $this->extensionOptions = $filterByDeprecated($this->extensionOptions);
     }
 
     private function getParentOptionsResolver(ResolvedFormTypeInterface $type)

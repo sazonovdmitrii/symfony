@@ -15,8 +15,9 @@ use Egulias\EmailValidator\Validation\EmailValidation;
 use Egulias\EmailValidator\Validation\NoRFCWarningsValidation;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Exception\RuntimeException;
+use Symfony\Component\Validator\Exception\LogicException;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
@@ -75,10 +76,14 @@ class EmailValidator extends ConstraintValidator
         }
 
         if (!is_scalar($value) && !(\is_object($value) && method_exists($value, '__toString'))) {
-            throw new UnexpectedTypeException($value, 'string');
+            throw new UnexpectedValueException($value, 'string');
         }
 
         $value = (string) $value;
+
+        if (null !== $constraint->normalizer) {
+            $value = ($constraint->normalizer)($value);
+        }
 
         if (null !== $constraint->strict) {
             @trigger_error(sprintf('The %s::$strict property is deprecated since Symfony 4.1. Use %s::mode="%s" instead.', Email::class, Email::class, Email::VALIDATION_MODE_STRICT), E_USER_DEPRECATED);
@@ -100,7 +105,7 @@ class EmailValidator extends ConstraintValidator
 
         if (Email::VALIDATION_MODE_STRICT === $constraint->mode) {
             if (!class_exists('\Egulias\EmailValidator\EmailValidator')) {
-                throw new RuntimeException('Strict email validation requires egulias/email-validator ~1.2|~2.0');
+                throw new LogicException('Strict email validation requires egulias/email-validator ~1.2|~2.0');
             }
 
             $strictValidator = new \Egulias\EmailValidator\EmailValidator();

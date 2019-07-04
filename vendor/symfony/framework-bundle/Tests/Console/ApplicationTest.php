@@ -12,8 +12,11 @@
 namespace Symfony\Bundle\FrameworkBundle\Tests\Console;
 
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Bundle\FrameworkBundle\EventListener\SuggestMissingPackageSubscriber;
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Event\ConsoleErrorEvent;
+use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\NullOutput;
@@ -101,6 +104,10 @@ class ApplicationTest extends TestCase
         $this->assertSame($command, $application->find('alias'));
     }
 
+    /**
+     * @group legacy
+     * @expectedDeprecation The "Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand" class is deprecated since Symfony 4.2, use "Symfony\Component\Console\Command\Command" with dependency injection instead.
+     */
     public function testBundleCommandsHaveRightContainer()
     {
         $command = $this->getMockForAbstractClass('Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand', ['foo'], '', true, true, true, ['setContainer']);
@@ -200,6 +207,7 @@ class ApplicationTest extends TestCase
         $container->setParameter('console.command.ids', [ThrowingCommand::class => ThrowingCommand::class]);
 
         $kernel = $this->getMockBuilder(KernelInterface::class)->getMock();
+        $kernel->expects($this->once())->method('boot');
         $kernel
             ->method('getBundles')
             ->willReturn([$this->createBundleMock(
@@ -221,6 +229,34 @@ class ApplicationTest extends TestCase
         $this->assertContains(trim('[WARNING] Some commands could not be registered:'), trim($display[1]));
     }
 
+    public function testSuggestingPackagesWithExactMatch()
+    {
+        $result = $this->createEventForSuggestingPackages('server:dump', []);
+        $this->assertRegExp('/You may be looking for a command provided by/', $result);
+    }
+
+    public function testSuggestingPackagesWithPartialMatchAndNoAlternatives()
+    {
+        $result = $this->createEventForSuggestingPackages('server', []);
+        $this->assertRegExp('/You may be looking for a command provided by/', $result);
+    }
+
+    public function testSuggestingPackagesWithPartialMatchAndAlternatives()
+    {
+        $result = $this->createEventForSuggestingPackages('server', ['server:run']);
+        $this->assertNotRegExp('/You may be looking for a command provided by/', $result);
+    }
+
+    private function createEventForSuggestingPackages(string $command, array $alternatives = []): string
+    {
+        $error = new CommandNotFoundException('', $alternatives);
+        $event = new ConsoleErrorEvent(new ArrayInput([$command]), new NullOutput(), $error);
+        $subscriber = new SuggestMissingPackageSubscriber();
+        $subscriber->onConsoleError($event);
+
+        return $event->getError()->getMessage();
+    }
+
     private function getKernel(array $bundles, $useDispatcher = false)
     {
         $container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerInterface')->getMock();
@@ -235,7 +271,7 @@ class ApplicationTest extends TestCase
                 ->expects($this->atLeastOnce())
                 ->method('get')
                 ->with($this->equalTo('event_dispatcher'))
-                ->will($this->returnValue($dispatcher));
+                ->willReturn($dispatcher);
         }
 
         $container
@@ -252,15 +288,16 @@ class ApplicationTest extends TestCase
         ;
 
         $kernel = $this->getMockBuilder('Symfony\Component\HttpKernel\KernelInterface')->getMock();
+        $kernel->expects($this->once())->method('boot');
         $kernel
             ->expects($this->any())
             ->method('getBundles')
-            ->will($this->returnValue($bundles))
+            ->willReturn($bundles)
         ;
         $kernel
             ->expects($this->any())
             ->method('getContainer')
-            ->will($this->returnValue($container))
+            ->willReturn($container)
         ;
 
         return $kernel;
@@ -272,9 +309,9 @@ class ApplicationTest extends TestCase
         $bundle
             ->expects($this->once())
             ->method('registerCommands')
-            ->will($this->returnCallback(function (Application $application) use ($commands) {
+            ->willReturnCallback(function (Application $application) use ($commands) {
                 $application->addCommands($commands);
-            }))
+            })
         ;
 
         return $bundle;

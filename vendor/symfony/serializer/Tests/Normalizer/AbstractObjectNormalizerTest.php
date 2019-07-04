@@ -338,3 +338,7 @@ class ArrayDenormalizerDummy implements DenormalizerInterface, SerializerAwareIn
         $this->serializer = $serializer;
     }
 }
+
+abstract class ObjectSerializerDenormalizer implements SerializerInterface, DenormalizerInterface
+{
+}

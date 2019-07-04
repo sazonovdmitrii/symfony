@@ -19,8 +19,10 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Command\DebugCommand;
 use Symfony\Component\Form\DependencyInjection\FormPass;
-use Symfony\Component\Form\FormRegistryInterface;
+use Symfony\Component\Form\FormRegistry;
 
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
@@ -70,8 +72,12 @@ class FormPassTest extends TestCase
     {
         $container = $this->createContainerBuilder();
 
+        $container->register('form.registry', FormRegistry::class);
+        $commandDefinition = new Definition(DebugCommand::class, [new Reference('form.registry')]);
+        $commandDefinition->setPublic(true);
+
         $container->setDefinition('form.extension', $this->createExtensionDefinition());
-        $container->setDefinition('console.command.form_debug', $this->createDebugCommandDefinition());
+        $container->setDefinition('console.command.form_debug', $commandDefinition);
         $container->register('my.type1', __CLASS__.'_Type1')->addTag('form.type')->setPublic(true);
         $container->register('my.type2', __CLASS__.'_Type2')->addTag('form.type')->setPublic(true);
 
@@ -91,7 +97,133 @@ class FormPassTest extends TestCase
     /**
      * @dataProvider addTaggedTypeExtensionsDataProvider
      */
-    public function testAddTaggedTypeExtensions(array $extensions, array $expectedRegisteredExtensions)
+    public function testAddTaggedTypeExtensions(array $extensions, array $expectedRegisteredExtensions, array $parameters = [])
+    {
+        $container = $this->createContainerBuilder();
+
+        foreach ($parameters as $name => $value) {
+            $container->setParameter($name, $value);
+        }
+
+        $container->setDefinition('form.extension', $this->createExtensionDefinition());
+
+        foreach ($extensions as $serviceId => $config) {
+            $container->register($serviceId, $config['class'])->addTag('form.type_extension', $config['tag']);
+        }
+
+        $container->compile();
+
+        $extDefinition = $container->getDefinition('form.extension');
+        $this->assertEquals($expectedRegisteredExtensions, $extDefinition->getArgument(1));
+    }
+
+    public function addTaggedTypeExtensionsDataProvider()
+    {
+        return [
+            [
+                [
+                    Type1TypeExtension::class => [
+                        'class' => Type1TypeExtension::class,
+                        'tag' => ['extended_type' => 'type1'],
+                    ],
+                    Type1Type2TypeExtension::class => [
+                        'class' => Type1Type2TypeExtension::class,
+                        'tag' => ['extended_type' => 'type2'],
+                    ],
+                ],
+                [
+                    'type1' => new IteratorArgument([new Reference(Type1TypeExtension::class)]),
+                    'type2' => new IteratorArgument([new Reference(Type1Type2TypeExtension::class)]),
+                ],
+            ],
+            [
+                [
+                    Type1TypeExtension::class => [
+                        'class' => Type1TypeExtension::class,
+                        'tag' => [],
+                    ],
+                    Type1Type2TypeExtension::class => [
+                        'class' => Type1Type2TypeExtension::class,
+                        'tag' => [],
+                    ],
+                ],
+                [
+                    'type1' => new IteratorArgument([
+                        new Reference(Type1TypeExtension::class),
+                        new Reference(Type1Type2TypeExtension::class),
+                    ]),
+                    'type2' => new IteratorArgument([new Reference(Type1Type2TypeExtension::class)]),
+                ],
+            ],
+            [
+                [
+                    'my.type_extension1' => [
+                        'class' => Type1TypeExtension::class,
+                        'tag' => ['extended_type' => 'type1', 'priority' => 1],
+                    ],
+                    'my.type_extension2' => [
+                        'class' => Type1TypeExtension::class,
+                        'tag' => ['extended_type' => 'type1', 'priority' => 2],
+                    ],
+                    'my.type_extension3' => [
+                        'class' => Type1TypeExtension::class,
+                        'tag' => ['extended_type' => 'type1', 'priority' => -1],
+                    ],
+                    'my.type_extension4' => [
+                        'class' => Type2TypeExtension::class,
+                        'tag' => ['extended_type' => 'type2', 'priority' => 2],
+                    ],
+                    'my.type_extension5' => [
+                        'class' => Type2TypeExtension::class,
+                        'tag' => ['extended_type' => 'type2', 'priority' => 1],
+                    ],
+                    'my.type_extension6' => [
+                        'class' => Type2TypeExtension::class,
+                        'tag' => ['extended_type' => 'type2', 'priority' => 1],
+                    ],
+                ],
+                [
+                    'type1' => new IteratorArgument([
+                        new Reference('my.type_extension2'),
+                        new Reference('my.type_extension1'),
+                        new Reference('my.type_extension3'),
+                    ]),
+                    'type2' => new IteratorArgument([
+                        new Reference('my.type_extension4'),
+                        new Reference('my.type_extension5'),
+                        new Reference('my.type_extension6'),
+                    ]),
+                ],
+            ],
+            [
+                [
+                    'my.type_extension1' => [
+                        'class' => '%type1_extension_class%',
+                        'tag' => ['extended_type' => 'type1'],
+                    ],
+                    'my.type_extension2' => [
+                        'class' => '%type1_extension_class%',
+                        'tag' => [],
+                    ],
+                ],
+                [
+                    'type1' => new IteratorArgument([
+                        new Reference('my.type_extension1'),
+                        new Reference('my.type_extension2'),
+                    ]),
+                ],
+                [
+                    'type1_extension_class' => Type1TypeExtension::class,
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @group legacy
+     * @dataProvider addLegacyTaggedTypeExtensionsDataProvider
+     */
+    public function testAddLegacyTaggedTypeExtensions(array $extensions, array $expectedRegisteredExtensions)
     {
         $container = $this->createContainerBuilder();
 
@@ -110,7 +242,7 @@ class FormPassTest extends TestCase
     /**
      * @return array
      */
-    public function addTaggedTypeExtensionsDataProvider()
+    public function addLegacyTaggedTypeExtensionsDataProvider()
     {
         return [
             [
@@ -154,14 +286,30 @@ class FormPassTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage extended-type attribute, none was configured for the "my.type_extension" service
+     * @expectedExceptionMessage "form.type_extension" tagged services have to implement the static getExtendedTypes() method. Class "stdClass" for service "my.type_extension" does not implement it.
      */
-    public function testAddTaggedFormTypeExtensionWithoutExtendedTypeAttribute()
+    public function testAddTaggedFormTypeExtensionWithoutExtendedTypeAttributeNorImplementingGetExtendedTypes()
     {
         $container = $this->createContainerBuilder();
 
         $container->setDefinition('form.extension', $this->createExtensionDefinition());
         $container->register('my.type_extension', 'stdClass')
+            ->setPublic(true)
+            ->addTag('form.type_extension');
+
+        $container->compile();
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The getExtendedTypes() method for service "my.type_extension" does not return any extended types.
+     */
+    public function testAddTaggedFormTypeExtensionWithoutExtendingAnyType()
+    {
+        $container = $this->createContainerBuilder();
+
+        $container->setDefinition('form.extension', $this->createExtensionDefinition());
+        $container->register('my.type_extension', WithoutExtendedTypesTypeExtension::class)
             ->setPublic(true)
             ->addTag('form.type_extension');
 
@@ -197,13 +345,13 @@ class FormPassTest extends TestCase
     /**
      * @dataProvider privateTaggedServicesProvider
      */
-    public function testPrivateTaggedServices($id, $tagName, callable $assertion, array $tagAttributes = [])
+    public function testPrivateTaggedServices($id, $class, $tagName, callable $assertion, array $tagAttributes = [])
     {
         $formPass = new FormPass();
         $container = new ContainerBuilder();
 
         $container->setDefinition('form.extension', $this->createExtensionDefinition());
-        $container->register($id, 'stdClass')->setPublic(false)->addTag($tagName, $tagAttributes);
+        $container->register($id, $class)->setPublic(false)->addTag($tagName, $tagAttributes);
         $formPass->process($container);
 
         $assertion($container);
@@ -214,6 +362,7 @@ class FormPassTest extends TestCase
         return [
             [
                 'my.type',
+                'stdClass',
                 'form.type',
                 function (ContainerBuilder $container) {
                     $formTypes = $container->getDefinition('form.extension')->getArgument(0);
@@ -231,6 +380,7 @@ class FormPassTest extends TestCase
             ],
             [
                 'my.type_extension',
+                Type1TypeExtension::class,
                 'form.type_extension',
                 function (ContainerBuilder $container) {
                     $this->assertEquals(
@@ -240,7 +390,7 @@ class FormPassTest extends TestCase
                 },
                 ['extended_type' => 'Symfony\Component\Form\Extension\Core\Type\FormType'],
             ],
-            ['my.guesser', 'form.type_guesser', function (ContainerBuilder $container) {
+            ['my.guesser', 'stdClass', 'form.type_guesser', function (ContainerBuilder $container) {
                 $this->assertEquals(new IteratorArgument([new Reference('my.guesser')]), $container->getDefinition('form.extension')->getArgument(2));
             }],
         ];
@@ -254,19 +404,6 @@ class FormPassTest extends TestCase
             [],
             [],
             new IteratorArgument([]),
-        ]);
-
-        return $definition;
-    }
-
-    private function createDebugCommandDefinition()
-    {
-        $definition = new Definition('Symfony\Component\Form\Command\DebugCommand');
-        $definition->setPublic(true);
-        $definition->setArguments([
-            $formRegistry = $this->getMockBuilder(FormRegistryInterface::class)->getMock(),
-            [],
-            ['Symfony\Component\Form\Extension\Core\Type'],
         ]);
 
         return $definition;
@@ -287,4 +424,37 @@ class FormPassTest_Type1 extends AbstractType
 
 class FormPassTest_Type2 extends AbstractType
 {
+}
+
+class Type1TypeExtension extends AbstractTypeExtension
+{
+    public static function getExtendedTypes(): iterable
+    {
+        return ['type1'];
+    }
+}
+
+class Type2TypeExtension extends AbstractTypeExtension
+{
+    public static function getExtendedTypes(): iterable
+    {
+        return ['type2'];
+    }
+}
+
+class Type1Type2TypeExtension extends AbstractTypeExtension
+{
+    public static function getExtendedTypes(): iterable
+    {
+        yield 'type1';
+        yield 'type2';
+    }
+}
+
+class WithoutExtendedTypesTypeExtension extends AbstractTypeExtension
+{
+    public static function getExtendedTypes(): iterable
+    {
+        return [];
+    }
 }

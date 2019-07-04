@@ -18,8 +18,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 use Symfony\Component\HttpKernel\DataCollector\LateDataCollectorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\SwitchUserToken;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\TraceableAccessDecisionManager;
+use Symfony\Component\Security\Core\Authorization\Voter\TraceableVoter;
 use Symfony\Component\Security\Core\Role\Role;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Component\Security\Core\Role\SwitchUserRole;
@@ -90,18 +92,32 @@ class SecurityDataCollector extends DataCollector implements LateDataCollectorIn
             ];
         } else {
             $inheritedRoles = [];
-            $assignedRoles = $token->getRoles();
+
+            if (method_exists($token, 'getRoleNames')) {
+                $assignedRoles = $token->getRoleNames();
+            } else {
+                $assignedRoles = array_map(function (Role $role) { return $role->getRole(); }, $token->getRoles(false));
+            }
 
             $impersonatorUser = null;
-            foreach ($assignedRoles as $role) {
-                if ($role instanceof SwitchUserRole) {
-                    $impersonatorUser = $role->getSource()->getUsername();
-                    break;
+            if ($token instanceof SwitchUserToken) {
+                $impersonatorUser = $token->getOriginalToken()->getUsername();
+            } else {
+                foreach ($token->getRoles(false) as $role) {
+                    if ($role instanceof SwitchUserRole) {
+                        $impersonatorUser = $role->getSource()->getUsername();
+                        break;
+                    }
                 }
             }
 
             if (null !== $this->roleHierarchy) {
-                $allRoles = $this->roleHierarchy->getReachableRoles($assignedRoles);
+                if (method_exists($this->roleHierarchy, 'getReachableRoleNames')) {
+                    $allRoles = $this->roleHierarchy->getReachableRoleNames($assignedRoles);
+                } else {
+                    $allRoles = array_map(function (Role $role) { return (string) $role; }, $this->roleHierarchy->getReachableRoles($token->getRoles(false)));
+                }
+
                 foreach ($allRoles as $role) {
                     if (!\in_array($role, $assignedRoles, true)) {
                         $inheritedRoles[] = $role;
@@ -128,20 +144,41 @@ class SecurityDataCollector extends DataCollector implements LateDataCollectorIn
                 'token_class' => $this->hasVarDumper ? new ClassStub(\get_class($token)) : \get_class($token),
                 'logout_url' => $logoutUrl,
                 'user' => $token->getUsername(),
-                'roles' => array_map(function (Role $role) { return $role->getRole(); }, $assignedRoles),
-                'inherited_roles' => array_unique(array_map(function (Role $role) { return $role->getRole(); }, $inheritedRoles)),
+                'roles' => $assignedRoles,
+                'inherited_roles' => array_unique($inheritedRoles),
                 'supports_role_hierarchy' => null !== $this->roleHierarchy,
             ];
         }
 
         // collect voters and access decision manager information
         if ($this->accessDecisionManager instanceof TraceableAccessDecisionManager) {
-            $this->data['access_decision_log'] = $this->accessDecisionManager->getDecisionLog();
             $this->data['voter_strategy'] = $this->accessDecisionManager->getStrategy();
 
             foreach ($this->accessDecisionManager->getVoters() as $voter) {
+                if ($voter instanceof TraceableVoter) {
+                    $voter = $voter->getDecoratedVoter();
+                }
+
                 $this->data['voters'][] = $this->hasVarDumper ? new ClassStub(\get_class($voter)) : \get_class($voter);
             }
+
+            // collect voter details
+            $decisionLog = $this->accessDecisionManager->getDecisionLog();
+            foreach ($decisionLog as $key => $log) {
+                $decisionLog[$key]['voter_details'] = [];
+                foreach ($log['voterDetails'] as $voterDetail) {
+                    $voterClass = \get_class($voterDetail['voter']);
+                    $classData = $this->hasVarDumper ? new ClassStub($voterClass) : $voterClass;
+                    $decisionLog[$key]['voter_details'][] = [
+                        'class' => $classData,
+                        'attributes' => $voterDetail['attributes'], // Only displayed for unanimous strategy
+                        'vote' => $voterDetail['vote'],
+                    ];
+                }
+                unset($decisionLog[$key]['voterDetails']);
+            }
+
+            $this->data['access_decision_log'] = $decisionLog;
         } else {
             $this->data['access_decision_log'] = [];
             $this->data['voter_strategy'] = 'unknown';

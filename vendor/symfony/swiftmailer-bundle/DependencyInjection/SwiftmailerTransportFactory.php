@@ -99,18 +99,20 @@ class SwiftmailerTransportFactory
         ];
 
         if (isset($options['url'])) {
-            $parts = parse_url($options['url']);
+            if (false === $parts = parse_url($options['url'])) {
+                throw new \InvalidArgumentException(sprintf('The Swiftmailer URL "%s" is not valid.', $options['url']));
+            }
             if (isset($parts['scheme'])) {
                 $options['transport'] = $parts['scheme'];
             }
             if (isset($parts['user'])) {
-                $options['username'] = $parts['user'];
+                $options['username'] = rawurldecode($parts['user']);
             }
             if (isset($parts['pass'])) {
-                $options['password'] = $parts['pass'];
+                $options['password'] = rawurldecode($parts['pass']);
             }
             if (isset($parts['host'])) {
-                $options['host'] = $parts['host'];
+                $options['host'] = rawurldecode($parts['host']);
             }
             if (isset($parts['port'])) {
                 $options['port'] = $parts['port'];
@@ -146,11 +148,11 @@ class SwiftmailerTransportFactory
      */
     public static function validateConfig($options)
     {
-        if (!in_array($options['encryption'], ['tls', 'ssl', null], true)) {
+        if (!\in_array($options['encryption'], ['tls', 'ssl', null], true)) {
             throw new \InvalidArgumentException(sprintf('The %s encryption is not supported', $options['encryption']));
         }
 
-        if (!in_array($options['auth_mode'], ['plain', 'login', 'cram-md5', 'ntlm', null], true)) {
+        if (!\in_array($options['auth_mode'], ['plain', 'login', 'cram-md5', 'ntlm', null], true)) {
             throw new \InvalidArgumentException(sprintf('The %s authentication mode is not supported', $options['auth_mode']));
         }
     }

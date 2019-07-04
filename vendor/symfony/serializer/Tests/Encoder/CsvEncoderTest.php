@@ -29,6 +29,24 @@ class CsvEncoderTest extends TestCase
         $this->encoder = new CsvEncoder();
     }
 
+    public function testTrueFalseValues()
+    {
+        $data = [
+            'string' => 'foo',
+            'int' => 2,
+            'false' => false,
+            'true' => true,
+        ];
+
+        // Check that true and false are appropriately handled
+        $this->assertEquals(<<<'CSV'
+string,int,false,true
+foo,2,0,1
+
+CSV
+    , $this->encoder->encode($data, 'csv'));
+    }
+
     public function testSupportEncoding()
     {
         $this->assertTrue($this->encoder->supportsEncoding('csv'));
@@ -100,7 +118,26 @@ CSV
 
     public function testEncodeCustomSettings()
     {
-        $this->encoder = new CsvEncoder(';', "'", '|', '-');
+        $this->doTestEncodeCustomSettings();
+    }
+
+    public function testLegacyEncodeCustomSettings()
+    {
+        $this->doTestEncodeCustomSettings(true);
+    }
+
+    private function doTestEncodeCustomSettings(bool $legacy = false)
+    {
+        if ($legacy) {
+            $this->encoder = new CsvEncoder(';', "'", '|', '-');
+        } else {
+            $this->encoder = new CsvEncoder([
+                CsvEncoder::DELIMITER_KEY => ';',
+                CsvEncoder::ENCLOSURE_KEY => "'",
+                CsvEncoder::ESCAPE_CHAR_KEY => '|',
+                CsvEncoder::KEY_SEPARATOR_KEY => '-',
+            ]);
+        }
 
         $value = ['a' => 'he\'llo', 'c' => ['d' => 'foo']];
 
@@ -175,7 +212,21 @@ CSV;
 
     public function testEncodeFormulas()
     {
-        $this->encoder = new CsvEncoder(',', '"', '\\', '.', true);
+        $this->doTestEncodeFormulas();
+    }
+
+    public function testLegacyEncodeFormulas()
+    {
+        $this->doTestEncodeFormulas(true);
+    }
+
+    private function doTestEncodeFormulas(bool $legacy = false)
+    {
+        if ($legacy) {
+            $this->encoder = new CsvEncoder(',', '"', '\\', '.', true);
+        } else {
+            $this->encoder = new CsvEncoder([CsvEncoder::ESCAPE_FORMULAS_KEY => true]);
+        }
 
         $this->assertSame(<<<'CSV'
 0
@@ -276,13 +327,29 @@ CSV
             ]));
     }
 
+    public function testEncodeWithoutHeader()
+    {
+        $this->assertSame(<<<'CSV'
+a,b
+c,d
+
+CSV
+            , $this->encoder->encode([['a', 'b'], ['c', 'd']], 'csv', [
+                CsvEncoder::NO_HEADERS_KEY => true,
+            ]));
+    }
+
     public function testSupportsDecoding()
     {
         $this->assertTrue($this->encoder->supportsDecoding('csv'));
         $this->assertFalse($this->encoder->supportsDecoding('foo'));
     }
 
-    public function testDecode()
+    /**
+     * @group legacy
+     * @expectedDeprecation Relying on the default value (false) of the "as_collection" option is deprecated since 4.2. You should set it to false explicitly instead as true will be the default value in 5.0.
+     */
+    public function testDecodeLegacy()
     {
         $expected = ['foo' => 'a', 'bar' => 'b'];
 
@@ -291,6 +358,17 @@ foo,bar
 a,b
 CSV
         , 'csv'));
+    }
+
+    public function testDecodeAsSingle()
+    {
+        $expected = ['foo' => 'a', 'bar' => 'b'];
+
+        $this->assertEquals($expected, $this->encoder->decode(<<<'CSV'
+foo,bar
+a,b
+CSV
+        , 'csv', [CsvEncoder::AS_COLLECTION_KEY => false]));
     }
 
     public function testDecodeCollection()
@@ -311,10 +389,8 @@ CSV
         , 'csv'));
     }
 
-    public function testDecodeOnlyOneAsCollection()
+    public function testDecode()
     {
-        $this->encoder = new CsvEncoder(',', '"', '\\', '.');
-
         $expected = [
             ['foo' => 'a'],
         ];
@@ -324,7 +400,9 @@ foo
 a
 
 CSV
-            , 'csv', [CsvEncoder::AS_COLLECTION_KEY => true]));
+        , 'csv', [
+            CsvEncoder::AS_COLLECTION_KEY => true, // Can be removed in 5.0
+        ]));
     }
 
     public function testDecodeToManyRelation()
@@ -363,19 +441,40 @@ CSV
 
     public function testDecodeCustomSettings()
     {
-        $this->encoder = new CsvEncoder(';', "'", '|', '-');
+        $this->doTestDecodeCustomSettings();
+    }
 
-        $expected = ['a' => 'hell\'o', 'bar' => ['baz' => 'b']];
+    public function testLegacyDecodeCustomSettings()
+    {
+        $this->doTestDecodeCustomSettings(true);
+    }
+
+    private function doTestDecodeCustomSettings(bool $legacy = false)
+    {
+        if ($legacy) {
+            $this->encoder = new CsvEncoder(';', "'", '|', '-');
+        } else {
+            $this->encoder = new CsvEncoder([
+                CsvEncoder::DELIMITER_KEY => ';',
+                CsvEncoder::ENCLOSURE_KEY => "'",
+                CsvEncoder::ESCAPE_CHAR_KEY => '|',
+                CsvEncoder::KEY_SEPARATOR_KEY => '-',
+            ]);
+        }
+
+        $expected = [['a' => 'hell\'o', 'bar' => ['baz' => 'b']]];
         $this->assertEquals($expected, $this->encoder->decode(<<<'CSV'
 a;bar-baz
 'hell''o';b;c
 CSV
-        , 'csv'));
+        , 'csv', [
+            CsvEncoder::AS_COLLECTION_KEY => true, // Can be removed in 5.0
+        ]));
     }
 
     public function testDecodeCustomSettingsPassedInContext()
     {
-        $expected = ['a' => 'hell\'o', 'bar' => ['baz' => 'b']];
+        $expected = [['a' => 'hell\'o', 'bar' => ['baz' => 'b']]];
         $this->assertEquals($expected, $this->encoder->decode(<<<'CSV'
 a;bar-baz
 'hell''o';b;c
@@ -385,6 +484,7 @@ CSV
             CsvEncoder::ENCLOSURE_KEY => "'",
             CsvEncoder::ESCAPE_CHAR_KEY => '|',
             CsvEncoder::KEY_SEPARATOR_KEY => '-',
+            CsvEncoder::AS_COLLECTION_KEY => true, // Can be removed in 5.0
         ]));
     }
 
@@ -409,5 +509,17 @@ CSV
     public function testDecodeEmptyArray()
     {
         $this->assertEquals([], $this->encoder->decode('', 'csv'));
+    }
+
+    public function testDecodeWithoutHeader()
+    {
+        $this->assertEquals([['a', 'b'], ['c', 'd']], $this->encoder->decode(<<<'CSV'
+a,b
+c,d
+
+CSV
+        , 'csv', [
+            CsvEncoder::NO_HEADERS_KEY => true,
+        ]));
     }
 }

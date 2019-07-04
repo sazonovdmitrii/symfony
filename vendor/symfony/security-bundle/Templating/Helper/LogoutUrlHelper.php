@@ -11,7 +11,8 @@
 
 namespace Symfony\Bundle\SecurityBundle\Templating\Helper;
 
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+@trigger_error('The '.LogoutUrlHelper::class.' class is deprecated since version 4.3 and will be removed in 5.0; use Twig instead.', E_USER_DEPRECATED);
+
 use Symfony\Component\Security\Http\Logout\LogoutUrlGenerator;
 use Symfony\Component\Templating\Helper\Helper;
 
@@ -19,6 +20,8 @@ use Symfony\Component\Templating\Helper\Helper;
  * LogoutUrlHelper provides generator functions for the logout URL.
  *
  * @author Jeremy Mikola <jmikola@gmail.com>
+ *
+ * @deprecated since version 4.3, to be removed in 5.0; use Twig instead.
  */
 class LogoutUrlHelper extends Helper
 {
@@ -38,7 +41,7 @@ class LogoutUrlHelper extends Helper
      */
     public function getLogoutPath($key)
     {
-        return $this->generator->getLogoutPath($key, UrlGeneratorInterface::ABSOLUTE_PATH);
+        return $this->generator->getLogoutPath($key);
     }
 
     /**
@@ -50,7 +53,7 @@ class LogoutUrlHelper extends Helper
      */
     public function getLogoutUrl($key)
     {
-        return $this->generator->getLogoutUrl($key, UrlGeneratorInterface::ABSOLUTE_URL);
+        return $this->generator->getLogoutUrl($key);
     }
 
     /**

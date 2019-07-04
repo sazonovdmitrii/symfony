@@ -47,7 +47,7 @@ class Definition
 
     protected $arguments = [];
 
-    private static $defaultDeprecationTemplate = 'The "%service_id%" service is deprecated. You should stop using it, as it will soon be removed.';
+    private static $defaultDeprecationTemplate = 'The "%service_id%" service is deprecated. You should stop using it, as it will be removed in the future.';
 
     /**
      * @internal
@@ -95,7 +95,7 @@ class Definition
     /**
      * Sets a factory.
      *
-     * @param string|array $factory A PHP function or an array containing a class/Reference and a method to call
+     * @param string|array|Reference $factory A PHP function, reference or an array containing a class/Reference and a method to call
      *
      * @return $this
      */
@@ -105,6 +105,8 @@ class Definition
 
         if (\is_string($factory) && false !== strpos($factory, '::')) {
             $factory = explode('::', $factory, 2);
+        } elseif ($factory instanceof Reference) {
+            $factory = [$factory, '__invoke'];
         }
 
         $this->factory = $factory;
@@ -269,7 +271,7 @@ class Definition
             throw new OutOfBoundsException(sprintf('The index "%d" is not in the range [0, %d].', $index, \count($this->arguments) - 1));
         }
 
-        if (!array_key_exists($index, $this->arguments)) {
+        if (!\array_key_exists($index, $this->arguments)) {
             throw new OutOfBoundsException(sprintf('The argument "%s" doesn\'t exist.', $index));
         }
 
@@ -314,7 +316,7 @@ class Definition
      */
     public function getArgument($index)
     {
-        if (!array_key_exists($index, $this->arguments)) {
+        if (!\array_key_exists($index, $this->arguments)) {
             throw new OutOfBoundsException(sprintf('The argument "%s" doesn\'t exist.', $index));
         }
 
@@ -330,7 +332,7 @@ class Definition
     {
         $this->calls = [];
         foreach ($calls as $call) {
-            $this->addMethodCall($call[0], $call[1]);
+            $this->addMethodCall($call[0], $call[1], $call[2] ?? false);
         }
 
         return $this;
@@ -339,19 +341,20 @@ class Definition
     /**
      * Adds a method to call after service initialization.
      *
-     * @param string $method    The method name to call
-     * @param array  $arguments An array of arguments to pass to the method call
+     * @param string $method       The method name to call
+     * @param array  $arguments    An array of arguments to pass to the method call
+     * @param bool   $returnsClone Whether the call returns the service instance or not
      *
      * @return $this
      *
      * @throws InvalidArgumentException on empty $method param
      */
-    public function addMethodCall($method, array $arguments = [])
+    public function addMethodCall($method, array $arguments = []/*, bool $returnsClone = false*/)
     {
         if (empty($method)) {
             throw new InvalidArgumentException('Method name cannot be empty.');
         }
-        $this->calls[] = [$method, $arguments];
+        $this->calls[] = 2 < \func_num_args() && func_get_arg(2) ? [$method, $arguments, true] : [$method, $arguments];
 
         return $this;
     }
@@ -782,7 +785,7 @@ class Definition
     /**
      * Sets a configurator to call after the service is fully initialized.
      *
-     * @param string|array $configurator A PHP callable
+     * @param string|array|Reference $configurator A PHP function, reference or an array containing a class/Reference and a method to call
      *
      * @return $this
      */
@@ -792,6 +795,8 @@ class Definition
 
         if (\is_string($configurator) && false !== strpos($configurator, '::')) {
             $configurator = explode('::', $configurator, 2);
+        } elseif ($configurator instanceof Reference) {
+            $configurator = [$configurator, '__invoke'];
         }
 
         $this->configurator = $configurator;
@@ -859,6 +864,10 @@ class Definition
     public function setBindings(array $bindings)
     {
         foreach ($bindings as $key => $binding) {
+            if (0 < strpos($key, '$') && $key !== $k = preg_replace('/[ \t]*\$/', ' $', $key)) {
+                unset($bindings[$key]);
+                $bindings[$key = $k] = $binding;
+            }
             if (!$binding instanceof BoundArgument) {
                 $bindings[$key] = new BoundArgument($binding);
             }
@@ -872,13 +881,17 @@ class Definition
     /**
      * Add an error that occurred when building this Definition.
      *
-     * @param string $error
+     * @param string|\Closure|self $error
      *
      * @return $this
      */
     public function addError($error)
     {
-        $this->errors[] = $error;
+        if ($error instanceof self) {
+            $this->errors = array_merge($this->errors, $error->errors);
+        } else {
+            $this->errors[] = $error;
+        }
 
         return $this;
     }
@@ -890,6 +903,19 @@ class Definition
      */
     public function getErrors()
     {
+        foreach ($this->errors as $i => $error) {
+            if ($error instanceof \Closure) {
+                $this->errors[$i] = (string) $error();
+            } elseif (!\is_string($error)) {
+                $this->errors[$i] = (string) $error;
+            }
+        }
+
         return $this->errors;
+    }
+
+    public function hasErrors(): bool
+    {
+        return (bool) $this->errors;
     }
 }

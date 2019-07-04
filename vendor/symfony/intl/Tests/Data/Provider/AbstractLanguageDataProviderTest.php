@@ -13,10 +13,11 @@ namespace Symfony\Component\Intl\Tests\Data\Provider;
 
 use Symfony\Component\Intl\Data\Provider\LanguageDataProvider;
 use Symfony\Component\Intl\Intl;
-use Symfony\Component\Intl\Locale;
 
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
+ *
+ * @group legacy
  */
 abstract class AbstractLanguageDataProviderTest extends AbstractDataProviderTest
 {
@@ -392,7 +393,6 @@ abstract class AbstractLanguageDataProviderTest extends AbstractDataProviderTest
         'ms',
         'mt',
         'mua',
-        'mul',
         'mus',
         'mwl',
         'mwr',
@@ -596,7 +596,6 @@ abstract class AbstractLanguageDataProviderTest extends AbstractDataProviderTest
         'uga',
         'uk',
         'umb',
-        'und',
         'ur',
         'uz',
         'vai',
@@ -641,7 +640,6 @@ abstract class AbstractLanguageDataProviderTest extends AbstractDataProviderTest
         'zh_Hant',
         'zu',
         'zun',
-        'zxx',
         'zza',
     ];
 
@@ -865,7 +863,7 @@ abstract class AbstractLanguageDataProviderTest extends AbstractDataProviderTest
 
     public function testGetNamesDefaultLocale()
     {
-        Locale::setDefault('de_AT');
+        \Locale::setDefault('de_AT');
 
         $this->assertSame(
             $this->dataProvider->getNames('de_AT'),
@@ -901,7 +899,7 @@ abstract class AbstractLanguageDataProviderTest extends AbstractDataProviderTest
 
     public function testGetNameDefaultLocale()
     {
-        Locale::setDefault('de_AT');
+        \Locale::setDefault('de_AT');
 
         $names = $this->dataProvider->getNames('de_AT');
 

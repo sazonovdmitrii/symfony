@@ -11,6 +11,8 @@
 
 namespace Symfony\Component\Form;
 
+use Symfony\Component\Form\Extension\Core\CoreExtension;
+
 /**
  * The default implementation of FormFactoryBuilderInterface.
  *
@@ -18,6 +20,8 @@ namespace Symfony\Component\Form;
  */
 class FormFactoryBuilder implements FormFactoryBuilderInterface
 {
+    private $forceCoreExtension;
+
     /**
      * @var ResolvedFormTypeFactoryInterface
      */
@@ -42,6 +46,14 @@ class FormFactoryBuilder implements FormFactoryBuilderInterface
      * @var FormTypeGuesserInterface[]
      */
     private $typeGuessers = [];
+
+    /**
+     * @param bool $forceCoreExtension
+     */
+    public function __construct($forceCoreExtension = false)
+    {
+        $this->forceCoreExtension = $forceCoreExtension;
+    }
 
     /**
      * {@inheritdoc}
@@ -100,7 +112,13 @@ class FormFactoryBuilder implements FormFactoryBuilderInterface
      */
     public function addTypeExtension(FormTypeExtensionInterface $typeExtension)
     {
-        $this->typeExtensions[$typeExtension->getExtendedType()][] = $typeExtension;
+        if (method_exists($typeExtension, 'getExtendedTypes')) {
+            foreach ($typeExtension::getExtendedTypes() as $extendedType) {
+                $this->typeExtensions[$extendedType][] = $typeExtension;
+            }
+        } else {
+            $this->typeExtensions[$typeExtension->getExtendedType()][] = $typeExtension;
+        }
 
         return $this;
     }
@@ -111,7 +129,7 @@ class FormFactoryBuilder implements FormFactoryBuilderInterface
     public function addTypeExtensions(array $typeExtensions)
     {
         foreach ($typeExtensions as $typeExtension) {
-            $this->typeExtensions[$typeExtension->getExtendedType()][] = $typeExtension;
+            $this->addTypeExtension($typeExtension);
         }
 
         return $this;
@@ -143,6 +161,21 @@ class FormFactoryBuilder implements FormFactoryBuilderInterface
     public function getFormFactory()
     {
         $extensions = $this->extensions;
+
+        if ($this->forceCoreExtension) {
+            $hasCoreExtension = false;
+
+            foreach ($extensions as $extension) {
+                if ($extension instanceof CoreExtension) {
+                    $hasCoreExtension = true;
+                    break;
+                }
+            }
+
+            if (!$hasCoreExtension) {
+                array_unshift($extensions, new CoreExtension());
+            }
+        }
 
         if (\count($this->types) > 0 || \count($this->typeExtensions) > 0 || \count($this->typeGuessers) > 0) {
             if (\count($this->typeGuessers) > 1) {

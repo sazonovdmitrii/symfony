@@ -37,7 +37,7 @@ class LengthValidatorTest extends ConstraintValidatorTestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
+     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedValueException
      */
     public function testExpectsStringCompatibleType()
     {
@@ -92,6 +92,18 @@ class LengthValidatorTest extends ConstraintValidatorTestCase
         ];
     }
 
+    public function getThreeCharactersWithWhitespaces()
+    {
+        return [
+            ["\x20ccc"],
+            ["\x09c\x09c"],
+            ["\x0Accc\x0A"],
+            ["ccc\x0D\x0D"],
+            ["\x00ccc\x00"],
+            ["\x0Bc\x0Bc\x0B"],
+        ];
+    }
+
     /**
      * @dataProvider getFiveOrMoreCharacters
      */
@@ -120,6 +132,17 @@ class LengthValidatorTest extends ConstraintValidatorTestCase
     public function testValidValuesExact($value)
     {
         $constraint = new Length(4);
+        $this->validator->validate($value, $constraint);
+
+        $this->assertNoViolation();
+    }
+
+    /**
+     * @dataProvider getThreeCharactersWithWhitespaces
+     */
+    public function testValidNormalizedValues($value)
+    {
+        $constraint = new Length(['min' => 3, 'max' => 3, 'normalizer' => 'trim']);
         $this->validator->validate($value, $constraint);
 
         $this->assertNoViolation();
@@ -237,11 +260,20 @@ class LengthValidatorTest extends ConstraintValidatorTestCase
         }
     }
 
-    public function testConstraintGetDefaultOption()
+    public function testConstraintDefaultOption()
     {
         $constraint = new Length(5);
 
         $this->assertEquals(5, $constraint->min);
         $this->assertEquals(5, $constraint->max);
+    }
+
+    public function testConstraintAnnotationDefaultOption()
+    {
+        $constraint = new Length(['value' => 5, 'exactMessage' => 'message']);
+
+        $this->assertEquals(5, $constraint->min);
+        $this->assertEquals(5, $constraint->max);
+        $this->assertEquals('message', $constraint->exactMessage);
     }
 }

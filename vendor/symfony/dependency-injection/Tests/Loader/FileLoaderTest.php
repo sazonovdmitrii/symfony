@@ -18,7 +18,6 @@ use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Loader\FileLoader;
 use Symfony\Component\DependencyInjection\Loader\IniFileLoader;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
@@ -136,6 +135,25 @@ class FileLoaderTest extends TestCase
         );
     }
 
+    public function testRegisterClassesWithExcludeAsArray()
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('sub_dir', 'Sub');
+        $loader = new TestFileLoader($container, new FileLocator(self::$fixturesPath.'/Fixtures'));
+        $loader->registerClasses(
+            new Definition(),
+            'Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\\',
+            'Prototype/*', [
+                'Prototype/%sub_dir%',
+                'Prototype/OtherDir/AnotherSub/DeeperBaz.php',
+            ]
+        );
+        $this->assertTrue($container->has(Foo::class));
+        $this->assertTrue($container->has(Baz::class));
+        $this->assertFalse($container->has(Bar::class));
+        $this->assertFalse($container->has(DeeperBaz::class));
+    }
+
     public function testNestedRegisterClasses()
     {
         $container = new ContainerBuilder();
@@ -198,32 +216,20 @@ class FileLoaderTest extends TestCase
     }
 
     /**
-     * @dataProvider getIncompatibleExcludeTests
+     * @expectedException \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
+     * @expectedExceptionMessage Invalid "exclude" pattern when importing classes for "Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\": make sure your "exclude" pattern (yaml/*) is a subset of the "resource" pattern (Prototype/*)
      */
-    public function testRegisterClassesWithIncompatibleExclude($resourcePattern, $excludePattern)
+    public function testRegisterClassesWithIncompatibleExclude()
     {
         $container = new ContainerBuilder();
         $loader = new TestFileLoader($container, new FileLocator(self::$fixturesPath.'/Fixtures'));
 
-        try {
-            $loader->registerClasses(
-                new Definition(),
-                'Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\\',
-                $resourcePattern,
-                $excludePattern
-            );
-        } catch (InvalidArgumentException $e) {
-            $this->assertEquals(
-                sprintf('Invalid "exclude" pattern when importing classes for "Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\": make sure your "exclude" pattern (%s) is a subset of the "resource" pattern (%s)', $excludePattern, $resourcePattern),
-                $e->getMessage()
-            );
-        }
-    }
-
-    public function getIncompatibleExcludeTests()
-    {
-        yield ['Prototype/*', 'yaml/*', false];
-        yield ['Prototype/OtherDir/*', 'Prototype/*', false];
+        $loader->registerClasses(
+            new Definition(),
+            'Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype\\',
+            'Prototype/*',
+            'yaml/*'
+        );
     }
 }
 

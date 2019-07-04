@@ -1,6 +1,16 @@
 CHANGELOG
 =========
 
+4.3.0
+-----
+
+ * Using a mapping inside a multi-line string is deprecated and will throw a `ParseException` in 5.0.
+
+4.2.0
+-----
+
+ * added support for multiple files or directories in `LintCommand`
+
 4.0.0
 -----
 
