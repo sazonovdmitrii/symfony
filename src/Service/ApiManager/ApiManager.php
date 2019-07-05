@@ -10,6 +10,8 @@ class ApiManager extends AbstractController implements ApiManagerInterface
 
     private $_url;
 
+    private $_headers;
+
     /**
      * @param $url
      * @return $this
@@ -47,14 +49,34 @@ class ApiManager extends AbstractController implements ApiManagerInterface
     }
 
     /**
+     * @param array $headers
+     * @return $this
+     */
+    public function setHeaders(array $headers)
+    {
+        $this->_headers = $headers;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHeaders()
+    {
+        return $this->_headers;
+    }
+
+    /**
      * @return int
      */
     public function getData()
     {
         $httpClient = HttpClient::create();
         $response = $httpClient->request(
-            'GET', $this->getUrl() . $this->getMethod()
+            'POST', $this->getUrl() . $this->getMethod(), [
+                'headers' => $this->getHeaders()
+            ]
         );
-        return $response->getStatusCode();
+        return $response->getContent();
     }
 }
