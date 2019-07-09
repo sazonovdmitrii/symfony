@@ -24,19 +24,19 @@ class Region
     private $title;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\City", mappedBy="region")
+     */
+    private $cities;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $kladr_id;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $fias_id;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\City", mappedBy="region")
-     */
-    private $cities;
 
     public function __construct()
     {
@@ -56,30 +56,6 @@ class Region
     public function setTitle(string $title): self
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    public function getKladrId(): ?int
-    {
-        return $this->kladr_id;
-    }
-
-    public function setKladrId(?int $kladr_id): self
-    {
-        $this->kladr_id = $kladr_id;
-
-        return $this;
-    }
-
-    public function getFiasId(): ?int
-    {
-        return $this->fias_id;
-    }
-
-    public function setFiasId(?int $fias_id): self
-    {
-        $this->fias_id = $fias_id;
 
         return $this;
     }
@@ -111,6 +87,30 @@ class Region
                 $city->setRegion(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getKladrId(): ?string
+    {
+        return $this->kladr_id;
+    }
+
+    public function setKladrId(?string $kladr_id): self
+    {
+        $this->kladr_id = $kladr_id;
+
+        return $this;
+    }
+
+    public function getFiasId(): ?string
+    {
+        return $this->fias_id;
+    }
+
+    public function setFiasId(?string $fias_id): self
+    {
+        $this->fias_id = $fias_id;
 
         return $this;
     }

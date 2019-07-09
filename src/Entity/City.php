@@ -49,21 +49,6 @@ class City
     private $short_title;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $fias_id;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $kladr_id;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\District", inversedBy="cities")
-     */
-    private $вdistrict;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Region", inversedBy="cities")
      */
     private $region;
@@ -72,6 +57,21 @@ class City
      * @ORM\OneToMany(targetEntity="App\Entity\Pickup", mappedBy="city")
      */
     private $pickups;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\District", inversedBy="cities")
+     */
+    private $district;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $fias_id;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $kladr_id;
 
     public function __construct()
     {
@@ -155,42 +155,6 @@ class City
         return $this;
     }
 
-    public function getFiasId(): ?string
-    {
-        return $this->fias_id;
-    }
-
-    public function setFiasId(?string $fias_id): self
-    {
-        $this->fias_id = $fias_id;
-
-        return $this;
-    }
-
-    public function getKladrId(): ?int
-    {
-        return $this->kladr_id;
-    }
-
-    public function setKladrId(?int $kladr_id): self
-    {
-        $this->kladr_id = $kladr_id;
-
-        return $this;
-    }
-
-    public function getвdistrict(): ?District
-    {
-        return $this->вdistrict;
-    }
-
-    public function setвdistrict(?District $вdistrict): self
-    {
-        $this->вdistrict = $вdistrict;
-
-        return $this;
-    }
-
     public function getRegion(): ?Region
     {
         return $this->region;
@@ -230,6 +194,42 @@ class City
                 $pickup->setCity(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDistrict(): ?District
+    {
+        return $this->district;
+    }
+
+    public function setDistrict(?District $district): self
+    {
+        $this->district = $district;
+
+        return $this;
+    }
+
+    public function getFiasId(): ?string
+    {
+        return $this->fias_id;
+    }
+
+    public function setFiasId(?string $fias_id): self
+    {
+        $this->fias_id = $fias_id;
+
+        return $this;
+    }
+
+    public function getKladrId(): ?string
+    {
+        return $this->kladr_id;
+    }
+
+    public function setKladrId(?string $kladr_id): self
+    {
+        $this->kladr_id = $kladr_id;
 
         return $this;
     }
