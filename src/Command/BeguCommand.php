@@ -30,6 +30,21 @@ class BeguCommand extends ContainerAwareCommand
         $data = $this->beguService
             ->setMethod('pickup/cities-pvz')
             ->getData();
+
+//        $data = $this->beguService
+//            ->setMethod('pickup/cities')
+//            ->getData();
+//
+//        $data = $this->beguService
+//            ->setMethod('pickup/regions')
+//            ->getData();
+
+//        $data = $this->beguService
+//            ->setMethod('pickup/directions')
+//            ->getData();
+
+
+
         print_r(json_decode($data, true)['data'][0]);
         die('-------');
     }
