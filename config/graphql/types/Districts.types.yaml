@@ -1,0 +1,18 @@
+Districts:
+  type: object
+  config:
+    description: "Districts"
+    fields:
+      data:
+       type: "[DistrictItem]"
+DistrictItem:
+  type: object
+  config:
+    description: "District Item"
+    fields:
+      id:
+        type: "Int!"
+        description: "District Id."
+      title:
+        type: "String"
+        description: "District Title."

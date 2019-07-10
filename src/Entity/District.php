@@ -81,4 +81,9 @@ class District
 
         return $this;
     }
+
+    public function __toString()
+    {
+        return 'District';
+    }
 }

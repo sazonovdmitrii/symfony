@@ -1,0 +1,13 @@
+{
+  directions {
+    data {
+      id,
+      avarda_id
+      title
+      price
+      delivery_days
+      visible   
+      comment      
+    }
+  }
+}

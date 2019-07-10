@@ -1,0 +1,96 @@
+Pickups:
+  type: object
+  config:
+    description: "Pickups"
+    fields:
+      data:
+       type: "[PickupItem]"
+PickupItem:
+  type: object
+  config:
+    description: "Pickup Item"
+    fields:
+      id:
+        type: "Int!"
+        description: "Pickup Id."
+      avarda_id:
+        type: "String"
+        description: "Pickup Avarda ID."
+      direction:
+        type: "DirectionItem"
+        description: "Kladr Id."
+      direction_title:
+        type: "String"
+        description: "Direction Title"
+      city:
+        type: "CityItem"
+        description: "City Item"
+      city_title:
+        type: "String"
+        description: "City Title"
+      city_short_title:
+        type: "String"
+        description: "City Short Title"
+      city_latitude:
+        type: "String"
+        description: "City Latitude"
+      city_longitude:
+        type: "String"
+        description: "City Longitude"
+      city_kladr:
+        type: "String"
+        description: "City Kladr"
+      city_fias:
+        type: "String"
+        description: "City Fias"
+      post_code:
+        type: "String"
+        description: "Post Code"
+      address:
+        type: "String"
+        description: "Address"
+      price:
+        type: "String"
+        description: "Price"
+      price_source:
+        type: "String"
+        description: "Price Source"
+      latitude:
+        type: "String"
+        description: "Latitude"
+      longitude:
+        type: "String"
+        description: "Longitude"
+      phones:
+        type: "String"
+        description: "phones"
+      schedule:
+        type: "String"
+        description: "Schedule"
+      delivery_days:
+        type: "String"
+        description: "Delivery Days"
+      delivery_days_source:
+        type: "String"
+        description: "Delivery Days Source"
+      min_order_sum:
+        type: "String"
+        description: "Min Order Sum"
+      retail:
+        type: "String"
+        description: "Retail"
+      pvz_id:
+        type: "String"
+        description: "PVZ Id"
+      pvz_title:
+        type: "String"
+        description: "Pvz Title"
+      visible:
+        type: "String"
+        description: "Visible"
+      comment:
+        type: "String"
+        description: "Comment"
+
+
+

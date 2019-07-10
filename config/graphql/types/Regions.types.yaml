@@ -1,0 +1,24 @@
+Regions:
+  type: object
+  config:
+    description: "Regions"
+    fields:
+      data:
+       type: "[RegionItem]"
+RegionItem:
+  type: object
+  config:
+    description: "Region Item"
+    fields:
+      id:
+        type: "Int!"
+        description: "Region Id."
+      title:
+        type: "String"
+        description: "Region Title."
+      kladr_id:
+        type: "String"
+        description: "Kladr Id."
+      fias_id:
+        type: "String"
+        description: "Fias Id."

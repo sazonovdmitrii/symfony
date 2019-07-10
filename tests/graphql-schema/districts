@@ -1,0 +1,8 @@
+{
+  districts {
+    data {
+      id
+      title
+    }
+  }
+}

@@ -1,0 +1,33 @@
+Directions:
+  type: object
+  config:
+    description: "Directions"
+    fields:
+      data:
+       type: "[DirectionItem]"
+DirectionItem:
+  type: object
+  config:
+    description: "Direction Item"
+    fields:
+      id:
+        type: "Int!"
+        description: "Direction Id."
+      avarda_id:
+        type: "String"
+        description: "Avarda ID"
+      title:
+        type: "String"
+        description: "Title"
+      price:
+        type: "String"
+        description: "Price"
+      delivery_days:
+        type: "String"
+        description: "Delivery Days"
+      visible:
+        type: "String"
+        description: "Visible"
+      comment:
+        type: "String"
+        description: "Comment"

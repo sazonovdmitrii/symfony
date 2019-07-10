@@ -66,6 +66,21 @@ Query:
               description: "Sale Limit"
               type: "Int"
         resolve: "@=resolver('Sales', [args])"
+      regions:
+        type: "Regions"
+        resolve: "@=resolver('Regions', [args])"
+      cities:
+        type: "Cities"
+        resolve: "@=resolver('Cities', [args])"
+      directions:
+        type: "Directions"
+        resolve: "@=resolver('Directions', [args])"
+      districts:
+        type: "Districts"
+        resolve: "@=resolver('Districts', [args])"
+      pickups:
+        type: "Pickups"
+        resolve: "@=resolver('Pickups', [args])"
 DateTime:
     type: custom-scalar
     config:

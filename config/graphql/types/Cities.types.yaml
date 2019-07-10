@@ -1,0 +1,48 @@
+Cities:
+  type: object
+  config:
+    description: "Cities"
+    fields:
+      data:
+       type: "[CityItem]"
+CityItem:
+  type: object
+  config:
+    description: "City Item"
+    fields:
+      id:
+        type: "Int!"
+        description: "City Id."
+      title:
+        type: "String"
+        description: "Title"
+      latitude:
+        type: "String"
+        description: "Latitude"
+      longitude:
+        type: "String"
+        description: "Longitude"
+      description:
+        type: "String"
+        description: "Description"
+      visible:
+        type: "String"
+        description: "Visible"
+      short_title:
+        type: "String"
+        description: "Short Title"
+      region:
+        type: "RegionItem"
+        description: "Region"
+      pickups:
+        type: "String"
+        description: "Pickups"
+      district:
+        type: "String"
+        description: "District"
+      fias_id:
+        type: "String"
+        description: "Fias Id"
+      kladr_id:
+        type: "String"
+        description: "Kladr Id"

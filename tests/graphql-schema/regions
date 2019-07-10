@@ -1,0 +1,10 @@
+{
+  regions {
+    data {
+      id,
+      title,
+      fias_id,
+      kladr_id
+    }
+  }
+}

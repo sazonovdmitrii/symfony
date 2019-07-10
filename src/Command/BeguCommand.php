@@ -40,7 +40,39 @@ class BeguCommand extends ContainerAwareCommand
         $this->output = $output;
 
         $connection = $this->_defaultDoctrine->getConnection();
+        $connection->query('DELETE FROM pickup');
+        $connection->query('DELETE FROM city');
         $connection->query('DELETE FROM region');
+        $connection->query('DELETE FROM direction');
+
+        $directions = $this->beguService
+            ->setMethod('pickup/directions')
+            ->getData();
+        $directions = json_decode($directions, true)['data'];
+        foreach($directions as $beguDirection) {
+            $connection->exec(
+                "
+                    INSERT INTO direction (
+                        id,                          
+                        avarda_id,
+                        title,
+                        price,
+                        delivery_days,
+                        visible,
+                        comment
+                    ) VALUES(
+                        " . $beguDirection['id'] . ", 
+                        '" . $beguDirection['avarda_id'] . "',
+                         '" . $beguDirection['title'] . "',                      
+                        '" . $beguDirection['price'] . "',
+                        '" . $beguDirection['delivery_days'] . "',
+                        '" . $beguDirection['visible'] . "',
+                        '" . $beguDirection['comment'] . "'
+                    )
+                "
+            );
+        }
+
         $regions = $this->beguService
             ->setMethod('pickup/regions')
             ->getData();
@@ -82,12 +114,14 @@ class BeguCommand extends ContainerAwareCommand
             );
         }
 
-        $connection->query('DELETE FROM city');
+
         $cities = $this->beguService
             ->setMethod('pickup/cities')
             ->getData();
         $cities = json_decode($cities, true)['data'];
+        $citiesIds = [];
         foreach($cities as $beguCity) {
+            $citiesIds[] = $beguCity['id'];
             $connection->exec(
                 "
                     INSERT INTO city (
@@ -105,8 +139,8 @@ class BeguCommand extends ContainerAwareCommand
                     ) VALUES(
                         " . $beguCity['id'] . ", 
                         '" . $beguCity['title'] . "',
-                        '" . $beguCity['latitude'] . "',
-                        '" . $beguCity['longitude'] . "',
+                        '" . (float)$beguCity['latitude'] . "',
+                        '" . (float)$beguCity['longitude'] . "',
                         '" . $beguCity['description'] . "',
                         '" . $beguCity['visible'] . "',
                         '" . $beguCity['short_title'] . "',
@@ -118,44 +152,76 @@ class BeguCommand extends ContainerAwareCommand
                 "
             );
         }
-        die('---');
 
-        $cities = $this->beguService
-            ->setMethod('pickup/cities')
+        $pickups = $this->beguService
+            ->setMethod('pickup/cities-pvz')
             ->getData();
-        $cities = json_decode($cities, true)['data'];
-        foreach($cities as $beguCity) {
-            $city = new City();
-            $city->setTitle($beguCity['title']);
-            $city->setLatitude($beguCity['latitude']);
-            $city->setLongitude($beguCity['longitude']);
-            $city->setDescription($beguCity['description']);
-            $city->setVisible($beguCity['visible']);
-            $city->setShortTitle($beguCity['short_title']);
-            $city->setFiasId($beguCity['fias_id']);
-            $city->setKladrId($beguCity['kladr_id']);
-            $city->setRegion($beguCity['region_id']);
-            $city->setDistrict($beguCity['district_id']);
-
-            $manager->persist($city);
-            $manager->flush();
-            die();
+        $pickups = json_decode($pickups, true)['data'];
+        $connection->query('DELETE FROM pickup');
+        foreach($pickups as $beguPickup) {
+            if(!in_array($beguPickup['city_id'], $citiesIds)) {
+                continue;
+            }
+            $connection->exec(
+                "
+                    INSERT INTO pickup (
+                        id,                          
+                        avarda_id,
+                        direction_id,
+                        direction_title,
+                        city_id,
+                        city_title,
+                        city_short_title,
+                        city_latitude,
+                        city_longitude,
+                        city_kladr,
+                        city_fias,
+                        post_code,
+                        address,
+                        comment,
+                        price,
+                        latitude,
+                        longitude,
+                        phones,
+                        schedule,
+                        delivery_days,
+                        delivery_days_source,
+                        min_order_sum,
+                        retail,
+                        pvz_id,
+                        pvz_title,
+                        visible                     
+                    ) VALUES(
+                        " . $beguPickup['id'] . ",
+                         '" . $beguPickup['avarda_id'] . "',
+                        '" . $beguPickup['direction_id'] . "',
+                        '" . $beguPickup['direction_title'] . "',
+                        '" . $beguPickup['city_id'] . "',
+                        '" . $beguPickup['city_title'] . "',
+                        '" . $beguPickup['city_short_title'] . "',
+                        '" . (float)$beguPickup['city_latitude'] . "',
+                        '" . (float)$beguPickup['city_longitude'] . "',
+                        '" . $beguPickup['city_kladr'] . "',
+                        '" . $beguPickup['city_fias'] . "',
+                        '" . (int)$beguPickup['post_code'] . "',
+                        '" . $beguPickup['address'] . "',
+                        '" . str_replace("'", "", $beguPickup['comment']) . "',
+                        '" . $beguPickup['price'] . "',
+                        '" . (float)$beguPickup['latitude'] . "',
+                        '" . (float)$beguPickup['longitude'] . "',
+                        '" . $beguPickup['phones'] . "',
+                        '" . $beguPickup['schedule'] . "',
+                        '" . $beguPickup['delivery_days'] . "',
+                        '" . $beguPickup['delivery_days_source'] . "',
+                        '" . $beguPickup['min_order_sum'] . "',
+                        '" . $beguPickup['retail'] . "',
+                        '" . $beguPickup['pvz_id'] . "',
+                        '" . $beguPickup['pvz_title'] . "',
+                        '" . $beguPickup['visible'] . "'                                            
+                    )
+                "
+            );
         }
-
-
-//        $data = $this->beguService
-//            ->setMethod('pickup/cities-pvz')
-//            ->getData();
-
-//
-
-//        $data = $this->beguService
-//            ->setMethod('pickup/directions')
-//            ->getData();
-
-
-
-        print_r(json_decode($cities, true)['data'][0]);
-        die('-------');
+        $this->output->writeln(['Import has done']);
     }
 }

@@ -77,11 +77,6 @@ class Pickup
     private $address;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $comment;
-
-    /**
      * @ORM\Column(type="float", nullable=true)
      */
     private $price;
@@ -145,6 +140,11 @@ class Pickup
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $visible;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $comment;
 
     public function getId(): ?int
     {
@@ -294,19 +294,7 @@ class Pickup
 
         return $this;
     }
-
-    public function getComment(): ?string
-    {
-        return $this->comment;
-    }
-
-    public function setComment(?string $comment): self
-    {
-        $this->comment = $comment;
-
-        return $this;
-    }
-
+    
     public function getPrice(): ?float
     {
         return $this->price;
@@ -459,6 +447,18 @@ class Pickup
     public function setVisible(?bool $visible): self
     {
         $this->visible = $visible;
+
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
 
         return $this;
     }

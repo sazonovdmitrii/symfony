@@ -1,0 +1,18 @@
+{
+  cities {
+    data {
+      id,
+      latitude
+      longitude
+      description
+      visible
+      short_title
+      region {
+        id
+        title
+      }
+      fias_id,
+      kladr_id
+    }
+  }
+}

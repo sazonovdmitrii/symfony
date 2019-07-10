@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Catalog;
+use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -17,6 +18,29 @@ class CatalogRepository extends ServiceEntityRepository
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Catalog::class);
+    }
+
+    public function findByCatalogId($catalogId)
+    {
+        $query = $this->createQueryBuilder('c')
+            ->select('c')
+            ->from(Catalog::class, 'c')
+            ->innerJoin(Product::class, 'pp', 'with', 'p.id = pp.product')
+            ->getQuery()
+            ->getSQL();
+        var_dump($query);
+        die();
+//        var_dump('-');
+//        var_dump($catalogId);
+//        die();
+//        return $this->createQueryBuilder('c')
+//            ->andWhere('c.exampleField = :val')
+//            ->setParameter('val', $value)
+//            ->orderBy('c.id', 'ASC')
+//            ->setMaxResults(10)
+//            ->getQuery()
+//            ->getResult()
+//            ;
     }
 
     // /**

@@ -1,0 +1,39 @@
+{
+  pickups {
+    data {
+      id
+      avarda_id
+      direction {
+        id
+        title
+      }
+      direction_title
+      city {
+        id
+        title
+      }
+      city_title
+      city_short_title
+      city_latitude
+      city_longitude
+      city_kladr
+      city_fias
+      post_code
+      address
+      price
+      price_source
+      latitude
+      longitude
+      phones
+      schedule
+      delivery_days
+      delivery_days_source
+      min_order_sum
+      retail
+      pvz_id
+      pvz_title
+      visible
+      comment
+    }
+  }
+}
