@@ -1,24 +1,24 @@
-Pickups:
+Couriers:
   type: object
   config:
-    description: "Pickups"
+    description: "Couriers"
     fields:
       data:
-       type: "[PickupItem]"
-PickupItem:
+       type: "[CourierItem]"
+CourierItem:
   type: object
   config:
-    description: "Pickup Item"
+    description: "Courier Item"
     fields:
       id:
         type: "Int!"
-        description: "Pickup Id."
+        description: "Courier Id."
       avarda_id:
         type: "String"
-        description: "Pickup Avarda ID."
+        description: "Courier Avarda ID."
       direction:
         type: "DirectionItem"
-        description: "Kladr Id."
+        description: "Courier Direction"
       direction_title:
         type: "String"
         description: "Direction Title"

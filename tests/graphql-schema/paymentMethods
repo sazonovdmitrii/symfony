@@ -1,0 +1,8 @@
+{
+  payments_methods {
+    data{
+      id
+      name
+    }
+  }
+}

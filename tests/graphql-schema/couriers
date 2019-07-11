@@ -1,5 +1,5 @@
 {
-  pickups(city_id: 1) {
+  couriers(city_id: 1) {
     data {
       id
       avarda_id

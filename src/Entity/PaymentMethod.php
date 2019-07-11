@@ -38,9 +38,21 @@ class PaymentMethod
      */
     private $visible;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Pickup", mappedBy="payments_methods")
+     */
+    private $pickups;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Courier", mappedBy="payments_methods")
+     */
+    private $couriers;
+
     public function __construct()
     {
         $this->orders = new ArrayCollection();
+        $this->pickups = new ArrayCollection();
+        $this->couriers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -111,6 +123,62 @@ class PaymentMethod
     public function setVisible(?bool $visible): self
     {
         $this->visible = $visible;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Pickup[]
+     */
+    public function getPickups(): Collection
+    {
+        return $this->pickups;
+    }
+
+    public function addPickup(Pickup $pickup): self
+    {
+        if (!$this->pickups->contains($pickup)) {
+            $this->pickups[] = $pickup;
+            $pickup->addPaymentsMethod($this);
+        }
+
+        return $this;
+    }
+
+    public function removePickup(Pickup $pickup): self
+    {
+        if ($this->pickups->contains($pickup)) {
+            $this->pickups->removeElement($pickup);
+            $pickup->removePaymentsMethod($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Courier[]
+     */
+    public function getCouriers(): Collection
+    {
+        return $this->couriers;
+    }
+
+    public function addCourier(Courier $courier): self
+    {
+        if (!$this->couriers->contains($courier)) {
+            $this->couriers[] = $courier;
+            $courier->addPaymentsMethod($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCourier(Courier $courier): self
+    {
+        if ($this->couriers->contains($courier)) {
+            $this->couriers->removeElement($courier);
+            $courier->removePaymentsMethod($this);
+        }
 
         return $this;
     }

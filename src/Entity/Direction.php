@@ -53,9 +53,15 @@ class Direction
      */
     private $pickups;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Courier", mappedBy="direction")
+     */
+    private $couriers;
+
     public function __construct()
     {
         $this->pickups = new ArrayCollection();
+        $this->couriers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -169,5 +175,36 @@ class Direction
     public function __toString()
     {
         return 'Direction';
+    }
+
+    /**
+     * @return Collection|Courier[]
+     */
+    public function getCouriers(): Collection
+    {
+        return $this->couriers;
+    }
+
+    public function addCourier(Courier $courier): self
+    {
+        if (!$this->couriers->contains($courier)) {
+            $this->couriers[] = $courier;
+            $courier->setDirection($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCourier(Courier $courier): self
+    {
+        if ($this->couriers->contains($courier)) {
+            $this->couriers->removeElement($courier);
+            // set the owning side to null (unless already changed)
+            if ($courier->getDirection() === $this) {
+                $courier->setDirection(null);
+            }
+        }
+
+        return $this;
     }
 }

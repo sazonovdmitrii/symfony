@@ -40,7 +40,10 @@ class BeguCommand extends ContainerAwareCommand
         $this->output = $output;
 
         $connection = $this->_defaultDoctrine->getConnection();
+        $connection->query('DELETE FROM courier_paymentmethod');
+        $connection->query('DELETE FROM pickup_paymentmethod');
         $connection->query('DELETE FROM pickup');
+        $connection->query('DELETE FROM courier');
         $connection->query('DELETE FROM paymentmethod');
         $connection->query('DELETE FROM city');
         $connection->query('DELETE FROM region');
@@ -70,7 +73,9 @@ class BeguCommand extends ContainerAwareCommand
             ->setMethod('pickup/directions')
             ->getData();
         $directions = json_decode($directions, true)['data'];
+        $directionsIds = [];
         foreach($directions as $beguDirection) {
+            $directionsIds[] = $beguDirection['id'];
             $connection->exec(
                 "
                     INSERT INTO direction (
@@ -242,6 +247,105 @@ class BeguCommand extends ContainerAwareCommand
                     )
                 "
             );
+            foreach($beguPickup['payment_methods'] as $beguPickupPaymentMethod) {
+                $connection->exec(
+                    "
+                    INSERT INTO pickup_paymentmethod (
+                        pickup_id,                          
+                        paymentmethod_id
+                    ) VALUES(
+                        " . $beguPickup['id'] . ", 
+                        '" . $beguPickupPaymentMethod['id'] . "'
+                    )
+                "
+                );
+            }
+        }
+
+        $couriers = $this->beguService
+            ->setMethod('pickup/courier-directions')
+            ->getData();
+        $couriers = json_decode($couriers, true)['data'];
+        $connection->query('DELETE FROM courier');
+        foreach($couriers as $beguCourier) {
+            if(!in_array($beguCourier['city_id'], $citiesIds)) {
+                continue;
+            }
+            if(!in_array($beguCourier['direction_id'], $directionsIds)) {
+                continue;
+            }
+            $connection->exec(
+                "
+                    INSERT INTO courier (
+                        id,                          
+                        avarda_id,
+                        direction_id,
+                        direction_title,
+                        city_id,
+                        city_title,
+                        city_short_title,
+                        city_latitude,
+                        city_longitude,
+                        city_kladr,
+                        city_fias,
+                        post_code,
+                        address,
+                        comment,
+                        price,
+                        latitude,
+                        longitude,
+                        phones,
+                        schedule,
+                        delivery_days,
+                        delivery_days_source,
+                        min_order_sum,
+                        retail,
+                        pvz_id,
+                        pvz_title,
+                        visible                     
+                    ) VALUES(
+                        " . $beguCourier['id'] . ",
+                         '" . $beguCourier['avarda_id'] . "',
+                        '" . $beguCourier['direction_id'] . "',
+                        '" . $beguCourier['direction_title'] . "',
+                        '" . $beguCourier['city_id'] . "',
+                        '" . $beguCourier['city_title'] . "',
+                        '" . $beguCourier['city_short_title'] . "',
+                        '" . (float)$beguCourier['city_latitude'] . "',
+                        '" . (float)$beguCourier['city_longitude'] . "',
+                        '" . $beguCourier['city_kladr'] . "',
+                        '" . $beguCourier['city_fias'] . "',
+                        '" . (int)$beguCourier['post_code'] . "',
+                        '" . $beguCourier['address'] . "',
+                        '" . str_replace("'", "", $beguCourier['comment']) . "',
+                        '" . $beguCourier['price'] . "',
+                        '" . (float)$beguCourier['latitude'] . "',
+                        '" . (float)$beguCourier['longitude'] . "',
+                        '" . $beguCourier['phones'] . "',
+                        '" . $beguCourier['schedule'] . "',
+                        '" . $beguCourier['delivery_days'] . "',
+                        '" . $beguCourier['delivery_days_source'] . "',
+                        '" . $beguCourier['min_order_sum'] . "',
+                        '" . $beguCourier['retail'] . "',
+                        '" . (int)$beguCourier['pvz_id'] . "',
+                        '" . $beguCourier['pvz_title'] . "',
+                        '" . $beguCourier['visible'] . "'                                            
+                    )
+                "
+            );
+            foreach($beguCourier['payment_methods'] as $beguCourierPaymentMethod) {
+                $connection->exec(
+                    "
+                    INSERT INTO courier_paymentmethod (
+                        courier_id,                          
+                        paymentmethod_id
+                    ) VALUES(
+                        " . $beguCourier['id'] . ", 
+                        '" . $beguCourierPaymentMethod['id'] . "'
+                    )
+                "
+                );
+            }
         }
         $this->output->writeln(['Import has done']);
     }

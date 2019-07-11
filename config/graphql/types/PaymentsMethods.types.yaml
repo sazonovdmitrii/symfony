@@ -1,0 +1,21 @@
+PaymentsMethods:
+  type: object
+  config:
+    description: "Payments Methods"
+    fields:
+      data:
+       type: "[PaymentMethod]"
+PaymentMethod:
+  type: object
+  config:
+    description: "Payment Method Item"
+    fields:
+      id:
+        type: "Int!"
+        description: "Payment Method Item Id"
+      name:
+        type: "String"
+        description: "Payment Method Item Name"
+
+
+

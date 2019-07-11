@@ -172,6 +172,8 @@ easy_admin:
             class: App\Entity\Pickup
         Region:
             class: App\Entity\Region
+        Courier:
+            class: App\Entity\Courier
     design:
         brand_color: 'black'
         form_theme:
@@ -197,7 +199,7 @@ easy_admin:
           - Configuration
           - Tags
           - label: 'Delivery & Payment'
-            children: ['City', 'Direction', 'District', 'Pickup', 'Region', 'PaymentMethod']
+            children: ['City', 'Direction', 'District', 'Pickup', 'Region', 'Courier', 'PaymentMethod']
         assets:
             css:
                 - '/bundles/lp/css/lp.css'

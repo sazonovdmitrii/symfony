@@ -85,6 +85,16 @@ Query:
             city_id:
               description: "City ID"
               type: "Int"
+      couriers:
+        type: "Couriers"
+        resolve: "@=resolver('Couriers', [args])"
+        args:
+            city_id:
+              description: "City ID"
+              type: "Int"
+      payments_methods:
+        type: "PaymentsMethods"
+        resolve: "@=resolver('PaymentsMethods', [args])"
 DateTime:
     type: custom-scalar
     config:

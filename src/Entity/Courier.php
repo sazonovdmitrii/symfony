@@ -7,9 +7,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\PickupRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\CourierRepository")
  */
-class Pickup
+class Courier
 {
     /**
      * @ORM\Id()
@@ -19,12 +19,12 @@ class Pickup
     private $id;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $avarda_id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Direction", inversedBy="pickups")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Direction", inversedBy="couriers")
      */
     private $direction;
 
@@ -34,7 +34,7 @@ class Pickup
     private $direction_title;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\City", inversedBy="pickups")
+     * @ORM\ManyToOne(targetEntity="App\Entity\City", inversedBy="couriers")
      */
     private $city;
 
@@ -69,7 +69,7 @@ class Pickup
     private $city_fias;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $post_code;
 
@@ -77,6 +77,11 @@ class Pickup
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $address;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $comment;
 
     /**
      * @ORM\Column(type="float", nullable=true)
@@ -89,7 +94,7 @@ class Pickup
     private $price_source;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $latitude;
 
@@ -109,7 +114,7 @@ class Pickup
     private $schedule;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $delivery_days;
 
@@ -126,10 +131,15 @@ class Pickup
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
+    private $wholesale;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
     private $retail;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $pvz_id;
 
@@ -144,12 +154,7 @@ class Pickup
     private $visible;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $comment;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\PaymentMethod", inversedBy="pickups")
+     * @ORM\ManyToMany(targetEntity="App\Entity\PaymentMethod", inversedBy="couriers")
      */
     private $payments_methods;
 
@@ -163,12 +168,12 @@ class Pickup
         return $this->id;
     }
 
-    public function getAvardaId(): ?int
+    public function getAvardaId(): ?string
     {
         return $this->avarda_id;
     }
 
-    public function setAvardaId(?int $avarda_id): self
+    public function setAvardaId(?string $avarda_id): self
     {
         $this->avarda_id = $avarda_id;
 
@@ -283,12 +288,12 @@ class Pickup
         return $this;
     }
 
-    public function getPostCode(): ?int
+    public function getPostCode(): ?string
     {
         return $this->post_code;
     }
 
-    public function setPostCode(?int $post_code): self
+    public function setPostCode(?string $post_code): self
     {
         $this->post_code = $post_code;
 
@@ -306,7 +311,19 @@ class Pickup
 
         return $this;
     }
-    
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+
+        return $this;
+    }
+
     public function getPrice(): ?float
     {
         return $this->price;
@@ -331,12 +348,12 @@ class Pickup
         return $this;
     }
 
-    public function getLatitude(): ?float
+    public function getLatitude(): ?string
     {
         return $this->latitude;
     }
 
-    public function setLatitude(float $latitude): self
+    public function setLatitude(?string $latitude): self
     {
         $this->latitude = $latitude;
 
@@ -379,12 +396,12 @@ class Pickup
         return $this;
     }
 
-    public function getDeliveryDays(): ?int
+    public function getDeliveryDays(): ?string
     {
         return $this->delivery_days;
     }
 
-    public function setDeliveryDays(?int $delivery_days): self
+    public function setDeliveryDays(?string $delivery_days): self
     {
         $this->delivery_days = $delivery_days;
 
@@ -415,6 +432,18 @@ class Pickup
         return $this;
     }
 
+    public function getWholesale(): ?bool
+    {
+        return $this->wholesale;
+    }
+
+    public function setWholesale(?bool $wholesale): self
+    {
+        $this->wholesale = $wholesale;
+
+        return $this;
+    }
+
     public function getRetail(): ?bool
     {
         return $this->retail;
@@ -427,12 +456,12 @@ class Pickup
         return $this;
     }
 
-    public function getPvzId(): ?string
+    public function getPvzId(): ?int
     {
         return $this->pvz_id;
     }
 
-    public function setPvzId(string $pvz_id): self
+    public function setPvzId(?int $pvz_id): self
     {
         $this->pvz_id = $pvz_id;
 
@@ -459,18 +488,6 @@ class Pickup
     public function setVisible(?bool $visible): self
     {
         $this->visible = $visible;
-
-        return $this;
-    }
-
-    public function getComment(): ?string
-    {
-        return $this->comment;
-    }
-
-    public function setComment(?string $comment): self
-    {
-        $this->comment = $comment;
 
         return $this;
     }
