@@ -186,7 +186,7 @@ easy_admin:
           - label: 'Catalog'
             children: ['Catalog', 'CatalogTag', 'Product', 'Items', 'ProductTag']
           - label: 'Order'
-            children: ['Order', 'Delivery', 'PaymentMethod', 'ProductTag']
+            children: ['Order', 'Delivery', 'ProductTag']
           - label: 'User'
             children: ['Users', 'Address']
           - ImportProduct
@@ -197,7 +197,7 @@ easy_admin:
           - Configuration
           - Tags
           - label: 'Delivery & Payment'
-            children: ['City', 'Direction', 'District', 'Pickup', 'Region']
+            children: ['City', 'Direction', 'District', 'Pickup', 'Region', 'PaymentMethod']
         assets:
             css:
                 - '/bundles/lp/css/lp.css'

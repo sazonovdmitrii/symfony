@@ -19,32 +19,18 @@ class PickupRepository extends ServiceEntityRepository
         parent::__construct($registry, Pickup::class);
     }
 
-    // /**
-    //  * @return Pickup[] Returns an array of Pickup objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param int $cityId
+     * @return array|mixed
+     */
+    public function findByCityId(int $cityId)
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
+        return $this
+            ->createQueryBuilder('p')
+            ->join('p.city', 'c')
+            ->where('c.id = :city_id')
+            ->setParameter('city_id', $cityId)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Pickup
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

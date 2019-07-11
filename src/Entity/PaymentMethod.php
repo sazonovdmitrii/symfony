@@ -33,6 +33,11 @@ class PaymentMethod
      */
     private $orders;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $visible;
+
     public function __construct()
     {
         $this->orders = new ArrayCollection();
@@ -94,6 +99,18 @@ class PaymentMethod
                 $order->setPaymentMethodId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getVisible(): ?bool
+    {
+        return $this->visible;
+    }
+
+    public function setVisible(?bool $visible): self
+    {
+        $this->visible = $visible;
 
         return $this;
     }

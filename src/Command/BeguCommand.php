@@ -41,9 +41,30 @@ class BeguCommand extends ContainerAwareCommand
 
         $connection = $this->_defaultDoctrine->getConnection();
         $connection->query('DELETE FROM pickup');
+        $connection->query('DELETE FROM paymentmethod');
         $connection->query('DELETE FROM city');
         $connection->query('DELETE FROM region');
         $connection->query('DELETE FROM direction');
+
+        $payments = $this->beguService
+            ->setMethod('pickup/paymethods')
+            ->getData();
+        $payments = json_decode($payments, true)['data'];
+        foreach($payments as $beguPayment) {
+            $connection->exec(
+                "
+                    INSERT INTO paymentmethod (
+                        id,                          
+                        name,
+                        visible
+                    ) VALUES(
+                        " . $beguPayment['id'] . ", 
+                        '" . $beguPayment['title'] . "',
+                         '" . $beguPayment['visible'] . "'
+                    )
+                "
+            );
+        }
 
         $directions = $this->beguService
             ->setMethod('pickup/directions')

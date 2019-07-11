@@ -81,6 +81,10 @@ Query:
       pickups:
         type: "Pickups"
         resolve: "@=resolver('Pickups', [args])"
+        args:
+            city_id:
+              description: "City ID"
+              type: "Int"
 DateTime:
     type: custom-scalar
     config:

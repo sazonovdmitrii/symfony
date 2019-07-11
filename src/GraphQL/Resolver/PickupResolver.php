@@ -2,6 +2,7 @@
 namespace App\GraphQL\Resolver;
 
 use Doctrine\ORM\EntityManager;
+use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 
@@ -14,9 +15,14 @@ class PickupResolver implements ResolverInterface, AliasedInterface
         $this->em = $entityManager;
     }
 
-    public function resolve()
+    public function resolve(Argument $args)
     {
-        $pickups = $this->em->getRepository('App:Pickup')->findAll();
+        $pickupRepository = $this->em->getRepository('App:Pickup');
+        if(isset($args['city_id'])) {
+            $pickups = $pickupRepository->findByCityId($args['city_id']);
+        } else {
+            $pickups = $pickupRepository->findAll();
+        }
         return [
             'data' => $pickups
         ];
