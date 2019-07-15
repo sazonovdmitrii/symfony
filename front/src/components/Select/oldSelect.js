@@ -58,6 +58,7 @@ const Select = ({ label, active, items: itemsProp }) => {
                             <li key={item.id} className="filtertiles__dropmenu_item active-0">
                                 <Link to={item.url} className="js-filter">
                                     {item.name}
+                                    {item.count ? ` (${item.count})` : null}
                                 </Link>
                             </li>
                         );
