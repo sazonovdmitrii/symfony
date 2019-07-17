@@ -55,7 +55,7 @@ class BasketService extends AbstractController
             if($basket) {
                 $this->redis->set($key, json_encode($basket));
             }
-            return $basket;
+            return ['products' => $basket];
         }
         return [
             'products' => null
@@ -71,7 +71,7 @@ class BasketService extends AbstractController
                 unset($basket[$itemId]);
             }
             $this->redis->set($key, json_encode($basket));
-            return $basket;
+            return ['products' => $basket];
         }
         return [
             'products' => null
@@ -87,7 +87,7 @@ class BasketService extends AbstractController
                 $basket[$itemId]['qty'] = $qty;
             }
             $this->redis->set($key, json_encode($basket));
-            return $basket;
+            return ['products' => $basket];
         }
         return [
             'products' => null
