@@ -47,10 +47,16 @@ class Users implements UserInterface
      */
     private $addresses;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\UserAddress", mappedBy="entity")
+     */
+    private $userAddresses;
+
     public function __construct()
     {
         $this->orders = new ArrayCollection();
         $this->addresses = new ArrayCollection();
+        $this->created = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -208,5 +214,36 @@ class Users implements UserInterface
     public function __toString()
     {
         return self::class;
+    }
+
+    /**
+     * @return Collection|UserAddress[]
+     */
+    public function getUserAddresses(): Collection
+    {
+        return $this->created;
+    }
+
+    public function addUserAddresses(UserAddress $userAddresses): self
+    {
+        if (!$this->userAddresses->contains($userAddresses)) {
+            $this->userAddresses[] = $userAddresses;
+            $userAddresses->setEntity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserAddresses(UserAddress $userAddresses): self
+    {
+        if ($this->userAddresses->contains($userAddresses)) {
+            $this->userAddresses->removeElement($userAddresses);
+            // set the owning side to null (unless already changed)
+            if ($userAddresses->getEntity() === $this) {
+                $userAddresses->setEntity(null);
+            }
+        }
+
+        return $this;
     }
 }

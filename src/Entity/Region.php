@@ -38,9 +38,15 @@ class Region
      */
     private $fias_id;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\UserAddress", mappedBy="region")
+     */
+    private $userAddresses;
+
     public function __construct()
     {
         $this->cities = new ArrayCollection();
+        $this->userAddresses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -111,6 +117,37 @@ class Region
     public function setFiasId(?string $fias_id): self
     {
         $this->fias_id = $fias_id;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|UserAddress[]
+     */
+    public function getUserAddresses(): Collection
+    {
+        return $this->userAddresses;
+    }
+
+    public function addUserAddress(UserAddress $userAddress): self
+    {
+        if (!$this->userAddresses->contains($userAddress)) {
+            $this->userAddresses[] = $userAddress;
+            $userAddress->setRegion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserAddress(UserAddress $userAddress): self
+    {
+        if ($this->userAddresses->contains($userAddress)) {
+            $this->userAddresses->removeElement($userAddress);
+            // set the owning side to null (unless already changed)
+            if ($userAddress->getRegion() === $this) {
+                $userAddress->setRegion(null);
+            }
+        }
 
         return $this;
     }

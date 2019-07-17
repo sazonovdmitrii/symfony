@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManager;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Redis;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use App\GraphQL\Input\OrderInput;
 
 class OrderMutation extends AuthMutation
 {
@@ -35,6 +36,8 @@ class OrderMutation extends AuthMutation
 
     public function create(Argument $args)
     {
+        $input = new OrderInput($args);
+
         $basket = $this->basketService
             ->setAuthKey($this->getAuthKey())
             ->getAll();
@@ -44,6 +47,9 @@ class OrderMutation extends AuthMutation
         $user  = $this->getUser();
         if ($user) {
             $order->setUserId($user);
+            $deliveryId = ($input->pvz_id) ? $input->pvz_id : $input->courier_id;
+            $order->setDeliveryId($deliveryId);
+            $order->setAddressId($input->address_id);
         }
 
         if(!count($basket) || in_array('products', array_keys($basket))) {

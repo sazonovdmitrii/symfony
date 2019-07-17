@@ -10,9 +10,9 @@ use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
-class AddressResolver implements ResolverInterface, AliasedInterface
+class AddressResolver extends AuthAlias
 {
-    private $em;
+    public $em;
 
     private $authenticatorService;
 
@@ -37,6 +37,7 @@ class AddressResolver implements ResolverInterface, AliasedInterface
         if ($container->has('request_stack')) {
             $this->request = $container->get('request_stack')->getCurrentRequest();
         }
+        parent::__construct($em, $container, $authenticatorService);
     }
 
     /**
@@ -44,10 +45,33 @@ class AddressResolver implements ResolverInterface, AliasedInterface
      */
     public function resolve()
     {
-        $token = $this->request->headers->get('token');
-//        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE1NTg5ODc0MzcsImV4cCI6MTU1ODk5MTAzNywicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFpQHJvYm8ucnUifQ.Rc2KY8wQtmjweVmxiIiZ4AgGdl1GlFn31kGdKcJXrpg8NNwtgCah1RACRLtGm5DeHaQigXum3InXVo85yVIVmtS4t-9et7RHQwk6z03AQP4MUGODSuv1FYzs5SwkNcgKTR2XkXz2QSpBtZfSPnk0pfSX-vUhZ1SzTlJV6CMbX_o-HTWF2d1_JJunUp4Wl4x3MSL8oXSCJn0TWxn1KemU1a2ctCvZupiq4AiTjTPWMWQ_zwVqcHkNvRbq466sNibdJoiZKpd2A3xL0tdotRgQaRF2OpiFieH6cR8SQkP3f-39TOfwELrd0uG8aDS11wIX_X5usoVqPATErh2u_YKW2A6yOPABGhbeFCCPZk_2rUYvRz2CcG1uO8XS53tlr9LxATjLPYpuOmPxqKsKDbmzTtG53hZrzn90BFy0mKFJ-S8nn8en2GEFalWrHdIY03GXAiINDwHZma5HZsPY0fUm4zqH-nI2HF8BbT3c61LX4_ypMrOmSXxyK1bqTFkeT5kQi4X3urKXAqTkOCX8jQjkbOtHAAoLpUgcO2bMNX3A76Dp4UwvuOeKEGbLVWnLo6i6FCsQwXzSVtDy0-fyK9NSSfbum-HBOw6w0Er_YFBC9SxeU8eMZjxdEw2eb39sOUzk-8HEfmdLzQmv0zSnIBiR1QOKVnupTHqUEZhDm12MRhY';
-        if($user = $this->authenticatorService->authByToken($token)) {
-            return $user;
+        if($this->getUser()) {
+
+            $addresses = [];
+            foreach($this->getUser()->getAddresses() as $address) {
+                $addresses[] = [
+                    'id' => $address->getId(),
+                    'name' => $address->getName(),
+                    'user_id' => $this->getUser()->getId(),
+                    'created' => $address->getCreated(),
+                    'person' => $address->getPerson(),
+                    'zip' => $address->getZip(),
+                    'region_id' => $address->getRegionId(),
+                    'city' => $address->getCity(),
+                    'street' => $address->getStreet(),
+                    'house' => $address->getHouse(),
+                    'corp' => $address->getCorp(),
+                    'level' => $address->getLevel(),
+                    'code' => $address->getCode(),
+                    'comment' => $address->getComment(),
+                    'active' => $address->getActive(),
+                    'flat' => $address->getFlat(),
+                ];
+            }
+
+            return [
+                'data' => $addresses
+            ];
         }
     }
 

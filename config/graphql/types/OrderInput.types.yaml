@@ -1,0 +1,10 @@
+UpdateBasketInput:
+  type: input-object
+  config:
+    fields:
+      item_id:
+        type: "Int!"
+        description: "Item ID"
+      qty:
+        type: "Int"
+        description: "Qty"

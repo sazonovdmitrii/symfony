@@ -197,7 +197,8 @@ class MigrateCommand extends ContainerAwareCommand
         $counter = 0;
         foreach($allUsers as $lpUser) {
             $counter++;
-            if($lpUser['id'] > $diff) {
+            if($counter > $diff) {
+                //            if($lpUser['id'] > $diff) {
                 $user = new Users();
                 $user->setEmail($lpUser['email']);
                 $user->setPassword($passwordEncoder->encodePassword(
@@ -213,7 +214,9 @@ class MigrateCommand extends ContainerAwareCommand
                 $this->_defaultDoctrine->persist($user);
                 $this->_defaultDoctrine->flush();
                 $this->output->writeln([$counter . '/' . count($allUsers) . ' ----- ' . $lpUser['id']]);
+//            }
             }
+
         }
         $this->output->writeln(['Users migration have done!']);
     }
@@ -524,7 +527,7 @@ class MigrateCommand extends ContainerAwareCommand
     {
         $this->output->writeln(['Migrating Users Addresses...']);
         $usersAddresses = $this->_lpDoctrine->getConnection()->prepare(
-            "SELECT ua.*, u.email FROM users_addresses ua JOIN users u ON u.id = ua.users_id WHERE ua.users_id=9"
+            "SELECT ua.*, u.email FROM users_addresses ua JOIN users u ON u.id = ua.users_id"
         );
         $usersAddresses->execute();
 
@@ -576,18 +579,18 @@ class MigrateCommand extends ContainerAwareCommand
                         active                      
                     ) VALUES(
                         " .  $usersAddress['id'] . ",
-                        '" .  $usersAddress['address'] . "',
+                        '" .  str_replace("'", "", $usersAddress['address']) . "',
                         '" .  $usersAddress['created'] . "',
                         " . $userId . ", 
-                        '" .  $usersAddress['person'] . "',
+                        '" .  str_replace("'", "", $usersAddress['person']) . "',
                         '" .  $usersAddress['post_code'] . "',
                         '" .  (isset($usersAddress['region_id']) ? $usersAddress['region_id'] : 0) . "',
-                        '" .  $usersAddress['city'] . "',
-                        '" .  $usersAddress['street'] . "',
+                        '" .  str_replace("'", "", $usersAddress['city']) . "',
+                        '" .  str_replace("'", "", $usersAddress['street']) . "',
                         '" .  (isset($usersAddress['corp']) ? $usersAddress['corp'] : '') . "',
                         '" .  (isset($usersAddress['corp']) ? $usersAddress['corp'] : '') . "',
                         '" .  (isset($usersAddress['level']) ? $usersAddress['level'] : '') . "',
-                        '" .  (isset($usersAddress['flat']) ? $usersAddress['flat'] : '') . "',
+                        '" .  (isset($usersAddress['flat']) ? str_replace("'", "", $usersAddress['flat']) : '') . "',
                         '" .  (isset($usersAddress['code']) ? $usersAddress['code'] : '') . "',
                         '1'
                     )

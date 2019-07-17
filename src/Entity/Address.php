@@ -81,11 +81,6 @@ class Address
     /**
      * @ORM\Column(type="string", length=45, nullable=true)
      */
-    private $flat;
-
-    /**
-     * @ORM\Column(type="string", length=45, nullable=true)
-     */
     private $code;
 
     /**
@@ -97,6 +92,11 @@ class Address
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $active;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $flat;
 
     public function __construct()
     {
@@ -271,18 +271,6 @@ class Address
         return $this;
     }
 
-    public function getFlat(): ?string
-    {
-        return $this->flat;
-    }
-
-    public function setFlat(?string $flat): self
-    {
-        $this->flat = $flat;
-
-        return $this;
-    }
-
     public function getCode(): ?string
     {
         return $this->code;
@@ -322,5 +310,17 @@ class Address
     public function __toString()
     {
         return self::class;
+    }
+
+    public function getFlat(): ?string
+    {
+        return $this->flat;
+    }
+
+    public function setFlat(?string $flat): self
+    {
+        $this->flat = $flat;
+
+        return $this;
     }
 }
