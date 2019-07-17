@@ -34,6 +34,9 @@ class BasketService extends AbstractController
             $oldBasket = $this->redis->get($key);
             if($oldBasket) {
                 $basket = json_decode($oldBasket, true);
+                if(!is_array($basket)) {
+                    $basket = [];
+                }
                 if(!isset($basket[$itemId])) {
                     $basket[$itemId] = [
                         'item_id' => $itemId,
