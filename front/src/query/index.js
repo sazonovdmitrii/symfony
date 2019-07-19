@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-import { CatalogPage } from './fragments';
+import { Address } from './fragments';
 
 export const IS_LOGGED_IN = gql`
     query IsUserLoggedIn {
@@ -94,6 +94,14 @@ export const GET_PRODUCTS = gql`
     }
 `;
 
+export const GET_ADDRESS = gql`
+    query Address($id: Int!) {
+        address(id: $id) {
+            id
+        }
+    }
+`;
+
 export const GET_ADDRESSES = gql`
     {
         addresses {
@@ -112,7 +120,12 @@ export const GET_ADDRESSES = gql`
 export const GET_BASKET = gql`
     query Basket {
         basket {
-            id
+            products {
+                item_id
+                qty
+                name
+                product_name
+            }
         }
     }
 `;

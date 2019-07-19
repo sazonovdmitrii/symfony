@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import { withApollo, Query } from 'react-apollo';
 import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import hardtack from 'hardtack';
-import { IS_LOGGED_IN } from 'query';
+
+import { IS_LOGGED_IN, GET_BASKET } from 'query';
 
 import BasketShort from 'components/BasketShort';
 import Button from 'components/Button';
@@ -99,19 +100,43 @@ const UserMenu = ({ client, history }) => {
                 }}
             </Query>
             <li className={styles.item}>
-                <Link className={styles.link} to="/basket">
-                    <span className={`${styles.icon} flaticon-shopping-bag`} />
-                    <span className="usermenu__labebasketcount">0</span>
-                    <span className={styles.label}>Корзина</span>
-                </Link>
-                <BasketShort className={styles.dropdown} />
+                <Query query={GET_BASKET} ssr={false} partialRefetch>
+                    {({ loading, error, data }) => {
+                        if (loading || error) return null;
+
+                        const {
+                            basket: { products },
+                        } = data;
+
+                        return (
+                            <Fragment>
+                                <Link className={styles.link} to="/basket">
+                                    <span className={`${styles.icon} flaticon-shopping-bag`} />
+                                    <span className="usermenu__labebasketcount">
+                                        {products ? products.length : 0}
+                                    </span>
+                                    <span className={styles.label}>Корзина</span>
+                                </Link>
+                                <BasketShort {...data.basket} className={styles.dropdown} />
+                            </Fragment>
+                        );
+                    }}
+                </Query>
             </li>
         </ul>
     );
 };
 
 UserMenu.propTypes = {
-    client: PropTypes.object.isRequired,
+    client: PropTypes.objectOf(
+        PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.object,
+            PropTypes.array,
+            PropTypes.func,
+            PropTypes.bool,
+        ])
+    ).isRequired,
     history: PropTypes.object.isRequired,
 };
 

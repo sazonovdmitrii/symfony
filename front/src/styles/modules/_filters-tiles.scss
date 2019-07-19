@@ -103,17 +103,10 @@
     }
 
     @include has('item') {
-        @extend %clearfix;
-
         @include breakpoint($screen-md-fl) {
             background-color: $color-buttongrey;
             border: 1px solid $COLORLINES;
-            vertical-align: top;
-            display: inline-block;
-            width: 100%;
             position: relative;
-            margin-top: calculateRem($PADDINGS / 2);
-            margin-right: calculateRem($PADDINGS / 2);
 
             &.loading {
                 .filtertiles__item-name {
@@ -139,9 +132,7 @@
                 }
 
                 & .filtertiles__item-name-i {
-                    -webkit-transform: rotate(-180deg);
-                    -moz-transform: rotate(-180deg);
-                    -o-transform: rotate(-180deg);
+                    transform: rotate(-180deg);
                     display: inline-block;
                     padding-left: 8 * $PADDINGS / 15;
                     vertical-align: text-top;
@@ -152,10 +143,8 @@
         }
 
         &-name {
+            display: block;
             padding: 10px 0px 10px 20px;
-            display: inline-block;
-            width: 100%;
-            float: left;
             box-sizing: border-box;
             border-bottom: 1px solid $COLORLINES;
             cursor: pointer;
@@ -181,9 +170,6 @@
             }
 
             @include breakpoint($screen-md-fl) {
-                float: none;
-                width: 100%;
-                display: block;
                 border-bottom: none;
                 padding: calculateRem($PADDINGS / 3);
                 z-index: 3;
@@ -198,7 +184,6 @@
                     color: $color-dark;
                     text-decoration: none;
                     padding-left: calculateRem(2 * $PADDINGS / 5);
-                    cursor: default;
                     cursor: pointer;
                 }
 

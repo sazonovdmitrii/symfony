@@ -79,9 +79,13 @@ export const AddressForm = props => {
                 <Button type="submit" kind="primary">
                     Сохранить
                 </Button>
-                <Button kind="primary" onClick={handleBackURL} outlined>
-                    Назад
-                </Button>
+                {props.actions ? (
+                    props.actions
+                ) : (
+                    <Button kind="primary" onClick={handleBackURL} outlined>
+                        Назад
+                    </Button>
+                )}
             </div>
         </form>
     );
@@ -100,11 +104,12 @@ const ADDRESS_MUTATION = gql`
 `;
 
 export default props => {
-    const isEdit = 'id' in props.match.params || props.type === 'edit';
+    // const isEdit = props.type === 'edit' || (props.match.params && 'id' in props.match.params);
+    const isEdit = props.type === 'edit';
 
     if (isEdit) {
         return (
-            <Query query={GET_ADDRESS} variables={{ id: props.match.params.id }}>
+            <Query query={GET_ADDRESS} variables={{ id: props.id || (props.match && props.match.params.id) }}>
                 {({ loading, data }) => {
                     if (loading) return <Loader />;
 

@@ -8,6 +8,8 @@ import RadioGroup from 'components/RadioGroup';
 import RadioButton from 'components/RadioButton';
 import Checkbox from 'components/Checkbox';
 
+import styles from './styles.css';
+
 const Register = props => {
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
@@ -40,7 +42,7 @@ const Register = props => {
     };
 
     return (
-        <form onSubmit={register}>
+        <form className={styles.root} onSubmit={register}>
             <div className="cabinet-content__row">
                 <div className="cabinet-content__column">
                     <InputGroup>

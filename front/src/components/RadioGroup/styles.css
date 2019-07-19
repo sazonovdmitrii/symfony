@@ -5,3 +5,8 @@
         margin-right: 0;
     }
 }
+
+.list {
+    display: flex;
+    margin-bottom: 5px;
+}

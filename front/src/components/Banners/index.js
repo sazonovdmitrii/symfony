@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames/bind';
 
@@ -10,44 +10,64 @@ import styles from './styles.css';
 const cx = classnames.bind(styles);
 
 const Banners = ({ children, interval, autoPlay: autoPlayProp }) => {
-    const [active, setActive] = useState(0);
-    const [autoPlay, setAutoplay] = useState(autoPlayProp);
-    const getActive = index => {
-        const lastIndex = children.length - 1;
+    const [state, dispatch] = useReducer(
+        (state, action) => {
+            const childLength = children.length;
 
-        /* eslint-disable-next-line */
-        return index > lastIndex ? 0 : index < 0 ? lastIndex : index;
-    };
-
+            switch (action.type) {
+                case 'NEXT':
+                    return {
+                        ...state,
+                        active: (state.active + 1) % childLength,
+                    };
+                case 'PREV':
+                    return {
+                        ...state,
+                        active: (state.active - 1 + childLength) % childLength,
+                    };
+                case 'PAUSE':
+                    return {
+                        ...state,
+                        isPlaying: false,
+                    };
+                case 'PLAY':
+                    return {
+                        ...state,
+                        isPlaying: true,
+                    };
+                default:
+                    return state;
+            }
+        },
+        {
+            active: 0,
+            isPlaying: autoPlayProp,
+        }
+    );
     useInterval(
         () => {
-            setActive(getActive(active + 1));
+            dispatch({ type: 'NEXT' });
         },
-        autoPlay ? interval : null
+        state.isPlaying ? interval : null
     );
-
     const handleChange = index => {
-        setActive(getActive(index));
+        dispatch({ type: index > state.active ? 'NEXT' : 'PREV' });
     };
-
-    const handleHover = event => {
-        const eventType = event.type;
-
+    const handleHover = ({ type }) => {
         const events = {
-            mouseenter: false,
-            mouseleave: true,
+            mouseenter: 'PAUSE',
+            mouseleave: 'PLAY',
         };
 
-        setAutoplay(events[eventType]);
+        dispatch({ type: events[type] });
     };
-
     const getChildrens = React.Children.map(children, (child, index) => {
         if (!React.isValidElement(child)) {
             return null;
         }
 
         const activeBannerClassName = cx(styles.item, {
-            active: active === index,
+            active: state.active === index,
         });
 
         return (
@@ -63,7 +83,7 @@ const Banners = ({ children, interval, autoPlay: autoPlayProp }) => {
     return (
         <div className={styles.wrapper} onMouseEnter={handleHover} onMouseLeave={handleHover}>
             <div className={styles.items}>{getChildrens}</div>
-            <Nav index={active} onChange={handleChange} />
+            <Nav index={state.active} onChange={handleChange} />
         </div>
     );
 };
@@ -71,7 +91,7 @@ const Banners = ({ children, interval, autoPlay: autoPlayProp }) => {
 Banners.defaultProps = {
     children: [],
     interval: 10000,
-    autoPlay: true,
+    autoPlay: false,
 };
 Banners.propTypes = {
     children: PropTypes.node,

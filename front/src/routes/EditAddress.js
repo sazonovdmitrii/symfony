@@ -1,13 +1,17 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { withRouter } from 'react-router';
+import PropTypes from 'prop-types';
 
-export default class EditAddress extends Component {
-    constructor(props) {
-        super(props);
+import AddressForm from 'components/AddressForm';
 
-        console.log(this.props.match.params);
-    }
+const EditAddress = props => (
+    <div>
+        <AddressForm {...props} />
+    </div>
+);
 
-    render() {
-        return <div>EditAddress</div>;
-    }
-}
+EditAddress.defaultProps = {};
+
+EditAddress.propTypes = {};
+
+export default withRouter(EditAddress);

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import styles from './styles.css';
 
-const RadioGroup = ({ className, name, value, children, onChange }) => {
+const RadioGroup = ({ className, name, value, children, onChange, type }) => {
     const childrens = React.Children.map(children, child => {
         if (!React.isValidElement(child)) {
             return null;
@@ -15,7 +15,7 @@ const RadioGroup = ({ className, name, value, children, onChange }) => {
             name,
             checked,
             onChange,
-            className: styles.item,
+            className: type === 'list' ? styles.list : styles.item,
         });
     });
 

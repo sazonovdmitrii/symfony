@@ -1,30 +1,61 @@
-import React from 'react';
+import React, { Fragment } from 'react';
+import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import loadable from '@loadable/component';
 
-import { withQuery } from 'utils';
-
 import Loader from 'components/Loader';
+import ErrorMessage from 'components/Error';
 
 const GET_BASKET = gql`
-    query Catalog($slug: String!) {
-        catalog(slug: $slug) {
-            name
-            count
+    query {
+        isLoggedIn @client(always: false)
+        basket {
+            products {
+                item_id
+                qty
+                name
+                product_name
+            }
+        }
+        directions {
+            data {
+                id
+                avarda_id
+                title
+                price
+                delivery_days
+                visible
+                comment
+            }
         }
     }
 `;
+// payments_methods {
+//     data {
+//         id
+//         name
+//     }
+// }
 
-export default props => {
-    // return withQuery({ query: GET_BASKET, variables: { slug } })(props => {
-    //     if (props) {
-    const Component = loadable(() => import('./Basket'), {
-        fallback: Loader,
-    });
+const Component = loadable(() => import('./Basket'), {
+    fallback: Loader,
+});
 
-    return <Component {...props} />;
-    //     }
+export default () => {
+    return (
+        <Query query={GET_BASKET} ssr={false}>
+            {({ loading, error, data }) => {
+                if (loading) return <Loader />;
 
-    //     return <Loader />;
-    // });
+                console.log(data, '🔥');
+
+                return (
+                    <Fragment>
+                        {error && <ErrorMessage error={error} />}
+                        <Component {...data} />
+                    </Fragment>
+                );
+            }}
+        </Query>
+    );
 };
