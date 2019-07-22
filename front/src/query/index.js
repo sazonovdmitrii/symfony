@@ -50,6 +50,7 @@ export const GET_PRODUCT = gql`
                     node {
                         id
                         name
+                        price
                     }
                 }
             }
@@ -84,6 +85,7 @@ export const GET_PRODUCTS = gql`
                                 node {
                                     id
                                     name
+                                    price
                                 }
                             }
                         }
