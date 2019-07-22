@@ -3,7 +3,7 @@ OrderInput:
   config:
     fields:
       pvz_id:
-        type: "Int!"
+        type: "Int"
         description: "Pvz ID"
       courier_id:
         type: "Int"
