@@ -77,13 +77,14 @@ const Basket = ({
     const [products, setProducts] = useState(productsProps);
     const [promocode, setPromocode] = useState(null);
     const [openModal, setOpenModal] = useState(false);
-    const [comment, setComment] = useState('');
     const [step, setStep] = useState(0);
     const [showAddressForm, setShowAddressForm] = useState(false);
     const [notification, setNotification] = useState(null);
     const [values, setValues] = useState({
         payment: paymentsMethods[0].id.toString(),
         direction: directions[0].id.toString(),
+        comment: '',
+        promocode: '',
     });
     const handleCloseModal = () => {
         setOpenModal(false);
@@ -181,25 +182,111 @@ const Basket = ({
                                     <span className="show-on-mobile">Кол-во</span>
                                     <span className="hide-on-mobile">Количество</span>
                                 </td>
-                                <td className="basket__table-tdh">Скидка</td>
+                                <td className="basket__table-tdh">{promocode && 'Скидка'}</td>
                                 <td className="basket__table-tdh">Цена</td>
                                 <td className="basket__table-tdh">Сумма</td>
                             </tr>
                         </thead>
                         <tbody>
-                            {products.map(({ product_name: productName, name, item_id: id, qty }) => (
-                                <tr key={id} className="basket__table-tr">
-                                    <td width="10%" align="center" className="basket__table-tdb">
-                                        <Link to="/" className="cart-tbl__link hide-on-mobile">
-                                            <img src="https://placehold.it/60x60/000" height="60" alt="" />
-                                        </Link>
-                                    </td>
-                                    <td width="50%" className="basket__table-tdb">
-                                        <strong className="basket__bold hide-on-mobile">Estee Lauder</strong>
-                                        <Link className="basket__productname" to="/">
-                                            {productName} {name}
-                                        </Link>
-                                        <div className="basket__table-navitem hide-on-mobile">
+                            {products.map(
+                                ({
+                                    product_name: productName,
+                                    item_id: id,
+                                    name,
+                                    qty,
+                                    brand_name,
+                                    discount,
+                                }) => (
+                                    <tr key={id} className="basket__table-tr">
+                                        <td width="10%" align="center" className="basket__table-tdb">
+                                            <Link to="/" className="cart-tbl__link hide-on-mobile">
+                                                <img
+                                                    src="https://placehold.it/60x60/000"
+                                                    height="60"
+                                                    alt=""
+                                                />
+                                            </Link>
+                                        </td>
+                                        <td width="50%" className="basket__table-tdb">
+                                            {brand_name && (
+                                                <strong className="basket__bold hide-on-mobile">
+                                                    {brand_name}
+                                                </strong>
+                                            )}
+                                            <Link className="basket__productname" to="/">
+                                                {productName} {name}
+                                            </Link>
+                                            <div className="basket__table-navitem hide-on-mobile">
+                                                <Mutation
+                                                    mutation={REMOVE_PRODUCT_MUTATION}
+                                                    onCompleted={handleRemoveProduct}
+                                                >
+                                                    {(remove, { error, data, loading }) => {
+                                                        return (
+                                                            <Button
+                                                                className="basket__bold basket__table-navitem-del"
+                                                                onClick={() =>
+                                                                    remove({
+                                                                        variables: { input: { item_id: id } },
+                                                                    })
+                                                                }
+                                                                bold
+                                                            >
+                                                                ✖ Удалить покупку
+                                                            </Button>
+                                                        );
+                                                    }}
+                                                </Mutation>
+                                            </div>
+                                        </td>
+                                        <td width="10%" className="basket__table-tdb">
+                                            <div className="basket__count">
+                                                <i className="basket__count-arrow">▼</i>
+                                                <Mutation
+                                                    mutation={UPDATE_PRODUCT_MUTATION}
+                                                    onCompleted={handleChangeAmount}
+                                                >
+                                                    {(callback, { error, data, loading }) => {
+                                                        return (
+                                                            <select
+                                                                className="basket__count-select"
+                                                                name="products-qty"
+                                                                onChange={event => {
+                                                                    callback({
+                                                                        variables: {
+                                                                            input: {
+                                                                                item_id: id,
+                                                                                qty: event.target.value,
+                                                                            },
+                                                                        },
+                                                                    });
+                                                                }}
+                                                                defaultValue={qty}
+                                                            >
+                                                                {[...new Array(10).keys()].map(item => (
+                                                                    <option key={item} value={item}>
+                                                                        {item}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        );
+                                                    }}
+                                                </Mutation>
+                                            </div>
+                                        </td>
+                                        <td width="10%" className="basket__table-tdb">
+                                            {discount}
+                                        </td>
+                                        <td width="10%" className="basket__table-tdb">
+                                            {/*<span className="cart-price cart-price_role_original">
+                                                666 {CURRENCY}
+                                            </span>*/}
+                                            <span className="cart-price cart-price_role_final">
+                                                {/* {item.price} */}666 {CURRENCY}
+                                            </span>
+                                        </td>
+                                        <td width="10%" className="basket__table-tdb">
+                                            <b>{/* {item.final_price} */}666</b> {CURRENCY}
                                             <Mutation
                                                 mutation={REMOVE_PRODUCT_MUTATION}
                                                 onCompleted={handleRemoveProduct}
@@ -209,7 +296,8 @@ const Basket = ({
 
                                                     return (
                                                         <Button
-                                                            className="basket__bold basket__table-navitem-del"
+                                                            className="show-on-mobile"
+                                                            style={{ float: 'right' }}
                                                             onClick={() =>
                                                                 remove({
                                                                     variables: { input: { item_id: id } },
@@ -217,93 +305,15 @@ const Basket = ({
                                                             }
                                                             bold
                                                         >
-                                                            ✖ Удалить покупку
+                                                            ✖
                                                         </Button>
                                                     );
                                                 }}
                                             </Mutation>
-                                        </div>
-                                    </td>
-                                    <td width="10%" className="basket__table-tdb">
-                                        <div className="basket__count">
-                                            <i className="basket__count-arrow">▼</i>
-                                            <Mutation
-                                                mutation={UPDATE_PRODUCT_MUTATION}
-                                                onCompleted={handleChangeAmount}
-                                            >
-                                                {(callback, { error, data, loading }) => {
-                                                    console.log(error, data, loading);
-
-                                                    return (
-                                                        <select
-                                                            className="basket__count-select"
-                                                            name="products-qty"
-                                                            onChange={event => {
-                                                                callback({
-                                                                    variables: {
-                                                                        input: {
-                                                                            item_id: id,
-                                                                            qty: event.target.value,
-                                                                        },
-                                                                    },
-                                                                });
-                                                            }}
-                                                            defaultValue={qty}
-                                                        >
-                                                            {[...new Array(10).keys()].map(item => (
-                                                                <option key={item} value={item}>
-                                                                    {item}
-                                                                </option>
-                                                            ))}
-                                                        </select>
-                                                    );
-                                                }}
-                                            </Mutation>
-                                            <span className="basket__count-label">{qty}</span>
-                                        </div>
-                                    </td>
-                                    <td width="10%" className="basket__table-tdb">
-                                        {/* {item.discount} */}66%
-                                    </td>
-                                    <td width="10%" className="basket__table-tdb">
-                                        <span className="cart-price cart-price_role_original">
-                                            {/* {item.old_price} */}666 {CURRENCY}
-                                        </span>
-                                        <span className="cart-price cart-price_role_final">
-                                            {/* {item.price} */}666 {CURRENCY}
-                                        </span>
-                                    </td>
-                                    <td width="10%" className="basket__table-tdb">
-                                        <span className="cart-subtotal criteo-cart">
-                                            {/* {item.final_price} */}666
-                                        </span>
-                                        {CURRENCY}
-                                        <Mutation
-                                            mutation={REMOVE_PRODUCT_MUTATION}
-                                            onCompleted={handleRemoveProduct}
-                                        >
-                                            {(remove, { error, data, loading }) => {
-                                                console.log(error, data, loading);
-
-                                                return (
-                                                    <Button
-                                                        className="show-on-mobile"
-                                                        style={{ float: 'right' }}
-                                                        onClick={() =>
-                                                            remove({
-                                                                variables: { input: { item_id: id } },
-                                                            })
-                                                        }
-                                                        bold
-                                                    >
-                                                        ✖
-                                                    </Button>
-                                                );
-                                            }}
-                                        </Mutation>
-                                    </td>
-                                </tr>
-                            ))}
+                                        </td>
+                                    </tr>
+                                )
+                            )}
                             <tr className="gift_row">
                                 <td colSpan="2" className="basket__table-tdb">
                                     <Button kind="primary" onClick={() => setOpenModal(true)} bold>
@@ -486,9 +496,11 @@ const Basket = ({
                             <div className="basket__payment-promo-code">
                                 <form onSubmit={handleSubmitPromocode} className={styles.promocode}>
                                     <Input
-                                        name="code"
+                                        name="promocode"
+                                        value={values.promocode}
                                         theme={{ input: styles.input, label: styles.inputLabel }}
                                         label="Промо-код"
+                                        onChange={handleChange}
                                     />
                                     <Button
                                         type="submit"
@@ -522,11 +534,12 @@ const Basket = ({
                                 <div className="basket__confirm-info-title basket__bold">Коментарии</div>
                                 <div className="basket__confirm-info-list">
                                     <Input
-                                        type="textarea"
                                         className="basket__textarea"
                                         name="comment"
-                                        value={comment}
+                                        value={values.comment}
                                         onChange={handleChange}
+                                        rows="2"
+                                        multiline
                                     />
                                 </div>
                             </div>
@@ -548,49 +561,55 @@ const Basket = ({
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {products.map(({ product_name: productName, name, item_id: id, qty }) => (
-                                        <tr key={id} className="basket__table-tr">
-                                            <td width="10%" align="center" className="basket__table-tdb">
-                                                <Link to="/" className="cart-tbl__link hide-on-mobile">
-                                                    <img
-                                                        src="https://placehold.it/60x60/000"
-                                                        height="60"
-                                                        alt=""
-                                                    />
-                                                </Link>
-                                            </td>
-                                            <td width="50%" className="basket__table-tdb">
-                                                <strong className="basket__bold hide-on-mobile">
-                                                    Estee Lauder
-                                                </strong>
-                                                <Link className="basket__productname" to="/">
-                                                    {productName} {name}
-                                                </Link>
-                                            </td>
-                                            <td width="10%" className="basket__table-tdb">
-                                                <div className="basket__count">
-                                                    <span className="basket__count-label">{qty}</span>
-                                                </div>
-                                            </td>
-                                            <td width="10%" className="basket__table-tdb">
-                                                {/* {item.discount} */}66%
-                                            </td>
-                                            <td width="10%" className="basket__table-tdb">
-                                                <span className="cart-price cart-price_role_original">
-                                                    {/* {item.old_price} */}666 {CURRENCY}
-                                                </span>
-                                                <span className="cart-price cart-price_role_final">
-                                                    {/* {item.price} */}666 {CURRENCY}
-                                                </span>
-                                            </td>
-                                            <td width="10%" className="basket__table-tdb">
-                                                <span className="cart-subtotal criteo-cart">
-                                                    {/* {item.final_price} */}666
-                                                </span>
-                                                {CURRENCY}
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    {products.map(
+                                        ({
+                                            product_name: productName,
+                                            name,
+                                            item_id: id,
+                                            qty,
+                                            brand_name,
+                                            discount,
+                                        }) => (
+                                            <tr key={id} className="basket__table-tr">
+                                                <td width="10%" align="center" className="basket__table-tdb">
+                                                    <Link to="/" className="cart-tbl__link hide-on-mobile">
+                                                        <img
+                                                            src="https://placehold.it/60x60/000"
+                                                            height="60"
+                                                            alt=""
+                                                        />
+                                                    </Link>
+                                                </td>
+                                                <td width="50%" className="basket__table-tdb">
+                                                    {brand_name && (
+                                                        <strong className="basket__bold hide-on-mobile">
+                                                            Estee Lauder
+                                                        </strong>
+                                                    )}
+                                                    <Link className="basket__productname" to="/">
+                                                        {productName} {name}
+                                                    </Link>
+                                                </td>
+                                                <td width="10%" className="basket__table-tdb">
+                                                    {qty}
+                                                </td>
+                                                <td width="10%" className="basket__table-tdb">
+                                                    {discount}
+                                                </td>
+                                                <td width="10%" className="basket__table-tdb">
+                                                    {/*<span className="cart-price cart-price_role_original">
+                                                        {old_price}{CURRENCY}
+                                                    </span>*/}
+                                                    <span className="cart-price cart-price_role_final">
+                                                        {/* {item.price} */}666 {CURRENCY}
+                                                    </span>
+                                                </td>
+                                                <td width="10%" className="basket__table-tdb">
+                                                    <b>{/* {item.final_price} */}666</b> {CURRENCY}
+                                                </td>
+                                            </tr>
+                                        )
+                                    )}
                                 </tbody>
                                 <tfoot>
                                     <tr>

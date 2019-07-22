@@ -420,14 +420,6 @@
             right: 5px;
             bottom: 3px;
         }
-
-        &-label {
-            display: none;
-
-            #conformation & {
-                display: inline;
-            }
-        }
     }
 
     @include has('bold') {
@@ -875,10 +867,10 @@
 }
 
 .show-on-mobile {
-    display: block;
+    display: block !important;
 
     @include breakpoint($screen-md) {
-        display: none;
+        display: none !important;
     }
 }
 
