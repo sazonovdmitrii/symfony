@@ -12,6 +12,8 @@ class ApiManager extends AbstractController implements ApiManagerInterface
 
     private $_headers;
 
+    private $_content;
+
     /**
      * @param $url
      * @return $this
@@ -59,11 +61,29 @@ class ApiManager extends AbstractController implements ApiManagerInterface
     }
 
     /**
+     * @param array $content
+     * @return $this
+     */
+    public function setContent(string $content)
+    {
+        $this->_content = $content;
+        return $this;
+    }
+
+    /**
      * @return mixed
      */
     public function getHeaders()
     {
         return $this->_headers;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getContent()
+    {
+        return $this->_content;
     }
 
     /**
