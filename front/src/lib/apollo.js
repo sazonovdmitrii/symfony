@@ -53,6 +53,7 @@ const create = ({ token } = {}) => {
         //         }
         //     },
         // }),
+        resolvers: {},
         link: ApolloLink.from([
             onError(({ graphQLErrors, networkError }) => {
                 if (graphQLErrors) {

@@ -158,10 +158,10 @@ const getConfig = target => {
                             test: /\.css$/,
                             loader: 'css-loader',
                             options: {
-                                localIdentName: '[folder]__[local]__[hash:base64:5]',
-                                modules: true,
-                                sourceMap: false,
-                                exportOnlyLocals: true,
+                                modules: {
+                                    localIdentName: '[folder]__[local]__[hash:base64:5]',
+                                },
+                                onlyLocals: true,
                                 url: true,
                             },
                         },
@@ -169,8 +169,9 @@ const getConfig = target => {
                             test: /\.css$/,
                             loader: getStyleLoaders({
                                 importLoaders: 1,
-                                localIdentName: '[folder]__[local]__[hash:base64:5]',
-                                modules: true,
+                                modules: {
+                                    localIdentName: '[folder]__[local]__[hash:base64:5]',
+                                },
                                 url: true,
                             }),
                         },
