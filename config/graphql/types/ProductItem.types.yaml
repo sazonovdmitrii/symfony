@@ -9,3 +9,6 @@ ProductItem:
       name:
         type: "String"
         description: "Product Item Name"
+      price:
+        type: "String"
+        description: "Product Item Price"
