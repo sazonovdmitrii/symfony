@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withApollo, Mutation } from 'react-apollo';
@@ -68,17 +68,19 @@ const Basket = ({
     client,
     basket: { products: productsProps, total, deliveryDays, delivery },
     directions: { data: directions },
-    payments_methods: paymentsMethods,
+    payments_methods: { data: paymentsMethods },
     isLoggedIn,
 }) => {
     const [products, setProducts] = useState(productsProps);
     const [promocode, setPromocode] = useState(null);
     const [openModal, setOpenModal] = useState(false);
-    const [payment, setPayment] = useState('');
-    const [direction, setDirection] = useState('');
     const [comment, setComment] = useState('');
     const [step, setStep] = useState(0);
     const [showAddressForm, setShowAddressForm] = useState(false);
+    const [values, setValues] = useState({
+        payment: paymentsMethods[0].id.toString(),
+        direction: directions[0].id.toString(),
+    });
     const handleCloseModal = () => {
         setOpenModal(false);
     };
@@ -91,9 +93,12 @@ const Basket = ({
     };
     const handleChangeAmount = () => {};
     const handleSubmitPromocode = () => {};
-    const handleChange = ({ target: { value } }) => {
-        console.log(value);
-        setDirection(value);
+    const handleChange = ({ target: { value, name } }) => {
+        console.log(name, value);
+        setValues(prevState => ({
+            ...prevState,
+            [name]: value,
+        }));
     };
     const isValid = () => {
         // TODO validation address, delivery, payment
@@ -113,6 +118,15 @@ const Basket = ({
         }
     };
     const handleOrderCompleted = () => {};
+
+    const findPayment = () => paymentsMethods.find(({ id }) => id.toString() === values.payment);
+
+    const [currentPayment, setCurrentPayment] = useState(findPayment());
+    useEffect(() => {
+        setCurrentPayment(findPayment());
+    }, [values.payment]);
+
+    console.log(currentPayment);
 
     if (!products.length) {
         return (
@@ -254,7 +268,7 @@ const Basket = ({
                                                         style={{ float: 'right' }}
                                                         onClick={() =>
                                                             remove({
-                                                                variables: { input: id },
+                                                                variables: { input: { item_id: id } },
                                                             })
                                                         }
                                                         bold
@@ -411,7 +425,7 @@ const Basket = ({
                                         <RadioGroup
                                             name="direction"
                                             type="list"
-                                            value={direction}
+                                            value={values.direction}
                                             onChange={handleChange}
                                         >
                                             {directions.map(({ id, title }) => (
@@ -427,9 +441,9 @@ const Basket = ({
                                     <div className="basket__address-shippblock-list">
                                         <InputGroup>
                                             <RadioGroup
-                                                name="direction"
+                                                name="payment"
                                                 type="list"
-                                                value={direction.id}
+                                                value={values.payment}
                                                 onChange={handleChange}
                                             >
                                                 {paymentsMethods.map(({ id, name }) => (
@@ -473,12 +487,14 @@ const Basket = ({
                                 <div className="basket__confirm-info-title basket__bold">Адрес доставки</div>
                                 <div data-render="confirmAddress" className="basket__confirm-info-list" />
                             </div>
-                            <div className="basket__confirm-info">
-                                <div className="basket__confirm-info-title basket__bold">Оплата</div>
-                                <div className="basket__confirm-info-list">
-                                    <span>{payment}</span>
+                            {currentPayment && (
+                                <div className="basket__confirm-info">
+                                    <div className="basket__confirm-info-title basket__bold">Оплата</div>
+                                    <div className="basket__confirm-info-list">
+                                        <span>{currentPayment.name}</span>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                             <div className="basket__confirm-info">
                                 <div className="basket__confirm-info-title basket__bold">Коментарии</div>
                                 <div className="basket__confirm-info-list">
