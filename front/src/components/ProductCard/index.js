@@ -22,19 +22,18 @@ const ProductCard = ({
     loading,
     price,
 }) => {
+    const [
+        {
+            node: { price: lowerPrice },
+        },
+    ] = items.edges.sort((a, b) => {
+        if (a.price > b.price) return -1;
+    });
     const myPrice = () => {
-        if (min_price && min_price > 0 && cantbuy !== 1) {
+        if (lowerPrice) {
             return (
                 <Fragment>
-                    от{' '}
-                    <span>
-                        {
-                            items.sort((a, b) => {
-                                if (a.price > b.price) return -1;
-                            })[0].price
-                        }
-                    </span>{' '}
-                    руб.
+                    от <span>{lowerPrice}</span> руб.
                 </Fragment>
             );
         }

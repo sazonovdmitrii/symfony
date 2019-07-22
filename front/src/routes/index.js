@@ -44,8 +44,12 @@ export default [
         component: getComponent('Basket'),
     },
     {
-        path: '/user/:slug?',
+        path: '/order/success',
         exact: true,
+        component: getComponent('Success'),
+    },
+    {
+        path: '/user/:slug?',
         component: User,
     },
     {
