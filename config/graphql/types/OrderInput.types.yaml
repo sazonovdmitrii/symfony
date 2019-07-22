@@ -1,10 +1,13 @@
-UpdateBasketInput:
+OrderInput:
   type: input-object
   config:
     fields:
-      item_id:
+      pvz_id:
         type: "Int!"
-        description: "Item ID"
-      qty:
+        description: "Pvz ID"
+      courier_id:
         type: "Int"
-        description: "Qty"
+        description: "Courier ID"
+      address_id:
+        type: "Int"
+        description: "User Address Id"

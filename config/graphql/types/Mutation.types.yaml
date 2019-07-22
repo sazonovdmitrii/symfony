@@ -29,3 +29,6 @@ Mutation:
       order:
         type: Order!
         resolve: '@=mutation("App\\GraphQL\\Mutation\\OrderMutation::create", [args])'
+        args:
+          input:
+            type: OrderInput
