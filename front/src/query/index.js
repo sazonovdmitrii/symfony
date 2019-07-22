@@ -50,6 +50,7 @@ export const GET_PRODUCT = gql`
                     node {
                         id
                         name
+                        price
                     }
                 }
             }
@@ -84,6 +85,7 @@ export const GET_PRODUCTS = gql`
                                 node {
                                     id
                                     name
+                                    price
                                 }
                             }
                         }
@@ -105,13 +107,21 @@ export const GET_ADDRESS = gql`
 export const GET_ADDRESSES = gql`
     {
         addresses {
-            data(limit: 40, offset: 0) {
-                edges {
-                    node {
-                        id
-                        name
-                    }
-                }
+            data {
+                id
+                name
+                user_id
+                person
+                zip
+                region_id
+                city
+                street
+                house
+                corp
+                level
+                flat
+                code
+                active
             }
         }
     }

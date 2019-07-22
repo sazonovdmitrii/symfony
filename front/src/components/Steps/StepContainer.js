@@ -20,7 +20,6 @@ const StepContainer = ({
     maxSteps = 0,
     onChange = () => {},
 }) => {
-    console.log(active, maxSteps, '🔥');
     const rootClassName = cx(styles.root, theme.root);
     const headerClassName = cx(styles.header, theme.header);
     const titleClassName = cx(styles.stepTitle, theme.stepTitle);

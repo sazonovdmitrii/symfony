@@ -233,8 +233,8 @@ class ProductItem
             $file->setProductItemId($this);
             $file->setTitle($uploadedFile->getClientOriginalName());
             $uploadedFile->move(__DIR__ . '/../../public/uploads/images/products', $path);
-            $this->addProductItemImage($file);
-            unset($uploadedFile);
+//            $this->addProductItemImage($file);
+//            unset($uploadedFile);
         }
     }
 
