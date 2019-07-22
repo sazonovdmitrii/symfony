@@ -11,8 +11,8 @@ class AlfaBankService extends ApiManager
     public function __construct()
     {
         $this->setUrl(self::URL);
-        
-        $this->setContent([
+
+        $this->setHeaders([
             "Content-Type: application/json"
         ]);
     }
