@@ -15,5 +15,5 @@ export default props => {
     const { url } = props.match;
     const slug = url.slice(1);
 
-    return withQuery({ query: GET_PRODUCT, variables: { slug } })(props => <Component {...props} />);
+    return withQuery({ query: GET_PRODUCT, variables: { slug } })(data => <Component {...props} {...data} />);
 };

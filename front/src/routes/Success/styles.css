@@ -1,0 +1,43 @@
+.root {
+    min-height: 452px;
+    background: transparent url('./images/bg.jpg') no-repeat center / cover;
+    text-align: right;
+    margin: 15px 0 65px 0;
+
+    @media (--viewport-tablet) {
+        padding: 0 50px 50px 0;
+    }
+}
+
+.box {
+    display: inline-block;
+    vertical-align: middle;
+    height: auto;
+    max-width: 430px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 45px 40px 40px 40px;
+    color: #444;
+    text-align: left;
+    overflow: hidden;
+}
+
+.title {
+    letter-spacing: 0.0625em;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 37px;
+    margin-bottom: 30px;
+    line-height: var(--headings-line-height);
+}
+
+.subtitle {
+    font-weight: bold;
+    font-size: var(--font-size-base);
+    margin-bottom: 25px;
+    line-height: var(--headings-line-height);
+}
+
+.primaryColor {
+    color: var(--color-primary);
+}

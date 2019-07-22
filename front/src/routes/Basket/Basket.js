@@ -17,6 +17,8 @@ import RadioButton from 'components/RadioButton';
 import { StepView, StepContainer } from 'components/Steps';
 import AddressList from 'components/AddressList';
 
+import Success from 'routes/Success';
+
 import styles from './styles.css';
 
 import infoIcon from './images/info.png';
@@ -51,8 +53,8 @@ const UPDATE_PRODUCT_MUTATION = gql`
 `;
 
 const ORDER_MUTATION = gql`
-    mutation {
-        order {
+    mutation createOrder($input: OrderInput) {
+        order(input: $input) {
             id
         }
     }
@@ -71,18 +73,23 @@ const Basket = ({
     payments_methods: { data: paymentsMethods },
     isLoggedIn,
 }) => {
+    const [success, setSuccess] = useState(false);
     const [products, setProducts] = useState(productsProps);
     const [promocode, setPromocode] = useState(null);
     const [openModal, setOpenModal] = useState(false);
     const [comment, setComment] = useState('');
     const [step, setStep] = useState(0);
     const [showAddressForm, setShowAddressForm] = useState(false);
+    const [notification, setNotification] = useState(null);
     const [values, setValues] = useState({
         payment: paymentsMethods[0].id.toString(),
         direction: directions[0].id.toString(),
     });
     const handleCloseModal = () => {
         setOpenModal(false);
+    };
+    const handleClose = () => {
+        setNotification(null);
     };
     const handleChangeStep = index => {
         setStep(index);
@@ -94,7 +101,6 @@ const Basket = ({
     const handleChangeAmount = () => {};
     const handleSubmitPromocode = () => {};
     const handleChange = ({ target: { value, name } }) => {
-        console.log(name, value);
         setValues(prevState => ({
             ...prevState,
             [name]: value,
@@ -102,6 +108,7 @@ const Basket = ({
     };
     const isValid = () => {
         // TODO validation address, delivery, payment
+        return true;
     };
     const handleLogInCompleted = ({ auth }) => {
         if (auth && auth.hash) {
@@ -114,19 +121,27 @@ const Basket = ({
                 expires: date.toUTCString(),
             });
             client.writeData({ data: { isLoggedIn: true } });
-            // handleCloseModal();
         }
     };
-    const handleOrderCompleted = () => {};
+    const handleOrderCompleted = ({ order: { id } }) => {
+        if (id) {
+            setSuccess(id);
+            console.log('order done', '👍');
+        } else {
+            setNotification({ type: 'error', text: 'Упс что-то пошло не так' });
+        }
+    };
 
     const findPayment = () => paymentsMethods.find(({ id }) => id.toString() === values.payment);
-
     const [currentPayment, setCurrentPayment] = useState(findPayment());
+
     useEffect(() => {
         setCurrentPayment(findPayment());
     }, [values.payment]);
 
-    console.log(currentPayment);
+    if (success) {
+        return <Success id={success} />;
+    }
 
     if (!products.length) {
         return (
@@ -146,6 +161,14 @@ const Basket = ({
 
     return (
         <div>
+            {notification && (
+                <Snackbar
+                    text={notification.text}
+                    active={!!notification}
+                    theme={notification.type}
+                    onClose={handleCloseNotification}
+                />
+            )}
             <StepView active={step} onChange={handleChangeStep}>
                 <StepContainer title="Моя корзина" theme={theme}>
                     <table className="basket__table">
@@ -638,7 +661,15 @@ const Basket = ({
                                                     kind="primary"
                                                     bold
                                                     onClick={() => {
-                                                        if (isValid()) createOrder();
+                                                        if (isValid()) {
+                                                            createOrder({
+                                                                variables: {
+                                                                    input: {
+                                                                        pvz_id: 1,
+                                                                    },
+                                                                },
+                                                            });
+                                                        }
                                                     }}
                                                 >
                                                     Оформить Заказ
