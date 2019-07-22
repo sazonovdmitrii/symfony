@@ -58,7 +58,7 @@ class BasketService extends AbstractController
             return ['products' => $basket];
         }
         return [
-            'products' => null
+            'products' => ''
         ];
     }
 
@@ -74,7 +74,7 @@ class BasketService extends AbstractController
             return ['products' => $basket];
         }
         return [
-            'products' => null
+            'products' => ''
         ];
     }
 
@@ -90,7 +90,7 @@ class BasketService extends AbstractController
             return ['products' => $basket];
         }
         return [
-            'products' => null
+            'products' => ''
         ];
     }
 
@@ -118,7 +118,7 @@ class BasketService extends AbstractController
             }
         }
         return [
-            'products' => null
+            'products' => ''
         ];
     }
 
