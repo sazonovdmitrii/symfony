@@ -49,6 +49,7 @@ const Product = ({
     match,
     description,
     tags,
+    history,
 }) => {
     const [tabIndex, setTabIndex] = useState(0);
     const [error, setError] = useState(null);
@@ -73,9 +74,9 @@ const Product = ({
     const handleCompleted = ({ addBasket: { products } }) => {
         console.warn('product added to basket', products);
 
-        // if (id) {
-        //     history.push('/basket');
-        // }
+        if (products) {
+            history.push('/basket');
+        }
     };
 
     return (
