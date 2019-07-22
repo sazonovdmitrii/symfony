@@ -28,14 +28,14 @@ const GET_BASKET = gql`
                 comment
             }
         }
+        payments_methods {
+            data {
+                id
+                name
+            }
+        }
     }
 `;
-// payments_methods {
-//     data {
-//         id
-//         name
-//     }
-// }
 
 const Component = loadable(() => import('./Basket'), {
     fallback: Loader,
@@ -47,12 +47,10 @@ export default () => {
             {({ loading, error, data }) => {
                 if (loading) return <Loader />;
 
-                console.log(data, '🔥');
-
                 return (
                     <Fragment>
                         {error && <ErrorMessage error={error} />}
-                        <Component {...data} />
+                        {data && <Component {...data} />}
                     </Fragment>
                 );
             }}
