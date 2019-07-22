@@ -64,7 +64,7 @@ class ApiManager extends AbstractController implements ApiManagerInterface
      * @param array $content
      * @return $this
      */
-    public function setContent(string $content)
+    public function setContent(array $content)
     {
         $this->_content = $content;
         return $this;
@@ -94,7 +94,8 @@ class ApiManager extends AbstractController implements ApiManagerInterface
         $httpClient = HttpClient::create();
         $response = $httpClient->request(
             'POST', $this->getUrl() . $this->getMethod(), [
-                'headers' => $this->getHeaders()
+                'headers' => $this->getHeaders(),
+                'query' => $this->getContent()
             ]
         );
         return $response->getContent();

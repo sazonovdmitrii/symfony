@@ -17,4 +17,19 @@ class AlfaBankService extends ApiManager
         ]);
     }
 
+    /**
+     * @return string
+     */
+    public function getLogin()
+    {
+        return self::LOGIN;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPassword()
+    {
+        return self::PASSWORD;
+    }
 }
