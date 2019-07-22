@@ -73,7 +73,7 @@ const Basket = ({
     payments_methods: { data: paymentsMethods },
     isLoggedIn,
 }) => {
-    const [success, setSuccess] = useState(9);
+    const [success, setSuccess] = useState(false);
     const [products, setProducts] = useState(productsProps);
     const [promocode, setPromocode] = useState(null);
     const [openModal, setOpenModal] = useState(false);

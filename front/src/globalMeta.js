@@ -11,6 +11,7 @@ export default {
         moscow: '+7 (495) 539 53 15',
         russia: '8 (800) 100 53 15',
     },
+    email: 'info@laparfumerie.ru',
     text: {
         phone() {
             return `Звоните ${this.phone.moscow} или ${this.phone.russia}`;
