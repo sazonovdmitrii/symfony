@@ -17,6 +17,9 @@ BasketProduct:
       qty:
         type: "Int"
         description: "Qty"
+      price:
+        type: "String"
+        description: "Price"
       name:
         type: "String"
         description: "Basket Product Name"
