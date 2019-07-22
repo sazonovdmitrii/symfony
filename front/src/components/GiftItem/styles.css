@@ -1,0 +1,14 @@
+.root {
+    display: flex;
+    justify-content: space-around;
+    border-bottom: 1px solid #ccc;
+    padding: 5px;
+}
+
+.image {
+    height: 80px;
+}
+
+.body {
+    width: 80%;
+}

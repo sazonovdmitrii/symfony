@@ -39,6 +39,7 @@ const Input = ({
     const [height, setHeight] = useState(null);
     const textAreaNode = useRef(null);
 
+    const wrapperClassName = cx(styles.wrapper, theme.wrapper);
     const labelClassName = cx(styles.label, theme.label, {
         focused,
         error,
@@ -97,7 +98,7 @@ const Input = ({
 
     if (multiline)
         return (
-            <div className={styles.wrapper}>
+            <div className={wrapperClassName}>
                 {label && (
                     <label className={labelClassName} htmlFor={id}>
                         {required ? `${label}*` : label}
@@ -125,7 +126,7 @@ const Input = ({
         );
 
     return (
-        <div className={styles.wrapper}>
+        <div className={wrapperClassName}>
             {label && (
                 <label className={labelClassName} htmlFor={id}>
                     {required ? `${label}*` : label}

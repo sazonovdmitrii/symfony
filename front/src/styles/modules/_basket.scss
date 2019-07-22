@@ -218,7 +218,9 @@
     }
 
     @include has('users') {
-        @extend %clearfix;
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -15px;
     }
 
     @include has('node') {
@@ -451,9 +453,7 @@
         width: 16px;
         height: 16px;
         display: inline-block;
-        position: absolute;
-        right: 10px;
-        top: 10px;
+        margin-left: 5px;
 
         .button-red:hover & {
             background-image: url($img-path+'arrow-r.png');

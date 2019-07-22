@@ -105,6 +105,8 @@
         color: $color-dark;
         padding-left: calculateRem(8px);
         line-height: calculateRem(26px);
+        display: flex;
+        flex-wrap: wrap;
 
         @include when('data') {
             display: inline-block;

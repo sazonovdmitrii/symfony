@@ -29,7 +29,9 @@ import yandexMoneyIcon from './payments/yandex.jpg';
 const ADD_TO_BASKET = gql`
     mutation AddBasket($input: AddBasketInput!) {
         addBasket(input: $input) {
-            id
+            products {
+                item_id
+            }
         }
     }
 `;
@@ -68,12 +70,12 @@ const Product = ({
 
         callback({ variables: { input: { item_id: selectedProduct.id } } });
     };
-    const handleCompleted = ({ id }) => {
-        console.warn('product added to basket');
+    const handleCompleted = ({ addBasket: { products } }) => {
+        console.warn('product added to basket', products);
 
-        if (id) {
-            history.push('/basket');
-        }
+        // if (id) {
+        //     history.push('/basket');
+        // }
     };
 
     return (

@@ -34,7 +34,7 @@ export default ({ carousel }) => (
                     if (loading || !banner) return null;
 
                     return (
-                        <Banners interval={5000}>
+                        <Banners interval={5000} autoPlay>
                             {banner.data.map((item, index) => (
                                 <Link key={item.id} to={item.url}>
                                     <img key={item.id} src={item.path} alt="" />
