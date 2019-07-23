@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import hardtack from 'hardtack';
 
-import { IS_LOGGED_IN, GET_BASKET } from 'query';
+import { IS_LOGGED_IN, GET_SHORT_BASKET } from 'query';
 
 import BasketShort from 'components/BasketShort';
 import Button from 'components/Button';
@@ -100,7 +100,7 @@ const UserMenu = ({ client, history }) => {
                 }}
             </Query>
             <li className={styles.item}>
-                <Query query={GET_BASKET} ssr={false} partialRefetch>
+                <Query query={GET_SHORT_BASKET} ssr={false} partialRefetch>
                     {({ loading, error, data }) => {
                         if (loading || error) return null;
 

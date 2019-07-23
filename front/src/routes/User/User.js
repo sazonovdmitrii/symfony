@@ -24,7 +24,7 @@ const routes = [
 
 const loggedInRoutes = [
     { path: '/user/addressbook', component: AddressBook },
-    { path: '/user/addressbook/edit/:id', component: EditAddress },
+    { path: ['/user/addressbook/new', '/user/addressbook/edit/:id'], component: EditAddress },
     { path: '/user/orders', component: Orders },
     { path: '/user/personal', component: Personal },
     { path: '/user/security', component: Security },

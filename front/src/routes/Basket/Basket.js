@@ -16,6 +16,7 @@ import RadioGroup from 'components/RadioGroup';
 import RadioButton from 'components/RadioButton';
 import { StepView, StepContainer } from 'components/Steps';
 import AddressList from 'components/AddressList';
+import Snackbar from 'components/Snackbar';
 
 import Success from 'routes/Success';
 
@@ -68,7 +69,7 @@ const theme = {
 
 const Basket = ({
     client,
-    basket: { products: productsProps, total, deliveryDays, delivery },
+    basket: { products: productsProps },
     directions: { data: directions },
     payments_methods: { data: paymentsMethods },
     isLoggedIn,
@@ -86,6 +87,18 @@ const Basket = ({
         comment: '',
         promocode: '',
     });
+    const [currentPayment, setCurrentPayment] = useState(paymentsMethods[0]);
+    const [currentDirection, setCurrentDirection] = useState(directions[0]);
+    const totalSum = products.reduce((acc, item) => acc + item.price * item.qty, 0);
+    const totalSumWithDirection = parseInt(currentDirection.price, 10) + totalSum;
+
+    useEffect(() => {
+        setCurrentPayment(paymentsMethods.find(({ id }) => id.toString() === values.payment));
+    }, [paymentsMethods, values.payment]);
+    useEffect(() => {
+        setCurrentDirection(directions.find(({ id }) => id.toString() === values.direction));
+    }, [directions, values.direction]);
+
     const handleCloseModal = () => {
         setOpenModal(false);
     };
@@ -95,11 +108,13 @@ const Basket = ({
     const handleChangeStep = index => {
         setStep(index);
     };
-    const handleRemoveProduct = ({ removeBasket: { products: newProducts } }) => {
-        console.log(newProducts);
+    const handleChangeProducts = ({ removeBasket, updateBasket }, data = removeBasket || updateBasket) => {
+        if (!data) return;
+
+        const { products: newProducts } = data;
+
         setProducts(newProducts);
     };
-    const handleChangeAmount = () => {};
     const handleSubmitPromocode = () => {};
     const handleChange = ({ target: { value, name } }) => {
         setValues(prevState => ({
@@ -125,20 +140,13 @@ const Basket = ({
         }
     };
     const handleOrderCompleted = ({ order: { id } }) => {
-        if (id) {
-            setSuccess(id);
-            console.log('order done', '👍');
-        } else {
-            setNotification({ type: 'error', text: 'Упс что-то пошло не так' });
-        }
+        // if (id) {
+        setSuccess(true);
+        console.log('order done', '👍');
+        // } else {
+        // setNotification({ type: 'error', text: 'Упс что-то пошло не так' });
+        // }
     };
-
-    const findPayment = () => paymentsMethods.find(({ id }) => id.toString() === values.payment);
-    const [currentPayment, setCurrentPayment] = useState(findPayment());
-
-    useEffect(() => {
-        setCurrentPayment(findPayment());
-    }, [values.payment]);
 
     if (success) {
         return <Success id={success} />;
@@ -196,6 +204,7 @@ const Basket = ({
                                     qty,
                                     brand_name,
                                     discount,
+                                    price,
                                 }) => (
                                     <tr key={id} className="basket__table-tr">
                                         <td width="10%" align="center" className="basket__table-tdb">
@@ -219,7 +228,7 @@ const Basket = ({
                                             <div className="basket__table-navitem hide-on-mobile">
                                                 <Mutation
                                                     mutation={REMOVE_PRODUCT_MUTATION}
-                                                    onCompleted={handleRemoveProduct}
+                                                    onCompleted={handleChangeProducts}
                                                 >
                                                     {(remove, { error, data, loading }) => {
                                                         return (
@@ -244,7 +253,7 @@ const Basket = ({
                                                 <i className="basket__count-arrow">▼</i>
                                                 <Mutation
                                                     mutation={UPDATE_PRODUCT_MUTATION}
-                                                    onCompleted={handleChangeAmount}
+                                                    onCompleted={handleChangeProducts}
                                                 >
                                                     {(callback, { error, data, loading }) => {
                                                         return (
@@ -278,18 +287,24 @@ const Basket = ({
                                             {discount}
                                         </td>
                                         <td width="10%" className="basket__table-tdb">
-                                            {/*<span className="cart-price cart-price_role_original">
+                                            {/* <span className="cart-price cart-price_role_original">
                                                 666 {CURRENCY}
-                                            </span>*/}
+                                            </span> */}
                                             <span className="cart-price cart-price_role_final">
-                                                {/* {item.price} */}666 {CURRENCY}
+                                                {price ? `${price} ${CURRENCY}` : 'Бесплатно'}
                                             </span>
                                         </td>
                                         <td width="10%" className="basket__table-tdb">
-                                            <b>{/* {item.final_price} */}666</b> {CURRENCY}
+                                            {price ? (
+                                                <Fragment>
+                                                    <b>{`${price * qty} ${CURRENCY}`}</b>
+                                                </Fragment>
+                                            ) : (
+                                                'Бесплатно'
+                                            )}
                                             <Mutation
                                                 mutation={REMOVE_PRODUCT_MUTATION}
-                                                onCompleted={handleRemoveProduct}
+                                                onCompleted={handleChangeProducts}
                                             >
                                                 {(remove, { error, data, loading }) => {
                                                     console.log(error, data, loading);
@@ -350,21 +365,21 @@ const Basket = ({
                                     <table width="100%">
                                         <tbody>
                                             <tr>
-                                                <td>
-                                                    <span className="show-on-mobile">Доставка: </span>
-                                                    <span className="hide-on-mobile">
-                                                        Стоимость доставки по Москве:
-                                                    </span>
-                                                </td>
+                                                <td>Доставка:</td>
                                                 <td className="align_right">
-                                                    <span>Бесплатно</span>
+                                                    <span>
+                                                        {currentDirection.price
+                                                            ? `${currentDirection.price} ${CURRENCY}`
+                                                            : 'Бесплатно'}
+                                                    </span>
                                                 </td>
                                             </tr>
                                             <tr data-render="promocodeRow" />
                                             <tr className="basket__bold">
                                                 <td>Итого:</td>
                                                 <td className="align_right">
-                                                    <span>4111</span> <span>{CURRENCY}</span>
+                                                    <span>{totalSumWithDirection}</span>{' '}
+                                                    <span>{CURRENCY}</span>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -399,7 +414,7 @@ const Basket = ({
                         </tfoot>
                     </table>
                 </StepContainer>
-                {!isLoggedIn && (
+                {!isLoggedIn ? (
                     <StepContainer title="Оформление заказа" theme={theme}>
                         <div className="basket__users">
                             <div className="basket__node">
@@ -416,8 +431,7 @@ const Basket = ({
                             </div>
                         </div>
                     </StepContainer>
-                )}
-                {isLoggedIn && (
+                ) : (
                     <StepContainer title="Доставка" theme={theme} nav={{ footer: true }}>
                         <div className="basket__address-shipp">
                             <div className="basket__address-shippblock">
@@ -569,6 +583,7 @@ const Basket = ({
                                             qty,
                                             brand_name,
                                             discount,
+                                            price,
                                         }) => (
                                             <tr key={id} className="basket__table-tr">
                                                 <td width="10%" align="center" className="basket__table-tdb">
@@ -597,15 +612,21 @@ const Basket = ({
                                                     {discount}
                                                 </td>
                                                 <td width="10%" className="basket__table-tdb">
-                                                    {/*<span className="cart-price cart-price_role_original">
+                                                    {/* <span className="cart-price cart-price_role_original">
                                                         {old_price}{CURRENCY}
-                                                    </span>*/}
+                                                    </span> */}
                                                     <span className="cart-price cart-price_role_final">
-                                                        {/* {item.price} */}666 {CURRENCY}
+                                                        {price ? `${price} ${CURRENCY}` : 'Бесплатно'}
                                                     </span>
                                                 </td>
                                                 <td width="10%" className="basket__table-tdb">
-                                                    <b>{/* {item.final_price} */}666</b> {CURRENCY}
+                                                    {price ? (
+                                                        <Fragment>
+                                                            <b>{`${price * qty} ${CURRENCY}`}</b>
+                                                        </Fragment>
+                                                    ) : (
+                                                        'Бесплатно'
+                                                    )}
                                                 </td>
                                             </tr>
                                         )
@@ -624,23 +645,18 @@ const Basket = ({
                                                     Ожидаемое время доставки:
                                                 </strong>
                                                 <br />
-                                                <span data-render="deliveryDate">{deliveryDays}</span>
+                                                <span>{currentDirection.delivery_days}</span>
                                             </p>
                                         </td>
                                         <td colSpan="3" className="basket__table-tdf">
                                             <table width="100%">
                                                 <tr>
-                                                    <td>
-                                                        <span className="show-on-mobile">Доставка: </span>
-                                                        <span className="hide-on-mobile">
-                                                            Стоимость доставки по Москве:
-                                                        </span>
-                                                    </td>
+                                                    <td>Доставка:</td>
                                                     <td className="align_right">
                                                         <span>
-                                                            {delivery
-                                                                ? `${delivery} ${CURRENCY}`
-                                                                : 'бесплатно'}
+                                                            {currentDirection.price
+                                                                ? `${currentDirection.price} ${CURRENCY}`
+                                                                : 'Бесплатно'}
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -650,7 +666,9 @@ const Basket = ({
                                                             <td>Скидка: {promocode} %</td>
                                                             <td className="align_right">
                                                                 -
-                                                                <span>{total * (promocode.value / 100)}</span>
+                                                                <span>
+                                                                    {totalSum * (promocode.value / 100)}
+                                                                </span>
                                                                 руб.
                                                             </td>
                                                         </Fragment>
@@ -659,8 +677,7 @@ const Basket = ({
                                                 <tr className="basket__bold">
                                                     <td>Итого:</td>
                                                     <td className="align_right">
-                                                        <span>{total}666</span>
-                                                        <span>{CURRENCY}</span>
+                                                        <span>{`${totalSumWithDirection} ${CURRENCY}`}</span>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -681,13 +698,7 @@ const Basket = ({
                                                     bold
                                                     onClick={() => {
                                                         if (isValid()) {
-                                                            createOrder({
-                                                                variables: {
-                                                                    input: {
-                                                                        pvz_id: 1,
-                                                                    },
-                                                                },
-                                                            });
+                                                            createOrder({ variables: { input: {} } });
                                                         }
                                                     }}
                                                 >

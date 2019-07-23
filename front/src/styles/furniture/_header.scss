@@ -39,12 +39,10 @@
         right: 0;
         z-index: 10;
         background-color: $WHITE;
-        border-bottom: 1px solid #eee;
         padding: 0 5px;
 
         @include breakpoint($screen-md) {
             position: relative;
-            border-bottom: none;
         }
     }
 }
@@ -178,16 +176,12 @@
         @include column(8, 12, 7.5px);
 
         text-align: center;
-        height: 50px;
         display: flex;
         align-items: center;
         justify-content: center;
 
         @include breakpoint($screen-md) {
             @include column(4, 12, 7.5px);
-
-            text-align: center;
-            display: inline-block;
         }
     }
 

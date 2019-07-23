@@ -15,7 +15,7 @@ const Success = ({ id }) => (
             <h2 className={styles.subtitle}>
                 Ваш заказ <span className={styles.primaryColor}>№ {id}</span>
             </h2>
-            <RichText expanded={true}>
+            <RichText expanded>
                 <p>В ближайшее время с вами свяжется оператор для уточнения деталей доставки </p>
                 <p>
                     По всем возникающим вопросам, пожалуйста, обращайтесь в нашу Службу по работе с клиентами.

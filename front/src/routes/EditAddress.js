@@ -4,11 +4,7 @@ import PropTypes from 'prop-types';
 
 import AddressForm from 'components/AddressForm';
 
-const EditAddress = props => (
-    <div>
-        <AddressForm {...props} />
-    </div>
-);
+const EditAddress = props => <AddressForm {...props} />;
 
 EditAddress.defaultProps = {};
 

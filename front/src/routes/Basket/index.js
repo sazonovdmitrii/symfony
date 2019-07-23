@@ -15,6 +15,7 @@ const GET_BASKET = gql`
                 qty
                 name
                 product_name
+                price
             }
         }
         directions {
