@@ -73,6 +73,7 @@ export const AddressForm = ({ values: valuesProp, onSubmit, history, actions, re
         region_id,
         code,
         name,
+        person,
     } = values;
 
     return (
@@ -114,6 +115,7 @@ export const AddressForm = ({ values: valuesProp, onSubmit, history, actions, re
                         <Input label="Этаж" name="level" value={level} onChange={handleChange} />
                     </InputGroup>
                     <InputGroup>
+                        <Input label="Получатель" name="person" value={person} onChange={handleChange} />
                         <Input label="Название адреса" name="name" value={name} onChange={handleChange} />
                         {/* <Input
                             label="Коментарий"
@@ -159,7 +161,6 @@ const CREATE_ADDRESS_MUTATION = gql`
             level
             flat
             code
-            active
         }
     }
 `;
@@ -179,7 +180,6 @@ const EDIT_ADDRESS_MUTATION = gql`
             level
             flat
             code
-            active
         }
     }
 `;
@@ -200,7 +200,11 @@ export default props => {
     const isEdit = props.type === 'edit';
 
     const handleCompleted = ({ createAddress, editAddress }, data = createAddress || editAddress) => {
-        if (data) props.history.push('/user/addressbook');
+        if (onSubmit) {
+            onSubmit(data);
+        } else {
+            if (data) props.history.push('/user/addressbook');
+        }
     };
 
     if (isEdit) {
