@@ -28,6 +28,7 @@
     --color-red: #db0119;
 
     /* main colors */
+    --color-background: var(--color-white);
     --color-border: var(--color-grey);
 
     --color-primary: var(--color-red);
