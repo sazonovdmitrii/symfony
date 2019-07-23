@@ -109,7 +109,8 @@ class BasketService extends AbstractController
                             $basketItem,
                             [
                                 'name' => $productItem->getName(),
-                                'product_name' => $productItem->getEntity()->getName()
+                                'product_name' => $productItem->getEntity()->getName(),
+                                'price' => $productItem->getPrice()
                             ]
                         );
                     }
