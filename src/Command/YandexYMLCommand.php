@@ -2,6 +2,7 @@
 // src/Command/CreateUserCommand.php
 namespace App\Command;
 
+use App\Entity\Catalog;
 use App\Entity\Product;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,12 +31,8 @@ class YandexYMLCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $doctrine = $this->getContainer()->get('doctrine');
-//        $products = $doctrine->getRepository(Product::class)->findAll();
-//        foreach($products as $product) {
-//            var_dump($product->getId());
-//            var_dump(get_class_methods($product));
-//            die();
-//        }
+        $products = $doctrine->getRepository(Product::class)->findAll();
+        $catalogs = $doctrine->getRepository(Catalog::class)->findAll();
 
         $file = 'public/YMLGenerator.xml';
         $settings = (new Settings())
@@ -45,9 +42,9 @@ class YandexYMLCommand extends ContainerAwareCommand
 
 // Creating ShopInfo object (https://yandex.ru/support/webmaster/goods-prices/technical-requirements.xml#shop)
         $shopInfo = (new ShopInfo())
-            ->setName('BestShop')
-            ->setCompany('Best online seller Inc.')
-            ->setUrl('http://www.best.seller.com/')
+            ->setName('Laparfumerie.ru')
+            ->setCompany('Laparfumerie.ru')
+            ->setUrl('https://laparfumerie.ru/')
         ;
 
 // Creating currencies array (https://yandex.ru/support/webmaster/goods-prices/technical-requirements.xml#currencies)
@@ -58,24 +55,27 @@ class YandexYMLCommand extends ContainerAwareCommand
         ;
 
 // Creating categories array (https://yandex.ru/support/webmaster/goods-prices/technical-requirements.xml#categories)
-        $categories = [];
-        $categories[] = (new Category())
-            ->setId(1)
-            ->setName('Test Category Name')
-        ;
+        $ymlcategories = [];
+        foreach($catalogs as $catalog) {
+            $ymlcategories[] = (new Category())
+                ->setId($catalog->getId())
+                ->setName($catalog->getName())
+            ;
+        }
 
 // Creating offers array (https://yandex.ru/support/webmaster/goods-prices/technical-requirements.xml#offers)
         $offers = [];
-        $offers[] = (new OfferSimple())
-            ->setId(12346)
-            ->setAvailable(true)
-            ->setUrl('http://www.best.seller.com/product_page.php?pid=12348')
-            ->setPrice('1231231231')
-            ->setCurrencyId('USD')
-            ->setCategoryId(1)
-            ->setDelivery(false)
-            ->setName('Best product ever')
-        ;
+        foreach($products as $product) {
+            $offers[] = (new OfferSimple())
+                ->setId($product->getId())
+                ->setAvailable(true)
+                ->setUrl('http://www.best.seller.com/product_page.php?pid=12348')
+                ->setPrice('1231231231')
+                ->setCurrencyId('USD')
+                ->setCategoryId(1)
+                ->setDelivery(false)
+                ->setName($product->getName());
+        }
 
 // Optional creating deliveries array (https://yandex.ru/support/partnermarket/elements/delivery-options.xml)
         $deliveries = [];
@@ -88,7 +88,7 @@ class YandexYMLCommand extends ContainerAwareCommand
         (new Generator($settings))->generate(
             $shopInfo,
             $currencies,
-            $categories,
+            $ymlcategories,
             $offers,
             $deliveries
         );
