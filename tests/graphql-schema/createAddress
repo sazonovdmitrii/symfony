@@ -1,0 +1,25 @@
+mutation ($input: CreateAddressInput!) {
+  createAddress(input: $input) {
+    id
+    name    
+    user_id {
+      id
+    }
+  }
+}
+
+{
+  "input": {
+    "name": "Rostov Dobrovolskogo",
+    "person": "hey hello",
+    "zip": "353614",
+    "region_id": "34",
+    "city": "Rostov",
+    "street": "Dobrovolskogo",
+    "house": "40",
+    "corp": "9",
+    "level": "8",
+    "flat": "62",
+    "code": "1514"
+  }
+}

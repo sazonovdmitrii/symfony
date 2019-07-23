@@ -32,3 +32,9 @@ Mutation:
         args:
           input:
             type: OrderInput
+      createAddress:
+        type: Address!
+        resolve: '@=mutation("App\\GraphQL\\Mutation\\AddressMutation::create", [args])'
+        args:
+          input:
+            type: CreateAddressInput!

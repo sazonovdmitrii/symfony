@@ -1,17 +1,13 @@
-Address:
-  type: object
+CreateAddressInput:
+  type: input-object
   config:
-    description: "User Address"
     fields:
-      id:
-        type: "Int"
-        description: "Product Id."
       name:
         type: "String"
         description: "Address Name"
-      user_id:
-        type: "User"
-        description: "User"
+      user_id_id:
+        type: "Int"
+        description: "User ID"
       person:
         type: "String"
         description: "Person Address Name"
@@ -42,7 +38,3 @@ Address:
       code:
         type: "String"
         description: "Code"
-      active:
-        type: "String"
-        description: "Active"
-

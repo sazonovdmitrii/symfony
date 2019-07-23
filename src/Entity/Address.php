@@ -101,6 +101,7 @@ class Address
     public function __construct()
     {
         $this->orders = new ArrayCollection();
+        $this->created = new \DateTime();
     }
 
     public function getId(): ?int
@@ -321,6 +322,13 @@ class Address
     {
         $this->flat = $flat;
 
+        return $this;
+    }
+
+    public function setData($key, $value = null)
+    {
+        $method = 'set' . implode('', array_map('ucfirst', explode('_', $key)));
+        $this->$method($value);
         return $this;
     }
 }
