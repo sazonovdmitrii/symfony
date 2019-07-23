@@ -34,10 +34,12 @@ class AddressMutation extends AuthMutation
         $address = [];
 
         if($userId = $this->getAuthKey()) {
-            $address = $this->addressService
-                ->setUserId($userId)
-                ->setData($input)
-                ->create();
+            if(is_int($userId)) {
+                $address = $this->addressService
+                    ->setUserId($userId)
+                    ->setData($input)
+                    ->create();
+            }
         }
 
         return $address;
