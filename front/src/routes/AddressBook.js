@@ -10,7 +10,7 @@ const AddressBook = props => (
     <div>
         <AddressList />
         <div>
-            <Button kind="primary" to="/user/address/new">
+            <Button kind="primary" to="/user/addressbook/new">
                 Добавить адрес
             </Button>
         </div>

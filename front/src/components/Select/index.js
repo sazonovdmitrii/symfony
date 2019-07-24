@@ -9,10 +9,10 @@ import styles from './styles.css';
 
 const cx = classnames.bind(styles);
 
-const Select = ({ items, label, active, onChange }) => {
+const Select = ({ items, label, value, onChange }) => {
     const ref = useRef();
     const [openList, setList] = useState(false);
-    const [selectedValue, setValue] = useState(active);
+    const [selectedValue, setValue] = useState(items.find(({ id }) => id === value) || {});
     const listClassName = cx(styles.list, {
         openList,
     });
@@ -26,7 +26,7 @@ const Select = ({ items, label, active, onChange }) => {
     if (onChange) {
         useEffect(() => {
             onChange(selectedValue);
-        }, [onChange, selectedValue, selectedValue.id]);
+        }, [selectedValue, selectedValue.id]);
     }
     useOnClickOutside(ref, () => setList(false));
 

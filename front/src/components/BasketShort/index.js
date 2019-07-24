@@ -5,6 +5,8 @@ import gql from 'graphql-tag';
 import { GET_BASKET } from 'query';
 import Button from 'components/Button';
 
+const CURRENCY = 'Руб.';
+
 const REMOVE_PRODUCT_MUTATION = gql`
     mutation removeProduct($input: AddBasketInput!) {
         removeBasket(input: $input) {
@@ -24,6 +26,7 @@ const BasketShort = ({ products: productsProps, className, delivery, currency, t
         console.log(newProducts);
         setProducts(newProducts);
     };
+    const totalSum = products.reduce((sum, { price, qty }) => sum + price * qty, 0);
 
     return (
         <div className={`basket-short ${className}`}>
@@ -32,23 +35,24 @@ const BasketShort = ({ products: productsProps, className, delivery, currency, t
                     <ul className="basket-short__list">
                         {products.map(
                             ({
-                                item_id,
+                                item_id: id,
                                 product_name,
                                 name,
                                 qty,
                                 url = '',
                                 brand_name,
-                                sum,
-                                prices,
-                                image,
+                                price,
+                                discount,
                             }) => (
-                                <li key={item_id} className="basket-short__item">
+                                <li key={id} className="basket-short__item">
                                     <div className="basket-short__item-img">
-                                        <img src={`${image}.small.jpg`} alt="" />
+                                        <img src="https://placehold.it/60x60" alt="" />
                                     </div>
                                     <div className="basket-short__item-body">
                                         <a className="basket-short__item-link" href={url}>
-                                            <div className="basket-short__item-brand">{brand_name}</div>
+                                            {brand_name && (
+                                                <div className="basket-short__item-brand">{brand_name}</div>
+                                            )}
                                             <div className="basket-short__item-title">{product_name}</div>
                                             <div className="basket-short__item-property">{name}</div>
                                         </a>
@@ -62,11 +66,11 @@ const BasketShort = ({ products: productsProps, className, delivery, currency, t
                                                 return (
                                                     <Button
                                                         className="basket-short__item-remove"
-                                                        onClick={() =>
+                                                        onClick={() => {
                                                             remove({
-                                                                variables: { input: { item_id } },
-                                                            })
-                                                        }
+                                                                variables: { input: { item_id: id } },
+                                                            });
+                                                        }}
                                                     >
                                                         ✖ Удалить покупку
                                                     </Button>
@@ -75,16 +79,16 @@ const BasketShort = ({ products: productsProps, className, delivery, currency, t
                                         </Mutation>
                                     </div>
                                     <span className="basket-short__item-quantity">x&nbsp;{qty}&nbsp;шт.</span>
-                                    {sum && (
+                                    {price && (
                                         <div className="basket-short__item-sum">
-                                            {discounted && (
+                                            {discount && (
                                                 <span className="basket-short__item-sum-sale">
-                                                    {prices.basket_original_price.value}&nbsp;{sum.currency}
+                                                    {discount}&nbsp;{CURRENCY}
                                                 </span>
                                             )}
-                                            {sum.value}
+                                            {price}&nbsp;
                                             <span className="basket-short__item-sum-currency">
-                                                {sum.currency}
+                                                {CURRENCY}
                                             </span>
                                         </div>
                                     )}
@@ -100,8 +104,8 @@ const BasketShort = ({ products: productsProps, className, delivery, currency, t
                             </div>
                             <div className="basket-short__column--right">
                                 Итого:&nbsp;
-                                <span className="basket-short__total-sum">{total_sum || 0}</span>
-                                &nbsp;{currency || 'руб.'}
+                                <span className="basket-short__total-sum">{totalSum}</span>
+                                &nbsp;{CURRENCY}
                             </div>
                         </div>
                         <Button to="/basket/#adress" className="basket-short__btn" kind="primary" fullWidth>

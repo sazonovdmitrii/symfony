@@ -127,7 +127,7 @@ export const GET_ADDRESSES = gql`
     }
 `;
 
-export const GET_BASKET = gql`
+export const GET_SHORT_BASKET = gql`
     query Basket {
         basket {
             products {
@@ -135,6 +135,7 @@ export const GET_BASKET = gql`
                 qty
                 name
                 product_name
+                price
             }
         }
     }

@@ -10,12 +10,12 @@ import Loader from 'components/Loader';
 export default () => {
     return (
         <Query query={GET_ADDRESSES}>
-            {({ loading, error, data }) => {
+            {({ loading, error, data: { addresses } }) => {
                 if (error && !data) return <ErrorMessage error={error} />;
                 if (loading) return <Loader />;
 
-                return data.addresses ? (
-                    data.addresses.map(item => <AddressItem key={item.id} {...item} />)
+                return addresses ? (
+                    addresses.data.map(item => <AddressItem key={item.id} {...item} />)
                 ) : (
                     <p>Вы не указали ни одного адреса</p>
                 );
