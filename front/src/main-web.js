@@ -14,7 +14,9 @@ import hardtack from 'hardtack';
 import { loadableReady } from '@loadable/component';
 
 import { isProd, createSessionKey } from 'utils';
-import { createClient } from './lib/apollo';
+import { useApp } from 'hooks';
+import { AppProvider } from 'AppContext';
+
 import App from './App';
 
 const history = createBrowserHistory();
@@ -23,18 +25,26 @@ const sessionKey = hardtack.get('session_key');
 if (!sessionKey) createSessionKey();
 
 // get token from cookies 🍪
-const token = hardtack.get('token');
-const client = createClient({ token });
 const HotApp = hot(App);
 
-loadableReady(() => {
-    const root = document.querySelector('#root');
-    const app = (
+const RootApp = () => {
+    const { client } = useApp();
+
+    return (
         <ApolloProvider client={client}>
             <Router history={history}>
                 <HotApp />
             </Router>
         </ApolloProvider>
+    );
+};
+
+loadableReady(() => {
+    const root = document.querySelector('#root');
+    const app = (
+        <AppProvider>
+            <RootApp />
+        </AppProvider>
     );
 
     if (root.hasChildNodes()) {

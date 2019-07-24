@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withApollo, Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
-import hardtack from 'hardtack';
+
+import { useApp } from 'hooks';
 
 import { Dialog, DialogTitle, DialogContent } from 'components/Dialog';
 import Input from 'components/Input';
@@ -68,7 +69,6 @@ const theme = {
 };
 
 const Basket = ({
-    client,
     basket: { products: productsProps },
     directions: { data: directions },
     payments_methods: { data: paymentsMethods },
@@ -102,7 +102,7 @@ const Basket = ({
     const handleCloseModal = () => {
         setOpenModal(false);
     };
-    const handleClose = () => {
+    const handleCloseNotification = () => {
         setNotification(null);
     };
     const handleChangeStep = index => {
@@ -126,18 +126,9 @@ const Basket = ({
         // TODO validation address, delivery, payment
         return true;
     };
-    const handleLogInCompleted = ({ auth }) => {
-        if (auth && auth.hash) {
-            const date = new Date();
-            const currentYear = date.getFullYear();
-
-            date.setFullYear(currentYear + 1);
-            hardtack.set('token', auth.hash, {
-                path: '/',
-                expires: date.toUTCString(),
-            });
-            client.writeData({ data: { isLoggedIn: true } });
-        }
+    const { login } = useApp();
+    const handleLogInCompleted = async ({ auth }) => {
+        await login(auth.hash);
     };
     const handleOrderCompleted = ({ order: { id } }) => {
         // if (id) {
@@ -146,6 +137,12 @@ const Basket = ({
         // } else {
         // setNotification({ type: 'error', text: 'Упс что-то пошло не так' });
         // }
+    };
+    const handleSubmitAddress = data => {
+        if (data) {
+            // todo refetchaddress
+            setShowAddressForm(false);
+        }
     };
 
     if (success) {
@@ -437,6 +434,7 @@ const Basket = ({
                             <div className="basket__address-shippblock">
                                 {showAddressForm ? (
                                     <AddressForm
+                                        onSubmit={handleSubmitAddress}
                                         actions={
                                             <Button
                                                 kind="secondary"
@@ -718,20 +716,13 @@ const Basket = ({
 };
 
 Basket.propTypes = {
-    client: PropTypes.objectOf(
-        PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.object,
-            PropTypes.array,
-            PropTypes.func,
-            PropTypes.bool,
-        ])
-    ).isRequired,
     directions: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.array, PropTypes.string])).isRequired,
     isLoggedIn: PropTypes.bool.isRequired,
     basket: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array]))
         .isRequired,
-    payments_methods: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+    payments_methods: PropTypes.objectOf(
+        PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.number])
+    ).isRequired,
 };
 
 export default withApollo(Basket);

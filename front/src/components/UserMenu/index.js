@@ -1,11 +1,9 @@
 import React, { useState, Fragment } from 'react';
-import { withApollo, Query } from 'react-apollo';
-import { withRouter } from 'react-router';
-import PropTypes from 'prop-types';
+import { Query } from 'react-apollo';
 import { Link } from 'react-router-dom';
-import hardtack from 'hardtack';
 
 import { IS_LOGGED_IN, GET_SHORT_BASKET } from 'query';
+import { useApp } from 'hooks';
 
 import BasketShort from 'components/BasketShort';
 import Button from 'components/Button';
@@ -14,29 +12,21 @@ import { Dialog, DialogTitle, DialogContent } from 'components/Dialog';
 
 import styles from './styles.css';
 
-const UserMenu = ({ client, history }) => {
+const UserMenu = () => {
+    const { logout, login } = useApp();
     const [openModal, setOpenModal] = useState(false);
     const handleLogOut = async () => {
-        hardtack.remove('token', { path: '/' });
-        await client.resetStore();
-
-        history.push('/');
+        await logout();
     };
     const handleCloseModal = () => {
         setOpenModal(false);
     };
-    const handleCompleted = ({ auth }) => {
+    const handleCompleted = async ({ auth }) => {
         if (auth && auth.hash) {
-            const date = new Date();
-            const currentYear = date.getFullYear();
-
-            date.setFullYear(currentYear + 1);
-            hardtack.set('token', auth.hash, {
-                path: '/',
-                expires: date.toUTCString(),
-            });
-            client.writeData({ data: { isLoggedIn: true } });
+            await login(auth.hash);
             handleCloseModal();
+        } else {
+            // todo error
         }
     };
 
@@ -117,7 +107,7 @@ const UserMenu = ({ client, history }) => {
                                     </span>
                                     <span className={styles.label}>Корзина</span>
                                 </Link>
-                                <BasketShort {...data.basket} className={styles.dropdown} />
+                                <BasketShort products={products} className={styles.dropdown} />
                             </Fragment>
                         );
                     }}
@@ -127,17 +117,6 @@ const UserMenu = ({ client, history }) => {
     );
 };
 
-UserMenu.propTypes = {
-    client: PropTypes.objectOf(
-        PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.object,
-            PropTypes.array,
-            PropTypes.func,
-            PropTypes.bool,
-        ])
-    ).isRequired,
-    history: PropTypes.object.isRequired,
-};
+UserMenu.propTypes = {};
 
-export default withApollo(withRouter(UserMenu));
+export default UserMenu;

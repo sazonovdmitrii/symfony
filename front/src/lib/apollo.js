@@ -1,7 +1,6 @@
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloLink } from 'apollo-link';
-import { setContext } from 'apollo-link-context';
 import { onError } from 'apollo-link-error';
 import { createHttpLink } from 'apollo-link-http';
 // mb todo use get for better cache
@@ -27,6 +26,16 @@ const create = ({ token } = {}) => {
     const httpLink = new createHttpLink({
         credentials: 'include',
         uri: process.env.GRAPHQL,
+    });
+    const middlewareLink = new ApolloLink((operation, forward) => {
+        operation.setContext({
+            headers: token
+                ? {
+                      Authorization: token,
+                  }
+                : {},
+        });
+        return forward(operation);
     });
 
     const client = new ApolloClient({
@@ -67,7 +76,7 @@ const create = ({ token } = {}) => {
                     console.log(`[Network error]: ${networkError}`);
                 }
             }),
-            httpLink,
+            middlewareLink.concat(httpLink),
         ]),
         // On the server, enable SSR mode
         ssrMode: isServer,

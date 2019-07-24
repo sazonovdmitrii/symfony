@@ -1,4 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
+import { AppContext } from 'AppContext';
+import { createClient } from 'lib/apollo';
+import hardtack from 'hardtack';
 
 // https://usehooks.com/useOnClickOutside/
 export function useOnClickOutside(ref, handler) {
@@ -87,9 +90,54 @@ export const useInterval = (callback, delay) => {
             savedCallback.current();
         }
         if (delay !== null) {
-            let id = setInterval(tick, delay);
+            const id = setInterval(tick, delay);
 
             return () => clearInterval(id);
         }
     }, [delay]);
+};
+
+export const useApp = () => {
+    const [state, setState] = useContext(AppContext);
+
+    const init = () => {
+        const token = hardtack.get('token');
+        const client = createClient({ token });
+
+        setState(prevState => ({
+            ...prevState,
+            client,
+        }));
+
+        return client;
+    };
+
+    const login = async token => {
+        if (token) {
+            const date = new Date();
+            const currentYear = date.getFullYear();
+
+            date.setFullYear(currentYear + 1);
+            hardtack.set('token', token, {
+                path: '/',
+                expires: date.toUTCString(),
+            });
+
+            const client = await init();
+            await client.writeData({ data: { isLoggedIn: true } });
+        }
+    };
+
+    const logout = async () => {
+        hardtack.remove('token', { path: '/' });
+
+        await init();
+    };
+
+    return {
+        init,
+        logout,
+        login,
+        client: state.client,
+    };
 };
