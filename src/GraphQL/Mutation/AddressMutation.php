@@ -2,6 +2,7 @@
 namespace App\GraphQL\Mutation;
 
 use App\GraphQL\Input\CreateAddressInput;
+use App\GraphQL\Input\UpdateAddressInput;
 use App\Service\AddressService;
 use App\Service\AuthenticatorService;
 use Overblog\GraphQLBundle\Definition\Argument;
@@ -39,6 +40,41 @@ class AddressMutation extends AuthMutation
                     ->setUserId($userId)
                     ->setData($input)
                     ->create();
+            }
+        }
+
+        return $address;
+    }
+
+    public function update(Argument $args)
+    {
+        $input = new UpdateAddressInput($args);
+
+        $address = [];
+
+        if($userId = $this->getAuthKey()) {
+            if(is_int($userId)) {
+                $address = $this->addressService
+                    ->setAddressId($input->id)
+                    ->setData($input)
+                    ->update();
+            }
+        }
+
+        return $address;
+    }
+
+    public function remove(Argument $args)
+    {
+        $input = new UpdateAddressInput($args);
+
+        $address = [];
+
+        if($userId = $this->getAuthKey()) {
+            if(is_int($userId)) {
+                $address = $this->addressService
+                    ->setAddressId($input->id)
+                    ->remove();
             }
         }
 

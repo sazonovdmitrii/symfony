@@ -38,3 +38,15 @@ Mutation:
         args:
           input:
             type: CreateAddressInput!
+      updateAddress:
+        type: Address!
+        resolve: '@=mutation("App\\GraphQL\\Mutation\\AddressMutation::update", [args])'
+        args:
+          input:
+            type: UpdateAddressInput!
+      removeAddress:
+        type: Address!
+        resolve: '@=mutation("App\\GraphQL\\Mutation\\AddressMutation::remove", [args])'
+        args:
+          input:
+            type: RemoveAddressInput!

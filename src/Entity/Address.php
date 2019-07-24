@@ -327,8 +327,10 @@ class Address
 
     public function setData($key, $value = null)
     {
-        $method = 'set' . implode('', array_map('ucfirst', explode('_', $key)));
-        $this->$method($value);
+        if($key != 'id') {
+            $method = 'set' . implode('', array_map('ucfirst', explode('_', $key)));
+            $this->$method($value);
+        }
         return $this;
     }
 }

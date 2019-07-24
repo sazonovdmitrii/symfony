@@ -1,0 +1,15 @@
+mutation ($input: RemoveAddressInput!) {
+  removeAddress(input: $input) {
+    id
+    name    
+    user_id {
+      id
+    }
+  }
+}
+
+{
+  "input": {
+    "id": "17"
+  }
+}

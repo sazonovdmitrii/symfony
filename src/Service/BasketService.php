@@ -71,6 +71,21 @@ class BasketService extends AbstractController
                 unset($basket[$itemId]);
             }
             $this->redis->set($key, json_encode($basket));
+            foreach($basket as $basketItem) {
+                $productItem = $this->em
+                    ->getRepository('App:ProductItem')
+                    ->find($basketItem['item_id']);
+                if($productItem) {
+                    $basket[$basketItem['item_id']] = array_merge(
+                        $basketItem,
+                        [
+                            'name' => $productItem->getName(),
+                            'product_name' => $productItem->getEntity()->getName(),
+                            'price' => $productItem->getPrice()
+                        ]
+                    );
+                }
+            }
             return ['products' => $basket];
         }
         return [
@@ -87,6 +102,21 @@ class BasketService extends AbstractController
                 $basket[$itemId]['qty'] = $qty;
             }
             $this->redis->set($key, json_encode($basket));
+            foreach($basket as $basketItem) {
+                $productItem = $this->em
+                    ->getRepository('App:ProductItem')
+                    ->find($basketItem['item_id']);
+                if($productItem) {
+                    $basket[$basketItem['item_id']] = array_merge(
+                        $basketItem,
+                        [
+                            'name' => $productItem->getName(),
+                            'product_name' => $productItem->getEntity()->getName(),
+                            'price' => $productItem->getPrice()
+                        ]
+                    );
+                }
+            }
             return ['products' => $basket];
         }
         return [

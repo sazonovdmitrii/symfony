@@ -11,6 +11,8 @@ class AddressService extends AbstractController
 {
     private $userId;
 
+    private $addressId;
+
     private $data;
 
     public function __construct(
@@ -32,7 +34,7 @@ class AddressService extends AbstractController
         return $this->userId;
     }
 
-    public function setData(CreateAddressInput $data)
+    public function setData($data)
     {
         $this->data = $data;
         return $this;
@@ -43,9 +45,17 @@ class AddressService extends AbstractController
         return $this->data;
     }
 
-    /**
-     *
-     */
+    public function setAddressId(int $addressId)
+    {
+        $this->addressId = $addressId;
+        return $this;
+    }
+
+    public function getAddressId()
+    {
+        return $this->addressId;
+    }
+
     public function create()
     {
         $address = new Address();
@@ -54,12 +64,42 @@ class AddressService extends AbstractController
                 $address->setData($attribute, $value);
             }
         }
-        $user = $this->em->getRepository('App:Users')->find($this->getUserId());
+        $user = $this->em
+            ->getRepository('App:Users')
+            ->find($this->getUserId());
+
         if($user) {
             $address->setUserId($user);
         }
+
         $this->manager->persist($address);
         $this->manager->flush();
+        return $address;
+    }
+
+    public function update()
+    {
+        $address = $this->em
+            ->getRepository('App:Address')
+            ->find($this->getAddressId());
+        foreach(get_object_vars($this->getData()) as $attribute => $value) {
+            if($value) {
+                $address->setData($attribute, $value);
+            }
+        }
+        $this->manager->flush();
+        return $address;
+    }
+
+    public function remove()
+    {
+        $address = $this->em
+            ->getRepository('App:Address')
+            ->find($this->getAddressId());
+
+        $this->manager->remove($address);
+        $this->manager->flush();
+
         return $address;
     }
 }
