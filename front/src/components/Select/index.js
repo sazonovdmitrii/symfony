@@ -12,7 +12,8 @@ const cx = classnames.bind(styles);
 const Select = ({ items, label, value, onChange }) => {
     const ref = useRef();
     const [openList, setList] = useState(false);
-    const [selectedValue, setValue] = useState(items.find(({ id }) => id === value) || {});
+    // TODO remove parseInt
+    const [selectedValue, setValue] = useState(items.find(({ id }) => id === parseInt(value, 10)) || {});
     const listClassName = cx(styles.list, {
         openList,
     });

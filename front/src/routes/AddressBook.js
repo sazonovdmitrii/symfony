@@ -9,11 +9,6 @@ import Button from 'components/Button';
 const AddressBook = props => (
     <div>
         <AddressList />
-        <div>
-            <Button kind="primary" to="/user/addressbook/new">
-                Добавить адрес
-            </Button>
-        </div>
     </div>
 );
 

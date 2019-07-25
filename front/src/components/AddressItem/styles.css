@@ -1,17 +1,24 @@
-.wrapper {
+.root {
     margin-bottom: 15px;
-    padding: 5px 10px;
-    display: block;
-    overflow: hidden;
-    border-bottom: dashed 1px #dadada;
-    background: #f2f2f2;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    background: var(--color-lightgrey);
+    border-radius: 5px;
 }
 
 .text {
-    float: left;
+    font-size: var(--font-size-small);
 }
 
-.button::before {
-    font-size: inherit;
-    margin: 0;
+.actions {
+    margin-left: auto;
+
+    & > * + * {
+        margin-left: 5px;
+    }
+}
+
+.active {
+    box-shadow: 0 0 0 2px var(--color-primary);
 }

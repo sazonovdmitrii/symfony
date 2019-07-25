@@ -1,0 +1,4 @@
+.button::before {
+    font-size: inherit;
+    margin: 0;
+}

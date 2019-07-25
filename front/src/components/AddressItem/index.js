@@ -1,38 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-
-import Button from 'components/Button';
+import classnames from 'classnames/bind';
 
 import styles from './styles.css';
 
-const AddressItem = ({ id, street, house, postcode, city, phone, housing, apartment }) => {
-    const handleDelete = () => {
-        // TODO mutation for delete addres by id
-    };
+const cx = classnames.bind(styles);
+const text = {
+    city: 'г.',
+    corp: 'корп.',
+    flat: 'кв.',
+    house: 'д.',
+    street: 'ул.',
+    zip: 'индекс:',
+};
+
+const AddressItem = ({ id, street, house, zip, city, corp, flat, actions, active, onClick }) => {
+    const rootClassName = cx(styles.root, {
+        active,
+    });
 
     return (
-        <div className={styles.wrapper}>
+        <div className={rootClassName} onClick={() => onClick(id)}>
             <div className={styles.text}>
-                г. {city}, индекс: {postcode}, ул. {street}, д. {house}, корп. {housing}, кв. {apartment},
-                тел. {phone}
+                {`${text.city} ${city}, ${text.zip} ${zip}, ${text.street} ${street}, ${
+                    text.house
+                } ${house}, ${text.corp} ${corp}, ${text.flat} ${flat}`}
             </div>
-            <div className="pull-right">
-                <Button
-                    className={`${styles.button} flaticon-pencil41`}
-                    to={`/user/addressbook/edit/${id}`}
-                    kind="primary"
-                    size="small"
-                    outlined
-                />
-                <Button
-                    className={`${styles.button} flaticon-delete96`}
-                    onClick={handleDelete}
-                    kind="primary"
-                    size="small"
-                    outlined
-                />
-            </div>
+            {actions && <div className={styles.actions}>{actions}</div>}
         </div>
     );
 };
@@ -40,22 +34,23 @@ const AddressItem = ({ id, street, house, postcode, city, phone, housing, apartm
 AddressItem.defaultProps = {
     street: null,
     house: null,
-    postcode: null,
+    zip: null,
     city: null,
-    phone: null,
-    apartment: null,
-    housing: null,
+    flat: null,
+    corp: null,
+    actions: null,
+    onClick: () => {},
 };
 
 AddressItem.propTypes = {
     id: PropTypes.number.isRequired,
     street: PropTypes.string,
     house: PropTypes.string,
-    postcode: PropTypes.string,
     city: PropTypes.string,
-    phone: PropTypes.string,
-    apartment: PropTypes.string,
-    housing: PropTypes.string,
+    zip: PropTypes.string,
+    flat: PropTypes.string,
+    corp: PropTypes.string,
+    actions: PropTypes.node,
 };
 
 export default AddressItem;

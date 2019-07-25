@@ -15,3 +15,22 @@ import gql from 'graphql-tag';
 //         }
 //     `,
 // };
+
+export const Address = gql`
+    fragment Address on Addresses {
+        data {
+            id
+            name
+            person
+            zip
+            region_id
+            city
+            street
+            house
+            corp
+            level
+            flat
+            code
+        }
+    }
+`;

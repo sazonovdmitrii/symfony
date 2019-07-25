@@ -11,7 +11,6 @@ import Input from 'components/Input';
 import Button from 'components/Button';
 import LoginForm from 'components/LoginForm';
 import RegisterForm from 'components/RegisterForm';
-import AddressForm from 'components/AddressForm';
 import InputGroup from 'components/InputGroup';
 import RadioGroup from 'components/RadioGroup';
 import RadioButton from 'components/RadioButton';
@@ -79,13 +78,13 @@ const Basket = ({
     const [promocode, setPromocode] = useState(null);
     const [openModal, setOpenModal] = useState(false);
     const [step, setStep] = useState(0);
-    const [showAddressForm, setShowAddressForm] = useState(false);
     const [notification, setNotification] = useState(null);
     const [values, setValues] = useState({
         payment: paymentsMethods[0].id.toString(),
         direction: directions[0].id.toString(),
         comment: '',
         promocode: '',
+        address_id: null,
     });
     const [currentPayment, setCurrentPayment] = useState(paymentsMethods[0]);
     const [currentDirection, setCurrentDirection] = useState(directions[0]);
@@ -138,11 +137,8 @@ const Basket = ({
         // setNotification({ type: 'error', text: 'Упс что-то пошло не так' });
         // }
     };
-    const handleSubmitAddress = data => {
-        if (data) {
-            // todo refetchaddress
-            setShowAddressForm(false);
-        }
+    const handleChangeAddress = address_id => {
+        setValues(prevState => ({ ...prevState, address_id }));
     };
 
     if (success) {
@@ -432,36 +428,7 @@ const Basket = ({
                     <StepContainer title="Доставка" theme={theme} nav={{ footer: true }}>
                         <div className="basket__address-shipp">
                             <div className="basket__address-shippblock">
-                                {showAddressForm ? (
-                                    <AddressForm
-                                        onSubmit={handleSubmitAddress}
-                                        actions={
-                                            <Button
-                                                kind="secondary"
-                                                bold
-                                                onClick={() => setShowAddressForm(false)}
-                                            >
-                                                Назад
-                                            </Button>
-                                        }
-                                    />
-                                ) : (
-                                    <Fragment>
-                                        <div style={{ right: '15px', position: 'absolute' }}>
-                                            <Button
-                                                kind="primary"
-                                                bold
-                                                onClick={() => setShowAddressForm(true)}
-                                            >
-                                                Добавить адрес
-                                            </Button>
-                                        </div>
-                                        <span className="basket__address-shippblock-label">
-                                            Адреса доставки
-                                        </span>
-                                        <AddressList />
-                                    </Fragment>
-                                )}
+                                <AddressList value={values.address_id} onChange={handleChangeAddress} />
                             </div>
                             <div className="basket__address-shippblock">
                                 <span className="basket__address-shippblock-label">Способ доставки</span>
@@ -696,7 +663,11 @@ const Basket = ({
                                                     bold
                                                     onClick={() => {
                                                         if (isValid()) {
-                                                            createOrder({ variables: { input: {} } });
+                                                            createOrder({
+                                                                variables: {
+                                                                    input: { address_id: values.address_id },
+                                                                },
+                                                            });
                                                         }
                                                     }}
                                                 >

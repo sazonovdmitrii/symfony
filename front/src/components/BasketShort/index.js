@@ -20,10 +20,9 @@ const REMOVE_PRODUCT_MUTATION = gql`
     }
 `;
 
-const BasketShort = ({ products: productsProps, className, delivery, currency, total_sum }) => {
-    const [products, setProducts] = useState(productsProps.filter(Boolean) || []);
+const BasketShort = ({ products: productsProps, className, delivery }) => {
+    const [products, setProducts] = useState(productsProps);
     const handleRemoveProduct = ({ removeBasket: { products: newProducts } }) => {
-        console.log(newProducts);
         setProducts(newProducts);
     };
     const totalSum = products.reduce((sum, { price, qty }) => sum + price * qty, 0);

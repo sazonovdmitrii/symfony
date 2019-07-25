@@ -6,7 +6,6 @@ import { Helmet } from 'react-helmet';
 import Nav from 'components/Nav';
 
 import AddressBook from 'routes/AddressBook';
-import EditAddress from 'routes/EditAddress';
 import NotFound from 'routes/NotFound';
 import Orders from 'routes/Orders';
 import Personal from 'routes/Personal';
@@ -24,7 +23,6 @@ const routes = [
 
 const loggedInRoutes = [
     { path: '/user/addressbook', component: AddressBook },
-    { path: ['/user/addressbook/new', '/user/addressbook/edit/:id'], component: EditAddress },
     { path: '/user/orders', component: Orders },
     { path: '/user/personal', component: Personal },
     { path: '/user/security', component: Security },

@@ -26,20 +26,6 @@ export const GET_CATALOG = gql`
     }
 `;
 
-export const GET_USER = gql`
-    query User($id: Int!) {
-        user(id: $id) {
-            email
-            session @client {
-                isAdmin
-                isLoggedIn
-                connectionCount
-                errors
-            }
-        }
-    }
-`;
-
 export const GET_PRODUCT = gql`
     query Product($slug: String!) {
         product(slug: $slug) {
@@ -96,21 +82,12 @@ export const GET_PRODUCTS = gql`
     }
 `;
 
-export const GET_ADDRESS = gql`
-    query Address($id: Int!) {
-        address(id: $id) {
-            id
-        }
-    }
-`;
-
 export const GET_ADDRESSES = gql`
     {
         addresses {
             data {
                 id
                 name
-                user_id
                 person
                 zip
                 region_id
@@ -121,7 +98,31 @@ export const GET_ADDRESSES = gql`
                 level
                 flat
                 code
-                active
+            }
+        }
+    }
+`;
+
+export const GET_ADDRESS = gql`
+    query getAddress($id: Int) {
+        address(id: $id) {
+            id
+            name
+            person
+            zip
+            region_id
+            city
+            street
+            house
+            corp
+            level
+            flat
+            code
+        }
+        regions {
+            data {
+                id
+                title
             }
         }
     }
