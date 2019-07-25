@@ -39,8 +39,8 @@ const AddressList = ({ items: itemsProp, value, onChange }) => {
     const handleRemoveAddress = ({ removeAddress: { data } }) => {
         setItems(data);
     };
-    const handleSubmitAddress = ({ data }) => {
-        setItems(data);
+    const handleSubmitAddress = data => {
+        setItems(data.data ? data.data : [...items, data]);
         setShowForm(null);
     };
 
@@ -67,7 +67,7 @@ const AddressList = ({ items: itemsProp, value, onChange }) => {
 
     return (
         <Fragment>
-            {items.length ? (
+            {items && items.length ? (
                 items.map(item => (
                     <AddressItem
                         key={item.id}

@@ -113,7 +113,13 @@ const AddressForm = ({ values: valuesProp, onSubmit, history, actions, regions }
                     </InputGroup>
                     <InputGroup>
                         <Input label="Получатель" name="person" value={person} onChange={handleChange} />
-                        <Input label="Название адреса" name="name" value={name} onChange={handleChange} />
+                        <Input
+                            label="Название адреса"
+                            name="name"
+                            value={name}
+                            onChange={handleChange}
+                            required
+                        />
                         {/* <Input
                             label="Коментарий"
                             name="comment"

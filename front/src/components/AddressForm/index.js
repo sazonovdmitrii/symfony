@@ -4,7 +4,6 @@ import { Query, Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import { GET_ADDRESS } from 'query';
-import { Address } from 'query/fragments';
 
 import Loader from 'components/Loader';
 
@@ -13,7 +12,18 @@ import AddressForm from './AddressForm';
 const CREATE_ADDRESS_MUTATION = gql`
     mutation createAddress($input: CreateAddressInput!) {
         createAddress(input: $input) {
-            ...${Address}
+            id
+            name
+            person
+            zip
+            region_id
+            city
+            street
+            house
+            corp
+            level
+            flat
+            code
         }
     }
 `;
@@ -21,7 +31,20 @@ const CREATE_ADDRESS_MUTATION = gql`
 const UPDATE_ADDRESS_MUTATION = gql`
     mutation updateAddress($input: UpdateAddressInput!) {
         updateAddress(input: $input) {
-            ...${Address}
+            data {
+                id
+                name
+                person
+                zip
+                region_id
+                city
+                street
+                house
+                corp
+                level
+                flat
+                code
+            }
         }
     }
 `;
