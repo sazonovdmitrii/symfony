@@ -50,34 +50,42 @@ class AddressMutation extends AuthMutation
     {
         $input = new UpdateAddressInput($args);
 
-        $address = [];
-
         if($userId = $this->getAuthKey()) {
             if(is_int($userId)) {
-                $address = $this->addressService
+                $this->addressService
                     ->setAddressId($input->id)
                     ->setData($input)
                     ->update();
+
+                return [
+                    'data' => $this->getUser()->getAddresses()
+                ];
             }
         }
 
-        return $address;
+        return [
+            'data' => []
+        ];
     }
 
     public function remove(Argument $args)
     {
         $input = new UpdateAddressInput($args);
 
-        $address = [];
-
         if($userId = $this->getAuthKey()) {
             if(is_int($userId)) {
-                $address = $this->addressService
+                $this->addressService
                     ->setAddressId($input->id)
                     ->remove();
+
+                return [
+                    'data' => $this->getUser()->getAddresses()
+                ];
             }
         }
 
-        return $address;
+        return [
+            'data' => []
+        ];
     }
 }

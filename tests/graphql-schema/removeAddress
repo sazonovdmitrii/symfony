@@ -1,10 +1,15 @@
 mutation ($input: RemoveAddressInput!) {
   removeAddress(input: $input) {
-    id
-    name    
-    user_id {
-      id
-    }
+    data{
+        id
+        name
+        user_id {
+          id
+        }
+        region_id
+        city
+        street
+      }
   }
 }
 

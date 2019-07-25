@@ -39,13 +39,13 @@ Mutation:
           input:
             type: CreateAddressInput!
       updateAddress:
-        type: Address!
+        type: Addresses!
         resolve: '@=mutation("App\\GraphQL\\Mutation\\AddressMutation::update", [args])'
         args:
           input:
             type: UpdateAddressInput!
       removeAddress:
-        type: Address!
+        type: Addresses!
         resolve: '@=mutation("App\\GraphQL\\Mutation\\AddressMutation::remove", [args])'
         args:
           input:

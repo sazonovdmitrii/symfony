@@ -49,7 +49,7 @@ Query:
           token:
             description: "User Token"
             type: "String"
-        resolve: "@=resolver('Address', [args])"
+        resolve: "@=resolver('Addresses', [args])"
       basket:
         type: "Basket"
         resolve: "@=resolver('Basket', [args])"
@@ -95,6 +95,13 @@ Query:
       payments_methods:
         type: "PaymentsMethods"
         resolve: "@=resolver('PaymentsMethods', [args])"
+      address:
+        type: "Address"
+        resolve: "@=resolver('Address', [args])"
+        args:
+            id:
+              description: "Address ID"
+              type: "Int"
 DateTime:
     type: custom-scalar
     config:

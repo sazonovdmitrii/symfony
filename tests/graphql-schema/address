@@ -3,7 +3,9 @@
     data{
       id
       name
-      user_id
+      user_id {
+        id
+      }
       region_id
       city
       street

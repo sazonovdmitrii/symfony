@@ -1,10 +1,13 @@
 mutation ($input: UpdateAddressInput!) {
-  updateAddress(input: $input) {
+  data{
     id
-    name    
+    name
     user_id {
       id
     }
+    region_id
+    city
+    street
   }
 }
 

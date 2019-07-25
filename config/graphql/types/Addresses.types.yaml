@@ -4,55 +4,6 @@ Addresses:
     description: "Users Addresses"
     fields:
       data:
-       type: "[UserAddress]"
-UserAddress:
-  type: object
-  config:
-    description: "User Address Item"
-    fields:
-      id:
-        type: "Int!"
-        description: "User Address Id"
-      name:
-        type: "String"
-        description: "User Address Name"
-      user_id:
-        type: "Int"
-        description: "User ID"
-      person:
-        type: "String"
-        description: "Person Address Name"
-      zip:
-        type: "String"
-        description: "Post Code"
-      region_id:
-        type: "String"
-        description: "Region ID"
-      city:
-        type: "String"
-        description: "City"
-      street:
-        type: "String"
-        description: "Street"
-      house:
-        type: "String"
-        description: "House"
-      corp:
-        type: "String"
-        description: "Corp"
-      level:
-        type: "String"
-        description: "Level"
-      flat:
-        type: "String"
-        description: "Flat"
-      code:
-        type: "String"
-        description: "Code"
-      active:
-        type: "String"
-        description: "Active"
-
-
+       type: "[Address]"
 
 
