@@ -1,0 +1,18 @@
+mutation ($input: RegisterInput!) {
+  register(input: $input) {
+    id,
+    email
+  }
+}
+
+{
+  "input": {
+    "firstname": "Dmitro",
+    "lastname": "Sazonenko",
+    "email": "sazonio@ya.ru",
+    "gender": "male",
+    "password": "fa8a150a09",
+    "confirm_password": "fa8a150a09",
+    "phone": "89889917443"
+  }
+}
