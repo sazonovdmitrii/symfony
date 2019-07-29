@@ -1,0 +1,25 @@
+RegisterInput:
+  type: input-object
+  config:
+    fields:
+      firstname:
+        type: "String"
+        description: "Fristname"
+      lastname:
+        type: "String"
+        description: "Lastname"
+      email:
+        type: "String"
+        description: "Email"
+      gender:
+        type: "String"
+        description: "Gender"
+      password:
+        type: "String"
+        description: "Password"
+      confirm_password:
+        type: "String"
+        description: "Confirm Password"
+      phone:
+        type: "String"
+        description: "Phone"

@@ -12,6 +12,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class Users implements UserInterface
 {
+    const ROLE_USER = 'ROLE_USER';
+    
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -51,6 +53,21 @@ class Users implements UserInterface
      * @ORM\OneToMany(targetEntity="App\Entity\UserAddress", mappedBy="entity")
      */
     private $userAddresses;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $gender;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $firstname;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $lastname;
 
     public function __construct()
     {
@@ -243,6 +260,42 @@ class Users implements UserInterface
                 $userAddresses->setEntity(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(?string $gender): self
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getFirstname(): ?string
+    {
+        return $this->firstname;
+    }
+
+    public function setFirstname(?string $firstname): self
+    {
+        $this->firstname = $firstname;
+
+        return $this;
+    }
+
+    public function getLastname(): ?string
+    {
+        return $this->lastname;
+    }
+
+    public function setLastname(?string $lastname): self
+    {
+        $this->lastname = $lastname;
 
         return $this;
     }

@@ -8,6 +8,12 @@ Mutation:
         args:
           input:
             type: UserInput!
+      register:
+        type: RegisterUser!
+        resolve: '@=mutation("App\\GraphQL\\Mutation\\UserMutation::register", [args])'
+        args:
+          input:
+            type: RegisterInput!
       addBasket:
         type: Basket!
         resolve: '@=mutation("App\\GraphQL\\Mutation\\BasketMutation::add", [args])'

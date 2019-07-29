@@ -1,0 +1,26 @@
+RegisterUser:
+  type: object
+  config:
+    description: "Register User"
+    fields:
+      id:
+        type: "Int!"
+        description: "User Id."
+      email:
+        type: "String!"
+        description: "Email"
+      firstname:
+        type: "String"
+        description: "Firstname"
+      lastname:
+        type: "String"
+        description: "Lastname"
+      gender:
+        type: "String"
+        description: "Gender"
+      password:
+        type: "String"
+        description: "Password"
+      confirm_password:
+        type: "String"
+        description: "Confirm Password"
