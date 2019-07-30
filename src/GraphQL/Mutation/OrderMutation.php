@@ -49,7 +49,8 @@ class OrderMutation extends AuthMutation
             $order->setUserId($user);
             $deliveryId = ($input->pvz_id) ? $input->pvz_id : $input->courier_id;
             $order->setDeliveryId($deliveryId);
-            $order->setAddressId($input->address_id);
+            $address = $this->em->getRepository('App:Address')->find($input->address_id);
+            $order->setAddressId($address);
         }
 
         if(!count($basket) || in_array('products', array_keys($basket))) {
