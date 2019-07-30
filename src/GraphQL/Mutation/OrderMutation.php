@@ -53,13 +53,13 @@ class OrderMutation extends AuthMutation
             $order->setAddressId($address);
         }
 
-        if(!count($basket) || in_array('products', array_keys($basket))) {
+        if(!count($basket)) {
             return [
                 'id' => null
             ];
         }
 
-        foreach ($basket as $basketItem) {
+        foreach ($basket['products'] as $basketItem) {
             $orderItem = new OrderItem();
             $orderItem->setQty($basketItem['qty']);
 
