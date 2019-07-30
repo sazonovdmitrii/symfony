@@ -33,8 +33,8 @@ const Button = ({
         disabled,
         uppercase,
         rounded,
-        [newKind]: kind,
-        [size]: size,
+        [newKind]: !!kind,
+        [size]: !!size,
     });
     const Button = href ? 'a' : to ? Link : 'button';
     const role = href || to ? null : 'button';

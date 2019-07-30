@@ -14,13 +14,14 @@ const text = {
     zip: 'индекс:',
 };
 
-const AddressItem = ({ id, street, house, zip, city, corp, flat, actions, active, onClick }) => {
+const AddressItem = props => {
+    const { id, street, house, zip, city, corp, flat, actions, active, onClick } = props;
     const rootClassName = cx(styles.root, {
         active,
     });
 
     return (
-        <div className={rootClassName} onClick={() => onClick(id)}>
+        <div className={rootClassName} onClick={() => onClick(props)}>
             <div className={styles.text}>
                 {`${text.city} ${city}, ${text.zip} ${zip}, ${text.street} ${street}, ${
                     text.house

@@ -35,6 +35,7 @@ const REMOVE_PRODUCT_MUTATION = gql`
                 qty
                 name
                 product_name
+                price
             }
         }
     }
@@ -48,6 +49,7 @@ const UPDATE_PRODUCT_MUTATION = gql`
                 qty
                 name
                 product_name
+                price
             }
         }
     }
@@ -65,6 +67,15 @@ const theme = {
     title: 'typography__catheader float_left basket__h1',
     header: 'basket__title',
     nav: 'float_right',
+};
+
+const text = {
+    city: 'г.',
+    corp: 'корп.',
+    flat: 'кв.',
+    house: 'д.',
+    street: 'ул.',
+    zip: 'индекс:',
 };
 
 const Basket = ({
@@ -88,6 +99,7 @@ const Basket = ({
     });
     const [currentPayment, setCurrentPayment] = useState(paymentsMethods[0]);
     const [currentDirection, setCurrentDirection] = useState(directions[0]);
+    const [currentAddress, setCurrentAddress] = useState(null);
     const totalSum = products.reduce((acc, item) => acc + item.price * item.qty, 0);
     const totalSumWithDirection = parseInt(currentDirection.price, 10) + totalSum;
 
@@ -129,16 +141,20 @@ const Basket = ({
     const handleLogInCompleted = async ({ auth }) => {
         await login(auth.hash);
     };
-    const handleOrderCompleted = ({ order: { id } }) => {
-        // if (id) {
-        setSuccess(true);
-        console.log('order done', '👍');
-        // } else {
-        // setNotification({ type: 'error', text: 'Упс что-то пошло не так' });
-        // }
+    const handleRegisterCompleted = async ({ register: { hash } }) => {
+        await login(hash);
     };
-    const handleChangeAddress = address_id => {
-        setValues(prevState => ({ ...prevState, address_id }));
+    const handleOrderCompleted = ({ order: { id } }) => {
+        if (id) {
+            setSuccess(id);
+            console.log('order done', '👍');
+            // } else {
+            // setNotification({ type: 'error', text: 'Упс что-то пошло не так' });
+        }
+    };
+    const handleChangeAddress = data => {
+        setCurrentAddress(data);
+        setValues(prevState => ({ ...prevState, address_id: data.id }));
     };
 
     if (success) {
@@ -419,7 +435,7 @@ const Basket = ({
                             <div className="basket__node">
                                 <div className="basket__form">
                                     <h3 className="basket__formtitle">Я новый пользователь</h3>
-                                    <RegisterForm />
+                                    <RegisterForm onCompleted={handleRegisterCompleted} />
                                 </div>
                             </div>
                         </div>
@@ -497,10 +513,20 @@ const Basket = ({
                 {isLoggedIn && (
                     <StepContainer title="Подтверждение" theme={theme}>
                         <div className="basket__confirm-data float_left">
-                            <div className="basket__confirm-info">
-                                <div className="basket__confirm-info-title basket__bold">Адрес доставки</div>
-                                <div data-render="confirmAddress" className="basket__confirm-info-list" />
-                            </div>
+                            {currentAddress && (
+                                <div className="basket__confirm-info">
+                                    <div className="basket__confirm-info-title basket__bold">
+                                        Адрес доставки
+                                    </div>
+                                    <div className="basket__confirm-info-list">{`${text.city} ${
+                                        currentAddress.city
+                                    }, ${text.zip} ${currentAddress.zip}, ${text.street} ${
+                                        currentAddress.street
+                                    }, ${text.house} ${currentAddress.house}, ${text.corp} ${
+                                        currentAddress.corp
+                                    }, ${text.flat} ${currentAddress.flat}`}</div>
+                                </div>
+                            )}
                             {currentPayment && (
                                 <div className="basket__confirm-info">
                                     <div className="basket__confirm-info-title basket__bold">Оплата</div>

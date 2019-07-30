@@ -11,38 +11,43 @@ import Checkbox from 'components/Checkbox';
 import styles from './styles.css';
 
 const Register = props => {
-    const [firstname, setFirstname] = useState('');
-    const [lastname, setLastname] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [password, setPassword] = useState('');
-    const [gender, setGender] = useState('');
+    const [{ firstname, lastname, email, phone, password, gender }, setValues] = useState({
+        firstname: '',
+        lastname: '',
+        email: '',
+        phone: '',
+        password: '',
+        gender: '',
+    });
     const [disclaimer, setDisclaimer] = useState(false);
     const [emailSubscription, setEmailSubscription] = useState(true);
-    const handleChange = ({ target: { value } }) => {
-        setGender(value);
+    const handleChange = ({ target: { value, name } }) => {
+        setValues(prevState => ({
+            ...prevState,
+            [name]: value,
+        }));
     };
-    const register = e => {
+    const handleSubmit = e => {
         e.preventDefault();
 
-        console.log(e);
-        props
-            .onSubmit({
-                variables: {
+        // todo validate
+        props.onSubmit({
+            variables: {
+                input: {
                     firstname,
                     lastname,
+                    phone,
                     email,
                     password,
                     gender,
+                    confirm_password: password,
                 },
-            })
-            .then(resp => {
-                console.log(resp, '🤔');
-            });
+            },
+        });
     };
 
     return (
-        <form className={styles.root} onSubmit={register}>
+        <form className={styles.root} onSubmit={handleSubmit}>
             <div className="cabinet-content__row">
                 <div className="cabinet-content__column">
                     <InputGroup>
@@ -50,7 +55,7 @@ const Register = props => {
                             name="firstname"
                             label="Имя"
                             value={firstname}
-                            onChange={({ target: { value } }) => setFirstname(value)}
+                            onChange={handleChange}
                             required
                         />
                     </InputGroup>
@@ -59,7 +64,7 @@ const Register = props => {
                             name="lastname"
                             label="Фамилия"
                             value={lastname}
-                            onChange={({ target: { value } }) => setLastname(value)}
+                            onChange={handleChange}
                             required
                         />
                     </InputGroup>
@@ -79,7 +84,7 @@ const Register = props => {
                             label="Email"
                             type="email"
                             value={email}
-                            onChange={({ target: { value } }) => setEmail(value)}
+                            onChange={handleChange}
                             required
                         />
                     </InputGroup>
@@ -91,7 +96,7 @@ const Register = props => {
                             label="Телефон"
                             placeholder="+7 (000) 000-00-00"
                             mask="+{7} (000) 000-00-00"
-                            onChange={({ target: { value } }) => setPhone(value)}
+                            onChange={handleChange}
                             required
                         />
                     </InputGroup>
@@ -101,7 +106,7 @@ const Register = props => {
                             type="password"
                             label="Пароль"
                             value={password}
-                            onChange={({ target: { value } }) => setPassword(value)}
+                            onChange={handleChange}
                             required
                         />
                     </InputGroup>

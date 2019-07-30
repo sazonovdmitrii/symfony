@@ -44,7 +44,7 @@ const Component = loadable(() => import('./Basket'), {
 
 export default () => {
     return (
-        <Query query={GET_BASKET} ssr={false}>
+        <Query query={GET_BASKET} ssr={false} partialRefetch>
             {({ loading, error, data }) => {
                 if (loading) return <Loader />;
 

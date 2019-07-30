@@ -171,3 +171,22 @@ export const GET_SALES = gql`
         }
     }
 `;
+
+export const GET_ORDERS = gql`
+    {
+        users_orders {
+            orders {
+                id
+                orderItems {
+                    id
+                    qty
+                    item {
+                        id
+                        name
+                        price
+                    }
+                }
+            }
+        }
+    }
+`;

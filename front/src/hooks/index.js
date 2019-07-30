@@ -129,7 +129,7 @@ export const useApp = () => {
     };
 
     const logout = async () => {
-        hardtack.remove('token', { path: '/' });
+        await hardtack.remove('token', { path: '/' });
 
         await state.client.resetStore();
         await init();
