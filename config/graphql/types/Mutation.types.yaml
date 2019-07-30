@@ -9,7 +9,7 @@ Mutation:
           input:
             type: UserInput!
       register:
-        type: RegisterUser!
+        type: AuthorizedUser!
         resolve: '@=mutation("App\\GraphQL\\Mutation\\UserMutation::register", [args])'
         args:
           input:

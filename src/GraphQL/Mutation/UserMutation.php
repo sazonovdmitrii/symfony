@@ -48,6 +48,13 @@ class UserMutation extends AuthMutation
     {
         $input = new RegisterInput($args);
 
-        return $this->userService->create($input);
+        $this->userService->create($input);
+
+        if($user = $this->authenticator->auth($input->email, $input->password)) {
+            $user->setHash($this->jwtManager->create($user));
+            return $user;
+        }
+
+        return $user;
     }
 }
