@@ -2,6 +2,7 @@
 namespace App\GraphQL\Mutation;
 
 use App\GraphQL\Input\RegisterInput;
+use App\GraphQL\Input\UserInput;
 use App\Service\AuthenticatorService;
 use App\Service\UserService;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
