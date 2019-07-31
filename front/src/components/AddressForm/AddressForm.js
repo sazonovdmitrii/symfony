@@ -105,8 +105,14 @@ const AddressForm = ({ values: valuesProp, onSubmit, history, actions, regions }
                 </div>
                 <div className="cabinet-content__column">
                     <InputGroup>
-                        <Input label="Дом" name="house" value={house} onChange={handleChange} />
-                        <Input label="Офис/квартира" name="flat" value={flat} onChange={handleChange} />
+                        <Input label="Дом" name="house" value={house} onChange={handleChange} required />
+                        <Input
+                            label="Офис/квартира"
+                            name="flat"
+                            value={flat}
+                            onChange={handleChange}
+                            required
+                        />
                         <Input label="Домофон" name="code" value={code} onChange={handleChange} />
                         <Input label="Корпус" name="corp" value={corp} onChange={handleChange} />
                         <Input label="Этаж" name="level" value={level} onChange={handleChange} />

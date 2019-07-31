@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 
@@ -26,6 +26,10 @@ const BasketShort = ({ products: productsProps, className, delivery }) => {
         setProducts(newProducts);
     };
     const totalSum = products.reduce((sum, { price, qty }) => sum + price * qty, 0);
+
+    useEffect(() => {
+        setProducts(productsProps);
+    }, [productsProps.length]);
 
     return (
         <div className={`basket-short ${className}`}>

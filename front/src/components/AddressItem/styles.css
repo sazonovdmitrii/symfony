@@ -7,6 +7,10 @@
     border-radius: 5px;
 }
 
+.pointer {
+    cursor: pointer;
+}
+
 .text {
     font-size: var(--font-size-small);
 }

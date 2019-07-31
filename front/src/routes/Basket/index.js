@@ -35,6 +35,22 @@ const GET_BASKET = gql`
                 name
             }
         }
+        addresses {
+            data {
+                id
+                name
+                person
+                zip
+                region_id
+                city
+                street
+                house
+                corp
+                level
+                flat
+                code
+            }
+        }
     }
 `;
 

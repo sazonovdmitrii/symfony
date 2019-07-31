@@ -1,8 +1,10 @@
 import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Mutation } from 'react-apollo';
+import { Mutation, withApollo } from 'react-apollo';
 import gql from 'graphql-tag';
+
+import { GET_SHORT_BASKET } from 'query';
 
 import { seoHead } from 'utils';
 import Button from 'components/Button';
@@ -31,12 +33,17 @@ const ADD_TO_BASKET = gql`
         addBasket(input: $input) {
             products {
                 item_id
+                qty
+                price
+                name
+                product_name
             }
         }
     }
 `;
 
 const Product = ({
+    client,
     name,
     id,
     items,
@@ -75,6 +82,15 @@ const Product = ({
         console.warn('product added to basket', products);
 
         if (products) {
+            client.writeQuery({
+                query: GET_SHORT_BASKET,
+                data: {
+                    basket: {
+                        products,
+                        __typename: 'Basket',
+                    },
+                },
+            });
             history.push('/basket');
         }
     };
@@ -462,4 +478,4 @@ Product.propTypes = {
     tags: PropTypes.arrayOf(PropTypes.object),
 };
 
-export default Product;
+export default withApollo(Product);

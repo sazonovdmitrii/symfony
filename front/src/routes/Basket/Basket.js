@@ -15,7 +15,7 @@ import InputGroup from 'components/InputGroup';
 import RadioGroup from 'components/RadioGroup';
 import RadioButton from 'components/RadioButton';
 import { StepView, StepContainer } from 'components/Steps';
-import AddressList from 'components/AddressList';
+import AddressList from 'components/AddressList/AddressList';
 import Snackbar from 'components/Snackbar';
 
 import Success from 'routes/Success';
@@ -82,6 +82,7 @@ const Basket = ({
     basket: { products: productsProps },
     directions: { data: directions },
     payments_methods: { data: paymentsMethods },
+    addresses,
     isLoggedIn,
 }) => {
     const [success, setSuccess] = useState(false);
@@ -95,11 +96,11 @@ const Basket = ({
         direction: directions[0].id.toString(),
         comment: '',
         promocode: '',
-        address_id: null,
+        address_id: addresses && addresses.data.length ? addresses.data[0].id : null,
     });
     const [currentPayment, setCurrentPayment] = useState(paymentsMethods[0]);
     const [currentDirection, setCurrentDirection] = useState(directions[0]);
-    const [currentAddress, setCurrentAddress] = useState(null);
+    const [currentAddress, setCurrentAddress] = useState(addresses ? addresses.data[0] : null);
     const totalSum = products.reduce((acc, item) => acc + item.price * item.qty, 0);
     const totalSumWithDirection = parseInt(currentDirection.price, 10) + totalSum;
 
@@ -125,6 +126,16 @@ const Basket = ({
         const { products: newProducts } = data;
 
         setProducts(newProducts);
+    };
+    const handleSubmitAddress = data => {
+        console.log(data);
+        if (data.id) {
+            setValues(prevState => ({
+                ...prevState,
+                address_id: data.id,
+            }));
+            setCurrentAddress(data);
+        }
     };
     const handleSubmitPromocode = () => {};
     const handleChange = ({ target: { value, name } }) => {
@@ -269,23 +280,25 @@ const Basket = ({
                                                             <select
                                                                 className="basket__count-select"
                                                                 name="products-qty"
-                                                                onChange={event => {
+                                                                onChange={({ target: { value } }) => {
                                                                     callback({
                                                                         variables: {
                                                                             input: {
                                                                                 item_id: id,
-                                                                                qty: event.target.value,
+                                                                                qty: value,
                                                                             },
                                                                         },
                                                                     });
                                                                 }}
                                                                 defaultValue={qty}
                                                             >
-                                                                {[...new Array(10).keys()].map(item => (
-                                                                    <option key={item} value={item}>
-                                                                        {item}
-                                                                    </option>
-                                                                ))}
+                                                                {[...new Array(11).keys()]
+                                                                    .slice(1)
+                                                                    .map(item => (
+                                                                        <option key={item} value={item}>
+                                                                            {item}
+                                                                        </option>
+                                                                    ))}
                                                             </select>
                                                         );
                                                     }}
@@ -444,7 +457,12 @@ const Basket = ({
                     <StepContainer title="Доставка" theme={theme} nav={{ footer: true }}>
                         <div className="basket__address-shipp">
                             <div className="basket__address-shippblock">
-                                <AddressList value={values.address_id} onChange={handleChangeAddress} />
+                                <AddressList
+                                    items={addresses.data}
+                                    onChange={handleChangeAddress}
+                                    onSubmit={handleSubmitAddress}
+                                    value={values.address_id}
+                                />
                             </div>
                             <div className="basket__address-shippblock">
                                 <span className="basket__address-shippblock-label">Способ доставки</span>
