@@ -1,5 +1,5 @@
-import React, { Fragment, useState } from 'react';
-import { Mutation } from 'react-apollo';
+import React, { Fragment, useState, useEffect } from 'react';
+import { Mutation, withApollo } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import AddressItem from 'components/AddressItem';
@@ -8,6 +8,27 @@ import AddressForm from 'components/AddressForm';
 import Badge from 'components/Badge';
 
 import styles from './styles.css';
+
+const GET_ADDRESSES = gql`
+    {
+        addresses {
+            data {
+                id
+                name
+                person
+                zip
+                region_id
+                city
+                street
+                house
+                corp
+                level
+                flat
+                code
+            }
+        }
+    }
+`;
 
 const REMOVE_ADDRESS_MUTATION = gql`
     mutation removeAddress($input: RemoveAddressInput!) {
@@ -39,7 +60,7 @@ const TEXT = {
     zip: 'индекс:',
 };
 
-const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {} }) => {
+const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {}, client }) => {
     const [items, setItems] = useState(itemsProp);
     const [showForm, setShowForm] = useState(null);
     const handleRemoveAddress = ({ removeAddress: { data } }) => {
@@ -48,10 +69,23 @@ const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {} })
     const handleSubmitAddress = data => {
         // if edit take new addresses from data.data
         // esle add new address from data to items
-        setItems(data.data ? data.data : [...items, data]);
+        // todo make better
+        client.writeQuery({
+            query: GET_ADDRESSES,
+            data: {
+                addresses: {
+                    data: data.data ? data.data : [...items, data],
+                    __typename: 'Addresses',
+                },
+            },
+        });
         setShowForm(null);
         onSubmit(data.data ? data.data : data);
     };
+
+    useEffect(() => {
+        setItems(itemsProp);
+    }, [itemsProp.length]);
 
     if (showForm) {
         return (
@@ -155,4 +189,4 @@ const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {} })
     );
 };
 
-export default AddressList;
+export default withApollo(AddressList);
