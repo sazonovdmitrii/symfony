@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { Mutation, withApollo } from 'react-apollo';
 import gql from 'graphql-tag';
 
-import AddressItem from 'components/AddressItem';
+import ListItem from 'components/ListItem';
 import Button from 'components/Button';
 import AddressForm from 'components/AddressForm';
 import Badge from 'components/Badge';
@@ -118,12 +118,12 @@ const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {}, c
                         kind="primary"
                         style={{ root: { display: 'block' }, badge: { left: '0', right: 'auto' } }}
                     >
-                        <AddressItem
-                            text={`${TEXT.city} ${item.city}, ${TEXT.zip} ${item.zip}, ${TEXT.street} ${
-                                item.street
-                            }, ${TEXT.house} ${item.house}${item.corp ? `, ${TEXT.corp} ${item.corp}` : ''}${
-                                item.flat ? `, ${TEXT.flat} ${item.flat}` : ''
-                            }`}
+                        <ListItem
+                            description={`${TEXT.city} ${item.city}, ${TEXT.zip} ${item.zip}, ${
+                                TEXT.street
+                            } ${item.street}, ${TEXT.house} ${item.house}${
+                                item.corp ? `, ${TEXT.corp} ${item.corp}` : ''
+                            }${item.flat ? `, ${TEXT.flat} ${item.flat}` : ''}`}
                             actions={
                                 <Fragment>
                                     <Button

@@ -220,7 +220,10 @@
     @include has('users') {
         display: flex;
         flex-wrap: wrap;
-        margin: 0 -15px;
+
+        @include breakpoint($screen-md) {
+            margin: 0 -15px;
+        }
     }
 
     @include has('node') {
@@ -530,9 +533,13 @@
     }
 
     @include has('title') {
-        display: table;
+        display: flex;
+        justify-content: space-between;
         margin: 15px 0px;
-        width: 100%;
+
+        @include when('right') {
+            justify-content: flex-end;
+        }
     }
 
     @include has('content') {
@@ -580,8 +587,6 @@
 
         &-shippblock {
             padding: 15px 10px 15px 10px;
-            overflow: hidden;
-            position: relative;
             transition: transform 0.4s, height 0.5s;
 
             @include breakpoint($screen-md) {

@@ -1,5 +1,4 @@
 import React from 'react';
-import gql from 'graphql-tag';
 import loadable from '@loadable/component';
 
 import { GET_PRODUCT } from 'query';
