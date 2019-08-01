@@ -13,6 +13,7 @@ use Overblog\GraphQLBundle\Definition\Argument;
 use Redis;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use App\GraphQL\Input\OrderInput;
+use GraphQL\Error\UserError;
 
 class OrderMutation extends AuthMutation
 {
@@ -48,6 +49,9 @@ class OrderMutation extends AuthMutation
         if ($user) {
             $order->setUserId($user);
             $deliveryId = ($input->pvz_id) ? $input->pvz_id : $input->courier_id;
+            if(!$deliveryId) {
+                throw new UserError('Необходимо указать хотя бы один метод доставки.');
+            }
             $order->setDeliveryId($deliveryId);
             $address = $this->em->getRepository('App:Address')->find($input->address_id);
             $order->setAddressId($address);
