@@ -138,7 +138,7 @@ const Basket = ({
     const [products, setProducts] = useState(productsProps);
     const [promocode, setPromocode] = useState(null);
     const [openModal, setOpenModal] = useState(false);
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(0);
     const [notification, setNotification] = useState(null);
     const [values, setValues] = useState({
         deliveryType: 'courier',
