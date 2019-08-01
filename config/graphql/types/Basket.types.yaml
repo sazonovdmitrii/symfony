@@ -26,3 +26,6 @@ BasketProduct:
       product_name:
         type: "String"
         description: "Basket Product Name"
+      url:
+        type: "String"
+        description: "Product Url"

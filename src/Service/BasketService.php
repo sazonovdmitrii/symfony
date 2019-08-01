@@ -55,7 +55,7 @@ class BasketService extends AbstractController
             if($basket) {
                 $this->redis->set($key, json_encode($basket));
             }
-            return ['products' => $basket];
+            return $this->getAll();
         }
         return [
             'products' => []
@@ -86,7 +86,7 @@ class BasketService extends AbstractController
                     );
                 }
             }
-            return ['products' => $basket];
+            return $this->getAll();
         }
         return [
             'products' => []
@@ -117,7 +117,7 @@ class BasketService extends AbstractController
                     );
                 }
             }
-            return ['products' => $basket];
+            return $this->getAll();
         }
         return [
             'products' => []
@@ -140,7 +140,8 @@ class BasketService extends AbstractController
                             [
                                 'name' => $productItem->getName(),
                                 'product_name' => $productItem->getEntity()->getName(),
-                                'price' => $productItem->getPrice()
+                                'price' => $productItem->getPrice(),
+                                'url' => $productItem->getEntity()->getProductUrls()->first()->getUrl()
                             ]
                         );
                     }

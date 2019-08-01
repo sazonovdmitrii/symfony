@@ -2,6 +2,11 @@ mutation ($input: AddBasketInput!) {
   addBasket(input: $input) {
     products {
       item_id
+      qty
+      price
+      name
+      product_name
+      url
     }
   }
 }
