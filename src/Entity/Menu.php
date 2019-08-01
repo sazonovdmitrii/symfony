@@ -38,6 +38,11 @@ class Menu
      */
     private $menuItems;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $menu;
+
     public function __construct()
     {
         $this->menuItems = new ArrayCollection();
@@ -111,6 +116,18 @@ class Menu
                 $menuItem->setEntityId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMenu(): ?string
+    {
+        return $this->menu;
+    }
+
+    public function setMenu(?string $menu): self
+    {
+        $this->menu = $menu;
 
         return $this;
     }

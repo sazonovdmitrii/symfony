@@ -27,6 +27,7 @@ easy_admin:
                 fields: ['id', 'email', 'roles']
         Menu:
             class: App\Entity\Menu
+            controller: App\Controller\Admin\MenuController
             list:
                 fields: ['id', 'name', 'title']
         MenuItem:
