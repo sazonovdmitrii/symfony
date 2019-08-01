@@ -123,7 +123,7 @@ class MenuController extends BaseAdminController
                   "loading": false
                 },
                 "data": [
-                  "adsfsad123"
+                  
                 ],
                 "children": [
                   
