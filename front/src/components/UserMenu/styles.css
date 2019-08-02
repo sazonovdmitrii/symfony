@@ -49,20 +49,17 @@
 }
 
 .icon {
-    display: block;
-    line-height: 1.875rem;
+    display: inline-flex;
+    justify-content: center;
     cursor: pointer;
     padding-top: 10px;
-    font-size: 22px;
-
-    &::before {
-        font-size: inherit;
-        margin: 0;
-    }
+    width: 20px;
+    height: 30px;
+    margin: auto auto 5px;
 }
 
 .label {
-    font-size: 0.6875rem;
+    font-size: 12px;
     text-transform: capitalize;
     display: none;
 

@@ -89,6 +89,7 @@
         display: block;
         line-height: 1.4rem;
         padding: 0 calculateRem($PADDINGS);
+
         &:last-child {
             margin-top: calculateRem($PADDINGS/2);
             background: $TEXTBACKGORUND;
@@ -99,8 +100,8 @@
     @include has('sublink') {
         text-decoration: none;
         color: $color-grey;
-        @include TextProThin;
         display: block;
+
         &:hover {
             color: $color-dark;
         }

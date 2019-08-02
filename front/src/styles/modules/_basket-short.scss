@@ -109,8 +109,6 @@
         flex: 1;
 
         @include when('right') {
-            @include TextProLight;
-
             font-size: calculateRem(18px);
             text-align: right;
         }

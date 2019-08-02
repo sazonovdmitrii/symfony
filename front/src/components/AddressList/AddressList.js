@@ -1,11 +1,11 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { Mutation, withApollo } from 'react-apollo';
 import gql from 'graphql-tag';
+import { Edit, X } from 'react-feather';
 
 import ListItem from 'components/ListItem';
 import Button from 'components/Button';
 import AddressForm from 'components/AddressForm';
-import Badge from 'components/Badge';
 
 import styles from './styles.css';
 
@@ -112,65 +112,62 @@ const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {}, c
         <Fragment>
             {items && items.length ? (
                 items.map(item => (
-                    <Badge
+                    <ListItem
                         key={item.id}
-                        badgeContent={item.name}
-                        kind="primary"
-                        style={{ root: { display: 'block' }, badge: { left: '0', right: 'auto' } }}
-                    >
-                        <ListItem
-                            description={`${TEXT.city} ${item.city}, ${TEXT.zip} ${item.zip}, ${
-                                TEXT.street
-                            } ${item.street}, ${TEXT.house} ${item.house}${
-                                item.corp ? `, ${TEXT.corp} ${item.corp}` : ''
-                            }${item.flat ? `, ${TEXT.flat} ${item.flat}` : ''}`}
-                            actions={
-                                <Fragment>
-                                    <Button
-                                        className={`${styles.button} flaticon-pencil41`}
-                                        onClick={event => {
-                                            event.stopPropagation();
+                        title={item.name}
+                        description={`${TEXT.city} ${item.city}, ${TEXT.zip} ${item.zip}, ${TEXT.street} ${
+                            item.street
+                        }, ${TEXT.house} ${item.house}${item.corp ? `, ${TEXT.corp} ${item.corp}` : ''}${
+                            item.flat ? `, ${TEXT.flat} ${item.flat}` : ''
+                        }`}
+                        actions={
+                            <Fragment>
+                                <Button
+                                    aria-label="Редактировать"
+                                    kind="primary"
+                                    outlined
+                                    onClick={event => {
+                                        event.stopPropagation();
 
-                                            setShowForm({
-                                                type: 'edit',
-                                                id: item.id,
-                                            });
-                                        }}
-                                        kind="primary"
-                                        size="small"
-                                        outlined
-                                    />
-                                    <Mutation
-                                        mutation={REMOVE_ADDRESS_MUTATION}
-                                        onCompleted={handleRemoveAddress}
-                                    >
-                                        {(remove, { error, data, loading }) => {
-                                            console.log(error, data, loading);
+                                        setShowForm({
+                                            type: 'edit',
+                                            id: item.id,
+                                        });
+                                    }}
+                                >
+                                    <Edit size="15" className={styles.icon} />
+                                </Button>
+                                <Mutation
+                                    mutation={REMOVE_ADDRESS_MUTATION}
+                                    onCompleted={handleRemoveAddress}
+                                >
+                                    {(remove, { error, data, loading }) => {
+                                        console.log(error, data, loading);
 
-                                            return (
-                                                <Button
-                                                    className={`${styles.button} flaticon-delete96`}
-                                                    kind="primary"
-                                                    size="small"
-                                                    outlined
-                                                    onClick={event => {
-                                                        event.stopPropagation();
+                                        return (
+                                            <Button
+                                                aria-label="Удалить"
+                                                kind="primary"
+                                                outlined
+                                                onClick={event => {
+                                                    event.stopPropagation();
 
-                                                        remove({
-                                                            variables: { input: { id: item.id } },
-                                                        });
-                                                    }}
-                                                />
-                                            );
-                                        }}
-                                    </Mutation>
-                                </Fragment>
-                            }
-                            active={value === item.id}
-                            onClick={() => onChange(item)}
-                            pointer={!!value}
-                        />
-                    </Badge>
+                                                    remove({
+                                                        variables: { input: { id: item.id } },
+                                                    });
+                                                }}
+                                            >
+                                                <X size="15" className={styles.icon} />
+                                            </Button>
+                                        );
+                                    }}
+                                </Mutation>
+                            </Fragment>
+                        }
+                        active={value === item.id}
+                        onClick={() => onChange(item)}
+                        pointer={!!value}
+                    />
                 ))
             ) : (
                 <p>Вы не указали ни одного адреса</p>

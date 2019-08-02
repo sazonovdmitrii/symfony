@@ -54,7 +54,8 @@
 }
 
 .label {
-    font-size: var(--font-size-small);
+    /*font-size: var(--font-size-small);*/
+    font-size: 15px;
     margin-left: 8px;
 }
 
