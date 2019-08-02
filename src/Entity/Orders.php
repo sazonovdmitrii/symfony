@@ -48,6 +48,11 @@ class Orders
      */
     private $orderItems;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $comment;
+
     public function __construct()
     {
         $this->orderItems = new ArrayCollection();
@@ -146,6 +151,18 @@ class Orders
                 $orderItem->setEntity(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
 
         return $this;
     }
