@@ -28,7 +28,6 @@ const GET_HEADER_MENU = gql`
 const HeaderMenu = ({ items, all_brands_top_menu = {}, className }) => {
     const [state, setState] = useState({ active: null });
     const menuClassName = classnames('mainmenu', className);
-
     const handleMouseEnter = index => {
         setState({ active: index });
     };
@@ -37,57 +36,51 @@ const HeaderMenu = ({ items, all_brands_top_menu = {}, className }) => {
     };
 
     return (
-        <ul className={menuClassName} data-behavior="menuModule">
-            {items.map(({ text, url, children }, index) => {
-                const submenuClassName =
-                    state.active !== index ? 'mainmenu__item--sub' : 'mainmenu__item opensubmenu';
+        <ul className={menuClassName}>
+            {items.map(({ text, url, children }, index) => (
+                <li
+                    className={`mainmenu__item--sub ${state.active === index ? 'opensubmenu' : ''}`}
+                    onMouseEnter={() => handleMouseEnter(index)}
+                    onMouseLeave={handleMouseLeave}
+                >
+                    <Link className="mainmenu__link" to={url}>
+                        {text}
+                    </Link>
+                    {children.length
+                        ? children.map(child => (
+                              <div className="mainmenu__submenu">
+                                  <div className="mainmenu__submenu_column">
+                                      {child.url ? (
+                                          <span className="mainmenu__submenu_group">{child.text}</span>
+                                      ) : (
+                                          <Link className="mainmenu__submenu_group" to={child.url}>
+                                              {child.text}
+                                          </Link>
+                                      )}
+                                      {child.children.length ? (
+                                          <ul className="mainmenu__submenu_list">
+                                              {child.children.map(grandson => {
+                                                  if (!grandson.url) return null;
 
-                return (
-                    <li
-                        data-handle="opensubmenu"
-                        className={submenuClassName}
-                        onMouseEnter={() => handleMouseEnter(index)}
-                        onMouseLeave={handleMouseLeave}
-                    >
-                        <Link className="mainmenu__link" to={url}>
-                            {text}
-                        </Link>
-                        {children.length
-                            ? children.map(child => (
-                                  <div data-render="submenu" class="mainmenu__submenu">
-                                      <div class="mainmenu__submenu_column">
-                                          {child.url ? (
-                                              <span class="mainmenu__submenu_group">{child.text}</span>
-                                          ) : (
-                                              <a class="mainmenu__submenu_group" href={child.url}>
-                                                  {child.text}
-                                              </a>
-                                          )}
-                                          {child.children.length ? (
-                                              <ul class="mainmenu__submenu_list">
-                                                  {child.children.map(grandson => {
-                                                      if (!grandson.url) return null;
-
-                                                      return (
-                                                          <li class="mainmenu__submenu_item">
-                                                              <a
-                                                                  class="mainmenu__submenu_link"
-                                                                  href={grandson.url}
-                                                              >
-                                                                  {grandson.text}
-                                                              </a>
-                                                          </li>
-                                                      );
-                                                  })}
-                                              </ul>
-                                          ) : null}
-                                      </div>
+                                                  return (
+                                                      <li className="mainmenu__submenu_item">
+                                                          <Link
+                                                              className="mainmenu__submenu_link"
+                                                              to={grandson.url}
+                                                          >
+                                                              {grandson.text}
+                                                          </Link>
+                                                      </li>
+                                                  );
+                                              })}
+                                          </ul>
+                                      ) : null}
                                   </div>
-                              ))
-                            : null}
-                    </li>
-                );
-            })}
+                              </div>
+                          ))
+                        : null}
+                </li>
+            ))}
             <li className="mainmenu__item--search">
                 <SearchForm />
             </li>
@@ -95,7 +88,7 @@ const HeaderMenu = ({ items, all_brands_top_menu = {}, className }) => {
     );
 };
 
-export default () => {
+export default props => {
     return (
         <Query query={GET_HEADER_MENU}>
             {({
@@ -107,7 +100,16 @@ export default () => {
             }) => {
                 if (loading) return null;
 
-                return <HeaderMenu items={items} />;
+                return (
+                    <HeaderMenu
+                        {...props}
+                        items={[
+                            { text: 'Бренды', url: '/brands/', children: [] },
+                            ...items,
+                            { text: 'Акции', url: '/sales/', children: [] },
+                        ]}
+                    />
+                );
             }}
         </Query>
     );
