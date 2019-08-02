@@ -13,7 +13,6 @@
     text-align: left;
 
     @include has('list') {
-        @include no-column();
         padding: 20px 20px 0;
     }
 

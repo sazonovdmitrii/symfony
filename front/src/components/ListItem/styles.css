@@ -1,8 +1,9 @@
 .root {
     margin-bottom: 15px;
-    padding: 8px 16px;
+    padding: 16px 24px;
     display: flex;
     align-items: center;
+    font-size: var(--font-size-base);
     background: var(--color-lightgrey);
     border-radius: 5px;
 }
@@ -11,8 +12,16 @@
     cursor: pointer;
 }
 
-.text {
+.body {
+}
+
+.title {
+    font-weight: 500;
+}
+
+.description {
     font-size: var(--font-size-small);
+    margin-top: 5px;
 }
 
 .actions {

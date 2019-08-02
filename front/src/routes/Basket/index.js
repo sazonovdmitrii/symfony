@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import loadable from '@loadable/component';
+import Helmet from 'react-helmet';
 
 import Loader from 'components/Loader';
 import ErrorMessage from 'components/Error';
@@ -16,17 +17,6 @@ const GET_BASKET = gql`
                 name
                 product_name
                 price
-            }
-        }
-        directions {
-            data {
-                id
-                avarda_id
-                title
-                price
-                delivery_days
-                visible
-                comment
             }
         }
         payments_methods {
@@ -51,6 +41,13 @@ const GET_BASKET = gql`
                 code
             }
         }
+        cities {
+            data {
+                id
+                title
+                visible
+            }
+        }
     }
 `;
 
@@ -60,17 +57,22 @@ const Component = loadable(() => import('./Basket'), {
 
 export default () => {
     return (
-        <Query query={GET_BASKET} ssr={false} partialRefetch>
-            {({ loading, error, data }) => {
-                if (loading) return <Loader />;
+        <Fragment>
+            <Helmet>
+                <title>Моя корзина</title>
+            </Helmet>
+            <Query query={GET_BASKET} ssr={false} partialRefetch>
+                {({ loading, error, data }) => {
+                    if (loading) return <Loader />;
 
-                return (
-                    <Fragment>
-                        {error && <ErrorMessage error={error} />}
-                        {data && <Component {...data} />}
-                    </Fragment>
-                );
-            }}
-        </Query>
+                    return (
+                        <Fragment>
+                            {error && <ErrorMessage error={error} />}
+                            {data && <Component {...data} />}
+                        </Fragment>
+                    );
+                }}
+            </Query>
+        </Fragment>
     );
 };

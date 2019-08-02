@@ -6,7 +6,7 @@ import styles from './styles.css';
 
 const cx = classnames.bind(styles);
 
-const AddressItem = ({ active, actions, text, onClick, pointer }) => {
+const ListItem = ({ active, actions, description, title, onClick, pointer }) => {
     const rootClassName = cx(styles.root, {
         active,
         pointer,
@@ -14,23 +14,30 @@ const AddressItem = ({ active, actions, text, onClick, pointer }) => {
 
     return (
         <div className={rootClassName} onClick={onClick}>
-            <div className={styles.text}>{text}</div>
+            <div className={styles.body}>
+                <div className={styles.title}>{title}</div>
+                {description && <div className={styles.description}>{description}</div>}
+            </div>
             {actions && <div className={styles.actions}>{actions}</div>}
         </div>
     );
 };
 
-AddressItem.defaultProps = {
+ListItem.defaultProps = {
     active: false,
+    pointer: false,
     actions: null,
+    description: null,
     onClick: () => {},
 };
 
-AddressItem.propTypes = {
+ListItem.propTypes = {
     onClick: PropTypes.func,
-    text: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string,
     active: PropTypes.bool,
+    pointer: PropTypes.bool,
     actions: PropTypes.node,
 };
 
-export default AddressItem;
+export default ListItem;

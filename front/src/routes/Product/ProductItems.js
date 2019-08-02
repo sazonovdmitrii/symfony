@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Loader from 'components/Loader';
-
 const ProductItems = ({ items, active, onChange }) => {
     return (
         <ul className="product__cart-block-type-ul">
@@ -11,11 +9,11 @@ const ProductItems = ({ items, active, onChange }) => {
 
                 return (
                     <li
-                        key={item.id}
+                        key={id}
                         className={`product__cart-block-type-ul-li${
-                            !item.price
+                            !price
                                 ? '--not_available'
-                                : active.id === item.id
+                                : active.id === id
                                 ? ' product__cart-block-type-ul-li-active'
                                 : ''
                         }`}
@@ -25,14 +23,14 @@ const ProductItems = ({ items, active, onChange }) => {
                             <img
                                 className="product__cart-block-type-ul-li-container-img"
                                 src="https://laparfumerie.ru/item/2015/01/18/23599_45305_353568.jpg.smaller.jpg"
-                                alt={item.name}
+                                alt={name}
                             />
                         </div>
                         <div className="product__cart-block-type-ul-li-nameblock">
-                            {item.name}
-                            {item.price ? (
+                            {name}
+                            {price ? (
                                 <div className="product__cart-block-type-ul-li-nameblock-price">
-                                    {item.price}
+                                    {price}
                                     <span className="product__cart-block-type-ul-li-nameblock-currer">
                                         руб.
                                     </span>

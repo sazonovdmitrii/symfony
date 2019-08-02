@@ -2,7 +2,7 @@
     min-height: 452px;
     background: transparent url('./images/bg.jpg') no-repeat center / cover;
     text-align: right;
-    margin: 15px 0 65px 0;
+    margin: 15px 0 65px;
 
     @media (--viewport-tablet) {
         padding: 0 50px 50px 0;
@@ -16,13 +16,15 @@
     max-width: 430px;
     width: 100%;
     background: rgba(255, 255, 255, 0.5);
-    padding: 45px 40px 40px 40px;
+    padding: 45px 40px 40px;
     color: #444;
     text-align: left;
     overflow: hidden;
 }
 
 .title {
+    /* legacy */
+    /* stylelint-disable-next-line */
     letter-spacing: 0.0625em;
     text-transform: uppercase;
     text-align: center;
@@ -32,7 +34,7 @@
 }
 
 .subtitle {
-    font-weight: bold;
+    font-weight: 700;
     font-size: var(--font-size-base);
     margin-bottom: 25px;
     line-height: var(--headings-line-height);
