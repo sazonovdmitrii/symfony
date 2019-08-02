@@ -1,0 +1,16 @@
+{
+  top_menu{
+    data {
+    	text
+      url
+      children{
+        text
+        url
+        children {
+          text
+          url
+        }
+      }
+    }
+  }
+}

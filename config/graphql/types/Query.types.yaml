@@ -95,6 +95,9 @@ Query:
       payments_methods:
         type: "PaymentsMethods"
         resolve: "@=resolver('PaymentsMethods', [args])"
+      top_menu:
+        type: "Menu"
+        resolve: "@=resolver('TopMenu', [args])"
       address:
         type: "Address"
         resolve: "@=resolver('Address', [args])"
