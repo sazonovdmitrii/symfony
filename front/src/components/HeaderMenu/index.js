@@ -51,11 +51,11 @@ const HeaderMenu = ({ items, all_brands_top_menu = {}, className }) => {
                               <div className="mainmenu__submenu">
                                   <div className="mainmenu__submenu_column">
                                       {child.url ? (
-                                          <span className="mainmenu__submenu_group">{child.text}</span>
-                                      ) : (
                                           <Link className="mainmenu__submenu_group" to={child.url}>
                                               {child.text}
                                           </Link>
+                                      ) : (
+                                          <span className="mainmenu__submenu_group">{child.text}</span>
                                       )}
                                       {child.children.length ? (
                                           <ul className="mainmenu__submenu_list">
