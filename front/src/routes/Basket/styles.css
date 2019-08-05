@@ -9,3 +9,13 @@
 .inputLabel {
     transform: translate(14px, 12px) scale(1);
 }
+
+.nav {
+    margin-left: auto;
+}
+
+.sectionTitle {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 15px;
+}

@@ -1,0 +1,24 @@
+Menu:
+  type: object
+  config:
+    description: "Menu"
+    fields:
+      data:
+       type: "[MenuItem]"
+
+MenuItem:
+  type: object
+  config:
+    description: "Sale Item"
+    resolveField: '@=resolver("App\\GraphQL\\Resolver\\MenuItemFieldResolver", [info, value, args])'
+    fields:
+      text:
+        type: "String"
+        description: "Name"
+      url:
+        type: "String"
+        description: "Url"
+      children:
+        type: "[MenuItem]"
+        description: "Childrens"
+

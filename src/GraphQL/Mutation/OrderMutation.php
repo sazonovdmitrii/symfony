@@ -53,8 +53,15 @@ class OrderMutation extends AuthMutation
                 throw new UserError('Необходимо указать хотя бы один метод доставки.');
             }
             $order->setDeliveryId($deliveryId);
-            $address = $this->em->getRepository('App:Address')->find($input->address_id);
+            $paymentMethod = $this->em
+                ->getRepository('App:PaymentMethod')
+                ->find($input->payment_method_id);
+            $order->setPaymentMethodId($paymentMethod);
+            $address = $this->em
+                ->getRepository('App:Address')
+                ->find($input->address_id);
             $order->setAddressId($address);
+            $order->setComment($input->comment);
         }
 
         if(!count($basket)) {

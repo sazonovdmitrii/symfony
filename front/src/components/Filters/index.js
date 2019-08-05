@@ -13,19 +13,23 @@ const Filters = ({ items }) => {
 
     return (
         <div className={styles.row}>
-            {items.map(({ id, name, childrens }) => (
-                <div key={id} className={styles.col}>
-                    <OldSelect label={name} items={childrens} />
-                </div>
-            ))}
-            {/*<Select
+            {items.map(({ id, name, childrens }) => {
+                if (!childrens.length) return null;
+
+                return (
+                    <div key={id} className={styles.col}>
+                        <OldSelect label={name} items={childrens} />
+                    </div>
+                );
+            })}
+            {/* <Select
                     label="Брэнд"
                     items={[
                         { value: 'Hugo Boss (241)', id: 1 },
                         { value: 'Nouvelle Etoile (Новая Заря) (237)', id: 2 },
                     ]}
                     onChange={handleChange}
-                />*/}
+                /> */}
         </div>
     );
 };

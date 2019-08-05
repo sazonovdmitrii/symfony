@@ -5,6 +5,12 @@ OrderInput:
       pvz_id:
         type: "Int"
         description: "Pvz ID"
+      payment_method_id:
+        type: "Int"
+        description: "Payment Method ID"
+      comment:
+        type: "String"
+        description: "Comment"
       courier_id:
         type: "Int"
         description: "Courier ID"

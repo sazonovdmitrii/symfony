@@ -11,6 +11,7 @@ import logger from 'koa-logger';
 import config from './config';
 import ssr from './ssr';
 import router from './router';
+import { getPath, missingSlash } from './utils';
 
 // Static file serving
 const staticMiddleware = (root, immutable = true) => async (ctx, next) => {
@@ -29,23 +30,38 @@ const staticMiddleware = (root, immutable = true) => async (ctx, next) => {
 };
 
 export default app => {
-    app.use(
-        logger()
-        // ((str, args) => {
-        //     const [format, method, url, status, time, length] = args;
+    app.use(async (ctx, next) => {
+        let path;
+        if (ctx.status !== 301) {
+            path = getPath(ctx.originalUrl, ctx.querystring);
+        }
 
-        //     if (status === 500) {
-        //         console.log('🔥', str);
-        //         // const text = Object.entries({ method, url, time, length }).join('\n');
-        //         // fetch(`https://integram.org/crx8r0xS-m3`, {
-        //         //     method: 'POST',
-        //         //     body: JSON.stringify({
-        //         //         text: 'hello',
-        //         //     }),
-        //         // });
-        //     }
-        // })
-    )
+        if (path && (!ctx.body || ctx.status !== 200) && missingSlash(path)) {
+            const query = ctx.querystring.length ? '?' + ctx.querystring : '';
+
+            ctx.status = 301;
+            ctx.redirect(path + '/' + query);
+        }
+
+        await next();
+    })
+        .use(
+            logger()
+            // ((str, args) => {
+            //     const [format, method, url, status, time, length] = args;
+
+            //     if (status === 500) {
+            //         console.log('🔥', str);
+            //         // const text = Object.entries({ method, url, time, length }).join('\n');
+            //         // fetch(`https://integram.org/crx8r0xS-m3`, {
+            //         //     method: 'POST',
+            //         //     body: JSON.stringify({
+            //         //         text: 'hello',
+            //         //     }),
+            //         // });
+            //     }
+            // })
+        )
         // CORS
         .use(koaCors())
         // Error catcher

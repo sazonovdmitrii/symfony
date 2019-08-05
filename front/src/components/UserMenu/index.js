@@ -1,6 +1,7 @@
 import React, { useState, Fragment } from 'react';
 import { Query } from 'react-apollo';
 import { Link } from 'react-router-dom';
+import { ShoppingBag, User } from 'react-feather';
 
 import { IS_LOGGED_IN, GET_SHORT_BASKET } from 'query';
 import { useApp } from 'hooks';
@@ -8,6 +9,7 @@ import { useApp } from 'hooks';
 import BasketShort from 'components/BasketShort';
 import Button from 'components/Button';
 import LoginForm from 'components/LoginForm';
+import Badge from 'components/Badge';
 import { Dialog, DialogTitle, DialogContent } from 'components/Dialog';
 
 import styles from './styles.css';
@@ -37,8 +39,10 @@ const UserMenu = () => {
                     return isLoggedIn ? (
                         <li className={styles.item}>
                             <Link className={styles.link} to="/user/personal/">
-                                <span className={`${styles.icon} flaticon-avatar`} />
-                                <span className={styles.label}>Ваш кабинет</span>
+                                <div className={styles.icon}>
+                                    <User size="24" />
+                                </div>
+                                <div className={styles.label}>Ваш кабинет</div>
                             </Link>
                             <ul className={styles.submenu}>
                                 <li className="usermenu__subitem">
@@ -72,8 +76,8 @@ const UserMenu = () => {
                     ) : (
                         <li className={styles.item}>
                             <button type="button" className={styles.link} onClick={() => setOpenModal(true)}>
-                                <span className={`${styles.icon} flaticon-avatar`} />
-                                <span className={styles.label}>Войти</span>
+                                <User className={styles.icon} />
+                                <div className={styles.label}>Войти</div>
                             </button>
                             {openModal && (
                                 <Dialog open={openModal} onClose={handleCloseModal}>
@@ -101,10 +105,11 @@ const UserMenu = () => {
                         return (
                             <Fragment>
                                 <Link className={styles.link} to="/basket">
-                                    <span className={`${styles.icon} flaticon-shopping-bag`} />
-                                    <span className="usermenu__labebasketcount">
-                                        {products ? products.length : 0}
-                                    </span>
+                                    <div className={styles.icon}>
+                                        <Badge badgeContent={products.length} kind="primary">
+                                            <ShoppingBag size="24" />
+                                        </Badge>
+                                    </div>
                                     <span className={styles.label}>Корзина</span>
                                 </Link>
                                 <BasketShort products={products} className={styles.dropdown} />

@@ -13,8 +13,8 @@
 .checkbox {
     display: inline-block;
     background-color: #fff;
-    /*border: 2px solid rgba(0, 0, 0, 0.54);*/
-    border: 2px solid #999999;
+    /* border: 2px solid rgba(0, 0, 0, 0.54); */
+    border: 2px solid #999;
     border-radius: 4px;
     width: 24px;
     height: 24px;
@@ -54,7 +54,8 @@
 }
 
 .label {
-    font-size: var(--font-size-small);
+    /*font-size: var(--font-size-small);*/
+    font-size: 15px;
     margin-left: 8px;
 }
 

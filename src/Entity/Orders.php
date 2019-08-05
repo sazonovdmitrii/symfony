@@ -49,9 +49,14 @@ class Orders
     private $orderItems;
 
     /**
+
      * @ORM\OneToMany(targetEntity="App\Entity\TransactionLog", mappedBy="entity")
      */
     private $transactionInfo;
+
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $comment;
 
     public function __construct()
     {
@@ -156,6 +161,7 @@ class Orders
         return $this;
     }
 
+
     /**
      * @return Collection|TransactionLog[]
      */
@@ -183,6 +189,15 @@ class Orders
                 $transactionInfo->setEntity(null);
             }
         }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
 
         return $this;
     }

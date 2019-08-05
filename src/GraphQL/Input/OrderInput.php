@@ -9,4 +9,8 @@ class OrderInput extends RequestObject
     public $courier_id;
 
     public $address_id;
+
+    public $payment_method_id;
+
+    public $comment;
 }

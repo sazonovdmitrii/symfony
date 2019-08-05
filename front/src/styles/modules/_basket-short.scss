@@ -13,7 +13,6 @@
     text-align: left;
 
     @include has('list') {
-        @include no-column();
         padding: 20px 20px 0;
     }
 
@@ -110,8 +109,6 @@
         flex: 1;
 
         @include when('right') {
-            @include TextProLight;
-
             font-size: calculateRem(18px);
             text-align: right;
         }

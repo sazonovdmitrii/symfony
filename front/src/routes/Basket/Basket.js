@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { withApollo, Mutation } from 'react-apollo';
+import { withApollo, Mutation, Query } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import { useApp } from 'hooks';
@@ -11,12 +11,12 @@ import Input from 'components/Input';
 import Button from 'components/Button';
 import LoginForm from 'components/LoginForm';
 import RegisterForm from 'components/RegisterForm';
-import InputGroup from 'components/InputGroup';
-import RadioGroup from 'components/RadioGroup';
-import RadioButton from 'components/RadioButton';
 import { StepView, StepContainer } from 'components/Steps';
 import AddressList from 'components/AddressList/AddressList';
 import Snackbar from 'components/Snackbar';
+import Select from 'components/Select';
+import Loader from 'components/Loader';
+import ListItem from 'components/ListItem';
 
 import Success from 'routes/Success';
 
@@ -63,10 +63,59 @@ const ORDER_MUTATION = gql`
     }
 `;
 
+const GET_PICKUPS = gql`
+    query pickups($city_id: Int) {
+        pickups(city_id: $city_id) {
+            data {
+                id
+                direction_title
+                address
+                price
+                latitude
+                longitude
+                phones
+                schedule
+                delivery_days
+                delivery_days_source
+                min_order_sum
+                retail
+                pvz_id
+                visible
+                comment
+                payments_methods {
+                    id
+                    name
+                }
+            }
+        }
+    }
+`;
+
+const GET_DELIVERY = gql`
+    query delivery($city_id: Int) {
+        couriers(city_id: $city_id) {
+            data {
+                id
+                direction_title
+                price
+                delivery_days
+                delivery_days_source
+                min_order_sum
+                visible
+                comment
+                payments_methods {
+                    id
+                    name
+                }
+            }
+        }
+    }
+`;
+
 const theme = {
-    title: 'typography__catheader float_left basket__h1',
+    title: 'typography__catheader basket__h1',
     header: 'basket__title',
-    nav: 'float_right',
+    nav: styles.nav,
 };
 
 const text = {
@@ -80,8 +129,8 @@ const text = {
 
 const Basket = ({
     basket: { products: productsProps },
-    directions: { data: directions },
-    payments_methods: { data: paymentsMethods },
+    gifts = [],
+    cities: { data: cities },
     addresses,
     isLoggedIn,
 }) => {
@@ -92,24 +141,64 @@ const Basket = ({
     const [step, setStep] = useState(0);
     const [notification, setNotification] = useState(null);
     const [values, setValues] = useState({
-        payment: paymentsMethods[0].id.toString(),
-        direction: directions[0].id.toString(),
+        deliveryType: 'courier',
+        city: null,
+        payment: {},
+        delivery: {},
+        pickup: {},
         comment: '',
         promocode: '',
         address_id: addresses && addresses.data.length ? addresses.data[0].id : null,
     });
-    const [currentPayment, setCurrentPayment] = useState(paymentsMethods[0]);
-    const [currentDirection, setCurrentDirection] = useState(directions[0]);
+    const isCourier = values.deliveryType === 'courier';
+    const [collapse, setCollapse] = useState({
+        pickup: false,
+        delivery: false,
+    });
+    const [currentPayment, setCurrentPayment] = useState({});
+    const [currentDirection, setCurrentDirection] = useState({});
     const [currentAddress, setCurrentAddress] = useState(addresses ? addresses.data[0] : null);
     const totalSum = products.reduce((acc, item) => acc + item.price * item.qty, 0);
     const totalSumWithDirection = parseInt(currentDirection.price, 10) + totalSum;
+    const citiesForSelect = cities
+        .map(({ id, title, visible }) => {
+            if (visible) return { id, value: title };
+            return null;
+        })
+        .filter(Boolean);
+
+    // console.log(currentAddress);
+    // useEffect(() => {
+    //     setCurrentPayment(paymentsMethods.find(({ id }) => id.toString() === values.payment));
+    // }, [paymentsMethods, values.payment]);
+    // useEffect(() => {
+    //     setCurrentDirection(directions.find(({ id }) => id.toString() === values.direction));
+    // }, [directions, values.direction]);
 
     useEffect(() => {
-        setCurrentPayment(paymentsMethods.find(({ id }) => id.toString() === values.payment));
-    }, [paymentsMethods, values.payment]);
+        if (totalSum < 500) {
+            setNotification({
+                errorType: 'lowPrice',
+                type: 'error',
+                text:
+                    'Минимальная сумма заказа по Москве и Московской области 500 руб, по регионам РФ - 1000 руб.',
+            });
+        }
+    }, [totalSum]);
+
     useEffect(() => {
-        setCurrentDirection(directions.find(({ id }) => id.toString() === values.direction));
-    }, [directions, values.direction]);
+        setCollapse({
+            pickup: false,
+            delivery: false,
+        });
+        // setValues(prevState => ({
+        //     ...prevState,
+        //     // address_id: null,
+        //     delivery: {},
+        //     payment: {},
+        //     pickup: {},
+        // }));
+    }, [values.city]);
 
     const handleCloseModal = () => {
         setOpenModal(false);
@@ -118,7 +207,15 @@ const Basket = ({
         setNotification(null);
     };
     const handleChangeStep = index => {
+        if (notification && notification.errorType === 'lowPrice') return;
+
         setStep(index);
+    };
+    const handleChangeSelect = ({ id }) => {
+        setValues(prevState => ({
+            ...prevState,
+            city: id,
+        }));
     };
     const handleChangeProducts = ({ removeBasket, updateBasket }, data = removeBasket || updateBasket) => {
         if (!data) return;
@@ -128,7 +225,7 @@ const Basket = ({
         setProducts(newProducts);
     };
     const handleSubmitAddress = data => {
-        console.log(data);
+        // console.log(data);
         if (data.id) {
             setValues(prevState => ({
                 ...prevState,
@@ -145,8 +242,16 @@ const Basket = ({
         }));
     };
     const isValid = () => {
+        const fields = isCourier ? [values.delivery, values.address_id] : [values.pickup];
+        const valid = [values.city, ...fields, values.payment].every(item => {
+            console.log(item);
+            if (item && typeof item === 'object') return item.id;
+
+            return item;
+        });
+
         // TODO validation address, delivery, payment
-        return true;
+        return valid;
     };
     const { login } = useApp();
     const handleLogInCompleted = async ({ auth }) => {
@@ -156,17 +261,27 @@ const Basket = ({
         await login(hash);
     };
     const handleOrderCompleted = ({ order: { id } }) => {
-        if (id) {
-            setSuccess(id);
-            console.log('order done', '👍');
-            // } else {
-            // setNotification({ type: 'error', text: 'Упс что-то пошло не так' });
-        }
+        if (id) setSuccess(id);
+    };
+    const handleError = data => {
+        setNotification({
+            type: 'error',
+            text: data.graphQLErrors[0].message,
+        });
     };
     const handleChangeAddress = data => {
         setCurrentAddress(data);
         setValues(prevState => ({ ...prevState, address_id: data.id }));
     };
+
+    const handleClickListItem = ({ data, type }) => {
+        setValues(prevState => ({
+            ...prevState,
+            [type]: data,
+        }));
+    };
+
+    // console.log(values.pickup, values.delivery, values.payment, values.address_id, '🔥');
 
     if (success) {
         return <Success id={success} />;
@@ -317,13 +432,7 @@ const Basket = ({
                                             </span>
                                         </td>
                                         <td width="10%" className="basket__table-tdb">
-                                            {price ? (
-                                                <Fragment>
-                                                    <b>{`${price * qty} ${CURRENCY}`}</b>
-                                                </Fragment>
-                                            ) : (
-                                                'Бесплатно'
-                                            )}
+                                            {price ? <b>{`${price * qty} ${CURRENCY}`}</b> : 'Бесплатно'}
                                             <Mutation
                                                 mutation={REMOVE_PRODUCT_MUTATION}
                                                 onCompleted={handleChangeProducts}
@@ -351,25 +460,23 @@ const Basket = ({
                                     </tr>
                                 )
                             )}
-                            <tr className="gift_row">
-                                <td colSpan="2" className="basket__table-tdb">
-                                    <Button kind="primary" onClick={() => setOpenModal(true)} bold>
-                                        <span className="basket__gifts-add">Добавить подарок</span>
-                                    </Button>
-                                    {openModal && (
-                                        <Dialog open={openModal} onClose={handleCloseModal}>
-                                            <DialogTitle>Подарки к заказу</DialogTitle>
-                                            <DialogContent>gifts</DialogContent>
-                                        </Dialog>
-                                    )}
-                                </td>
-                                <td colSpan="4" className="basket__table-tdb">
-                                    <div hidden>
-                                        Минимальная сумма заказа по Москве и Московской области 500 руб, по
-                                        регионам РФ - 1000 руб.
-                                    </div>
-                                </td>
-                            </tr>
+                            {gifts.length ? (
+                                <tr className="gift_row">
+                                    <td colSpan="2" className="basket__table-tdb">
+                                        <Fragment>
+                                            <Button kind="primary" onClick={() => setOpenModal(true)} bold>
+                                                <span className="basket__gifts-add">Добавить подарок</span>
+                                            </Button>
+                                            {openModal && (
+                                                <Dialog open={openModal} onClose={handleCloseModal}>
+                                                    <DialogTitle>Подарки к заказу</DialogTitle>
+                                                    <DialogContent>gifts</DialogContent>
+                                                </Dialog>
+                                            )}
+                                        </Fragment>
+                                    </td>
+                                </tr>
+                            ) : null}
                         </tbody>
                         <tfoot>
                             <tr>
@@ -457,52 +564,259 @@ const Basket = ({
                     <StepContainer title="Доставка" theme={theme} nav={{ footer: true }}>
                         <div className="basket__address-shipp">
                             <div className="basket__address-shippblock">
-                                <AddressList
-                                    items={addresses.data}
-                                    onChange={handleChangeAddress}
-                                    onSubmit={handleSubmitAddress}
-                                    value={values.address_id}
+                                <Select
+                                    label="Город*"
+                                    items={citiesForSelect}
+                                    value={values.city}
+                                    onChange={handleChangeSelect}
                                 />
                             </div>
                             <div className="basket__address-shippblock">
-                                <span className="basket__address-shippblock-label">Способ доставки</span>
+                                <div className={styles.sectionTitle}>Способ получения</div>
                                 <div className="basket__address-shippblock-list">
-                                    <InputGroup>
-                                        <RadioGroup
-                                            name="direction"
-                                            type="list"
-                                            value={values.direction}
-                                            onChange={handleChange}
-                                        >
-                                            {directions.map(({ id, title }) => (
-                                                <RadioButton key={id} label={title} value={id.toString()} />
-                                            ))}
-                                        </RadioGroup>
-                                    </InputGroup>
+                                    {[
+                                        { id: 'courier', label: 'Курьером' },
+                                        { id: 'pickup', label: 'Самовывоз' },
+                                    ].map(({ id, label }) => {
+                                        return (
+                                            <ListItem
+                                                key={id}
+                                                title={label}
+                                                active={values.deliveryType === id}
+                                                onClick={() =>
+                                                    handleClickListItem({
+                                                        type: 'deliveryType',
+                                                        data: id,
+                                                    })
+                                                }
+                                                pointer
+                                            />
+                                        );
+                                    })}
                                 </div>
                             </div>
-                            {paymentsMethods && (
-                                <div className="basket__address-shippblock">
-                                    <span className="basket__address-shippblock-label">Способ оплаты</span>
-                                    <div className="basket__address-shippblock-list">
-                                        <InputGroup>
-                                            <RadioGroup
-                                                name="payment"
-                                                type="list"
-                                                value={values.payment}
-                                                onChange={handleChange}
-                                            >
-                                                {paymentsMethods.map(({ id, name }) => (
-                                                    <RadioButton
-                                                        key={id}
-                                                        label={name}
-                                                        value={id.toString()}
-                                                    />
-                                                ))}
-                                            </RadioGroup>
-                                        </InputGroup>
-                                    </div>
-                                </div>
+                            {values.city && values.deliveryType && (
+                                <Query
+                                    query={isCourier ? GET_DELIVERY : GET_PICKUPS}
+                                    variables={{
+                                        city_id: values.city,
+                                    }}
+                                >
+                                    {({ loading, error, data: { couriers, pickups } }) => {
+                                        if (error) return null;
+                                        if (loading) return <Loader />;
+
+                                        const myData = couriers || pickups;
+                                        const currentPayments = myData.data.reduce(
+                                            (obj, { id, payments_methods }) => {
+                                                return {
+                                                    ...obj,
+                                                    [id]: payments_methods,
+                                                };
+                                            },
+                                            {}
+                                        );
+                                        const currentValue = isCourier ? values.delivery : values.pickup;
+                                        const payments = currentValue.id
+                                            ? currentPayments[currentValue.id]
+                                            : [];
+                                        // console.log(currentValue, payments, '🤯');
+
+                                        return (
+                                            <Fragment>
+                                                <div className="basket__address-shippblock">
+                                                    <div className={styles.sectionTitle}>
+                                                        {isCourier ? 'Способ доставки' : 'Самовывоз'}
+                                                    </div>
+                                                    <div className="basket__address-shippblock-list">
+                                                        <div>
+                                                            {collapse[values.deliveryType] ? (
+                                                                <div>
+                                                                    <ListItem
+                                                                        title={currentValue.direction_title}
+                                                                        description={
+                                                                            isCourier ? (
+                                                                                <Fragment>
+                                                                                    <p>
+                                                                                        {
+                                                                                            currentValue.delivery_days_source
+                                                                                        }
+                                                                                        :{' '}
+                                                                                        {
+                                                                                            currentValue.delivery_days
+                                                                                        }
+                                                                                    </p>
+                                                                                    {currentValue.comment && (
+                                                                                        <p>
+                                                                                            {
+                                                                                                currentValue.comment
+                                                                                            }
+                                                                                        </p>
+                                                                                    )}
+                                                                                </Fragment>
+                                                                            ) : (
+                                                                                <Fragment>
+                                                                                    <p>
+                                                                                        {
+                                                                                            currentValue.delivery_days_source
+                                                                                        }
+                                                                                        :{' '}
+                                                                                        {
+                                                                                            currentValue.delivery_days
+                                                                                        }
+                                                                                    </p>
+                                                                                    <p>
+                                                                                        Адрес:{' '}
+                                                                                        {currentValue.address}
+                                                                                    </p>
+                                                                                    <p>
+                                                                                        Время работы:{' '}
+                                                                                        {
+                                                                                            currentValue.schedule
+                                                                                        }
+                                                                                    </p>
+                                                                                </Fragment>
+                                                                            )
+                                                                        }
+                                                                        actions={
+                                                                            <b>
+                                                                                {currentValue.price}&nbsp;
+                                                                                {CURRENCY}
+                                                                            </b>
+                                                                        }
+                                                                        active
+                                                                    />
+                                                                    <Button
+                                                                        kind="primary"
+                                                                        onClick={() =>
+                                                                            setCollapse(prevState => ({
+                                                                                ...prevState,
+                                                                                [values.deliveryType]: false,
+                                                                            }))
+                                                                        }
+                                                                    >
+                                                                        Показать еще ({myData.data.length})
+                                                                    </Button>
+                                                                </div>
+                                                            ) : (
+                                                                myData.data.map(item => {
+                                                                    const {
+                                                                        id,
+                                                                        direction_title,
+                                                                        address,
+                                                                        schedule,
+                                                                        price,
+                                                                        delivery_days,
+                                                                        delivery_days_source,
+                                                                        visible,
+                                                                        comment,
+                                                                    } = item;
+                                                                    if (!visible) return null;
+
+                                                                    return (
+                                                                        <ListItem
+                                                                            key={id}
+                                                                            title={direction_title}
+                                                                            description={
+                                                                                isCourier ? (
+                                                                                    <Fragment>
+                                                                                        <p>
+                                                                                            {
+                                                                                                delivery_days_source
+                                                                                            }
+                                                                                            : {delivery_days}
+                                                                                        </p>
+                                                                                        {comment && (
+                                                                                            <p>{comment}</p>
+                                                                                        )}
+                                                                                    </Fragment>
+                                                                                ) : (
+                                                                                    <Fragment>
+                                                                                        <p>
+                                                                                            {
+                                                                                                delivery_days_source
+                                                                                            }
+                                                                                            : {delivery_days}
+                                                                                        </p>
+                                                                                        <p>
+                                                                                            Адрес: {address}
+                                                                                        </p>
+                                                                                        <p>
+                                                                                            Время работы:{' '}
+                                                                                            {schedule}
+                                                                                        </p>
+                                                                                    </Fragment>
+                                                                                )
+                                                                            }
+                                                                            actions={
+                                                                                <b>
+                                                                                    {price}&nbsp;{CURRENCY}
+                                                                                </b>
+                                                                            }
+                                                                            active={currentValue.id === id}
+                                                                            onClick={() => {
+                                                                                setCollapse(prevState => ({
+                                                                                    ...prevState,
+                                                                                    [values.deliveryType]: true,
+                                                                                }));
+                                                                                handleClickListItem({
+                                                                                    type: isCourier
+                                                                                        ? 'delivery'
+                                                                                        : 'pickup',
+                                                                                    data: item,
+                                                                                });
+                                                                            }}
+                                                                            pointer
+                                                                        />
+                                                                    );
+                                                                })
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {currentValue.id && payments && payments.length && (
+                                                    <div className="basket__address-shippblock">
+                                                        <div className={styles.sectionTitle}>
+                                                            Способ оплаты
+                                                        </div>
+                                                        <div className="basket__address-shippblock-list">
+                                                            <div>
+                                                                {payments.map(item => {
+                                                                    const { id, name } = item;
+
+                                                                    return (
+                                                                        <ListItem
+                                                                            key={id}
+                                                                            title={name}
+                                                                            active={values.payment.id === id}
+                                                                            onClick={() => {
+                                                                                handleClickListItem({
+                                                                                    type: 'payment',
+                                                                                    data: item,
+                                                                                });
+                                                                            }}
+                                                                            pointer
+                                                                        />
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {isCourier && (
+                                                    <div className="basket__address-shippblock">
+                                                        <AddressList
+                                                            items={addresses.data}
+                                                            onChange={handleChangeAddress}
+                                                            onSubmit={handleSubmitAddress}
+                                                            value={values.address_id}
+                                                        />
+                                                    </div>
+                                                )}
+                                            </Fragment>
+                                        );
+                                    }}
+                                </Query>
                             )}
                         </div>
                         <div className="basket__payment-promo">
@@ -630,9 +944,7 @@ const Basket = ({
                                                 </td>
                                                 <td width="10%" className="basket__table-tdb">
                                                     {price ? (
-                                                        <Fragment>
-                                                            <b>{`${price * qty} ${CURRENCY}`}</b>
-                                                        </Fragment>
+                                                        <b>{`${price * qty} ${CURRENCY}`}</b>
                                                     ) : (
                                                         'Бесплатно'
                                                     )}
@@ -659,19 +971,19 @@ const Basket = ({
                                         </td>
                                         <td colSpan="3" className="basket__table-tdf">
                                             <table width="100%">
-                                                <tr>
-                                                    <td>Доставка:</td>
-                                                    <td className="align_right">
-                                                        <span>
-                                                            {currentDirection.price
-                                                                ? `${currentDirection.price} ${CURRENCY}`
-                                                                : 'Бесплатно'}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                                <tr data-render="promocodeRow">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Доставка:</td>
+                                                        <td className="align_right">
+                                                            <span>
+                                                                {currentDirection.price
+                                                                    ? `${currentDirection.price} ${CURRENCY}`
+                                                                    : 'Бесплатно'}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
                                                     {promocode && (
-                                                        <Fragment>
+                                                        <tr>
                                                             <td>Скидка: {promocode} %</td>
                                                             <td className="align_right">
                                                                 -
@@ -680,47 +992,60 @@ const Basket = ({
                                                                 </span>
                                                                 руб.
                                                             </td>
-                                                        </Fragment>
+                                                        </tr>
                                                     )}
-                                                </tr>
-                                                <tr className="basket__bold">
-                                                    <td>Итого:</td>
-                                                    <td className="align_right">
-                                                        <span>{`${totalSumWithDirection} ${CURRENCY}`}</span>
-                                                    </td>
-                                                </tr>
+                                                    <tr className="basket__bold">
+                                                        <td>Итого:</td>
+                                                        <td className="align_right">
+                                                            <span>{`${totalSumWithDirection} ${CURRENCY}`}</span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
                                             </table>
                                         </td>
                                     </tr>
                                 </tfoot>
                             </table>
-                            <div className="basket__title">
-                                <div className="float_right">
-                                    <Mutation mutation={ORDER_MUTATION} onCompleted={handleOrderCompleted}>
-                                        {(createOrder, { error, data, loading }) => {
-                                            console.log(error, data, loading);
+                            <div className="basket__title--right">
+                                <Mutation
+                                    mutation={ORDER_MUTATION}
+                                    onCompleted={handleOrderCompleted}
+                                    onError={handleError}
+                                >
+                                    {(createOrder, { error, loading, data }) => {
+                                        return (
+                                            <Button
+                                                className="basket__button"
+                                                kind="primary"
+                                                bold
+                                                onClick={() => {
+                                                    if (isValid()) {
+                                                        const input = isCourier
+                                                            ? {
+                                                                  courier_id: values.delivery.id,
+                                                                  address_id: values.address_id,
+                                                              }
+                                                            : {
+                                                                  pvz_id: values.pickup.id,
+                                                              };
 
-                                            return (
-                                                <Button
-                                                    className="basket__button"
-                                                    kind="primary"
-                                                    bold
-                                                    onClick={() => {
-                                                        if (isValid()) {
-                                                            createOrder({
-                                                                variables: {
-                                                                    input: { address_id: values.address_id },
+                                                        createOrder({
+                                                            variables: {
+                                                                input: {
+                                                                    ...input,
+                                                                    // payment_id: values.payment.id
+                                                                    // comment: values.comment
                                                                 },
-                                                            });
-                                                        }
-                                                    }}
-                                                >
-                                                    Оформить Заказ
-                                                </Button>
-                                            );
-                                        }}
-                                    </Mutation>
-                                </div>
+                                                            },
+                                                        });
+                                                    }
+                                                }}
+                                            >
+                                                Оформить Заказ
+                                            </Button>
+                                        );
+                                    }}
+                                </Mutation>
                             </div>
                         </div>
                     </StepContainer>

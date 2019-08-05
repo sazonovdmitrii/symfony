@@ -1,72 +1,116 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Query } from 'react-apollo';
+import gql from 'graphql-tag';
+import classnames from 'classnames';
 
 import SearchForm from 'components/SearchForm';
 
-import classnames from 'classnames';
+const GET_HEADER_MENU = gql`
+    {
+        top_menu {
+            data {
+                text
+                url
+                children {
+                    text
+                    url
+                    children {
+                        text
+                        url
+                    }
+                }
+            }
+        }
+    }
+`;
 
-export default ({ all_brands_top_menu = {}, className }) => {
+const HeaderMenu = ({ items, all_brands_top_menu = {}, className }) => {
+    const [state, setState] = useState({ active: null });
     const menuClassName = classnames('mainmenu', className);
+    const handleMouseEnter = index => {
+        setState({ active: index });
+    };
+    const handleMouseLeave = () => {
+        setState({ active: null });
+    };
 
     return (
-        <ul className={menuClassName} data-behavior="menuModule">
-            <li data-handle="opensubmenu" className="mainmenu__item">
-                <Link className="mainmenu__link" to="/brands/">
-                    Бренды
-                </Link>
-                <div data-render="submenu" className="mainmenu__brandmenu">
-                    <ul className="mainmenu__brandmenu_list">
-                        {(all_brands_top_menu.pairs || []).map((pair, index) => (
-                            <li
-                                className={`mainmenu__brandmenu_item${loop.count ==
-                                    all_brands_top_menu.pairs.size && '--last'}${loop.count == 1 &&
-                                    '--first'}`}
-                            >
-                                <span>{pair.key || 'Бестселлеры'}</span>
-                                <div className="mainmenu__brandmenu_wrapper">
-                                    <div className="mainmenu__brandmenu_bigletter">
-                                        <span>{pair.key || 'ТB'}</span>
-                                        {pair.key == 0 && <small>top brands</small>}
-                                        <img
-                                            data-render="imagehover"
-                                            className="mainmenu__brandmenu_logo"
-                                            src=""
-                                            alt=""
-                                        />
-                                    </div>
-                                    <ul className="mainmenu__brandmenu_brandlist">
-                                        {(pair.value || []).map(brand => (
-                                            <li className="mainmenu__brandmenu_brandlist_item">
-                                                <Link
-                                                    className="mainmenu__brandmenu_brandlist_item_link[% 'bold' IF  brand.left_menu %]"
-                                                    to={brand.url}
-                                                    data-handle="imagehover"
-                                                    data-content={brand.images[0].value}
-                                                >
-                                                    {brand.name}
-                                                </Link>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </li>
-            <li data-handle="opensubmenu" className="mainmenu__item">
-                <Link className="mainmenu__link" to="/parfumeriya/">
-                    Парфюмерия
-                </Link>
-            </li>
-            <li data-handle="opensubmenu" className="mainmenu__item">
-                <Link className="mainmenu__link" to="/sales/">
-                    Акции
-                </Link>
-            </li>
+        <ul className={menuClassName}>
+            {items.map(({ text, url, children }, index) => (
+                <li
+                    className={`mainmenu__item--sub ${state.active === index ? 'opensubmenu' : ''}`}
+                    onMouseEnter={() => handleMouseEnter(index)}
+                    onMouseLeave={handleMouseLeave}
+                >
+                    <Link className="mainmenu__link" to={url}>
+                        {text}
+                    </Link>
+                    {children.length
+                        ? children.map(child => (
+                              <div className="mainmenu__submenu">
+                                  <div className="mainmenu__submenu_column">
+                                      {child.url ? (
+                                          <Link className="mainmenu__submenu_group" to={child.url}>
+                                              {child.text}
+                                          </Link>
+                                      ) : (
+                                          <span className="mainmenu__submenu_group">{child.text}</span>
+                                      )}
+                                      {child.children.length ? (
+                                          <ul className="mainmenu__submenu_list">
+                                              {child.children.map(grandson => {
+                                                  if (!grandson.url) return null;
+
+                                                  return (
+                                                      <li className="mainmenu__submenu_item">
+                                                          <Link
+                                                              className="mainmenu__submenu_link"
+                                                              to={grandson.url}
+                                                          >
+                                                              {grandson.text}
+                                                          </Link>
+                                                      </li>
+                                                  );
+                                              })}
+                                          </ul>
+                                      ) : null}
+                                  </div>
+                              </div>
+                          ))
+                        : null}
+                </li>
+            ))}
             <li className="mainmenu__item--search">
                 <SearchForm />
             </li>
         </ul>
+    );
+};
+
+export default props => {
+    return (
+        <Query query={GET_HEADER_MENU}>
+            {({
+                loading,
+                error,
+                data: {
+                    top_menu: { data: items },
+                },
+            }) => {
+                if (loading) return null;
+
+                return (
+                    <HeaderMenu
+                        {...props}
+                        items={[
+                            { text: 'Бренды', url: '/brands/', children: [] },
+                            ...items,
+                            { text: 'Акции', url: '/sales/', children: [] },
+                        ]}
+                    />
+                );
+            }}
+        </Query>
     );
 };

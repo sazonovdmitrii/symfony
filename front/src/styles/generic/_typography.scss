@@ -45,7 +45,7 @@ body {
 
     @include has('title') {
         @include TextProExtraThin;
-        font-size: calculateRem(55px);
+        font-size: calculateRem(40px);
         line-height: 1;
         border-bottom: 1px solid #ccc;
         display: inline-block;

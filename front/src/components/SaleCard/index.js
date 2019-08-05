@@ -8,7 +8,7 @@ const SaleCard = ({ name, description, image, url }) => (
     <div className={styles.root}>
         <Link className={styles.inner} to={url}>
             <picture className={styles.imageWrapper}>
-                <img className={styles.image} src={image} alt="" />
+                <img className={styles.image} src={image || 'https://placehold.it/240x290'} alt="" />
             </picture>
             <h3 className={styles.title}>{name}</h3>
             <div className={styles.textRight}>

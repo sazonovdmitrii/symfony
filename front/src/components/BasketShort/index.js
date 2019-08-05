@@ -106,9 +106,11 @@ const BasketShort = ({ products: productsProps, className, delivery }) => {
                                 <p>{delivery ? `${delivery}&nbsp;${currency}` : 'Бесплатно'}</p>
                             </div>
                             <div className="basket-short__column--right">
-                                Итого:&nbsp;
-                                <span className="basket-short__total-sum">{totalSum}</span>
-                                &nbsp;{CURRENCY}
+                                Итого:
+                                <p className="basket-short__total-sum">
+                                    {totalSum}
+                                    &nbsp;{CURRENCY}
+                                </p>
                             </div>
                         </div>
                         <Button to="/basket/#adress" className="basket-short__btn" kind="primary" fullWidth>
