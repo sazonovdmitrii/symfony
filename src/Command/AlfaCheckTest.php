@@ -5,6 +5,7 @@ namespace App\Command;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 use App\Service\AlfaBankService;
 
 class AlfaCheckTest extends Command
@@ -35,7 +36,7 @@ class AlfaCheckTest extends Command
             'amount' => 100000,# цена в копейках
             'currency'  => 810,# код валюты
            # 'jsonParams' => ['orderNumber' => 2],
-            'orderNumber' => '2_1',# внутренний id типа order_id + transaction_cnt
+            'orderNumber' => '3_1',# внутренний id типа order_id + transaction_cnt
             'userName'  => $this->alfaService->getLogin(),
             'password' => $this->alfaService->getPassword(),
             'returnUrl' => 'https://www.laparfumerie.ru/order/success/'
@@ -47,6 +48,7 @@ class AlfaCheckTest extends Command
             ->setMethod('register.do')
             ->getData();
         print_r($payments);
+        $this->alfaService->setTransaction('Alfabank','3',$payments);#придется реально передать заказ
         die();
     }
 }
