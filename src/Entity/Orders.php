@@ -49,6 +49,11 @@ class Orders
     private $orderItems;
 
     /**
+
+     * @ORM\OneToMany(targetEntity="App\Entity\TransactionLog", mappedBy="entity")
+     */
+    private $transactionInfo;
+
      * @ORM\Column(type="text", nullable=true)
      */
     private $comment;
@@ -57,6 +62,7 @@ class Orders
     {
         $this->orderItems = new ArrayCollection();
         $this->created = new \DateTime('now');
+        $this->transactionInfo = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -154,6 +160,35 @@ class Orders
 
         return $this;
     }
+
+
+    /**
+     * @return Collection|TransactionLog[]
+     */
+    public function getTransactionInfo(): Collection
+    {
+        return $this->transactionInfo;
+    }
+
+    public function addTransactionInfo(TransactionLog $transactionInfo): self
+    {
+        if (!$this->transactionInfo->contains($transactionInfo)) {
+            $this->transactionInfo[] = $transactionInfo;
+            $transactionInfo->setEntity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTransactionInfo(TransactionLog $transactionInfo): self
+    {
+        if ($this->transactionInfo->contains($transactionInfo)) {
+            $this->transactionInfo->removeElement($transactionInfo);
+            // set the owning side to null (unless already changed)
+            if ($transactionInfo->getEntity() === $this) {
+                $transactionInfo->setEntity(null);
+            }
+        }
 
     public function getComment(): ?string
     {

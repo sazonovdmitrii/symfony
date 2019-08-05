@@ -1,6 +1,8 @@
 <?php
 namespace App\Service;
 use App\Service\ApiManager\ApiManager;
+use Doctrine\Common\Persistence\ObjectManager;
+use App\Entity\TransactionLog;
 
 class AlfaBankService extends ApiManager
 {
@@ -31,5 +33,19 @@ class AlfaBankService extends ApiManager
     public function getPassword()
     {
         return self::PASSWORD;
+    }
+
+
+    public function setTransaction(String $type, Int $entityId, String $message)
+    {
+        $manager = $this->getDoctrine()
+            ->getManager();
+        $transaction = new TransactionLog();
+        $transaction->setType($type);
+        $transaction->setEntity($entityId);
+        $transaction->setMessage($message);
+
+        $manager->persist($transaction);
+        $manager->flush();
     }
 }
