@@ -1,0 +1,5 @@
+{% block _product_products_items_widget %}
+    {% for row in form.parent.vars.data.productItems %}
+        <a href="/admin/?entity=Items&action=edit&id={{ row.id }}">{{ row.name }}</a><br/>
+    {% endfor %}
+{% endblock %}

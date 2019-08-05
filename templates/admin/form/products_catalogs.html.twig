@@ -1,0 +1,5 @@
+{% block _product_products_catalogs_widget %}
+    {% for row in form.parent.vars.data.catalogs %}
+        <a href="/admin/?entity=Catalog&action=edit&id={{ row.id }}">{{ row.name }}</a><br/>
+    {% endfor %}
+{% endblock %}

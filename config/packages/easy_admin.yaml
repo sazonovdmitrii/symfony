@@ -75,9 +75,9 @@ easy_admin:
                     - created
                     - updated
                     - { type: 'tab', label: 'Categories' }
-                    - { property: 'catalogs', type: 'easyadmin_autocomplete' }
-                    - { type: 'tab', label: 'Product Items' }
-                    - { property: 'productItems', type: 'easyadmin_autocomplete' }
+                    - { property: 'catalogs', type_options: { block_name: 'products_catalogs' }}
+                    - { type: 'tab', label: 'Product Items'}
+                    - { property: 'productItems', type_options: { block_name: 'products_items' }}
                     - { type: 'tab', label: 'Virtual Urls' }
                     - { property: 'productUrls', type: 'easyadmin_autocomplete' }
                     - { type: 'tab', label: 'Tags' }
@@ -184,6 +184,8 @@ easy_admin:
             - 'admin/form/bootstrap_3_horizontal_layout.html.twig'
             - 'admin/form/images.html.twig'
             - 'admin/form/tags.html.twig'
+            - 'admin/form/products_items.html.twig'
+            - 'admin/form/products_catalogs.html.twig'
             - 'admin/form/products_tags_items.html.twig'
         menu:
           - label: 'Urls'
