@@ -79,7 +79,7 @@ easy_admin:
                     - { type: 'tab', label: 'Product Items'}
                     - { property: 'productItems', type_options: { block_name: 'products_items' }}
                     - { type: 'tab', label: 'Virtual Urls' }
-                    - { property: 'productUrls', type: 'easyadmin_autocomplete' }
+                    - { property: 'productUrls', type: 'form', type_options: {block_name: 'products_urls'}}
                     - { type: 'tab', label: 'Tags' }
                     - { property: 'producttagitem', type_options: { block_name: 'products_tags_items' }}
         Order:
@@ -187,6 +187,7 @@ easy_admin:
             - 'admin/form/products_items.html.twig'
             - 'admin/form/products_catalogs.html.twig'
             - 'admin/form/products_tags_items.html.twig'
+            - 'admin/form/products_urls.html.twig'
         menu:
           - label: 'Urls'
             children: ['ProductUrl', 'CatalogUrl']

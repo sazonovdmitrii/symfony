@@ -1,0 +1,5 @@
+{% block _product_products_urls_widget %}
+    {% for row in form.parent.vars.data.productUrls %}
+        <a href="/{{ row.url }}">{{ row.url }}</a><br/>
+    {% endfor %}
+{% endblock %}
