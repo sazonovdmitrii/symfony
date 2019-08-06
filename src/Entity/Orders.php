@@ -54,6 +54,7 @@ class Orders
      */
     private $transactionInfo;
 
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $comment;
@@ -189,6 +190,7 @@ class Orders
                 $transactionInfo->setEntity(null);
             }
         }
+    }
 
     public function getComment(): ?string
     {
