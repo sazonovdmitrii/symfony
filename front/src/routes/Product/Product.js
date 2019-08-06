@@ -8,9 +8,7 @@ import { GET_SHORT_BASKET } from 'query';
 
 import { seoHead } from 'utils';
 import Button from 'components/Button';
-import Tabs from 'components/Tabs';
-import Tab from 'components/Tabs/Tab';
-import TabsView from 'components/Tabs/TabsView';
+import { Tabs, Tab, TabsView } from 'components/Tabs';
 import CommentForm from 'components/CommentForm';
 import Comment from 'components/Comment';
 import RichText from 'components/RichText';
@@ -168,7 +166,7 @@ const Product = ({
                                 </Tab>
                                 <Tab className="product__brand-info-li">Оплата</Tab>
                             </Tabs>
-                            <TabsView index={tabIndex}>
+                            <TabsView value={tabIndex}>
                                 <div className="product__brand-info-shipp product__brand-info-block">
                                     <p className="product__brand-info-shipp-p">
                                         Стоимость:{' '}

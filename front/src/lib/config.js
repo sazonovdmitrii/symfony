@@ -1,6 +1,6 @@
 import path from 'path';
 import ora from 'ora';
-import knex from 'knex';
+// import knex from 'knex';
 
 import { createClient } from './apollo';
 

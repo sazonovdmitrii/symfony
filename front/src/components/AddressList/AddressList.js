@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useRef } from 'react';
 import { Mutation, withApollo } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Edit, X } from 'react-feather';
@@ -61,8 +61,9 @@ const TEXT = {
 };
 
 const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {}, client }) => {
+    const formEl = useRef(null);
     const [items, setItems] = useState(itemsProp);
-    const [showForm, setShowForm] = useState(null);
+    const [showForm, setShowForm] = useState({});
     const handleRemoveAddress = ({ removeAddress: { data } }) => {
         setItems(data);
     };
@@ -79,7 +80,7 @@ const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {}, c
                 },
             },
         });
-        setShowForm(null);
+        setShowForm({});
         onSubmit(data.data ? data.data : data);
     };
 
@@ -87,24 +88,32 @@ const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {}, c
         setItems(itemsProp);
     }, [itemsProp.length]);
 
-    if (showForm) {
+    useEffect(() => {
+        if (formEl.current) {
+            formEl.current.scrollIntoView();
+        }
+    }, [showForm.id, showForm.type]);
+
+    if (showForm.id) {
         return (
-            <AddressForm
-                type={showForm.type}
-                id={showForm.id}
-                actions={
-                    <Button
-                        kind="secondary"
-                        bold
-                        onClick={() => {
-                            setShowForm(null);
-                        }}
-                    >
-                        Назад
-                    </Button>
-                }
-                onSubmit={handleSubmitAddress}
-            />
+            <div ref={formEl}>
+                <AddressForm
+                    type={showForm.type}
+                    id={showForm.id}
+                    actions={
+                        <Button
+                            kind="secondary"
+                            bold
+                            onClick={() => {
+                                setShowForm({});
+                            }}
+                        >
+                            Назад
+                        </Button>
+                    }
+                    onSubmit={handleSubmitAddress}
+                />
+            </div>
         );
     }
 

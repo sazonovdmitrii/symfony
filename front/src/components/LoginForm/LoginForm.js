@@ -59,7 +59,7 @@ const LoginForm = ({ onSubmit, error }) => {
                 </InputGroup>
                 <InputGroup>
                     <ButtonGroup>
-                        <Button type="submit" kind="primary" bold uppercase>
+                        <Button type="submit" kind="primary" bold>
                             Войти
                         </Button>
                         <Button to="/user/remind-password" kind="secondary">
