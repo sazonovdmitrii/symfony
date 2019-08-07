@@ -1,8 +1,8 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withApollo, Mutation, Query } from 'react-apollo';
 import gql from 'graphql-tag';
+import { Trash2 } from 'react-feather';
 
 import { useApp } from 'hooks';
 
@@ -10,26 +10,37 @@ import { Dialog, DialogTitle, DialogContent } from 'components/Dialog';
 import Input from 'components/Input';
 import Button from 'components/Button';
 import LoginForm from 'components/LoginForm';
-import RegisterForm from 'components/RegisterForm';
 import { StepView, StepContainer } from 'components/Steps';
 import AddressList from 'components/AddressList/AddressList';
 import Snackbar from 'components/Snackbar';
 import Select from 'components/Select';
 import Loader from 'components/Loader';
 import ListItem from 'components/ListItem';
+import ProductTable from 'components/ProductTable';
+import Promocode from 'components/Promocode';
+import SidebarBasket from 'components/SidebarBasket';
+import UserForm from 'components/UserForm';
+import Stripe from 'components/Stripe';
 
 import Success from 'routes/Success';
 
 import styles from './styles.css';
 
-import infoIcon from './images/info.png';
-import carIcon from './images/car.png';
-
 const CURRENCY = 'Руб.';
+const DELIVERY_TYPES = [{ id: 'courier', label: 'Курьером' }, { id: 'pickup', label: 'Самовывоз' }];
+const ERORRS = {
+    city: 'Город доставки',
+    address: 'Адрес',
+    payment: 'Способ оплаты',
+    pickup: 'Пункт выдачи',
+    delivery: 'Способ доставки',
+};
 
-const REMOVE_PRODUCT_MUTATION = gql`
-    mutation removeProduct($input: AddBasketInput!) {
-        removeBasket(input: $input) {
+const isNumber = value => parseInt(value, 10) === parseInt(value, 10);
+
+const UPDATE_PRODUCT_MUTATION = gql`
+    mutation updateProduct($input: UpdateBasketInput!) {
+        updateBasket(input: $input) {
             products {
                 item_id
                 qty
@@ -41,9 +52,9 @@ const REMOVE_PRODUCT_MUTATION = gql`
     }
 `;
 
-const UPDATE_PRODUCT_MUTATION = gql`
-    mutation updateProduct($input: UpdateBasketInput!) {
-        updateBasket(input: $input) {
+const REMOVE_PRODUCT_MUTATION = gql`
+    mutation removeProduct($input: AddBasketInput!) {
+        removeBasket(input: $input) {
             products {
                 item_id
                 qty
@@ -84,7 +95,6 @@ const GET_PICKUPS = gql`
                 comment
                 payments_methods {
                     id
-                    name
                 }
             }
         }
@@ -105,7 +115,6 @@ const GET_DELIVERY = gql`
                 comment
                 payments_methods {
                     id
-                    name
                 }
             }
         }
@@ -113,92 +122,80 @@ const GET_DELIVERY = gql`
 `;
 
 const theme = {
-    title: 'typography__catheader basket__h1',
-    header: 'basket__title',
+    title: styles.title,
+    header: styles.header,
     nav: styles.nav,
-};
-
-const text = {
-    city: 'г.',
-    corp: 'корп.',
-    flat: 'кв.',
-    house: 'д.',
-    street: 'ул.',
-    zip: 'индекс:',
 };
 
 const Basket = ({
     basket: { products: productsProps },
     gifts = [],
-    cities: { data: cities },
+    cities: { data: citiesProps },
+    payments_methods: { data: paymentsMethodsProps },
     addresses,
     isLoggedIn,
 }) => {
+    const { login } = useApp();
     const [success, setSuccess] = useState(false);
     const [products, setProducts] = useState(productsProps);
     const [promocode, setPromocode] = useState(null);
     const [openModal, setOpenModal] = useState(false);
+    const [showLogin, setShowLogin] = useState(false);
     const [step, setStep] = useState(0);
     const [notification, setNotification] = useState(null);
+    // TODO check active key
     const [values, setValues] = useState({
         deliveryType: 'courier',
-        city: null,
+        city: {},
         payment: {},
         delivery: {},
         pickup: {},
         comment: '',
-        promocode: '',
-        address_id: addresses && addresses.data.length ? addresses.data[0].id : null,
+        address: addresses && addresses.data.length ? addresses.data[0] : null,
     });
-    const isCourier = values.deliveryType === 'courier';
     const [collapse, setCollapse] = useState({
         pickup: false,
         delivery: false,
     });
-    const [currentPayment, setCurrentPayment] = useState({});
-    const [currentDirection, setCurrentDirection] = useState({});
-    const [currentAddress, setCurrentAddress] = useState(addresses ? addresses.data[0] : null);
+
+    const isCourier = values.deliveryType === 'courier';
+    const currentDelivery = isCourier ? values.delivery : values.pickup;
     const totalSum = products.reduce((acc, item) => acc + item.price * item.qty, 0);
-    const totalSumWithDirection = parseInt(currentDirection.price, 10) + totalSum;
+    const cities = citiesProps.sort((a, b) => {
+        if (a.title < b.title) {
+            return -1;
+        }
+
+        return 0;
+    });
     const citiesForSelect = cities
-        .map(({ id, title, visible }) => {
-            if (visible) return { id, value: title };
+        .map(({ id, title, visible, ...any }) => {
+            if (visible) return { id, value: title, ...any };
             return null;
         })
         .filter(Boolean);
 
-    // console.log(currentAddress);
     // useEffect(() => {
-    //     setCurrentPayment(paymentsMethods.find(({ id }) => id.toString() === values.payment));
-    // }, [paymentsMethods, values.payment]);
-    // useEffect(() => {
-    //     setCurrentDirection(directions.find(({ id }) => id.toString() === values.direction));
-    // }, [directions, values.direction]);
+    //     if (totalSum < 500) {
+    //         setNotification({
+    //             errorType: 'lowPrice',
+    //             type: 'error',
+    //             text:
+    //                 'Минимальная сумма заказа по Москве и Московской области 500 руб, по регионам РФ - 1000 руб.',
+    //         });
+    //     }
+    // }, [totalSum]);
 
     useEffect(() => {
-        if (totalSum < 500) {
-            setNotification({
-                errorType: 'lowPrice',
-                type: 'error',
-                text:
-                    'Минимальная сумма заказа по Москве и Московской области 500 руб, по регионам РФ - 1000 руб.',
-            });
-        }
-    }, [totalSum]);
+        window.scrollTo(0, 0);
+    }, [step]);
 
     useEffect(() => {
         setCollapse({
             pickup: false,
             delivery: false,
         });
-        // setValues(prevState => ({
-        //     ...prevState,
-        //     // address_id: null,
-        //     delivery: {},
-        //     payment: {},
-        //     pickup: {},
-        // }));
-    }, [values.city]);
+    }, [values.city.id]);
 
     const handleCloseModal = () => {
         setOpenModal(false);
@@ -211,10 +208,10 @@ const Basket = ({
 
         setStep(index);
     };
-    const handleChangeSelect = ({ id }) => {
+    const handleChangeSelect = data => {
         setValues(prevState => ({
             ...prevState,
-            city: id,
+            city: data,
         }));
     };
     const handleChangeProducts = ({ removeBasket, updateBasket }, data = removeBasket || updateBasket) => {
@@ -225,16 +222,13 @@ const Basket = ({
         setProducts(newProducts);
     };
     const handleSubmitAddress = data => {
-        // console.log(data);
         if (data.id) {
             setValues(prevState => ({
                 ...prevState,
-                address_id: data.id,
+                address: data,
             }));
-            setCurrentAddress(data);
         }
     };
-    const handleSubmitPromocode = () => {};
     const handleChange = ({ target: { value, name } }) => {
         setValues(prevState => ({
             ...prevState,
@@ -242,20 +236,36 @@ const Basket = ({
         }));
     };
     const isValid = () => {
-        const fields = isCourier ? [values.delivery, values.address_id] : [values.pickup];
-        const valid = [values.city, ...fields, values.payment].every(item => {
-            console.log(item);
-            if (item && typeof item === 'object') return item.id;
+        const fields = isCourier ? ['delivery', 'address'] : ['pickup'];
+        const requiredFields = ['city', ...fields, 'payment'];
 
-            return item;
-        });
+        const valid = requiredFields
+            .map(field => {
+                const value = values[field];
 
-        // TODO validation address, delivery, payment
-        return valid;
+                if (!value) return field;
+
+                if (isNumber(value) || (typeof value === 'object' && value.id)) {
+                    return null;
+                }
+
+                return field;
+            })
+            .filter(Boolean);
+
+        if (valid.length) {
+            const name = [...valid].shift();
+
+            setNotification({
+                type: 'error',
+                text: ERORRS[name],
+            });
+        }
+
+        return !valid.length;
     };
-    const { login } = useApp();
-    const handleLogInCompleted = async ({ auth }) => {
-        await login(auth.hash);
+    const handleLogInCompleted = async ({ auth: { hash } }) => {
+        await login(hash);
     };
     const handleRegisterCompleted = async ({ register: { hash } }) => {
         await login(hash);
@@ -270,16 +280,20 @@ const Basket = ({
         });
     };
     const handleChangeAddress = data => {
-        setCurrentAddress(data);
-        setValues(prevState => ({ ...prevState, address_id: data.id }));
+        setValues(prevState => ({ ...prevState, address: data }));
     };
-
     const handleClickListItem = ({ data, type }) => {
         setValues(prevState => ({
             ...prevState,
             [type]: data,
         }));
     };
+    const handleSubmitPromocode = (e, { promocode, error }) => {
+        e.preventDefault();
+
+        console.log('submit promocode', promocode, error);
+    };
+    const handleRemovePromocode = () => {};
 
     // console.log(values.pickup, values.delivery, values.payment, values.address_id, '🔥');
 
@@ -289,22 +303,14 @@ const Basket = ({
 
     if (!products.length) {
         return (
-            <div
-                style={{
-                    margin: '20px 0',
-                    textAlign: 'center',
-                    fontSize: '18px',
-                    lineHeight: '48px',
-                    background: '#f6f6f6',
-                }}
-            >
+            <Stripe className={styles.empty} kind="secondary">
                 В данный момент ваша корзина пуста.
-            </div>
+            </Stripe>
         );
     }
 
     return (
-        <div>
+        <div className={styles.root}>
             {notification && (
                 <Snackbar
                     text={notification.text}
@@ -315,754 +321,450 @@ const Basket = ({
             )}
             <StepView active={step} onChange={handleChangeStep}>
                 <StepContainer title="Моя корзина" theme={theme}>
-                    <table className="basket__table">
-                        <thead>
-                            <tr>
-                                <td colSpan="2" className="basket__table-tdh">
-                                    Наименование
-                                </td>
-                                <td className="basket__table-tdh">
-                                    <span className="show-on-mobile">Кол-во</span>
-                                    <span className="hide-on-mobile">Количество</span>
-                                </td>
-                                <td className="basket__table-tdh">{promocode && 'Скидка'}</td>
-                                <td className="basket__table-tdh">Цена</td>
-                                <td className="basket__table-tdh">Сумма</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {products.map(
-                                ({
-                                    product_name: productName,
-                                    item_id: id,
-                                    name,
-                                    qty,
-                                    brand_name,
-                                    discount,
-                                    price,
-                                }) => (
-                                    <tr key={id} className="basket__table-tr">
-                                        <td width="10%" align="center" className="basket__table-tdb">
-                                            <Link to="/" className="cart-tbl__link hide-on-mobile">
-                                                <img
-                                                    src="https://placehold.it/60x60/000"
-                                                    height="60"
-                                                    alt=""
-                                                />
-                                            </Link>
-                                        </td>
-                                        <td width="50%" className="basket__table-tdb">
-                                            {brand_name && (
-                                                <strong className="basket__bold hide-on-mobile">
-                                                    {brand_name}
-                                                </strong>
-                                            )}
-                                            <Link className="basket__productname" to="/">
-                                                {productName} {name}
-                                            </Link>
-                                            <div className="basket__table-navitem hide-on-mobile">
-                                                <Mutation
-                                                    mutation={REMOVE_PRODUCT_MUTATION}
-                                                    onCompleted={handleChangeProducts}
+                    {products.map(
+                        ({
+                            product_name: productName,
+                            item_id: id,
+                            name,
+                            qty,
+                            brand_name,
+                            discount,
+                            price,
+                        }) => (
+                            <ProductTable
+                                key={id}
+                                id={id}
+                                type="basket"
+                                brand={brand_name}
+                                image="https://placehold.it/150x150"
+                                title={productName}
+                                description={name}
+                                price={price}
+                                footerActions={
+                                    <Fragment>
+                                        x&nbsp;
+                                        <Mutation
+                                            mutation={UPDATE_PRODUCT_MUTATION}
+                                            onCompleted={handleChangeProducts}
+                                        >
+                                            {(callback, { error, data, loading }) => {
+                                                return (
+                                                    <select
+                                                        name="products-qty"
+                                                        className={styles.amountSelect}
+                                                        onChange={({ target: { value } }) => {
+                                                            callback({
+                                                                variables: {
+                                                                    input: {
+                                                                        item_id: id,
+                                                                        qty: value,
+                                                                    },
+                                                                },
+                                                            });
+                                                        }}
+                                                        defaultValue={qty}
+                                                    >
+                                                        {[...new Array(11).keys()].slice(1).map(item => (
+                                                            <option key={item} value={item}>
+                                                                {item}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                );
+                                            }}
+                                        </Mutation>
+                                        &nbsp;шт.
+                                    </Fragment>
+                                }
+                                rightActions={
+                                    <Mutation
+                                        mutation={REMOVE_PRODUCT_MUTATION}
+                                        onCompleted={handleChangeProducts}
+                                    >
+                                        {(remove, { error, data, loading }) => {
+                                            console.log(error, data, loading);
+
+                                            return (
+                                                <Button
+                                                    type="button"
+                                                    className={styles.removeButton}
+                                                    onClick={() =>
+                                                        remove({
+                                                            variables: { input: { item_id: id } },
+                                                        })
+                                                    }
+                                                    bold
                                                 >
-                                                    {(remove, { error, data, loading }) => {
-                                                        return (
+                                                    <Trash2 size="20px" />
+                                                </Button>
+                                            );
+                                        }}
+                                    </Mutation>
+                                }
+                            />
+                        )
+                    )}
+                    <div className={styles.productsFooter}>
+                        <div className={styles.productsFooterItem}>
+                            <Promocode
+                                {...promocode}
+                                onSubmit={handleSubmitPromocode}
+                                onRemove={handleRemovePromocode}
+                            />
+                        </div>
+                        <div className={styles.productsFooterItem}>
+                            <Button kind="primary" onClick={() => setOpenModal(true)} bold>
+                                Добавить подарок
+                            </Button>
+                            {openModal && (
+                                <Dialog open={openModal} onClose={handleCloseModal}>
+                                    <DialogTitle>Подарки к заказу</DialogTitle>
+                                    <DialogContent>gifts</DialogContent>
+                                </Dialog>
+                            )}
+                        </div>
+                    </div>
+                </StepContainer>
+                {isLoggedIn ? (
+                    <StepContainer title="Оформление заказа" theme={theme}>
+                        <div className={styles.block}>
+                            <Select
+                                label="Город*"
+                                items={citiesForSelect}
+                                value={values.city.id}
+                                onChange={handleChangeSelect}
+                            />
+                        </div>
+                        <div className={styles.block}>
+                            <div className={styles.blockTitle}>Способ получения</div>
+                            {DELIVERY_TYPES.map(({ id, label }) => {
+                                return (
+                                    <ListItem
+                                        key={id}
+                                        title={label}
+                                        active={values.deliveryType === id}
+                                        onClick={() =>
+                                            handleClickListItem({
+                                                type: 'deliveryType',
+                                                data: id,
+                                            })
+                                        }
+                                        pointer
+                                    />
+                                );
+                            })}
+                        </div>
+                        {values.city.id && values.deliveryType && (
+                            <Query
+                                query={isCourier ? GET_DELIVERY : GET_PICKUPS}
+                                variables={{
+                                    city_id: values.city.id,
+                                }}
+                            >
+                                {({ loading, error, data: { couriers, pickups } }) => {
+                                    if (error) return null;
+                                    if (loading) return <Loader />;
+
+                                    const myData = couriers || pickups;
+                                    const { payments_methods: newPaymentsMethods = [] } = currentDelivery;
+                                    const allIdsPaymentMethods = newPaymentsMethods.map(({ id }) => id);
+                                    const paymentsMethods = paymentsMethodsProps.filter(
+                                        ({ id }) => allIdsPaymentMethods.indexOf(id) !== -1
+                                    );
+
+                                    return (
+                                        <Fragment>
+                                            <div className={styles.block}>
+                                                <div className={styles.blockTitle}>
+                                                    {isCourier ? 'Способ доставки' : 'Самовывозы'}
+                                                </div>
+
+                                                <div>
+                                                    {collapse[values.deliveryType] &&
+                                                    myData.data.length > 1 ? (
+                                                        <div>
+                                                            <ListItem
+                                                                title={currentDelivery.direction_title}
+                                                                description={
+                                                                    isCourier ? (
+                                                                        <Fragment>
+                                                                            <p>
+                                                                                {
+                                                                                    currentDelivery.delivery_days_source
+                                                                                }
+                                                                                :{' '}
+                                                                                {
+                                                                                    currentDelivery.delivery_days
+                                                                                }
+                                                                            </p>
+                                                                            {currentDelivery.comment && (
+                                                                                <p>
+                                                                                    {currentDelivery.comment}
+                                                                                </p>
+                                                                            )}
+                                                                        </Fragment>
+                                                                    ) : (
+                                                                        <Fragment>
+                                                                            <p>
+                                                                                {
+                                                                                    currentDelivery.delivery_days_source
+                                                                                }
+                                                                                :{' '}
+                                                                                {
+                                                                                    currentDelivery.delivery_days
+                                                                                }
+                                                                            </p>
+                                                                            <p>
+                                                                                Адрес:{' '}
+                                                                                {currentDelivery.address}
+                                                                            </p>
+                                                                            <p>
+                                                                                Время работы:{' '}
+                                                                                {currentDelivery.schedule}
+                                                                            </p>
+                                                                            {currentDelivery.comment && (
+                                                                                <p>
+                                                                                    {currentDelivery.comment}
+                                                                                </p>
+                                                                            )}
+                                                                        </Fragment>
+                                                                    )
+                                                                }
+                                                                actions={
+                                                                    <b>
+                                                                        {currentDelivery.price}&nbsp;
+                                                                        {CURRENCY}
+                                                                    </b>
+                                                                }
+                                                                active
+                                                            />
                                                             <Button
-                                                                className="basket__bold basket__table-navitem-del"
+                                                                kind="primary"
                                                                 onClick={() =>
-                                                                    remove({
-                                                                        variables: { input: { item_id: id } },
-                                                                    })
+                                                                    setCollapse(prevState => ({
+                                                                        ...prevState,
+                                                                        [values.deliveryType]: false,
+                                                                    }))
                                                                 }
                                                                 bold
                                                             >
-                                                                ✖ Удалить покупку
+                                                                Показать еще ({myData.data.length})
                                                             </Button>
-                                                        );
-                                                    }}
-                                                </Mutation>
+                                                        </div>
+                                                    ) : (
+                                                        myData.data.map(item => {
+                                                            const {
+                                                                direction_title: title,
+                                                                delivery_days: deliveryDays,
+                                                                delivery_days_source: deliveryDaysSource,
+                                                                id,
+                                                                address,
+                                                                schedule,
+                                                                price,
+                                                                visible,
+                                                                comment,
+                                                            } = item;
+                                                            if (!visible) return null;
+
+                                                            return (
+                                                                <ListItem
+                                                                    key={id}
+                                                                    title={title}
+                                                                    description={
+                                                                        isCourier ? (
+                                                                            <Fragment>
+                                                                                <p>
+                                                                                    {deliveryDaysSource}:{' '}
+                                                                                    {deliveryDays}
+                                                                                </p>
+                                                                                {comment && <p>{comment}</p>}
+                                                                            </Fragment>
+                                                                        ) : (
+                                                                            <Fragment>
+                                                                                <p>
+                                                                                    {deliveryDaysSource}:{' '}
+                                                                                    {deliveryDays}
+                                                                                </p>
+                                                                                <p>Адрес: {address}</p>
+                                                                                <p>
+                                                                                    Время работы: {schedule}
+                                                                                </p>
+
+                                                                                {comment && <p>{comment}</p>}
+                                                                            </Fragment>
+                                                                        )
+                                                                    }
+                                                                    actions={
+                                                                        <b>
+                                                                            {price}&nbsp;{CURRENCY}
+                                                                        </b>
+                                                                    }
+                                                                    active={currentDelivery.id === id}
+                                                                    onClick={() => {
+                                                                        handleClickListItem({
+                                                                            type: isCourier
+                                                                                ? 'delivery'
+                                                                                : 'pickup',
+                                                                            data: item,
+                                                                        });
+                                                                        setCollapse(prevState => ({
+                                                                            ...prevState,
+                                                                            [values.deliveryType]: true,
+                                                                        }));
+                                                                        // set default first payment
+                                                                        setValues(prevState => ({
+                                                                            ...prevState,
+                                                                            payment: item.payments_methods[0],
+                                                                        }));
+                                                                    }}
+                                                                    pointer
+                                                                />
+                                                            );
+                                                        })
+                                                    )}
+                                                </div>
                                             </div>
-                                        </td>
-                                        <td width="10%" className="basket__table-tdb">
-                                            <div className="basket__count">
-                                                <i className="basket__count-arrow">▼</i>
-                                                <Mutation
-                                                    mutation={UPDATE_PRODUCT_MUTATION}
-                                                    onCompleted={handleChangeProducts}
-                                                >
-                                                    {(callback, { error, data, loading }) => {
+                                            {isCourier && (
+                                                <div className={styles.block}>
+                                                    <div className={styles.blockTitle}>Адреса</div>
+                                                    <AddressList
+                                                        items={addresses ? addresses.data : []}
+                                                        onChange={handleChangeAddress}
+                                                        onSubmit={handleSubmitAddress}
+                                                        value={values.address ? values.address.id : null}
+                                                    />
+                                                </div>
+                                            )}
+                                            {currentDelivery.id && paymentsMethods && paymentsMethods.length && (
+                                                <div className={styles.block}>
+                                                    <div className={styles.blockTitle}>Способ оплаты</div>
+                                                    {paymentsMethods.map(item => {
+                                                        const { id, name } = item;
+
                                                         return (
-                                                            <select
-                                                                className="basket__count-select"
-                                                                name="products-qty"
-                                                                onChange={({ target: { value } }) => {
-                                                                    callback({
-                                                                        variables: {
-                                                                            input: {
-                                                                                item_id: id,
-                                                                                qty: value,
-                                                                            },
-                                                                        },
+                                                            <ListItem
+                                                                key={id}
+                                                                title={name}
+                                                                active={values.payment.id === id}
+                                                                onClick={() => {
+                                                                    handleClickListItem({
+                                                                        type: 'payment',
+                                                                        data: item,
                                                                     });
                                                                 }}
-                                                                defaultValue={qty}
-                                                            >
-                                                                {[...new Array(11).keys()]
-                                                                    .slice(1)
-                                                                    .map(item => (
-                                                                        <option key={item} value={item}>
-                                                                            {item}
-                                                                        </option>
-                                                                    ))}
-                                                            </select>
+                                                                pointer
+                                                            />
                                                         );
-                                                    }}
-                                                </Mutation>
-                                            </div>
-                                        </td>
-                                        <td width="10%" className="basket__table-tdb">
-                                            {discount}
-                                        </td>
-                                        <td width="10%" className="basket__table-tdb">
-                                            {/* <span className="cart-price cart-price_role_original">
-                                                666 {CURRENCY}
-                                            </span> */}
-                                            <span className="cart-price cart-price_role_final">
-                                                {price ? `${price} ${CURRENCY}` : 'Бесплатно'}
-                                            </span>
-                                        </td>
-                                        <td width="10%" className="basket__table-tdb">
-                                            {price ? <b>{`${price * qty} ${CURRENCY}`}</b> : 'Бесплатно'}
-                                            <Mutation
-                                                mutation={REMOVE_PRODUCT_MUTATION}
-                                                onCompleted={handleChangeProducts}
-                                            >
-                                                {(remove, { error, data, loading }) => {
-                                                    console.log(error, data, loading);
-
-                                                    return (
-                                                        <Button
-                                                            className="show-on-mobile"
-                                                            style={{ float: 'right' }}
-                                                            onClick={() =>
-                                                                remove({
-                                                                    variables: { input: { item_id: id } },
-                                                                })
-                                                            }
-                                                            bold
-                                                        >
-                                                            ✖
-                                                        </Button>
-                                                    );
-                                                }}
-                                            </Mutation>
-                                        </td>
-                                    </tr>
-                                )
-                            )}
-                            {gifts.length ? (
-                                <tr className="gift_row">
-                                    <td colSpan="2" className="basket__table-tdb">
-                                        <Fragment>
-                                            <Button kind="primary" onClick={() => setOpenModal(true)} bold>
-                                                <span className="basket__gifts-add">Добавить подарок</span>
-                                            </Button>
-                                            {openModal && (
-                                                <Dialog open={openModal} onClose={handleCloseModal}>
-                                                    <DialogTitle>Подарки к заказу</DialogTitle>
-                                                    <DialogContent>gifts</DialogContent>
-                                                </Dialog>
+                                                    })}
+                                                </div>
                                             )}
                                         </Fragment>
-                                    </td>
-                                </tr>
-                            ) : null}
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colSpan="3" className="basket__table-tdf">
-                                    <img className="basket__icon hide-on-mobile" src={carIcon} alt="" />
-                                    <p className="basket__table-time">
-                                        <strong className="basket__bold">
-                                            Ожидаемое время доставки по Москве:
-                                        </strong>
-                                        <br />
-                                        <span>до 14 дней</span>
-                                    </p>
-                                </td>
-                                <td colSpan="3" className="basket__table-tdf">
-                                    <table width="100%">
-                                        <tbody>
-                                            <tr>
-                                                <td>Доставка:</td>
-                                                <td className="align_right">
-                                                    <span>
-                                                        {currentDirection.price
-                                                            ? `${currentDirection.price} ${CURRENCY}`
-                                                            : 'Бесплатно'}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                            <tr data-render="promocodeRow" />
-                                            <tr className="basket__bold">
-                                                <td>Итого:</td>
-                                                <td className="align_right">
-                                                    <span>{totalSumWithDirection}</span>{' '}
-                                                    <span>{CURRENCY}</span>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colSpan="3" className="basket__table-tdf">
-                                    <div>
-                                        <ul className="basket__table-list">
-                                            <li className="basket__table-list-pt">
-                                                ✔ Удобные споcобы оплаты
-                                            </li>
-                                            <li className="basket__table-list-pt">✔ Бесплатная доставка</li>
-                                            <li className="basket__table-list-pt">✔ Гарантия качества</li>
-                                            <li className="basket__table-list-pt">✔ Бесплатный возврат</li>
-                                        </ul>
-                                    </div>
-                                </td>
-                                <td colSpan="3" className="basket__table-tdf">
-                                    <div className="basket__table-list basket__table-infoblock float_right">
-                                        <img className="basket__icon" src={infoIcon} alt="" />
-                                        <p className="basket__table-infoblock-text">
-                                            <span>
-                                                Вы сможете ввести промо-код на стадии &quot;Подтверждения
-                                                заказа&quot;
-                                            </span>
-                                        </p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </StepContainer>
-                {!isLoggedIn ? (
-                    <StepContainer title="Оформление заказа" theme={theme}>
+                                    );
+                                }}
+                            </Query>
+                        )}
+                        <div className={styles.block}>
+                            <div className={styles.blockTitle}>Коментарии</div>
+                            <Input
+                                className="basket__textarea"
+                                name="comment"
+                                value={values.comment}
+                                onChange={handleChange}
+                                rows="2"
+                                multiline
+                            />
+                        </div>
+                    </StepContainer>
+                ) : (
+                    <StepContainer title="Вход в личный кабинет" theme={theme}>
                         <div className="basket__users">
                             <div className="basket__node">
                                 <div className="basket__form">
-                                    <h3 className="basket__formtitle">Я зарегистрирован на La Parfumerie</h3>
+                                    <h3 className={styles.blockTitle}>Я зарегистрирован на La Parfumerie</h3>
                                     <LoginForm onCompleted={handleLogInCompleted} />
                                 </div>
                             </div>
                             <div className="basket__node">
                                 <div className="basket__form">
-                                    <h3 className="basket__formtitle">Я новый пользователь</h3>
-                                    <RegisterForm onCompleted={handleRegisterCompleted} />
-                                </div>
-                            </div>
-                        </div>
-                    </StepContainer>
-                ) : (
-                    <StepContainer title="Доставка" theme={theme} nav={{ footer: true }}>
-                        <div className="basket__address-shipp">
-                            <div className="basket__address-shippblock">
-                                <Select
-                                    label="Город*"
-                                    items={citiesForSelect}
-                                    value={values.city}
-                                    onChange={handleChangeSelect}
-                                />
-                            </div>
-                            <div className="basket__address-shippblock">
-                                <div className={styles.sectionTitle}>Способ получения</div>
-                                <div className="basket__address-shippblock-list">
-                                    {[
-                                        { id: 'courier', label: 'Курьером' },
-                                        { id: 'pickup', label: 'Самовывоз' },
-                                    ].map(({ id, label }) => {
-                                        return (
-                                            <ListItem
-                                                key={id}
-                                                title={label}
-                                                active={values.deliveryType === id}
-                                                onClick={() =>
-                                                    handleClickListItem({
-                                                        type: 'deliveryType',
-                                                        data: id,
-                                                    })
-                                                }
-                                                pointer
-                                            />
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                            {values.city && values.deliveryType && (
-                                <Query
-                                    query={isCourier ? GET_DELIVERY : GET_PICKUPS}
-                                    variables={{
-                                        city_id: values.city,
-                                    }}
-                                >
-                                    {({ loading, error, data: { couriers, pickups } }) => {
-                                        if (error) return null;
-                                        if (loading) return <Loader />;
-
-                                        const myData = couriers || pickups;
-                                        const currentPayments = myData.data.reduce(
-                                            (obj, { id, payments_methods }) => {
-                                                return {
-                                                    ...obj,
-                                                    [id]: payments_methods,
-                                                };
-                                            },
-                                            {}
-                                        );
-                                        const currentValue = isCourier ? values.delivery : values.pickup;
-                                        const payments = currentValue.id
-                                            ? currentPayments[currentValue.id]
-                                            : [];
-                                        // console.log(currentValue, payments, '🤯');
-
-                                        return (
-                                            <Fragment>
-                                                <div className="basket__address-shippblock">
-                                                    <div className={styles.sectionTitle}>
-                                                        {isCourier ? 'Способ доставки' : 'Самовывоз'}
-                                                    </div>
-                                                    <div className="basket__address-shippblock-list">
-                                                        <div>
-                                                            {collapse[values.deliveryType] ? (
-                                                                <div>
-                                                                    <ListItem
-                                                                        title={currentValue.direction_title}
-                                                                        description={
-                                                                            isCourier ? (
-                                                                                <Fragment>
-                                                                                    <p>
-                                                                                        {
-                                                                                            currentValue.delivery_days_source
-                                                                                        }
-                                                                                        :{' '}
-                                                                                        {
-                                                                                            currentValue.delivery_days
-                                                                                        }
-                                                                                    </p>
-                                                                                    {currentValue.comment && (
-                                                                                        <p>
-                                                                                            {
-                                                                                                currentValue.comment
-                                                                                            }
-                                                                                        </p>
-                                                                                    )}
-                                                                                </Fragment>
-                                                                            ) : (
-                                                                                <Fragment>
-                                                                                    <p>
-                                                                                        {
-                                                                                            currentValue.delivery_days_source
-                                                                                        }
-                                                                                        :{' '}
-                                                                                        {
-                                                                                            currentValue.delivery_days
-                                                                                        }
-                                                                                    </p>
-                                                                                    <p>
-                                                                                        Адрес:{' '}
-                                                                                        {currentValue.address}
-                                                                                    </p>
-                                                                                    <p>
-                                                                                        Время работы:{' '}
-                                                                                        {
-                                                                                            currentValue.schedule
-                                                                                        }
-                                                                                    </p>
-                                                                                </Fragment>
-                                                                            )
-                                                                        }
-                                                                        actions={
-                                                                            <b>
-                                                                                {currentValue.price}&nbsp;
-                                                                                {CURRENCY}
-                                                                            </b>
-                                                                        }
-                                                                        active
-                                                                    />
-                                                                    <Button
-                                                                        kind="primary"
-                                                                        onClick={() =>
-                                                                            setCollapse(prevState => ({
-                                                                                ...prevState,
-                                                                                [values.deliveryType]: false,
-                                                                            }))
-                                                                        }
-                                                                    >
-                                                                        Показать еще ({myData.data.length})
-                                                                    </Button>
-                                                                </div>
-                                                            ) : (
-                                                                myData.data.map(item => {
-                                                                    const {
-                                                                        id,
-                                                                        direction_title,
-                                                                        address,
-                                                                        schedule,
-                                                                        price,
-                                                                        delivery_days,
-                                                                        delivery_days_source,
-                                                                        visible,
-                                                                        comment,
-                                                                    } = item;
-                                                                    if (!visible) return null;
-
-                                                                    return (
-                                                                        <ListItem
-                                                                            key={id}
-                                                                            title={direction_title}
-                                                                            description={
-                                                                                isCourier ? (
-                                                                                    <Fragment>
-                                                                                        <p>
-                                                                                            {
-                                                                                                delivery_days_source
-                                                                                            }
-                                                                                            : {delivery_days}
-                                                                                        </p>
-                                                                                        {comment && (
-                                                                                            <p>{comment}</p>
-                                                                                        )}
-                                                                                    </Fragment>
-                                                                                ) : (
-                                                                                    <Fragment>
-                                                                                        <p>
-                                                                                            {
-                                                                                                delivery_days_source
-                                                                                            }
-                                                                                            : {delivery_days}
-                                                                                        </p>
-                                                                                        <p>
-                                                                                            Адрес: {address}
-                                                                                        </p>
-                                                                                        <p>
-                                                                                            Время работы:{' '}
-                                                                                            {schedule}
-                                                                                        </p>
-                                                                                    </Fragment>
-                                                                                )
-                                                                            }
-                                                                            actions={
-                                                                                <b>
-                                                                                    {price}&nbsp;{CURRENCY}
-                                                                                </b>
-                                                                            }
-                                                                            active={currentValue.id === id}
-                                                                            onClick={() => {
-                                                                                setCollapse(prevState => ({
-                                                                                    ...prevState,
-                                                                                    [values.deliveryType]: true,
-                                                                                }));
-                                                                                handleClickListItem({
-                                                                                    type: isCourier
-                                                                                        ? 'delivery'
-                                                                                        : 'pickup',
-                                                                                    data: item,
-                                                                                });
-                                                                            }}
-                                                                            pointer
-                                                                        />
-                                                                    );
-                                                                })
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                {currentValue.id && payments && payments.length && (
-                                                    <div className="basket__address-shippblock">
-                                                        <div className={styles.sectionTitle}>
-                                                            Способ оплаты
-                                                        </div>
-                                                        <div className="basket__address-shippblock-list">
-                                                            <div>
-                                                                {payments.map(item => {
-                                                                    const { id, name } = item;
-
-                                                                    return (
-                                                                        <ListItem
-                                                                            key={id}
-                                                                            title={name}
-                                                                            active={values.payment.id === id}
-                                                                            onClick={() => {
-                                                                                handleClickListItem({
-                                                                                    type: 'payment',
-                                                                                    data: item,
-                                                                                });
-                                                                            }}
-                                                                            pointer
-                                                                        />
-                                                                    );
-                                                                })}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                                {isCourier && (
-                                                    <div className="basket__address-shippblock">
-                                                        <AddressList
-                                                            items={addresses.data}
-                                                            onChange={handleChangeAddress}
-                                                            onSubmit={handleSubmitAddress}
-                                                            value={values.address_id}
-                                                        />
-                                                    </div>
-                                                )}
-                                            </Fragment>
-                                        );
-                                    }}
-                                </Query>
-                            )}
-                        </div>
-                        <div className="basket__payment-promo">
-                            <div className="basket__payment-promo-code">
-                                <form onSubmit={handleSubmitPromocode} className={styles.promocode}>
-                                    <Input
-                                        name="promocode"
-                                        value={values.promocode}
-                                        theme={{ input: styles.input, label: styles.inputLabel }}
-                                        label="Промо-код"
-                                        onChange={handleChange}
-                                    />
-                                    <Button
-                                        type="submit"
-                                        className="basket__button basket__bold button button-red button-litegrey"
-                                        kind="secondary"
-                                        bold
-                                    >
-                                        Применить
-                                    </Button>
-                                </form>
-                            </div>
-                        </div>
-                    </StepContainer>
-                )}
-                {isLoggedIn && (
-                    <StepContainer title="Подтверждение" theme={theme}>
-                        <div className="basket__confirm-data float_left">
-                            {currentAddress && (
-                                <div className="basket__confirm-info">
-                                    <div className="basket__confirm-info-title basket__bold">
-                                        Адрес доставки
-                                    </div>
-                                    <div className="basket__confirm-info-list">{`${text.city} ${
-                                        currentAddress.city
-                                    }, ${text.zip} ${currentAddress.zip}, ${text.street} ${
-                                        currentAddress.street
-                                    }, ${text.house} ${currentAddress.house}, ${text.corp} ${
-                                        currentAddress.corp
-                                    }, ${text.flat} ${currentAddress.flat}`}</div>
-                                </div>
-                            )}
-                            {currentPayment && (
-                                <div className="basket__confirm-info">
-                                    <div className="basket__confirm-info-title basket__bold">Оплата</div>
-                                    <div className="basket__confirm-info-list">
-                                        <span>{currentPayment.name}</span>
+                                    <h3 className={styles.blockTitle}>Я новый пользователь</h3>
+                                    <div style={{ textAlign: 'left' }}>
+                                        <UserForm type="registration" onCompleted={handleRegisterCompleted} />
                                     </div>
                                 </div>
-                            )}
-                            <div className="basket__confirm-info">
-                                <div className="basket__confirm-info-title basket__bold">Коментарии</div>
-                                <div className="basket__confirm-info-list">
-                                    <Input
-                                        className="basket__textarea"
-                                        name="comment"
-                                        value={values.comment}
-                                        onChange={handleChange}
-                                        rows="2"
-                                        multiline
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="basket__confirm-items float_right">
-                            <table className="basket__table">
-                                <thead>
-                                    <tr>
-                                        <td colSpan="2" className="basket__table-tdh">
-                                            Наименование
-                                        </td>
-                                        <td className="basket__table-tdh">
-                                            <span className="show-on-mobile">Кол-во</span>
-                                            <span className="hide-on-mobile">Количество</span>
-                                        </td>
-                                        <td className="basket__table-tdh">{promocode && 'Скидка'}</td>
-                                        <td className="basket__table-tdh">Цена</td>
-                                        <td className="basket__table-tdh">Сумма</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {products.map(
-                                        ({
-                                            product_name: productName,
-                                            name,
-                                            item_id: id,
-                                            qty,
-                                            brand_name,
-                                            discount,
-                                            price,
-                                        }) => (
-                                            <tr key={id} className="basket__table-tr">
-                                                <td width="10%" align="center" className="basket__table-tdb">
-                                                    <Link to="/" className="cart-tbl__link hide-on-mobile">
-                                                        <img
-                                                            src="https://placehold.it/60x60/000"
-                                                            height="60"
-                                                            alt=""
-                                                        />
-                                                    </Link>
-                                                </td>
-                                                <td width="50%" className="basket__table-tdb">
-                                                    {brand_name && (
-                                                        <strong className="basket__bold hide-on-mobile">
-                                                            Estee Lauder
-                                                        </strong>
-                                                    )}
-                                                    <Link className="basket__productname" to="/">
-                                                        {productName} {name}
-                                                    </Link>
-                                                </td>
-                                                <td width="10%" className="basket__table-tdb">
-                                                    {qty}
-                                                </td>
-                                                <td width="10%" className="basket__table-tdb">
-                                                    {discount}
-                                                </td>
-                                                <td width="10%" className="basket__table-tdb">
-                                                    {/* <span className="cart-price cart-price_role_original">
-                                                        {old_price}{CURRENCY}
-                                                    </span> */}
-                                                    <span className="cart-price cart-price_role_final">
-                                                        {price ? `${price} ${CURRENCY}` : 'Бесплатно'}
-                                                    </span>
-                                                </td>
-                                                <td width="10%" className="basket__table-tdb">
-                                                    {price ? (
-                                                        <b>{`${price * qty} ${CURRENCY}`}</b>
-                                                    ) : (
-                                                        'Бесплатно'
-                                                    )}
-                                                </td>
-                                            </tr>
-                                        )
-                                    )}
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colSpan="3" className="basket__table-tdf">
-                                            <img
-                                                className="basket__icon hide-on-mobile"
-                                                src={carIcon}
-                                                alt=""
-                                            />
-                                            <p className="basket__table-time">
-                                                <strong className="basket__bold">
-                                                    Ожидаемое время доставки:
-                                                </strong>
-                                                <br />
-                                                <span>{currentDirection.delivery_days}</span>
-                                            </p>
-                                        </td>
-                                        <td colSpan="3" className="basket__table-tdf">
-                                            <table width="100%">
-                                                <tbody>
-                                                    <tr>
-                                                        <td>Доставка:</td>
-                                                        <td className="align_right">
-                                                            <span>
-                                                                {currentDirection.price
-                                                                    ? `${currentDirection.price} ${CURRENCY}`
-                                                                    : 'Бесплатно'}
-                                                            </span>
-                                                        </td>
-                                                    </tr>
-                                                    {promocode && (
-                                                        <tr>
-                                                            <td>Скидка: {promocode} %</td>
-                                                            <td className="align_right">
-                                                                -
-                                                                <span>
-                                                                    {totalSum * (promocode.value / 100)}
-                                                                </span>
-                                                                руб.
-                                                            </td>
-                                                        </tr>
-                                                    )}
-                                                    <tr className="basket__bold">
-                                                        <td>Итого:</td>
-                                                        <td className="align_right">
-                                                            <span>{`${totalSumWithDirection} ${CURRENCY}`}</span>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                            <div className="basket__title--right">
-                                <Mutation
-                                    mutation={ORDER_MUTATION}
-                                    onCompleted={handleOrderCompleted}
-                                    onError={handleError}
-                                >
-                                    {(createOrder, { error, loading, data }) => {
-                                        return (
-                                            <Button
-                                                className="basket__button"
-                                                kind="primary"
-                                                bold
-                                                onClick={() => {
-                                                    if (isValid()) {
-                                                        const input = isCourier
-                                                            ? {
-                                                                  courier_id: values.delivery.id,
-                                                                  address_id: values.address_id,
-                                                              }
-                                                            : {
-                                                                  pvz_id: values.pickup.id,
-                                                              };
-
-                                                        createOrder({
-                                                            variables: {
-                                                                input: {
-                                                                    ...input,
-                                                                    // payment_id: values.payment.id
-                                                                    // comment: values.comment
-                                                                },
-                                                            },
-                                                        });
-                                                    }
-                                                }}
-                                            >
-                                                Оформить Заказ
-                                            </Button>
-                                        );
-                                    }}
-                                </Mutation>
                             </div>
                         </div>
                     </StepContainer>
                 )}
             </StepView>
+            {step === 1 && !isLoggedIn ? null : (
+                <SidebarBasket
+                    total={totalSum}
+                    className={styles.sidebar}
+                    step={step}
+                    count={step === 0 && products.length}
+                    deliveryPrice={step !== 0 && currentDelivery.price}
+                    actions={
+                        step === 1 ? (
+                            <Mutation
+                                mutation={ORDER_MUTATION}
+                                onCompleted={handleOrderCompleted}
+                                onError={handleError}
+                            >
+                                {(createOrder, { error, loading, data }) => {
+                                    return (
+                                        <Button
+                                            className="basket__button"
+                                            kind="primary"
+                                            bold
+                                            onClick={() => {
+                                                if (isValid()) {
+                                                    const input = isCourier
+                                                        ? {
+                                                              courier_id: values.delivery.id,
+                                                              address_id: values.address.id,
+                                                          }
+                                                        : {
+                                                              pvz_id: values.pickup.id,
+                                                          };
+
+                                                    createOrder({
+                                                        variables: {
+                                                            input: {
+                                                                ...input,
+                                                                payment_method_id: values.payment.id,
+                                                                comment: values.comment,
+                                                            },
+                                                        },
+                                                    });
+                                                }
+                                            }}
+                                        >
+                                            Оформить Заказ
+                                        </Button>
+                                    );
+                                }}
+                            </Mutation>
+                        ) : (
+                            <Button
+                                kind="primary"
+                                bold
+                                onClick={() => step === 0 && handleChangeStep(step + 1)}
+                            >
+                                Перейти к оформлению
+                            </Button>
+                        )
+                    }
+                />
+            )}
         </div>
     );
 };
 
 Basket.propTypes = {
-    directions: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.array, PropTypes.string])).isRequired,
     isLoggedIn: PropTypes.bool.isRequired,
     basket: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array]))
         .isRequired,
-    payments_methods: PropTypes.objectOf(
-        PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.number])
-    ).isRequired,
+    cities: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.array, PropTypes.string])).isRequired,
 };
 
 export default withApollo(Basket);

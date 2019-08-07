@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import classnames from 'classnames';
+import PropTypes from 'prop-types';
 
 import SearchForm from 'components/SearchForm';
 
@@ -25,7 +26,7 @@ const GET_HEADER_MENU = gql`
     }
 `;
 
-const HeaderMenu = ({ items, all_brands_top_menu = {}, className }) => {
+const HeaderMenu = ({ items, className }) => {
     const [state, setState] = useState({ active: null });
     const menuClassName = classnames('mainmenu', className);
     const handleMouseEnter = index => {
@@ -35,10 +36,13 @@ const HeaderMenu = ({ items, all_brands_top_menu = {}, className }) => {
         setState({ active: null });
     };
 
+    if (!items.length) return null;
+
     return (
         <ul className={menuClassName}>
             {items.map(({ text, url, children }, index) => (
                 <li
+                    key={url}
                     className={`mainmenu__item--sub ${state.active === index ? 'opensubmenu' : ''}`}
                     onMouseEnter={() => handleMouseEnter(index)}
                     onMouseLeave={handleMouseLeave}
@@ -48,7 +52,7 @@ const HeaderMenu = ({ items, all_brands_top_menu = {}, className }) => {
                     </Link>
                     {children.length
                         ? children.map(child => (
-                              <div className="mainmenu__submenu">
+                              <div key={child.url} className="mainmenu__submenu">
                                   <div className="mainmenu__submenu_column">
                                       {child.url ? (
                                           <Link className="mainmenu__submenu_group" to={child.url}>
@@ -63,7 +67,10 @@ const HeaderMenu = ({ items, all_brands_top_menu = {}, className }) => {
                                                   if (!grandson.url) return null;
 
                                                   return (
-                                                      <li className="mainmenu__submenu_item">
+                                                      <li
+                                                          key={grandson.url}
+                                                          className="mainmenu__submenu_item"
+                                                      >
                                                           <Link
                                                               className="mainmenu__submenu_link"
                                                               to={grandson.url}
@@ -86,6 +93,16 @@ const HeaderMenu = ({ items, all_brands_top_menu = {}, className }) => {
             </li>
         </ul>
     );
+};
+
+HeaderMenu.defaultProps = {
+    className: null,
+    items: [],
+};
+
+HeaderMenu.propTypes = {
+    items: PropTypes.arrayOf(PropTypes.string),
+    className: PropTypes.string,
 };
 
 export default props => {

@@ -30,13 +30,9 @@ const StepContainer = ({
 
     const navBlock = (
         <div className={navClassName}>
-            {active > 0 ? (
+            {active > 0 && (
                 <Button className="basket__button" onClick={() => onChange(active - 1)} kind="secondary" bold>
                     Назад
-                </Button>
-            ) : (
-                <Button className="basket__button" to="/" kind="secondary" bold>
-                    Продолжить покупки
                 </Button>
             )}
             {(active === 0 || active !== maxSteps) && (

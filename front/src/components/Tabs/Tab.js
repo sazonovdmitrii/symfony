@@ -22,14 +22,13 @@ const Tab = ({ onClick, value, active, children, className }) => {
 
 Tab.defaultProps = {
     onClick: () => {},
-    children: [],
     className: null,
     active: false,
 };
 
 Tab.propTypes = {
     onClick: PropTypes.func,
-    children: PropTypes.node,
+    children: PropTypes.oneOfType(PropTypes.node, PropTypes.string).isRequired,
     className: PropTypes.string,
     active: PropTypes.bool,
     value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,

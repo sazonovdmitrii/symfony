@@ -14,7 +14,7 @@
         "start": "NODE_ENV=production SERVER=true node serverBabel/index.js",
         "start:dev": "SERVER=true nodemon --exec babel-node src/lib/index.js -w ./src/lib",
         "storybook": "start-storybook -p 6006",
-        "stylelint": "stylelint ./source",
+        "stylelint": "stylelint ./src/**/*.css",
         "env": "sync-dotenv"
     },
     "browserslist": [
@@ -139,6 +139,8 @@
         "eslint-plugin-react": "^7.13.0",
         "eslint-plugin-react-hooks": "^1.6.0",
         "koa-webpack": "^5.2.3",
+        "stylelint": "^10.1.0",
+        "stylelint-config-km": "^2.0.0",
         "sync-dotenv": "^2.1.0",
         "webpack-dev-server": "^3.7.2"
     }

@@ -237,8 +237,7 @@
     }
 
     @include has('form') {
-        border: 1px solid $COLORLINES;
-        padding: 25px 35px;
+        padding: 25px 0;
         text-align: center;
         position: relative;
         overflow: hidden;
@@ -261,14 +260,10 @@
     }
 
     @include has('formtitle') {
-        transition: transform 0.3s;
-
-        @include TextProMedium;
-
         text-transform: uppercase;
-        color: $FOOTERTEXT;
-        font-size: calculateRem($FOOTERFONT);
-        margin-bottom: 15px;
+        font-size: 18px;
+        line-height: 1.2;
+        margin-bottom: 8px;
     }
 
     /****cart****/
@@ -579,12 +574,6 @@
     }
 
     @include has('address') {
-        &-shipp {
-            width: 100%;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
-
         &-shippblock {
             padding: 15px 10px 15px 10px;
             transition: transform 0.4s, height 0.5s;
