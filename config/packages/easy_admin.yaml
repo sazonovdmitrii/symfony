@@ -107,6 +107,12 @@ easy_admin:
                 - { property: 'type', type: 'choice', type_options: {multiple: false, choices: {bool: 'bool', string: 'string', int: 'int', float: 'float', enum: 'enum'}} }
                 - { property: 'visible', type: 'choice', type_options: {multiple: false, choices: {No: 'No', Yes: 'Yes'}}}
                 - { property: 'productTagItems', type_options: { block_name: 'products_tags_items' }}
+        ProductTagItem:
+            class: App\Entity\ProductTagItem
+            form:
+              fields:
+                - name
+                - slug
         CatalogTag:
             class: App\Entity\CatalogTag
             controller: App\Controller\Admin\ProductTagController

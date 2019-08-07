@@ -14,7 +14,9 @@
                         <a class="btn pull-right" onclick="remove_option(this)">
                             <span class="glyphicon glyphicon-remove">x</span>
                         </a>
-                        <div class="list-option">{{ row.name }}</div>
+                        <div class="list-option">
+                            <a href="/admin/?entity=ProductTagItem&action=edit&id={{ row.id }}">{{ row.name }}</a>
+                        </div>
                     </div>
                 </li>
             {% endfor %}
