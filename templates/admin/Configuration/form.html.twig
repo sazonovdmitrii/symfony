@@ -25,7 +25,11 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for="profit">Маржинальность</label>
-                            <input type="text" class="form-control" name="profit" id="profit" value="{{ list.profit }}"/>
+                            <input type="text" class="form-control" name="profit" id="profit" value="{{ list.profit is defined ? list.profit : '' }}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="profit">Стоп тег-слова</label>
+                            <input type="text" class="form-control" name="stop_tag" id="stop_tag" value="{{ list.stop_tag is defined ? list.stop_tag : '' }}"/>
                         </div>
                         <button type="submit" class="btn btn-primary">Сохранить</button>
                     </div>

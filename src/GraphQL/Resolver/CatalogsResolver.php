@@ -30,9 +30,14 @@ class CatalogsResolver implements ResolverInterface, AliasedInterface {
     public function resolve(Argument $args)
     {
         $parsed = $this->urlParseService->parse($args);
-        $catalogUrl = $this->em
-            ->getRepository('App:CatalogUrl')
-            ->findByUrl($parsed['path']);
+
+        if($parsed['path']) {
+            $catalogUrl = $this->em
+                ->getRepository('App:CatalogUrl')
+                ->findByUrl($parsed['path']);
+        } else {
+            
+        }
 
         if($catalogUrl) {
             $catalog = $catalogUrl->getEntity();
