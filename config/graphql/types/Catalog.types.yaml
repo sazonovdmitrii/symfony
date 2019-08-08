@@ -2,7 +2,7 @@ Catalog:
   type: object
   config:
     description: "Catalog"
-    resolveField: '@=resolver("App\\GraphQL\\Resolver\\CatalogResolver", [info, value, args])'
+    resolveField: '@=resolver("App\\GraphQL\\Resolver\\CatalogFieldResolver", [info, value, args])'
     fields:
       id:
         type: "Int!"
@@ -13,6 +13,7 @@ Catalog:
       products:
         type: ProductConnection
         argsBuilder: PaginatoringBuilder
+        resolve: '@=resolver("CatalogProduct", [value, args])'
       count:
         type: "Int!"
         description: "Count of products"

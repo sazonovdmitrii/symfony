@@ -42,7 +42,7 @@ Query:
             tags:
               description: 'Tags'
               type: "[Int]"
-        resolve: "@=resolver('Catalog', [args])"
+        resolve: "@=resolver('Catalogs', [args])"
       addresses:
         type: "Addresses"
         args:
