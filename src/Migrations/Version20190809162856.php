@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20190724111444 extends AbstractMigration
+final class Version20190809162856 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -22,11 +22,11 @@ final class Version20190724111444 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SEQUENCE TransactionLog_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE TransactionLog (id INT NOT NULL, entity_id INT DEFAULT NULL, type VARCHAR(255) DEFAULT NULL, message TEXT DEFAULT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE INDEX IDX_339758C281257D5D ON TransactionLog (entity_id)');
-        $this->addSql('ALTER TABLE TransactionLog ADD CONSTRAINT FK_339758C281257D5D FOREIGN KEY (entity_id) REFERENCES Orders (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE address ALTER flat TYPE VARCHAR(255)');
+        $this->addSql('CREATE TABLE producttagitem_catalog (producttagitem_id INT NOT NULL, catalog_id INT NOT NULL, PRIMARY KEY(producttagitem_id, catalog_id))');
+        $this->addSql('CREATE INDEX IDX_DD15FFAE2121EB61 ON producttagitem_catalog (producttagitem_id)');
+        $this->addSql('CREATE INDEX IDX_DD15FFAECC3C66FC ON producttagitem_catalog (catalog_id)');
+        $this->addSql('ALTER TABLE producttagitem_catalog ADD CONSTRAINT FK_DD15FFAE2121EB61 FOREIGN KEY (producttagitem_id) REFERENCES ProductTagItem (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE producttagitem_catalog ADD CONSTRAINT FK_DD15FFAECC3C66FC FOREIGN KEY (catalog_id) REFERENCES Catalog (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
     }
 
     public function down(Schema $schema) : void
@@ -35,8 +35,6 @@ final class Version20190724111444 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('CREATE SCHEMA public');
-        $this->addSql('DROP SEQUENCE TransactionLog_id_seq CASCADE');
-        $this->addSql('DROP TABLE TransactionLog');
-        $this->addSql('ALTER TABLE Address ALTER flat TYPE VARCHAR(45)');
+        $this->addSql('DROP TABLE producttagitem_catalog');
     }
 }

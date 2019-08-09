@@ -64,9 +64,6 @@ class UrlParseService extends AbstractController
                         }
                     }
 
-                    if($pathExists) {
-                        $urlComponent = '';
-                    }
                     $tagsLib['path'] = $urlComponent;
                 }
             }

@@ -53,11 +53,17 @@ class ProductTag
      */
     private $slug;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Catalog", inversedBy="productTags")
+     */
+    private $catalog;
+
     public function __construct()
     {
         $this->entity_id = new ArrayCollection();
         $this->productTagItems = new ArrayCollection();
         $this->created = new \DateTime('now');
+        $this->catalog = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -183,6 +189,32 @@ class ProductTag
     public function setSlug(?string $slug): self
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Catalog[]
+     */
+    public function getCatalog(): Collection
+    {
+        return $this->catalog;
+    }
+
+    public function addCatalog(Catalog $catalog): self
+    {
+        if (!$this->catalog->contains($catalog)) {
+            $this->catalog[] = $catalog;
+        }
+
+        return $this;
+    }
+
+    public function removeCatalog(Catalog $catalog): self
+    {
+        if ($this->catalog->contains($catalog)) {
+            $this->catalog->removeElement($catalog);
+        }
 
         return $this;
     }

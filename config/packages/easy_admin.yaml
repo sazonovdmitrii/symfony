@@ -36,6 +36,7 @@ easy_admin:
                 fields: ['id', 'title']
         Catalog:
             class: App\Entity\Catalog
+            controller: App\Controller\Admin\CatalogController
             list:
                 fields: ['id', 'name', 'visible']
             form:
@@ -47,7 +48,8 @@ easy_admin:
                   - updated
                   - { type: 'tab', label: 'Virtual Urls' }
                   - { property: 'catalogUrls', type: 'easyadmin_autocomplete' }
-
+                  - { type: 'tab', label: 'Tags' }
+                  - { property: 'productTagItems', type_options: { block_name: 'catalogs_tags' }}
         Items:
             class: App\Entity\ProductItem
             controller: App\Controller\Admin\ItemsController
@@ -106,7 +108,7 @@ easy_admin:
                 - name
                 - { property: 'type', type: 'choice', type_options: {multiple: false, choices: {bool: 'bool', string: 'string', int: 'int', float: 'float', enum: 'enum'}} }
                 - { property: 'visible', type: 'choice', type_options: {multiple: false, choices: {No: 'No', Yes: 'Yes'}}}
-                - { property: 'productTagItems', type_options: { block_name: 'products_tags_items' }}
+                - { property: 'productTagItems', type_options: { block_name: 'catalogs_tags' }}
         ProductTagItem:
             class: App\Entity\ProductTagItem
             form:
@@ -193,6 +195,7 @@ easy_admin:
             - 'admin/form/products_items.html.twig'
             - 'admin/form/products_catalogs.html.twig'
             - 'admin/form/products_tags_items.html.twig'
+            - 'admin/form/catalogs_tags.html.twig'
             - 'admin/form/products_urls.html.twig'
         menu:
           - label: 'Urls'

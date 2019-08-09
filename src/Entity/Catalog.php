@@ -70,12 +70,24 @@ class Catalog
 
     private $parsed;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\ProductTag", mappedBy="catalog")
+     */
+    private $productTags;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\ProductTagItem", mappedBy="catalog")
+     */
+    private $productTagItems;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
         $this->catalogUrls = new ArrayCollection();
         $this->sales = new ArrayCollection();
         $this->catalogTags = new ArrayCollection();
+        $this->productTags = new ArrayCollection();
+        $this->productTagItems = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -287,5 +299,61 @@ class Catalog
     public function getParsed()
     {
         return $this->parsed;
+    }
+
+    /**
+     * @return Collection|ProductTag[]
+     */
+    public function getProductTags(): Collection
+    {
+        return $this->productTags;
+    }
+
+    public function addProductTag(ProductTag $productTag): self
+    {
+        if (!$this->productTags->contains($productTag)) {
+            $this->productTags[] = $productTag;
+            $productTag->addCatalog($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductTag(ProductTag $productTag): self
+    {
+        if ($this->productTags->contains($productTag)) {
+            $this->productTags->removeElement($productTag);
+            $productTag->removeCatalog($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductTagItem[]
+     */
+    public function getProductTagItems(): Collection
+    {
+        return $this->productTagItems;
+    }
+
+    public function addProductTagItem(ProductTagItem $productTagItem): self
+    {
+        if (!$this->productTagItems->contains($productTagItem)) {
+            $this->productTagItems[] = $productTagItem;
+            $productTagItem->addCatalog($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductTagItem(ProductTagItem $productTagItem): self
+    {
+        if ($this->productTagItems->contains($productTagItem)) {
+            $this->productTagItems->removeElement($productTagItem);
+            $productTagItem->removeCatalog($this);
+        }
+
+        return $this;
     }
 }
