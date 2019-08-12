@@ -30,11 +30,11 @@ class CatalogController extends BaseAdminController
         $entity = $easyadmin['item'];
 
         if($tags = $this->tagService->parseRequest($this->request->request->all())) {
-//            $this->tagService
-//                ->setTags($tags)
-//                ->setEntityType(Catalog::class)
-//                ->setEntity($entity)
-//                ->update();
+            $this->tagService
+                ->setTags($tags)
+                ->setEntityType(Catalog::class)
+                ->setEntity($entity)
+                ->update();
         }
 
         if ($this->request->isXmlHttpRequest() && $property = $this->request->query->get('property')) {

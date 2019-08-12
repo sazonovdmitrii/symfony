@@ -1,6 +1,6 @@
 {% block _catalog_catalogs_tags_widget %}
     {% set currentTags = [] %}
-    {% for key, tag_item in form.parent.vars.data.productTags %}
+    {% for key, tag_item in form.parent.vars.data.productTagItems %}
         {% set currentTags = currentTags|merge([tag_item.id]) %}
     {% endfor %}
     {% for key, tag in tags.getTree() %}

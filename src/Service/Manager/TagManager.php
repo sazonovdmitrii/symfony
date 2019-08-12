@@ -5,17 +5,22 @@ use Redis;
 use Doctrine\ORM\EntityManager;
 use App\Entity\ProductTag;
 use App\Entity\ProductTagItem;
+use App\Service\DoctrineService;
 
 class TagManager extends AbstractController
 {
     private $redis;
 
+    private $doctrineService;
+
     public function __construct(
         Redis $redis,
-        EntityManager $em
+        EntityManager $em,
+        DoctrineService $doctrineService
     ) {
         $this->em = $em;
         $this->redis = $redis;
+        $this->doctrineService = $doctrineService;
     }
 
     public function getFilters()

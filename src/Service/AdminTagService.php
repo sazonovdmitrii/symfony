@@ -1,6 +1,8 @@
 <?php
 namespace App\Service;
 
+use App\Entity\ProductTagItem;
+
 class AdminTagService extends TagService
 {
     private $tags = [];
@@ -29,8 +31,19 @@ class AdminTagService extends TagService
 
     public function update()
     {
-        foreach($this->getTags() as $tagId => $tagValue) {
+        $doctrine = $this->getDoctrine();
 
+        $manager = $doctrine->getManager();
+
+        foreach($this->getEntity()->getProductTagItems() as $productTagItem) {
+            $this->getEntity()->removeProductTagItem($productTagItem);
+        }
+
+        foreach($this->getTags() as $tagId => $tagValue) {
+            $productTagItem = $this->em->getRepository('App:ProductTagItem')->find($tagValue);
+            $this->getEntity()->addProductTagItem($productTagItem);
+            $manager->persist($this->getEntity());
+            $manager->flush();
         }
     }
 }
