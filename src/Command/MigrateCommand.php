@@ -32,17 +32,93 @@ class MigrateCommand extends ContainerAwareCommand
         $this->_defaultDoctrine = $doctrine->getManager();
 
         $this->output = $output;
-//        $this->tags();
+        $this->tags();
         $this->tags_to_products();
-//        $this->users();
+        $this->users();
         $this->users_addresses();
-//        $this->catalog_products();
-        die();
+        $this->catalog_products();
         $this->product_items();
         $this->catalogs();
         $this->catalog_urls();
+        $this->catalog_brands_aromas();
         $this->products();
         $this->product_urls();
+    }
+
+    protected function catalog_brands_aromas()
+    {
+        $this->output->writeln(['Migrating Catalogs...']);
+
+        $doctrine = $this->_defaultDoctrine->getConnection();
+        $doctrine->query('DELETE FROM producttagitem_catalog');
+
+        $catalogs = $this->_lpDoctrine->getConnection()->prepare("SELECT * FROM catalog WHERE is_aroma > 0");
+        $catalogs->execute();
+        $allCatalogs = $catalogs->fetchAll();
+        $counter = 0;
+        foreach($allCatalogs as $catalog) {
+            $products = $this->_lpDoctrine->getConnection()->prepare("SELECT * FROM catalog_2_products WHERE cat_id = " . $catalog['id']);
+            $products->execute();
+            $products = $products->fetchAll();
+            $aromats  = [];
+            foreach ($products as $product) {
+                $tags = $this->_lpDoctrine->getConnection()->prepare("select * from tags_to where eid = " . $product['prod_id'] . " AND tag_id IN (SELECT t.id FROM tags t JOIN translations tr ON tr.eid=t.id AND tr.type = 15 WHERE t.left_key > 2178 AND t.level = 2 AND t.right_key < 15879 AND t.id <> 15879 AND t.id <> 2178) LIMIT 5");
+                $tags->execute();
+                $tags = $tags->fetchAll();
+                foreach ($tags as $tag) {
+                    $aromats[] = $tag['tag_id'];
+                }
+            }
+            $values = array_count_values($aromats);
+            arsort($values);
+            $aromat = array_slice(array_keys($values), 0, 1, true);
+            if (count($aromat)) {
+                $aromatId       = $aromat[0];
+                $productTagItem = $this->_defaultDoctrine->getRepository('App:ProductTagItem')->find($aromatId);
+                $catalog        = $this->_defaultDoctrine->getRepository('App:Catalog')->find($catalog['id']);
+                $catalog->addProductTagItem($productTagItem);
+                $this->_defaultDoctrine->persist($catalog);
+                $this->_defaultDoctrine->flush();
+            }
+            $this->output->writeln([$counter . '/' . count($allCatalogs)]);
+            $counter++;
+        }
+
+        $catalogs = $this->_lpDoctrine->getConnection()->prepare("SELECT * FROM catalog WHERE brand > 0");
+        $catalogs->execute();
+        $allCatalogs = $catalogs->fetchAll();
+        $counter = 0;
+        foreach($allCatalogs as $catalog) {
+
+                $products = $this->_lpDoctrine->getConnection()->prepare("SELECT * FROM catalog_2_products WHERE cat_id = ". $catalog['id']);
+                $products->execute();
+                $products = $products->fetchAll();
+                $aromats = [];
+                foreach($products as $product) {
+                    $tags = $this->_lpDoctrine->getConnection()->prepare("select * from tags_to where eid = ".$product['prod_id'] . " AND tag_id IN (SELECT t.id FROM tags t JOIN translations tr ON tr.eid=t.id AND tr.type = 15 WHERE t.left_key > 1 AND t.level = 2 AND t.right_key < 2177 AND t.id <> 2177 AND t.id <> 1) LIMIT 5");
+                    $tags->execute();
+                    $tags = $tags->fetchAll();
+                    foreach($tags as $tag) {
+                        $aromats[] = $tag['tag_id'];
+                    }
+                }
+                $values = array_count_values($aromats);
+                arsort($values);
+                $aromat = array_slice(array_keys($values), 0, 1, true);
+                if(count($aromat)) {
+                    $aromatId = $aromat[0];
+                    $productTagItem = $this->_defaultDoctrine->getRepository('App:ProductTagItem')->find($aromatId);
+                    $catalog = $this->_defaultDoctrine->getRepository('App:Catalog')->find($catalog['id']);
+                    $catalog->addProductTagItem($productTagItem);
+                    $this->_defaultDoctrine->persist($catalog);
+                    $this->_defaultDoctrine->flush();
+                }
+                $this->output->writeln([$counter . '/' . count($allCatalogs)]);
+
+            $counter++;
+        }
+
+        $this->output->writeln(['Catalogs migration have done!']);
     }
 
     protected function tags_to_products()
