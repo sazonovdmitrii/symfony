@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Query, Mutation } from 'react-apollo';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
-import { GET_ADDRESS } from 'query';
+import { GET_ADDRESS, GET_ADDRESSES } from 'query';
 
 import Loader from 'components/Loader';
 
@@ -62,52 +62,60 @@ const GET_REGIONS = gql`
 
 export default props => {
     const isEdit = props.type === 'edit';
+    const [save, { data, error: errorMutation }] = useMutation(
+        isEdit ? UPDATE_ADDRESS_MUTATION : CREATE_ADDRESS_MUTATION,
+        {
+            onCompleted({ createAddress, updateAddress }) {
+                const data = createAddress || updateAddress;
 
-    const handleCompleted = ({ createAddress, updateAddress }, data = createAddress || updateAddress) => {
-        if (props.onSubmit) {
-            props.onSubmit(data);
+                if (props.onSubmit) {
+                    props.onSubmit(data);
+                }
+            },
+            update(
+                cache,
+                {
+                    data: { updateAddress, createAddress },
+                }
+            ) {
+                const {
+                    addresses: { data: items },
+                } = cache.readQuery({ query: GET_ADDRESSES });
+
+                cache.writeQuery({
+                    query: GET_ADDRESSES,
+                    data: {
+                        addresses: {
+                            data: updateAddress.data ? updateAddress.data : [...items, createAddress],
+                            __typename: 'Addresses',
+                        },
+                    },
+                });
+            },
         }
-    };
+    );
+    const {
+        loading,
+        error,
+        data: { address: { __typename, ...newAddress } = {}, regions },
+    } = useQuery(isEdit ? GET_ADDRESS : GET_REGIONS, {
+        variables: isEdit
+            ? {
+                  id: props.id,
+              }
+            : null,
+        ssr: false,
+    });
 
-    if (isEdit) {
-        return (
-            <Query query={GET_ADDRESS} variables={{ id: props.id }} ssr={false}>
-                {({ loading, data: { address, regions } }) => {
-                    if (loading) return <Loader />;
-
-                    const { __typename, ...newAddress } = address;
-
-                    return (
-                        <Mutation mutation={UPDATE_ADDRESS_MUTATION} onCompleted={handleCompleted}>
-                            {(save, { error }) => (
-                                <AddressForm
-                                    {...props}
-                                    regions={regions.data}
-                                    values={newAddress}
-                                    error={error}
-                                    onSubmit={save}
-                                />
-                            )}
-                        </Mutation>
-                    );
-                }}
-            </Query>
-        );
-    }
+    if (loading) return <Loader />;
 
     return (
-        <Query query={GET_REGIONS} ssr={false}>
-            {({ loading, error, data: { regions } }) => {
-                if (loading) return <Loader />;
-
-                return (
-                    <Mutation mutation={CREATE_ADDRESS_MUTATION} onCompleted={handleCompleted}>
-                        {(save, { data, error: errorMutation }) => (
-                            <AddressForm {...props} {...data} regions={regions.data} onSubmit={save} />
-                        )}
-                    </Mutation>
-                );
-            }}
-        </Query>
+        <AddressForm
+            {...props}
+            regions={regions.data}
+            values={isEdit ? newAddress : null}
+            error={errorMutation}
+            onSubmit={save}
+        />
     );
 };

@@ -23,12 +23,11 @@ const Select = ({ items, label, value, onChange }) => {
     const handleSelect = item => {
         setValue(item);
         setList(false);
+
+        if (onChange) {
+            onChange(item);
+        }
     };
-    if (onChange) {
-        useEffect(() => {
-            onChange(selectedValue);
-        }, [selectedValue, selectedValue.id]);
-    }
     useOnClickOutside(ref, () => setList(false));
 
     return (

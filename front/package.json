@@ -24,6 +24,11 @@
         "not op_mob > 0"
     ],
     "dependencies": {
+        "@apollo/react-common": "^3.0.0",
+        "@apollo/react-components": "^3.0.0",
+        "@apollo/react-hoc": "^3.0.0",
+        "@apollo/react-hooks": "^3.0.0",
+        "@apollo/react-ssr": "^3.0.0",
         "@babel/cli": "^7.5.5",
         "@babel/core": "^7.5.5",
         "@babel/node": "^7.5.5",

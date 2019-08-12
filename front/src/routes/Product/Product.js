@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Mutation, withApollo } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 import { GET_SHORT_BASKET } from 'query';
@@ -41,7 +41,6 @@ const ADD_TO_BASKET = gql`
 `;
 
 const Product = ({
-    client,
     name,
     id,
     items,
@@ -59,6 +58,41 @@ const Product = ({
     const [tabIndex, setTabIndex] = useState(0);
     const [error, setError] = useState(null);
     const [selectedProduct, setSelectedProduct] = useState(items.edges[0].node);
+    const [addToCard, { data: addBasket, loadingMutation }] = useMutation(ADD_TO_BASKET, {
+        variables: {
+            input: {
+                item_id: selectedProduct.id,
+            },
+        },
+        onCompleted({ addBasket: { products } }) {
+            if (products) {
+                console.warn('product added to basket', products);
+                history.push('/basket');
+            }
+        },
+        onError(error) {
+            setError(error.message);
+        },
+        // TODO
+        update(
+            cache,
+            {
+                data: { addBasket },
+            }
+        ) {
+            // const test = cache.readQuery({ query: GET_SHORT_BASKET });
+
+            cache.writeQuery({
+                query: GET_SHORT_BASKET,
+                data: {
+                    basket: {
+                        products: addBasket.products,
+                        __typename: 'Basket',
+                    },
+                },
+            });
+        },
+    });
     const handleChangeItem = ({ id, price: itemPrice }) => {
         if (!itemPrice) return;
         const newSelectedProduct = items.edges.find(item => item.node.id === id);
@@ -69,28 +103,6 @@ const Product = ({
     };
     const handleChangeTab = ({ value }) => {
         setTabIndex(value);
-    };
-    const handleAddToCard = callback => {
-        // const { selectedProduct } = this.state;
-        // todo add to card
-
-        callback({ variables: { input: { item_id: selectedProduct.id } } });
-    };
-    const handleCompleted = ({ addBasket: { products } }) => {
-        console.warn('product added to basket', products);
-
-        if (products) {
-            client.writeQuery({
-                query: GET_SHORT_BASKET,
-                data: {
-                    basket: {
-                        products,
-                        __typename: 'Basket',
-                    },
-                },
-            });
-            history.push('/basket');
-        }
     };
 
     return (
@@ -286,39 +298,29 @@ const Product = ({
                                     )}
                                     <div className="product__cart-block-button">
                                         {1 || selectedProduct.price ? (
-                                            <Mutation
-                                                mutation={ADD_TO_BASKET}
-                                                onCompleted={handleCompleted}
-                                                onError={error => setError(error.message)}
-                                            >
-                                                {(addToCard, { loading, data }) => {
-                                                    if (data && data.addBasket.id) {
-                                                        return (
-                                                            <Button to="/basket">Перейти в корзину</Button>
-                                                        );
-                                                    }
-
-                                                    return (
-                                                        <div className="product__cart-block-button-form product-item__frm">
-                                                            {/* <div className="left-3">
-                                                                <Select
-                                                        className="select-group"
-                                                                        items={[...new Array(10).keys()]}
-                                                                        />
-                                                    </div> */}
-                                                            <Button
-                                                                onClick={() => handleAddToCard(addToCard)}
-                                                                kind="primary"
-                                                                loading={loading}
-                                                                bold
-                                                                uppercase
-                                                            >
-                                                                Добавить в корзину
-                                                            </Button>
-                                                        </div>
-                                                    );
-                                                }}
-                                            </Mutation>
+                                            addBasket ? (
+                                                <Button to="/basket" kind="secondary">
+                                                    Перейти в корзину
+                                                </Button>
+                                            ) : (
+                                                <div className="product__cart-block-button-form product-item__frm">
+                                                    {/* <div className="left-3">
+                                                        <Select
+                                                className="select-group"
+                                                                items={[...new Array(10).keys()]}
+                                                                />
+                                            </div> */}
+                                                    <Button
+                                                        onClick={addToCard}
+                                                        kind="primary"
+                                                        loading={loadingMutation}
+                                                        bold
+                                                        uppercase
+                                                    >
+                                                        Добавить в корзину
+                                                    </Button>
+                                                </div>
+                                            )
                                         ) : (
                                             <Button bold uppercase disabled>
                                                 Нет в наличии
@@ -453,6 +455,7 @@ Product.defaultProps = {
     likes: 0,
     name_translit: null,
     vendor_code: '562292522',
+    tags: [],
 };
 
 Product.propTypes = {
@@ -470,4 +473,4 @@ Product.propTypes = {
     tags: PropTypes.arrayOf(PropTypes.object),
 };
 
-export default withApollo(Product);
+export default Product;

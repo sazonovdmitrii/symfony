@@ -1,7 +1,6 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import Helmet from 'react-helmet';
 
 import { seoHead } from 'utils';
 
@@ -32,7 +31,7 @@ const Catalog = ({ match, slug, limit, name, count, description, subtitle, tags 
 
     return (
         <div className="catalogpage">
-            {seoHead('catalog', { name, currentPage })}
+            {seoHead('catalog', { name, page: currentPage })}
             <Sidebar />
             <div className="catalogpage__content">
                 <div className="brand-info">

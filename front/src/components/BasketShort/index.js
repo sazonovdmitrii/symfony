@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mutation } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 import { GET_BASKET } from 'query';
@@ -22,9 +22,11 @@ const REMOVE_PRODUCT_MUTATION = gql`
 
 const BasketShort = ({ products: productsProps, className, delivery }) => {
     const [products, setProducts] = useState(productsProps);
-    const handleRemoveProduct = ({ removeBasket: { products: newProducts } }) => {
-        setProducts(newProducts);
-    };
+    const [handleRemove] = useMutation(REMOVE_PRODUCT_MUTATION, {
+        onCompleted({ removeBasket: { products: newProducts } }) {
+            setProducts(newProducts);
+        },
+    });
     const totalSum = products.reduce((sum, { price, qty }) => sum + price * qty, 0);
 
     useEffect(() => {
@@ -59,27 +61,16 @@ const BasketShort = ({ products: productsProps, className, delivery }) => {
                                             <div className="basket-short__item-title">{product_name}</div>
                                             <div className="basket-short__item-property">{name}</div>
                                         </a>
-                                        <Mutation
-                                            mutation={REMOVE_PRODUCT_MUTATION}
-                                            onCompleted={handleRemoveProduct}
-                                        >
-                                            {(remove, { error, data, loading }) => {
-                                                console.log(error, data, loading);
-
-                                                return (
-                                                    <Button
-                                                        className="basket-short__item-remove"
-                                                        onClick={() => {
-                                                            remove({
-                                                                variables: { input: { item_id: id } },
-                                                            });
-                                                        }}
-                                                    >
-                                                        ✖ Удалить покупку
-                                                    </Button>
-                                                );
+                                        <Button
+                                            className="basket-short__item-remove"
+                                            onClick={() => {
+                                                handleRemove({
+                                                    variables: { input: { item_id: id } },
+                                                });
                                             }}
-                                        </Mutation>
+                                        >
+                                            ✖ Удалить покупку
+                                        </Button>
                                     </div>
                                     <span className="basket-short__item-quantity">x&nbsp;{qty}&nbsp;шт.</span>
                                     {price && (

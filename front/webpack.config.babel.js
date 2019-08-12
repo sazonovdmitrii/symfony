@@ -223,7 +223,7 @@ const getConfig = target => {
                       verbose: true,
                   })
                 : new CaseSensitivePathsPlugin(),
-            isAnalyze && !isNode && new BundleAnalyzerPlugin(),
+            isAnalyze && new BundleAnalyzerPlugin(),
             // new webpack.HashedModuleIdsPlugin({
             //     hashFunction: 'md4',
             //     hashDigest: 'base64',
@@ -253,4 +253,4 @@ const getConfig = target => {
     };
 };
 
-export default [getConfig('node'), getConfig('web')];
+export default (isAnalyze ? getConfig('web') : [getConfig('node'), getConfig('web')]);

@@ -1,10 +1,8 @@
 import React from 'react';
-import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
 
 import { useApp } from 'hooks';
 
-import RegisterForm from 'components/RegisterForm';
+import UserForm from 'components/UserForm';
 
 export default ({ history }) => {
     const { login } = useApp();
@@ -19,7 +17,7 @@ export default ({ history }) => {
                 <h1 className="page-header__title">Регистрация</h1>
             </div>
             <div className="cabinet-content">
-                <RegisterForm onCompleted={handleCompleted} />
+                <UserForm type="registration" onCompleted={handleCompleted} />
             </div>
         </div>
     );

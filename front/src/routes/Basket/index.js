@@ -1,5 +1,5 @@
 import React from 'react';
-import { Query } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import loadable from '@loadable/component';
 import Helmet from 'react-helmet';
@@ -56,23 +56,17 @@ const Component = loadable(() => import('./Basket'), {
 });
 
 export default () => {
+    const { loading, error, data } = useQuery(GET_BASKET, { ssr: false });
+
+    if (loading) return <Loader />;
+    if (error) return <ErrorMessage error={error} />;
+
     return (
         <>
             <Helmet>
                 <title>Моя корзина</title>
             </Helmet>
-            <Query query={GET_BASKET} ssr={false} partialRefetch>
-                {({ loading, error, data }) => {
-                    if (loading) return <Loader />;
-
-                    return (
-                        <>
-                            {error && <ErrorMessage error={error} />}
-                            {data && <Component {...data} />}
-                        </>
-                    );
-                }}
-            </Query>
+            <Component {...data} />
         </>
     );
 };

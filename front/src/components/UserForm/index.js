@@ -24,35 +24,35 @@ const CREATE_USER_MUTATION = gql`
 export default ({ type, onSubmit, onCompleted }) => {
     switch (type) {
         case 'personal':
-            return (
-                <Mutation onCompleted={onCompleted}>
-                    {save => {
-                        return (
-                            <Query query={GET_USER} ssr={false}>
-                                {({ loading, error, data }) => {
-                                    console.log(data);
+            // return (
+            //     <Mutation onCompleted={onCompleted}>
+            //         {save => {
+            //             return (
+            //                 <Query query={GET_USER} ssr={false}>
+            //                     {({ loading, error, data }) => {
+            //                         console.log(data);
 
-                                    return (
-                                        <UserForm
-                                            type={type}
-                                            data={data}
-                                            onSubmit={() =>
-                                                save({
-                                                    variables: {
-                                                        input: {
-                                                            // todo
-                                                        },
-                                                    },
-                                                })
-                                            }
-                                        />
-                                    );
-                                }}
-                            </Query>
-                        );
-                    }}
-                </Mutation>
+            return (
+                <UserForm
+                    type={type}
+                    // data={data}
+                    // onSubmit={() =>
+                    //     save({
+                    //         variables: {
+                    //             input: {
+                    //                 // todo
+                    //             },
+                    //         },
+                    //     })
+                    // }
+                />
             );
+        //                 }}
+        //             </Query>
+        //         );
+        //     }}
+        // </Mutation>
+        // );
         case 'registration':
             return (
                 <Mutation mutation={CREATE_USER_MUTATION} onCompleted={onCompleted}>

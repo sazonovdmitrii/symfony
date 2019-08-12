@@ -26,3 +26,4 @@ const NorifyGraphql = ({ client }) => {
 NorifyGraphql.propTypes = {};
 
 export default withApollo(NorifyGraphql);
+

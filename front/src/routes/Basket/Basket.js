@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { withApollo, Mutation, Query } from 'react-apollo';
+import { withApollo } from '@apollo/react-hoc';
+import { useLazyQuery, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { Trash2 } from 'react-feather';
 
@@ -140,10 +141,8 @@ const Basket = ({
     const [products, setProducts] = useState(productsProps);
     const [promocode, setPromocode] = useState(null);
     const [openModal, setOpenModal] = useState(false);
-    const [showLogin, setShowLogin] = useState(false);
     const [step, setStep] = useState(0);
     const [notification, setNotification] = useState(null);
-    // TODO check active key
     const [values, setValues] = useState({
         deliveryType: 'courier',
         city: {},
@@ -161,19 +160,52 @@ const Basket = ({
     const isCourier = values.deliveryType === 'courier';
     const currentDelivery = isCourier ? values.delivery : values.pickup;
     const totalSum = products.reduce((acc, item) => acc + item.price * item.qty, 0);
-    const cities = citiesProps.sort((a, b) => {
-        if (a.title < b.title) {
-            return -1;
-        }
-
-        return 0;
-    });
-    const citiesForSelect = cities
+    const citiesForSelect = citiesProps
         .map(({ id, title, visible, ...any }) => {
             if (visible) return { id, value: title, ...any };
             return null;
         })
         .filter(Boolean);
+
+    const handleChangeProducts = ({ removeBasket, updateBasket }, data = removeBasket || updateBasket) => {
+        if (!data) return;
+
+        const { products: newProducts } = data;
+
+        setProducts(newProducts);
+    };
+
+    //* MUTATIONS
+    const [handleChangeQty] = useMutation(UPDATE_PRODUCT_MUTATION, {
+        onCompleted: handleChangeProducts,
+    });
+    const [handleRemoveProduct] = useMutation(REMOVE_PRODUCT_MUTATION, {
+        onCompleted: handleChangeProducts,
+    });
+
+    const [createOrder] = useMutation(ORDER_MUTATION, {
+        onCompleted({ order: { id } }) {
+            if (id) setSuccess(id);
+        },
+        onError(data) {
+            setNotification({
+                type: 'error',
+                text: data.graphQLErrors[0].message,
+            });
+        },
+    });
+    //* MUTATIONS
+
+    //* QUERY delivery
+    const [
+        loadDeliveries,
+        { called: calledDeliveries, loading: loadingDeliveries, data: { couriers, pickups } = {} },
+    ] = useLazyQuery(isCourier ? GET_DELIVERY : GET_PICKUPS);
+    const deliveries = couriers || pickups;
+    const { payments_methods: newPaymentsMethods = [] } = currentDelivery;
+    const allIdsPaymentMethods = newPaymentsMethods.map(({ id }) => id);
+    const paymentsMethods = paymentsMethodsProps.filter(({ id }) => allIdsPaymentMethods.indexOf(id) !== -1);
+    //* QUERY delivery
 
     // useEffect(() => {
     //     if (totalSum < 500) {
@@ -209,17 +241,16 @@ const Basket = ({
         setStep(index);
     };
     const handleChangeSelect = data => {
+        loadDeliveries({
+            variables: {
+                city_id: data.id,
+            },
+        });
+
         setValues(prevState => ({
             ...prevState,
             city: data,
         }));
-    };
-    const handleChangeProducts = ({ removeBasket, updateBasket }, data = removeBasket || updateBasket) => {
-        if (!data) return;
-
-        const { products: newProducts } = data;
-
-        setProducts(newProducts);
     };
     const handleSubmitAddress = data => {
         if (data.id) {
@@ -269,15 +300,6 @@ const Basket = ({
     };
     const handleRegisterCompleted = async ({ register: { hash } }) => {
         await login(hash);
-    };
-    const handleOrderCompleted = ({ order: { id } }) => {
-        if (id) setSuccess(id);
-    };
-    const handleError = data => {
-        setNotification({
-            type: 'error',
-            text: data.graphQLErrors[0].message,
-        });
     };
     const handleChangeAddress = data => {
         setValues(prevState => ({ ...prevState, address: data }));
@@ -343,63 +365,43 @@ const Basket = ({
                                 footerActions={
                                     <>
                                         x&nbsp;
-                                        <Mutation
-                                            mutation={UPDATE_PRODUCT_MUTATION}
-                                            onCompleted={handleChangeProducts}
-                                        >
-                                            {(callback, { error, data, loading }) => {
-                                                return (
-                                                    <select
-                                                        name="products-qty"
-                                                        className={styles.amountSelect}
-                                                        onChange={({ target: { value } }) => {
-                                                            callback({
-                                                                variables: {
-                                                                    input: {
-                                                                        item_id: id,
-                                                                        qty: value,
-                                                                    },
-                                                                },
-                                                            });
-                                                        }}
-                                                        defaultValue={qty}
-                                                    >
-                                                        {[...new Array(11).keys()].slice(1).map(item => (
-                                                            <option key={item} value={item}>
-                                                                {item}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                );
+                                        <select
+                                            name="products-qty"
+                                            className={styles.amountSelect}
+                                            onChange={({ target: { value } }) => {
+                                                handleChangeQty({
+                                                    variables: {
+                                                        input: {
+                                                            item_id: id,
+                                                            qty: value,
+                                                        },
+                                                    },
+                                                });
                                             }}
-                                        </Mutation>
+                                            defaultValue={qty}
+                                        >
+                                            {[...new Array(11).keys()].slice(1).map(item => (
+                                                <option key={item} value={item}>
+                                                    {item}
+                                                </option>
+                                            ))}
+                                        </select>
                                         &nbsp;шт.
                                     </>
                                 }
                                 rightActions={
-                                    <Mutation
-                                        mutation={REMOVE_PRODUCT_MUTATION}
-                                        onCompleted={handleChangeProducts}
+                                    <Button
+                                        type="button"
+                                        className={styles.removeButton}
+                                        onClick={() =>
+                                            handleRemoveProduct({
+                                                variables: { input: { item_id: id } },
+                                            })
+                                        }
+                                        bold
                                     >
-                                        {(remove, { error, data, loading }) => {
-                                            console.log(error, data, loading);
-
-                                            return (
-                                                <Button
-                                                    type="button"
-                                                    className={styles.removeButton}
-                                                    onClick={() =>
-                                                        remove({
-                                                            variables: { input: { item_id: id } },
-                                                        })
-                                                    }
-                                                    bold
-                                                >
-                                                    <Trash2 size="20px" />
-                                                </Button>
-                                            );
-                                        }}
-                                    </Mutation>
+                                        <Trash2 size="20px" />
+                                    </Button>
                                 }
                             />
                         )
@@ -454,214 +456,175 @@ const Basket = ({
                                 );
                             })}
                         </div>
-                        {values.city.id && values.deliveryType && (
-                            <Query
-                                query={isCourier ? GET_DELIVERY : GET_PICKUPS}
-                                variables={{
-                                    city_id: values.city.id,
-                                }}
-                            >
-                                {({ loading, error, data: { couriers, pickups } }) => {
-                                    if (error) return null;
-                                    if (loading) return <Loader />;
 
-                                    const myData = couriers || pickups;
-                                    const { payments_methods: newPaymentsMethods = [] } = currentDelivery;
-                                    const allIdsPaymentMethods = newPaymentsMethods.map(({ id }) => id);
-                                    const paymentsMethods = paymentsMethodsProps.filter(
-                                        ({ id }) => allIdsPaymentMethods.indexOf(id) !== -1
-                                    );
+                        {!calledDeliveries ? null : loadingDeliveries ? (
+                            <Loader />
+                        ) : (
+                            <>
+                                <div className={styles.block}>
+                                    <div className={styles.blockTitle}>
+                                        {isCourier ? 'Способ доставки' : 'Самовывозы'}
+                                    </div>
 
-                                    return (
-                                        <>
-                                            <div className={styles.block}>
-                                                <div className={styles.blockTitle}>
-                                                    {isCourier ? 'Способ доставки' : 'Самовывозы'}
-                                                </div>
-
-                                                <div>
-                                                    {collapse[values.deliveryType] &&
-                                                    myData.data.length > 1 ? (
-                                                        <div>
-                                                            <ListItem
-                                                                title={currentDelivery.direction_title}
-                                                                description={
-                                                                    isCourier ? (
-                                                                        <>
-                                                                            <p>
-                                                                                {
-                                                                                    currentDelivery.delivery_days_source
-                                                                                }
-                                                                                :{' '}
-                                                                                {
-                                                                                    currentDelivery.delivery_days
-                                                                                }
-                                                                            </p>
-                                                                            {currentDelivery.comment && (
-                                                                                <p>
-                                                                                    {currentDelivery.comment}
-                                                                                </p>
-                                                                            )}
-                                                                        </>
-                                                                    ) : (
-                                                                        <>
-                                                                            <p>
-                                                                                {
-                                                                                    currentDelivery.delivery_days_source
-                                                                                }
-                                                                                :{' '}
-                                                                                {
-                                                                                    currentDelivery.delivery_days
-                                                                                }
-                                                                            </p>
-                                                                            <p>
-                                                                                Адрес:{' '}
-                                                                                {currentDelivery.address}
-                                                                            </p>
-                                                                            <p>
-                                                                                Время работы:{' '}
-                                                                                {currentDelivery.schedule}
-                                                                            </p>
-                                                                            {currentDelivery.comment && (
-                                                                                <p>
-                                                                                    {currentDelivery.comment}
-                                                                                </p>
-                                                                            )}
-                                                                        </>
-                                                                    )
-                                                                }
-                                                                actions={
-                                                                    <b>
-                                                                        {currentDelivery.price}&nbsp;
-                                                                        {CURRENCY}
-                                                                    </b>
-                                                                }
-                                                                active
-                                                            />
-                                                            <Button
-                                                                kind="primary"
-                                                                onClick={() =>
-                                                                    setCollapse(prevState => ({
-                                                                        ...prevState,
-                                                                        [values.deliveryType]: false,
-                                                                    }))
-                                                                }
-                                                                bold
-                                                            >
-                                                                Показать еще ({myData.data.length})
-                                                            </Button>
-                                                        </div>
-                                                    ) : (
-                                                        myData.data.map(item => {
-                                                            const {
-                                                                direction_title: title,
-                                                                delivery_days: deliveryDays,
-                                                                delivery_days_source: deliveryDaysSource,
-                                                                id,
-                                                                address,
-                                                                schedule,
-                                                                price,
-                                                                visible,
-                                                                comment,
-                                                            } = item;
-                                                            if (!visible) return null;
-
-                                                            return (
-                                                                <ListItem
-                                                                    key={id}
-                                                                    title={title}
-                                                                    description={
-                                                                        isCourier ? (
-                                                                            <>
-                                                                                <p>
-                                                                                    {deliveryDaysSource}:{' '}
-                                                                                    {deliveryDays}
-                                                                                </p>
-                                                                                {comment && <p>{comment}</p>}
-                                                                            </>
-                                                                        ) : (
-                                                                            <>
-                                                                                <p>
-                                                                                    {deliveryDaysSource}:{' '}
-                                                                                    {deliveryDays}
-                                                                                </p>
-                                                                                <p>Адрес: {address}</p>
-                                                                                <p>
-                                                                                    Время работы: {schedule}
-                                                                                </p>
-
-                                                                                {comment && <p>{comment}</p>}
-                                                                            </>
-                                                                        )
-                                                                    }
-                                                                    actions={
-                                                                        <b>
-                                                                            {price}&nbsp;{CURRENCY}
-                                                                        </b>
-                                                                    }
-                                                                    active={currentDelivery.id === id}
-                                                                    onClick={() => {
-                                                                        handleClickListItem({
-                                                                            type: isCourier
-                                                                                ? 'delivery'
-                                                                                : 'pickup',
-                                                                            data: item,
-                                                                        });
-                                                                        setCollapse(prevState => ({
-                                                                            ...prevState,
-                                                                            [values.deliveryType]: true,
-                                                                        }));
-                                                                        // set default first payment
-                                                                        setValues(prevState => ({
-                                                                            ...prevState,
-                                                                            payment: item.payments_methods[0],
-                                                                        }));
-                                                                    }}
-                                                                    pointer
-                                                                />
-                                                            );
-                                                        })
-                                                    )}
-                                                </div>
+                                    <div>
+                                        {collapse[values.deliveryType] && deliveries.data.length > 1 ? (
+                                            <div>
+                                                <ListItem
+                                                    title={currentDelivery.direction_title}
+                                                    description={
+                                                        isCourier ? (
+                                                            <>
+                                                                <p>
+                                                                    {currentDelivery.delivery_days_source}:{' '}
+                                                                    {currentDelivery.delivery_days}
+                                                                </p>
+                                                                {currentDelivery.comment && (
+                                                                    <p>{currentDelivery.comment}</p>
+                                                                )}
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <p>
+                                                                    {currentDelivery.delivery_days_source}:{' '}
+                                                                    {currentDelivery.delivery_days}
+                                                                </p>
+                                                                <p>Адрес: {currentDelivery.address}</p>
+                                                                <p>
+                                                                    Время работы: {currentDelivery.schedule}
+                                                                </p>
+                                                                {currentDelivery.comment && (
+                                                                    <p>{currentDelivery.comment}</p>
+                                                                )}
+                                                            </>
+                                                        )
+                                                    }
+                                                    actions={
+                                                        <b>
+                                                            {currentDelivery.price === '0'
+                                                                ? 'Бесплатно'
+                                                                : `${currentDelivery.price} ${CURRENCY}`}
+                                                        </b>
+                                                    }
+                                                    active
+                                                />
+                                                <Button
+                                                    kind="primary"
+                                                    onClick={() =>
+                                                        setCollapse(prevState => ({
+                                                            ...prevState,
+                                                            [values.deliveryType]: false,
+                                                        }))
+                                                    }
+                                                    bold
+                                                >
+                                                    Показать еще ({deliveries.data.length})
+                                                </Button>
+                                                >>>>>>> wip
                                             </div>
-                                            {isCourier && (
-                                                <div className={styles.block}>
-                                                    <div className={styles.blockTitle}>Адреса</div>
-                                                    <AddressList
-                                                        items={addresses ? addresses.data : []}
-                                                        onChange={handleChangeAddress}
-                                                        onSubmit={handleSubmitAddress}
-                                                        value={values.address ? values.address.id : null}
-                                                    />
-                                                </div>
-                                            )}
-                                            {currentDelivery.id && paymentsMethods && paymentsMethods.length && (
-                                                <div className={styles.block}>
-                                                    <div className={styles.blockTitle}>Способ оплаты</div>
-                                                    {paymentsMethods.map(item => {
-                                                        const { id, name } = item;
+                                        ) : (
+                                            deliveries.data.map(item => {
+                                                const {
+                                                    direction_title: title,
+                                                    delivery_days: deliveryDays,
+                                                    delivery_days_source: deliveryDaysSource,
+                                                    id,
+                                                    address,
+                                                    schedule,
+                                                    price,
+                                                    visible,
+                                                    comment,
+                                                } = item;
+                                                if (!visible) return null;
 
-                                                        return (
-                                                            <ListItem
-                                                                key={id}
-                                                                title={name}
-                                                                active={values.payment.id === id}
-                                                                onClick={() => {
-                                                                    handleClickListItem({
-                                                                        type: 'payment',
-                                                                        data: item,
-                                                                    });
-                                                                }}
-                                                                pointer
-                                                            />
-                                                        );
-                                                    })}
-                                                </div>
-                                            )}
-                                        </>
-                                    );
-                                }}
-                            </Query>
+                                                return (
+                                                    <ListItem
+                                                        key={id}
+                                                        title={title}
+                                                        description={
+                                                            isCourier ? (
+                                                                <>
+                                                                    <p>
+                                                                        {deliveryDaysSource}: {deliveryDays}
+                                                                    </p>
+                                                                    {comment && <p>{comment}</p>}
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <p>
+                                                                        {deliveryDaysSource}: {deliveryDays}
+                                                                    </p>
+                                                                    <p>Адрес: {address}</p>
+                                                                    <p>Время работы: {schedule}</p>
+
+                                                                    {comment && <p>{comment}</p>}
+                                                                </>
+                                                            )
+                                                        }
+                                                        actions={
+                                                            <b>
+                                                                {price === '0'
+                                                                    ? 'Бесплатно'
+                                                                    : `${price} ${CURRENCY}`}
+                                                            </b>
+                                                        }
+                                                        active={currentDelivery.id === id}
+                                                        onClick={() => {
+                                                            handleClickListItem({
+                                                                type: isCourier ? 'delivery' : 'pickup',
+                                                                data: item,
+                                                            });
+                                                            setCollapse(prevState => ({
+                                                                ...prevState,
+                                                                [values.deliveryType]: true,
+                                                            }));
+                                                            // set default first payment
+                                                            setValues(prevState => ({
+                                                                ...prevState,
+                                                                payment: item.payments_methods[0],
+                                                            }));
+                                                        }}
+                                                        pointer
+                                                    />
+                                                );
+                                            })
+                                        )}
+                                    </div>
+                                </div>
+                                {isCourier && (
+                                    <div className={styles.block}>
+                                        <div className={styles.blockTitle}>Адреса</div>
+                                        <AddressList
+                                            items={addresses ? addresses.data : []}
+                                            onChange={handleChangeAddress}
+                                            onSubmit={handleSubmitAddress}
+                                            value={values.address ? values.address.id : null}
+                                        />
+                                    </div>
+                                )}
+                                {currentDelivery.id && paymentsMethods && paymentsMethods.length && (
+                                    <div className={styles.block}>
+                                        <div className={styles.blockTitle}>Способ оплаты</div>
+                                        {paymentsMethods.map(item => {
+                                            const { id, name } = item;
+
+                                            return (
+                                                <ListItem
+                                                    key={id}
+                                                    title={name}
+                                                    active={values.payment.id === id}
+                                                    onClick={() => {
+                                                        handleClickListItem({
+                                                            type: 'payment',
+                                                            data: item,
+                                                        });
+                                                    }}
+                                                    pointer
+                                                />
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </>
                         )}
                         <div className={styles.block}>
                             <div className={styles.blockTitle}>Коментарии</div>
@@ -705,45 +668,35 @@ const Basket = ({
                     deliveryPrice={step !== 0 && currentDelivery.price}
                     actions={
                         step === 1 ? (
-                            <Mutation
-                                mutation={ORDER_MUTATION}
-                                onCompleted={handleOrderCompleted}
-                                onError={handleError}
-                            >
-                                {(createOrder, { error, loading, data }) => {
-                                    return (
-                                        <Button
-                                            className="basket__button"
-                                            kind="primary"
-                                            bold
-                                            onClick={() => {
-                                                if (isValid()) {
-                                                    const input = isCourier
-                                                        ? {
-                                                              courier_id: values.delivery.id,
-                                                              address_id: values.address.id,
-                                                          }
-                                                        : {
-                                                              pvz_id: values.pickup.id,
-                                                          };
+                            <Button
+                                className="basket__button"
+                                kind="primary"
+                                bold
+                                onClick={() => {
+                                    if (isValid()) {
+                                        const input = isCourier
+                                            ? {
+                                                  courier_id: values.delivery.id,
+                                                  address_id: values.address.id,
+                                              }
+                                            : {
+                                                  pvz_id: values.pickup.id,
+                                              };
 
-                                                    createOrder({
-                                                        variables: {
-                                                            input: {
-                                                                ...input,
-                                                                payment_method_id: values.payment.id,
-                                                                comment: values.comment,
-                                                            },
-                                                        },
-                                                    });
-                                                }
-                                            }}
-                                        >
-                                            Оформить Заказ
-                                        </Button>
-                                    );
+                                        createOrder({
+                                            variables: {
+                                                input: {
+                                                    ...input,
+                                                    payment_method_id: values.payment.id,
+                                                    comment: values.comment,
+                                                },
+                                            },
+                                        });
+                                    }
                                 }}
-                            </Mutation>
+                            >
+                                Оформить Заказ
+                            </Button>
                         ) : (
                             <Button
                                 kind="primary"
