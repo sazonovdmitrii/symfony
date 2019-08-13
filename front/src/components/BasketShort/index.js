@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 
@@ -29,12 +29,12 @@ const BasketShort = ({ products: productsProps, className, delivery }) => {
 
     useEffect(() => {
         setProducts(productsProps);
-    }, [productsProps.length]);
+    }, [productsProps, productsProps.length]);
 
     return (
         <div className={`basket-short ${className}`}>
             {products.length ? (
-                <Fragment>
+                <>
                     <ul className="basket-short__list">
                         {products.map(
                             ({
@@ -117,7 +117,7 @@ const BasketShort = ({ products: productsProps, className, delivery }) => {
                             Оформить заказ
                         </Button>
                     </div>
-                </Fragment>
+                </>
             ) : (
                 <div className="basket-short__empty">В данный момент ваша корзина пуста.</div>
             )}

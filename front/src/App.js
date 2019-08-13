@@ -10,6 +10,8 @@ import Container from './components/Container';
 import Breadcrumbs from './components/Breadcrumbs';
 import ScrollToTop from './components/ScrollToTop';
 
+import NotifyDevGraphql from 'utils/NotifyDevGraphql';
+
 const App = props => {
     const isHomePage = props.location.pathname === '/';
 
@@ -55,6 +57,7 @@ const App = props => {
                 <Footer />
             </Container>
             <div className="scroll-to-top" data-behavior="scrollToTop" />
+            <NotifyDevGraphql />
         </Fragment>
     );
 };

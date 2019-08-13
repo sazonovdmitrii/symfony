@@ -1,7 +1,7 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import { Query } from 'react-apollo';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, User } from 'react-feather';
+import { ShoppingBag as ShoppingBagIcon, User as UserIcon } from 'react-feather';
 
 import { IS_LOGGED_IN, GET_SHORT_BASKET } from 'query';
 import { useApp } from 'hooks';
@@ -40,7 +40,7 @@ const UserMenu = () => {
                         <li className={styles.item}>
                             <Link className={styles.link} to="/user/personal/">
                                 <div className={styles.icon}>
-                                    <User size="24" />
+                                    <UserIcon size="24" />
                                 </div>
                                 <div className={styles.label}>Ваш кабинет</div>
                             </Link>
@@ -76,7 +76,7 @@ const UserMenu = () => {
                     ) : (
                         <li className={styles.item}>
                             <button type="button" className={styles.link} onClick={() => setOpenModal(true)}>
-                                <User className={styles.icon} />
+                                <UserIcon className={styles.icon} size="24" />
                                 <div className={styles.label}>Войти</div>
                             </button>
                             {openModal && (
@@ -103,17 +103,17 @@ const UserMenu = () => {
                         } = data;
 
                         return (
-                            <Fragment>
+                            <>
                                 <Link className={styles.link} to="/basket">
                                     <div className={styles.icon}>
                                         <Badge badgeContent={products.length} kind="primary">
-                                            <ShoppingBag size="24" />
+                                            <ShoppingBagIcon size="24" />
                                         </Badge>
                                     </div>
                                     <span className={styles.label}>Корзина</span>
                                 </Link>
                                 <BasketShort products={products} className={styles.dropdown} />
-                            </Fragment>
+                            </>
                         );
                     }}
                 </Query>

@@ -1,8 +1,8 @@
 const isProd = process.env.NODE_ENV === 'production';
 const isServer = !!process.env.SERVER;
 
-const isWebTarget = (caller) => Boolean(caller && caller.target === 'web');
-const isWebpack = (caller) => Boolean(caller && caller.name === 'babel-loader');
+const isWebTarget = caller => Boolean(caller && caller.target === 'web');
+const isWebpack = caller => Boolean(caller && caller.name === 'babel-loader');
 
 // todo try ejsx for ssr
 module.exports = api => {
@@ -28,7 +28,6 @@ module.exports = api => {
         ],
         plugins: [
             '@babel/plugin-transform-react-constant-elements',
-            '@babel/plugin-syntax-dynamic-import',
             [
                 '@babel/plugin-proposal-class-properties',
                 {

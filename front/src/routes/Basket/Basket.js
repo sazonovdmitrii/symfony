@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { withApollo, Mutation, Query } from 'react-apollo';
 import gql from 'graphql-tag';
@@ -341,7 +341,7 @@ const Basket = ({
                                 description={name}
                                 price={price}
                                 footerActions={
-                                    <Fragment>
+                                    <>
                                         x&nbsp;
                                         <Mutation
                                             mutation={UPDATE_PRODUCT_MUTATION}
@@ -374,7 +374,7 @@ const Basket = ({
                                             }}
                                         </Mutation>
                                         &nbsp;шт.
-                                    </Fragment>
+                                    </>
                                 }
                                 rightActions={
                                     <Mutation
@@ -473,7 +473,7 @@ const Basket = ({
                                     );
 
                                     return (
-                                        <Fragment>
+                                        <>
                                             <div className={styles.block}>
                                                 <div className={styles.blockTitle}>
                                                     {isCourier ? 'Способ доставки' : 'Самовывозы'}
@@ -487,7 +487,7 @@ const Basket = ({
                                                                 title={currentDelivery.direction_title}
                                                                 description={
                                                                     isCourier ? (
-                                                                        <Fragment>
+                                                                        <>
                                                                             <p>
                                                                                 {
                                                                                     currentDelivery.delivery_days_source
@@ -502,9 +502,9 @@ const Basket = ({
                                                                                     {currentDelivery.comment}
                                                                                 </p>
                                                                             )}
-                                                                        </Fragment>
+                                                                        </>
                                                                     ) : (
-                                                                        <Fragment>
+                                                                        <>
                                                                             <p>
                                                                                 {
                                                                                     currentDelivery.delivery_days_source
@@ -527,7 +527,7 @@ const Basket = ({
                                                                                     {currentDelivery.comment}
                                                                                 </p>
                                                                             )}
-                                                                        </Fragment>
+                                                                        </>
                                                                     )
                                                                 }
                                                                 actions={
@@ -572,15 +572,15 @@ const Basket = ({
                                                                     title={title}
                                                                     description={
                                                                         isCourier ? (
-                                                                            <Fragment>
+                                                                            <>
                                                                                 <p>
                                                                                     {deliveryDaysSource}:{' '}
                                                                                     {deliveryDays}
                                                                                 </p>
                                                                                 {comment && <p>{comment}</p>}
-                                                                            </Fragment>
+                                                                            </>
                                                                         ) : (
-                                                                            <Fragment>
+                                                                            <>
                                                                                 <p>
                                                                                     {deliveryDaysSource}:{' '}
                                                                                     {deliveryDays}
@@ -591,7 +591,7 @@ const Basket = ({
                                                                                 </p>
 
                                                                                 {comment && <p>{comment}</p>}
-                                                                            </Fragment>
+                                                                            </>
                                                                         )
                                                                     }
                                                                     actions={
@@ -658,7 +658,7 @@ const Basket = ({
                                                     })}
                                                 </div>
                                             )}
-                                        </Fragment>
+                                        </>
                                     );
                                 }}
                             </Query>

@@ -1,21 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ApolloConsumer } from 'react-apollo';
+import { withApollo } from 'react-apollo';
 
-const NorifyGraphql = props => (
-    <ApolloConsumer>
-        {client => {
-            console.log(client);
-            return (
-                <div>
-                    <h1>The current cache is:</h1>
-                    <pre>{/*client.extract()*/}</pre>
-                </div>
-            );
-        }}
-    </ApolloConsumer>
-);
+const NorifyGraphql = ({ client }) => {
+    if (typeof document !== 'undefined') {
+        return (
+            <pre
+                style={{
+                    background: '#ccc',
+                    wordWrap: 'break-word',
+                    whiteSpace: 'pre-wrap',
+                    margin: '40px 25px',
+                    padding: '12px 16px',
+                    margin: '10px',
+                }}
+            >
+                {JSON.stringify(client.extract())}
+            </pre>
+        );
+    }
+
+    return null;
+};
 
 NorifyGraphql.propTypes = {};
 
-export default NorifyGraphql;
+export default withApollo(NorifyGraphql);

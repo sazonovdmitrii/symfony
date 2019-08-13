@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Mutation, withApollo } from 'react-apollo';
@@ -94,7 +94,7 @@ const Product = ({
     };
 
     return (
-        <Fragment>
+        <>
             {seoHead('product', { name, items: items.edges })}
             {error && <Snackbar theme="error" text={error} active={!!error} onClose={() => setError(null)} />}
             <div className="product" itemScope itemType="http://schema.org/Product">
@@ -252,7 +252,7 @@ const Product = ({
                     <div className="product__cart">
                         <div className="product__cart-block">
                             {selectedProduct && (
-                                <Fragment>
+                                <>
                                     <div className="product__cart-block-name">
                                         <h2 className="product__cart-block-name-h2">
                                             {selectedProduct.name}
@@ -325,7 +325,7 @@ const Product = ({
                                             </Button>
                                         )}
                                     </div>
-                                </Fragment>
+                                </>
                             )}
                             {items.edges.length > 1 && (
                                 <div className="product__cart-block-type">
@@ -342,19 +342,19 @@ const Product = ({
                 <div className="product__row">
                     <div className="product__options">
                         {tags.length ? (
-                            <Fragment>
+                            <>
                                 <h3 className="product-element__label">Характеристики товара</h3>
                                 <ul className="product-element__datalist">
                                     {tags.map(({ name, value, url }) => (
-                                        <Fragment>
+                                        <>
                                             <li className="product-element__datalist--data">{name}:</li>
                                             <li className="product-element__datalist--data__last">
                                                 {url ? <Link to={url}>{value}</Link> : value}
                                             </li>
-                                        </Fragment>
+                                        </>
                                     ))}
                                 </ul>
-                            </Fragment>
+                            </>
                         ) : null}
                         {description && (
                             <div>
@@ -400,12 +400,6 @@ const Product = ({
                                         </Link>
                                     </div>
                                 </div>
-                                <a data-handle="control-left" href="#">
-                                    <img src="/img/asset/left-arrow.png" alt="" />
-                                </a>
-                                <a data-handle="control-right" href="#">
-                                    <img src="/img/asset/right-arrow.png" alt="" />
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -431,7 +425,7 @@ const Product = ({
                 </div>
                 <ArticlesPreview />
             </div>
-        </Fragment>
+        </>
     );
 };
 

@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import loadable from '@loadable/component';
@@ -57,7 +57,7 @@ const Component = loadable(() => import('./Basket'), {
 
 export default () => {
     return (
-        <Fragment>
+        <>
             <Helmet>
                 <title>Моя корзина</title>
             </Helmet>
@@ -66,13 +66,13 @@ export default () => {
                     if (loading) return <Loader />;
 
                     return (
-                        <Fragment>
+                        <>
                             {error && <ErrorMessage error={error} />}
                             {data && <Component {...data} />}
-                        </Fragment>
+                        </>
                     );
                 }}
             </Query>
-        </Fragment>
+        </>
     );
 };

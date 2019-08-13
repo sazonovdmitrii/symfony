@@ -59,6 +59,7 @@ Checkbox.defaultProps = {
     disabled: false,
     isError: false,
     label: null,
+    required: false,
     type: 'checkbox',
     onChange: () => {},
 };
@@ -69,6 +70,7 @@ Checkbox.propTypes = {
     label: PropTypes.string,
     name: PropTypes.string.isRequired,
     onChange: PropTypes.func,
+    required: PropTypes.bool,
 };
 
 export default Checkbox;

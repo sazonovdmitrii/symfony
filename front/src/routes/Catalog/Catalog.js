@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
@@ -39,7 +39,7 @@ const Catalog = ({ match, slug, limit, name, count, description, subtitle, tags 
                     <h1 className="brand-info__title">{name || 'Без имени'}</h1>
                     {subtitle && <p className="brand-info__subtitle">{subtitle || 'Черрути'}</p>}
                     {description && (
-                        <Fragment>
+                        <>
                             <div className="brand-info__body">
                                 <p>
                                     {description ||
@@ -50,7 +50,7 @@ const Catalog = ({ match, slug, limit, name, count, description, subtitle, tags 
                             <a href="#full_description" className="brand-info__link">
                                 Подробнее
                             </a>
-                        </Fragment>
+                        </>
                     )}
                 </div>
                 {tags.length ? <Filters items={tags} /> : null}

@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 
 import { seoHead } from 'utils';
 
@@ -16,7 +16,7 @@ export default class Sale extends Component {
         const { location } = this.props;
 
         return (
-            <Fragment>
+            <>
                 {seoHead('sale', { name: 'Lorem', url: location.pathname })}
                 <div className="sale-info">
                     <img className="sale-info__image" src="https://placehold.it/503x290" alt="" />
@@ -59,7 +59,7 @@ export default class Sale extends Component {
                     </div>
                 </div>
                 <Products />
-            </Fragment>
+            </>
         );
     }
 }

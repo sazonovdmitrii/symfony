@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Mutation, withApollo } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Edit, X } from 'react-feather';
@@ -86,7 +86,7 @@ const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {}, c
 
     useEffect(() => {
         setItems(itemsProp);
-    }, [itemsProp.length]);
+    }, [itemsProp, itemsProp.length]);
 
     useEffect(() => {
         if (formEl.current) {
@@ -118,7 +118,7 @@ const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {}, c
     }
 
     return (
-        <Fragment>
+        <>
             {items && items.length ? (
                 items.map(item => (
                     <ListItem
@@ -130,7 +130,7 @@ const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {}, c
                             item.flat ? `, ${TEXT.flat} ${item.flat}` : ''
                         }`}
                         actions={
-                            <Fragment>
+                            <>
                                 <Button
                                     aria-label="Редактировать"
                                     kind="primary"
@@ -171,7 +171,7 @@ const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {}, c
                                         );
                                     }}
                                 </Mutation>
-                            </Fragment>
+                            </>
                         }
                         active={value === item.id}
                         onClick={() => onChange(item)}
@@ -191,7 +191,7 @@ const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {}, c
                     Добавить адрес
                 </Button>
             </div>
-        </Fragment>
+        </>
     );
 };
 

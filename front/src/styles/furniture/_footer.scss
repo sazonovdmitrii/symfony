@@ -11,8 +11,6 @@
 @include new('footer') {
     margin-top: 3 * $PADDINGS;
     display: block;
-    float: left;
-    width: 100%;
 
     @include has('row') {
         @include row();

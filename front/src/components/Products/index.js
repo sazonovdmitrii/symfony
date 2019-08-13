@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Query } from 'react-apollo';
@@ -34,7 +34,7 @@ const Products = ({ title, page, slug, limit, offset, col, className }) => {
                 const { products, count } = data.catalog;
 
                 return (
-                    <Fragment>
+                    <>
                         {title || null}
                         <div className={'catalog' || rowClassName}>
                             {products &&
@@ -97,7 +97,7 @@ const Products = ({ title, page, slug, limit, offset, col, className }) => {
                                 Показать еще ...
                             </Button>
                         )}
-                    </Fragment>
+                    </>
                 );
             }}
         </Query>

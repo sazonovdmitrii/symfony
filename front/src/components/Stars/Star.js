@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import nanoid from 'nanoid';
 import classnames from 'classnames/bind';
@@ -29,7 +29,7 @@ const Star = ({ checked, label, name, value, hidden, disabled, onChange }) => {
     }
 
     return (
-        <Fragment>
+        <>
             <input
                 className={styles.input}
                 id={id}
@@ -44,7 +44,7 @@ const Star = ({ checked, label, name, value, hidden, disabled, onChange }) => {
             <label className={labelClassName} htmlFor={id}>
                 {label}
             </label>
-        </Fragment>
+        </>
     );
 };
 

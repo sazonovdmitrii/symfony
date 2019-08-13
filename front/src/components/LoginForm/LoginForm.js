@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import Input from 'components/Input';
@@ -34,7 +34,7 @@ const LoginForm = ({ onSubmit, error }) => {
     };
 
     return (
-        <Fragment>
+        <>
             {notify && <Snackbar text={notify} active={!!notify} theme="error" onClose={handleClose} />}
             <form onSubmit={handleSubmit}>
                 <InputGroup>
@@ -68,7 +68,7 @@ const LoginForm = ({ onSubmit, error }) => {
                     </ButtonGroup>
                 </InputGroup>
             </form>
-        </Fragment>
+        </>
     );
 };
 

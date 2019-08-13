@@ -10,11 +10,11 @@ import styles from './styles.css';
 const cx = classnames.bind(styles);
 
 const Button = ({
+    type: typeProps,
     kind,
     size,
     fullWidth,
     className,
-    type: typeProps,
     href,
     to,
     bold,

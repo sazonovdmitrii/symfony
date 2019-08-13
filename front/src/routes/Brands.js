@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 export default class Brands extends Component {
@@ -8,7 +8,7 @@ export default class Brands extends Component {
 
     render() {
         return (
-            <Fragment>
+            <>
                 <div className="page-header">
                     <h1 className="page-header__title">Все бренды</h1>
                 </div>
@@ -48,7 +48,7 @@ export default class Brands extends Component {
                         </li>
                     </ul>
                 </div>
-            </Fragment>
+            </>
         );
     }
 }
