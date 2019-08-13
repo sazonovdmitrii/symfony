@@ -7,13 +7,12 @@ import { renderToString } from 'react-dom/server';
 import Helmet from 'react-helmet';
 import { ApolloProvider, getDataFromTree } from 'react-apollo';
 import { StaticRouter } from 'react-router';
-// import knex from 'knex';
 import { ChunkExtractor, ChunkExtractorManager } from '@loadable/server';
 import jwt from 'jsonwebtoken';
 
 import Html from './Html';
+import ErrorPage from './500';
 import config from './config';
-// import routes from './routes/index';
 
 const checkToken = token => {
     const pathToCert = path.join('../config/jwt/public.pem');
@@ -37,33 +36,6 @@ export default async ctx => {
     // We create an extractor from the statsFile
     const webExtractor = new ChunkExtractor({ statsFile: config.webStats });
 
-    // console.log(location, '🤔');
-    // console.log(webExtractor.getScriptElements());
-
-    // let url = await db('virtualurl').where('url', location);
-    // let url = null;
-
-    // check for product/catalog
-    // if (!url) {
-    //     const isProduct = /\.htm$/.test(location);
-    //     const type = isProduct ? 'product' : 'catalog';
-    //     const database = isProduct ? 'producturl' : 'catalogurl';
-    //     const [row] = await db(database).where('url', location.replace(/^\//, ''));
-    //     url = row ? row.url : null;
-    //     url && console.log(url, '// url is in the database 👍');
-    // }
-
-    // TODO make redirect
-    // if (url) {
-    //     // find route by type
-    //     // const testRoute = routes.find(item => item.type && item.type === type);
-
-    //     routerContext = {
-    //         url: `/${url}`,
-    //         status: 301,
-    //     };
-    // }
-
     let routerContext = {};
     const components = (
         <ChunkExtractorManager extractor={webExtractor}>
@@ -80,7 +52,15 @@ export default async ctx => {
         await getDataFromTree(components);
     } catch (error) {
         // Prevent GraphQL client errors from crashing SSR.
-        // console.error('Error while running `getDataFromTree`', error, location);
+        console.error('Error while running `getDataFromTree`', error, location);
+        const errorRender = renderToString(
+            <ErrorPage helmet={Helmet.renderStatic()} bundle={webExtractor} />
+        );
+
+        ctx.status = 500;
+        ctx.body = `<!DOCTYPE html>${errorRender}`;
+
+        return;
     }
 
     if ([301, 302].includes(routerContext.statusCode)) {
@@ -93,8 +73,6 @@ export default async ctx => {
         // Return early -- no need to set a response body
         return;
     }
-
-    // console.log('ssr: ', routerContext);
 
     if (routerContext.statusCode === 404) {
         // By default, just set the statusCode to 404. You can
