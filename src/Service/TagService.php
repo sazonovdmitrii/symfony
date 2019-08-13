@@ -8,6 +8,8 @@ class TagService extends TagManager
 
     private $entity;
 
+    private $tagId;
+
     public function getEntityType()
     {
         return $this->entityType;
@@ -29,6 +31,17 @@ class TagService extends TagManager
     public function setEntity($entity)
     {
         $this->entity = $entity;
+        return $this;
+    }
+
+    public function getTagId()
+    {
+        return $this->getTagId();
+    }
+
+    public function setTagId($tagId)
+    {
+        $this->tagId = $tagId;
         return $this;
     }
 }

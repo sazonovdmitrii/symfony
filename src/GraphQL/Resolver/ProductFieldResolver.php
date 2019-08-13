@@ -89,6 +89,20 @@ class ProductFieldResolver implements ResolverInterface
         return $paginator->auto($args, count($items));
     }
 
+    public function other_fragrance(Product $product)
+    {
+        return [
+            [
+                'id' => '1',
+                'name' => 'asdf'
+            ],
+            [
+                'id' => '2',
+                'name' => 'asdf23'
+            ]
+        ];
+    }
+
     /**
      * @return array
      */

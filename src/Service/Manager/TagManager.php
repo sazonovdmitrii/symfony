@@ -103,4 +103,33 @@ class TagManager extends AbstractController
 
         return $tags;
     }
+
+    public function all()
+    {
+        $result = [];
+        $tags = $this->em
+            ->getRepository(ProductTag::class)
+            ->findAll();
+        foreach($tags as $tag) {
+            $result[] = [
+                'name' => $tag->getName(),
+                'id' => $tag->getId()
+            ];
+        }
+        return $result;
+    }
+
+    public function getOne()
+    {
+        if($this->getEntity()) {
+            $productTags = [];
+
+            foreach($this->getEntity()->getProducttagitem() as $productTag) {
+                $productTags[] = $productTag->getId();
+            }
+            echo "<pre>";
+            print_r($productTags);
+            die();
+        }
+    }
 }

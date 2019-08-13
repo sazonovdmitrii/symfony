@@ -1,0 +1,17 @@
+ProductMini:
+  type: object
+  config:
+    description: "Product Thumb"
+    fields:
+      id:
+        type: "Int!"
+        description: "Product Id."
+      name:
+        type: "String"
+        description: "Product Name"
+      url:
+        type: "String"
+        description: "Product Url"
+      image:
+        type: "String"
+        description: "Product Image"

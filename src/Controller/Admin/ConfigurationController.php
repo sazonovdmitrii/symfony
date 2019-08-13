@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AdminController as BaseAdminContr
 use App\Service\RequestFilterService;
 use App\Service\DoctrineService;
 use App\Entity\Configuration;
+use App\Service\TagService;
 
 class ConfigurationController extends BaseAdminController
 {
@@ -18,14 +19,18 @@ class ConfigurationController extends BaseAdminController
 
     private $entityManager;
 
+    private $tagService;
+
     public function __construct(
         RequestFilterService $filterService,
         DoctrineService $doctrineService,
-        EntityManager $entityManager
+        EntityManager $entityManager,
+        TagService $tagService
     ) {
         $this->filterService = $filterService;
         $this->doctrineService = $doctrineService;
         $this->entityManager = $entityManager;
+        $this->tagService = $tagService;
     }
 
     protected function renderTemplate($actionName, $templatePath, array $parameters = array())
@@ -34,6 +39,7 @@ class ConfigurationController extends BaseAdminController
         foreach($list as $item) {
             $parameters['list'][$item->getOption()] = $item->getValue();
         }
+        $parameters['tags'] = $this->tagService->all();
         return $this->render($this->_template, $parameters);
     }
 

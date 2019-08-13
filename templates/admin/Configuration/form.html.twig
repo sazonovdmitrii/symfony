@@ -31,10 +31,34 @@
                             <label for="profit">Стоп тег-слова</label>
                             <input type="text" class="form-control" name="stop_tag" id="stop_tag" value="{{ list.stop_tag is defined ? list.stop_tag : '' }}"/>
                         </div>
-                        <button type="submit" class="btn btn-primary">Сохранить</button>
                     </div>
                 </div>
             </div>
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne"
+                                aria-expanded="true"
+                                aria-controls="collapseOne">
+                            Теги
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="profit">Тег аромата</label>
+                            <select class="form-control" name="fragrance_tag">
+                                {% for tag in tags %}
+                                    <option value="{{ tag.id }}" {{ list.fragrance_tag is defined and list.fragrance_tag == tag.id ? 'selected' : '' }}>{{ tag.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
         </div>
     </form>
 {% endblock main %}

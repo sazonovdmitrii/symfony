@@ -19,7 +19,9 @@ Product:
       tags:
         type: "[ProductFilters]"
         description: "Product Filter"
-
+      other_fragrance:
+        type: "[ProductMini]"
+        description: "Product Mini"
 ProductFilters:
   type: object
   config:

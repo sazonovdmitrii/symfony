@@ -1,8 +1,6 @@
 <?php
 namespace App\Service;
 
-use App\Entity\ProductTagItem;
-
 class AdminTagService extends TagService
 {
     private $tags = [];
