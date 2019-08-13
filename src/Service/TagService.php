@@ -36,7 +36,7 @@ class TagService extends TagManager
 
     public function getTagId()
     {
-        return $this->getTagId();
+        return $this->tagId;
     }
 
     public function setTagId($tagId)

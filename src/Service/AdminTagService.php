@@ -29,9 +29,29 @@ class AdminTagService extends TagService
 
     public function update()
     {
-        $doctrine = $this->getDoctrine();
+        $method = 'update' . $this->getEntityType();
+        return $this->$method();
+    }
 
-        $manager = $doctrine->getManager();
+    public function updateProduct()
+    {
+        $manager = $this->getDoctrine()->getManager();
+
+        foreach($this->getEntity()->getProducttagitem() as $productTagItem) {
+            $this->getEntity()->removeProducttagitem($productTagItem);
+        }
+
+        foreach($this->getTags() as $tagId => $tagValue) {
+            $productTagItem = $this->em->getRepository('App:ProductTagItem')->find($tagValue);
+            $this->getEntity()->addProducttagitem($productTagItem);
+            $manager->persist($this->getEntity());
+            $manager->flush();
+        }
+    }
+
+    public function updateCatalog()
+    {
+        $manager = $this->getDoctrine()->getManager();
 
         foreach($this->getEntity()->getProductTagItems() as $productTagItem) {
             $this->getEntity()->removeProductTagItem($productTagItem);
@@ -43,5 +63,6 @@ class AdminTagService extends TagService
             $manager->persist($this->getEntity());
             $manager->flush();
         }
+
     }
 }

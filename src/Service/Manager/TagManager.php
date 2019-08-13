@@ -1,11 +1,13 @@
 <?php
+
 namespace App\Service\Manager;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Redis;
-use Doctrine\ORM\EntityManager;
+
 use App\Entity\ProductTag;
 use App\Entity\ProductTagItem;
 use App\Service\DoctrineService;
+use Doctrine\ORM\EntityManager;
+use Redis;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class TagManager extends AbstractController
 {
@@ -18,18 +20,18 @@ class TagManager extends AbstractController
         EntityManager $em,
         DoctrineService $doctrineService
     ) {
-        $this->em = $em;
-        $this->redis = $redis;
+        $this->em              = $em;
+        $this->redis           = $redis;
         $this->doctrineService = $doctrineService;
     }
 
     public function getFilters()
     {
-        $method = 'get' . $this->getEntityType() . 'Filters';
+        $method   = 'get' . $this->getEntityType() . 'Filters';
         $cacheKey = $method . $this->getEntity()->getId();
 
         $cacheItem = json_decode($this->redis->get($cacheKey));
-        if(!$cacheItem) {
+        if (!$cacheItem) {
             if (method_exists($this, $method)) {
                 $cacheItem = $this->$method();
                 $this->redis->set($cacheKey, json_encode($cacheItem));
@@ -45,38 +47,38 @@ class TagManager extends AbstractController
             ->getRepository(ProductTag::class)
             ->findAll();
 
-        $tags = [];
+        $tags        = [];
         $productTags = [];
 
-        foreach($this->getEntity()->getProducts() as $product) {
-            foreach($product->getProducttagitem() as $productTag) {
+        foreach ($this->getEntity()->getProducts() as $product) {
+            foreach ($product->getProducttagitem() as $productTag) {
                 $tagId = $productTag->getId();
-                if(isset($productTags[$tagId])) {
+                if (isset($productTags[$tagId])) {
                     $productTags[$tagId] += 1;
                 } else {
                     $productTags[$tagId] = 1;
                 }
             }
         }
-        foreach($allTags as $allTag) {
-            $tag = [
+        foreach ($allTags as $allTag) {
+            $tag          = [
                 'name' => $allTag->getName(),
-                'id' => $allTag->getId()
+                'id'   => $allTag->getId()
             ];
             $tagChildrens = [];
-            foreach($allTag->getProductTagItems() as $productTagItem) {
+            foreach ($allTag->getProductTagItems() as $productTagItem) {
                 $count = 0;
-                if(isset($productTags[$productTagItem->getId()])) {
+                if (isset($productTags[$productTagItem->getId()])) {
                     $count = $productTags[$productTagItem->getId()];
                 }
                 $tagChildrens[] = [
-                    'name' => $productTagItem->getName(),
-                    'id' => $productTagItem->getId(),
+                    'name'  => $productTagItem->getName(),
+                    'id'    => $productTagItem->getId(),
                     'count' => $count
                 ];
             }
             $tag['childrens'] = $tagChildrens;
-            $tags[] = $tag;
+            $tags[]           = $tag;
         }
         return $tags;
     }
@@ -84,18 +86,18 @@ class TagManager extends AbstractController
     public function getProductFilters()
     {
         $productTags = [];
-        foreach($this->getEntity()->getProducttagitem() as $productTag) {
+        foreach ($this->getEntity()->getProducttagitem() as $productTag) {
             $productTags[] = $productTag->getId();
         }
 
         $tagsItems = $this->em->getRepository(ProductTagItem::class)
-            ->findBy( ['id' => $productTags], ['id' => 'DESC'] );
+            ->findBy(['id' => $productTags], ['id' => 'DESC']);
 
         $tags = [];
-        foreach($tagsItems as $tag) {
-            if($tag->getName()) {
+        foreach ($tagsItems as $tag) {
+            if ($tag->getName()) {
                 $tags[] = [
-                    'name' => $tag->getEntityId()->getName(),
+                    'name'  => $tag->getEntityId()->getName(),
                     'value' => $tag->getName()
                 ];
             }
@@ -107,13 +109,13 @@ class TagManager extends AbstractController
     public function all()
     {
         $result = [];
-        $tags = $this->em
+        $tags   = $this->em
             ->getRepository(ProductTag::class)
             ->findAll();
-        foreach($tags as $tag) {
+        foreach ($tags as $tag) {
             $result[] = [
                 'name' => $tag->getName(),
-                'id' => $tag->getId()
+                'id'   => $tag->getId()
             ];
         }
         return $result;
@@ -121,15 +123,11 @@ class TagManager extends AbstractController
 
     public function getOne()
     {
-        if($this->getEntity()) {
-            $productTags = [];
-
-            foreach($this->getEntity()->getProducttagitem() as $productTag) {
-                $productTags[] = $productTag->getId();
+        if ($this->getEntity()) {
+            return $this->getEntity()->getProducttagitem()->filter(function (ProductTagItem $productTagItem) {
+                return $productTagItem->getEntityId()->getId() == $this->getTagId();
             }
-            echo "<pre>";
-            print_r($productTags);
-            die();
+            )->first();
         }
     }
 }

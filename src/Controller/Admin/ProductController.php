@@ -4,10 +4,19 @@ namespace App\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AdminController as BaseAdminController;
 use EasyCorp\Bundle\EasyAdminBundle\Event\EasyAdminEvents;
+use App\Service\AdminTagService;
+use App\Entity\Product;
 
 class ProductController extends BaseAdminController
 {
     private $_template = 'admin/Product/edit.html.twig';
+
+    private $tagService;
+
+    public function __construct(AdminTagService $tagService)
+    {
+        $this->tagService = $tagService;
+    }
 
     protected function editAction()
     {
@@ -44,7 +53,13 @@ class ProductController extends BaseAdminController
             $this->executeDynamicMethod('update<EntityName>Entity', array($entity, $editForm));
 
             $this->dispatch(EasyAdminEvents::POST_UPDATE, array('entity' => $entity));
-
+            if($tags = $this->tagService->parseRequest($this->request->request->all())) {
+                $this->tagService
+                    ->setTags($tags)
+                    ->setEntityType(Product::class)
+                    ->setEntity($entity)
+                    ->update();
+            }
             return $this->redirectToReferrer();
         }
 

@@ -10,7 +10,7 @@
                 <select id="tag{{ tag.id }}" name="tag_{{ tag.id }}" class="select2 form-control">
                     {% for key_tag_item, tag_item in tag.getProductTagItems() %}
                         <option></option>
-                        <option id="{{ tag_item.id }}" {% if tag_item.id in currentTags %} selected {% endif %}>{{ tag_item.name }}</option>
+                        <option value="{{ tag_item.id }}" {% if tag_item.id in currentTags %} selected {% endif %}>{{ tag_item.name }}</option>
                     {% endfor %}
                 </select>
             </div>
