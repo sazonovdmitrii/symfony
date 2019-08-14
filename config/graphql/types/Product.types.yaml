@@ -22,6 +22,9 @@ Product:
       other_fragrance:
         type: "[ProductMini]"
         description: "Product Mini"
+      other_brand:
+        type: "[ProductMini]"
+        description: "Product Mini"
 ProductFilters:
   type: object
   config:

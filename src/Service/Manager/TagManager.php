@@ -2,6 +2,7 @@
 
 namespace App\Service\Manager;
 
+use App\Entity\Catalog;
 use App\Entity\ProductTag;
 use App\Entity\ProductTagItem;
 use App\Service\DoctrineService;
@@ -124,10 +125,23 @@ class TagManager extends AbstractController
     public function getOne()
     {
         if ($this->getEntity()) {
-            return $this->getEntity()->getProducttagitem()->filter(function (ProductTagItem $productTagItem) {
-                return $productTagItem->getEntityId()->getId() == $this->getTagId();
-            }
-            )->first();
+            $method = 'getOne' . $this->getEntityType();
+            return $this->$method();
         }
+    }
+
+    public function getOneProduct()
+    {
+        return $this->getEntity()->getProducttagitem()->filter(function (ProductTagItem $productTagItem) {
+            return $productTagItem->getEntityId()->getId() == $this->getTagId();
+        }
+        )->first();
+    }
+
+    public function getOneCatalog()
+    {
+        return $this->em
+            ->getRepository(Catalog::class)
+            ->findByTagId($this->getTagId());
     }
 }

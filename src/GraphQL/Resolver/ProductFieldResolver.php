@@ -10,11 +10,15 @@ use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Paginator;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use App\Service\TagService;
+use App\Service\ConfigService;
+use App\Entity\Catalog;
 
 class ProductFieldResolver implements ResolverInterface
 {
 
     private $em;
+
+    private $configService;
 
     /**
      * ProductResolver constructor.
@@ -23,10 +27,12 @@ class ProductFieldResolver implements ResolverInterface
      */
     public function __construct(
         EntityManager $em,
-        TagService $tagService
+        TagService $tagService,
+        ConfigService $configService
     ) {
         $this->em = $em;
         $this->tagService = $tagService;
+        $this->configService = $configService;
     }
 
     public function __invoke(ResolveInfo $info, $value, Argument $args)
@@ -91,16 +97,34 @@ class ProductFieldResolver implements ResolverInterface
 
     public function other_fragrance(Product $product)
     {
-        return [
-            [
-                'id' => '1',
-                'name' => 'asdf'
-            ],
-            [
-                'id' => '2',
-                'name' => 'asdf23'
-            ]
-        ];
+        $aromat = $this->tagService
+            ->setEntityType(Product::class)
+            ->setEntity($product)
+            ->setTagId($this->configService->get('fragrance_tag'))
+            ->getOne();
+
+        $catalog = $this->tagService
+            ->setEntityType(Catalog::class)
+            ->setTagId($aromat->getId())
+            ->getOne();
+
+        return $catalog->getProducts()->slice(0, 10);
+    }
+
+    public function other_brand(Product $produsct)
+    {
+        $brand = $this->tagService
+            ->setEntityType(Product::class)
+            ->setEntity($product)
+            ->setTagId($this->configService->get('brand_tag'))
+            ->getOne();
+
+        $catalog = $this->tagService
+            ->setEntityType(Catalog::class)
+            ->setTagId($brand->getId())
+            ->getOne();
+
+        return $catalog->getProducts()->slice(0, 10);
     }
 
     /**

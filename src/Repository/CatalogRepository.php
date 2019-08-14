@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Catalog;
 use App\Entity\Product;
+use App\Entity\ProductTagItem;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -20,27 +21,16 @@ class CatalogRepository extends ServiceEntityRepository
         parent::__construct($registry, Catalog::class);
     }
 
-    public function findByCatalogId($catalogId)
+    public function findByTagId($tagId)
     {
-        $query = $this->createQueryBuilder('c')
-            ->select('c')
-            ->from(Catalog::class, 'c')
-            ->innerJoin(Product::class, 'pp', 'with', 'p.id = pp.product')
+        $catalog = $this->createQueryBuilder('c')
+            ->innerJoin('c.productTagItems', 'pti')
+            ->where('pti = :tag_id')
+            ->setParameter('tag_id', $tagId)
+            ->setMaxResults(10)
             ->getQuery()
-            ->getSQL();
-        var_dump($query);
-        die();
-//        var_dump('-');
-//        var_dump($catalogId);
-//        die();
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//            ;
+            ->getOneOrNullResult();
+        return $catalog;
     }
 
     // /**
