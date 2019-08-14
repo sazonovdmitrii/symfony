@@ -46,6 +46,19 @@ class ProductController extends BaseAdminController
         $deleteForm = $this->createDeleteForm($this->entity['name'], $id);
 
         $editForm->handleRequest($this->request);
+        $productTags = [];
+        foreach($entity->getProducttagitem() as $tagItem) {
+            $tagId = $tagItem->getEntityId()->getId();
+            if(!isset($productTags[$tagId])) {
+                $productTags[$tagId] = [$tagItem->getId()];
+            } else {
+                $productTags[$tagId] = array_merge($productTags[$tagId], [$tagItem->getId()]);
+            }
+        }
+        foreach($productTags as $tagId => $tagValues) {
+            $productTags[$tagId] = implode(',', $tagValues);
+        }
+
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->dispatch(EasyAdminEvents::PRE_UPDATE, array('entity' => $entity));
 
@@ -55,7 +68,7 @@ class ProductController extends BaseAdminController
             $this->dispatch(EasyAdminEvents::POST_UPDATE, array('entity' => $entity));
             if($tags = $this->tagService->parseRequest($this->request->request->all())) {
                 $this->tagService
-                    ->setTags($tags)
+                    ->setTags($productTags)
                     ->setEntityType(Product::class)
                     ->setEntity($entity)
                     ->update();
@@ -64,12 +77,12 @@ class ProductController extends BaseAdminController
         }
 
         $this->dispatch(EasyAdminEvents::POST_EDIT);
-
         $parameters = array(
             'form' => $editForm->createView(),
             'entity_fields' => $fields,
             'entity' => $entity,
             'delete_form' => $deleteForm->createView(),
+            'productTags' => $productTags
         );
 
         return $this->executeDynamicMethod('render<EntityName>Template', array('edit', $this->_template, $parameters));

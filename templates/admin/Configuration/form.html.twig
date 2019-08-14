@@ -63,6 +63,10 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="profit">Порядок тегов для похожих товаров (от более приоритетных к менее приоритетных)</label>
+                            <input type="text" class="form-control" name="tags_similar_products" id="tags_similar_products" value="{{ list.tags_similar_products is defined ? list.tags_similar_products : '' }}"/>
+                        </div>
                     </div>
                 </div>
             </div>

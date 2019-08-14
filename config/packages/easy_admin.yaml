@@ -107,8 +107,9 @@ easy_admin:
               fields:
                 - name
                 - { property: 'type', type: 'choice', type_options: {multiple: false, choices: {bool: 'bool', string: 'string', int: 'int', float: 'float', enum: 'enum'}} }
+                - { property: 'input_type', type: 'choice', type_options: {multiple: false, choices: {multiple: 'multiple', once: 'once'}} }
                 - { property: 'visible', type: 'choice', type_options: {multiple: false, choices: {No: 'No', Yes: 'Yes'}}}
-                - { property: 'productTagItems', type_options: { block_name: 'catalogs_tags' }}
+                - { property: 'productTagItems', type_options: { block_name: 'products_tags_items' }}
         ProductTagItem:
             class: App\Entity\ProductTagItem
             form:

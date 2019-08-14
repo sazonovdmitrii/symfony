@@ -58,6 +58,11 @@ class ProductTag
      */
     private $catalog;
 
+    /**
+     * @ORM\Column(type="string", length=20, nullable=true)
+     */
+    private $input_type;
+
     public function __construct()
     {
         $this->entity_id = new ArrayCollection();
@@ -215,6 +220,18 @@ class ProductTag
         if ($this->catalog->contains($catalog)) {
             $this->catalog->removeElement($catalog);
         }
+
+        return $this;
+    }
+
+    public function getInputType(): ?string
+    {
+        return $this->input_type;
+    }
+
+    public function setInputType(?string $input_type): self
+    {
+        $this->input_type = $input_type;
 
         return $this;
     }

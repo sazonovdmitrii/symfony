@@ -20,8 +20,8 @@ class AdminTagService extends TagService
     {
         $result = [];
         foreach($request as $key => $value) {
-            if (strpos($key, 'tag_') !== false && $value) {
-                $result[str_replace('tag_', '', $key)] = $value;
+            if (strpos($key, 'tag_') !== false && count($value) && $value[0]) {
+                $result[str_replace('tag_', '', $key)] = implode(',', $value);
             }
         }
         return $result;
@@ -42,10 +42,13 @@ class AdminTagService extends TagService
         }
 
         foreach($this->getTags() as $tagId => $tagValue) {
-            $productTagItem = $this->em->getRepository('App:ProductTagItem')->find($tagValue);
-            $this->getEntity()->addProducttagitem($productTagItem);
-            $manager->persist($this->getEntity());
-            $manager->flush();
+            $tagValues = explode(',', $tagValue);
+            foreach($tagValues as $tagValue) {
+                $productTagItem = $this->em->getRepository('App:ProductTagItem')->find($tagValue);
+                $this->getEntity()->addProducttagitem($productTagItem);
+                $manager->persist($this->getEntity());
+                $manager->flush();
+            }
         }
     }
 
