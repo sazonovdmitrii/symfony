@@ -149,18 +149,18 @@ export default ({ bundle, helmet }) => (
             </style>
         </head>
         <body>
-            <header class="page-header">
-                <div class="content grid">
-                    <p class="phone">{SEO.phone.moscow}</p>
-                    <p class="phone">{SEO.phone.russia}</p>
+            <header className="page-header">
+                <div className="content grid">
+                    <p className="phone">{SEO.phone.moscow}</p>
+                    <p className="phone">{SEO.phone.russia}</p>
                 </div>
             </header>
-            <main class="page-wrapper">
-                <div class="content grid">
-                    <div class="content-text">
-                        <p class="large-text">Ошибка 500</p>
-                        <p class="medium-text">Мы обновляем сайт.</p>
-                        <p class="text">
+            <main className="page-wrapper">
+                <div className="content grid">
+                    <div className="content-text">
+                        <p className="large-text">Ошибка 500</p>
+                        <p className="medium-text">Мы обновляем сайт.</p>
+                        <p className="text">
                             Пожалуйста, зайдите позже.
                             <br />
                             Приносим свои извинения за доставленные неудобства.

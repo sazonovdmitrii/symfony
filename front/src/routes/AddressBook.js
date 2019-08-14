@@ -1,9 +1,7 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { Switch, Route, withRouter } from 'react-router';
 
 import AddressList from 'components/AddressList';
-import Button from 'components/Button';
 
 const AddressBook = props => (
     <div>

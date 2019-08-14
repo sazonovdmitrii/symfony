@@ -2,15 +2,12 @@ import loadable from '@loadable/component';
 
 import Loader from 'components/Loader';
 
-import Product from './Product';
-import Catalog from './Catalog';
-import Search from './Search';
-import User from './User';
 import NotFound from './NotFound';
 
-const getComponent = component => {
+const getComponent = (component, opts) => {
     return loadable(() => import(`./${component}`), {
         fallback: Loader,
+        ...opts,
     });
 };
 
@@ -50,7 +47,7 @@ export default [
     },
     {
         path: '/user/:slug?',
-        component: User,
+        component: getComponent('User', { ssr: false }),
     },
     {
         path: '/brands',
@@ -70,7 +67,7 @@ export default [
     {
         path: '/search',
         exact: true,
-        component: Search,
+        component: getComponent('Search'),
     },
     {
         path: '/order/:id',
@@ -87,13 +84,13 @@ export default [
         path: '/:catalog?/:subcatalog?/:product.htm',
         exact: true,
         strict: true,
-        component: Product,
+        component: getComponent('Product'),
     },
     {
         type: 'catalog',
         path: '/:catalog/:subcatalog?/:filter?',
         exact: true,
-        component: Catalog,
+        component: getComponent('Catalog'),
     },
     {
         component: NotFound,

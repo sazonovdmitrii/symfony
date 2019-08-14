@@ -1,6 +1,5 @@
-import React, { Fragment, useState } from 'react';
-import { Query } from 'react-apollo';
-import gql from 'graphql-tag';
+import React from 'react';
+import { useQuery } from '@apollo/react-hooks';
 
 import { GET_ADDRESSES } from 'query';
 
@@ -10,14 +9,14 @@ import Loader from 'components/Loader';
 import AddressList from './AddressList';
 
 export default ({ onChange, value }) => {
-    return (
-        <Query query={GET_ADDRESSES} ssr={false} partialRefetch>
-            {({ loading, error, data: { addresses } }) => {
-                if (error && !addresses) return <ErrorMessage error={error} />;
-                if (loading) return <Loader />;
+    const {
+        loading,
+        error,
+        data: { addresses },
+    } = useQuery(GET_ADDRESSES, { ssr: false });
 
-                return <AddressList items={addresses.data} onChange={onChange} value={value} />;
-            }}
-        </Query>
-    );
+    if (error && !addresses) return <ErrorMessage error={error} />;
+    if (loading) return <Loader />;
+
+    return <AddressList items={addresses.data} onChange={onChange} value={value} />;
 };

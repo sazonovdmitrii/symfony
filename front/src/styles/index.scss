@@ -16,43 +16,35 @@
 // Fonts
 // --------------------------------------------------------------------------
 
-[class^='flaticon-']:before,
-[class*=' flaticon-']:before,
-[class^='flaticon-']:after,
-[class*=' flaticon-']:after {
+[class^='flaticon-']::before,
+[class*=' flaticon-']::before,
+[class^='flaticon-']::after,
+[class*=' flaticon-']::after {
     font-family: Flaticon;
     font-size: 20px;
     font-style: normal;
     margin-left: 20px;
 }
 
-.flaticon-avatar:before {
+.flaticon-avatar::before {
     content: '\f100';
 }
-.flaticon-chat:before {
+
+.flaticon-chat::before {
     content: '\f101';
 }
-.flaticon-magnifying-glass:before {
+
+.flaticon-magnifying-glass::before {
     content: '\f102';
 }
-.flaticon-shopping-bag:before {
+
+.flaticon-shopping-bag::before {
     content: '\f103';
 }
-.flaticon-technology:before {
+
+.flaticon-technology::before {
     content: '\f104';
 }
-
-// @import '../../fonts/PFDinTextCondPro-Light/styles.css';
-// @import '../../fonts/PFDinTextPro-Bold/styles.css';
-
-// @import '../../fonts/PFDinTextPro-Light/styles.css';
-// @import '../../fonts/PFDinTextPro-Medium/styles.css';
-// @import '../../fonts/PFDinTextCondPro-Regular/styles.css';
-
-// @import '../../fonts/PFDinTextPro-Regular/styles.css';
-// @import '../../fonts/PFDinTextPro-Thin/styles.css';
-// @import '../../fonts/PFDinTextPro-ExtraThin/styles.css';
-// @import '../../fonts/my-icons-collection/font/flaticon.css';
 
 // Utilities
 // --------------------------------------------------------------------------

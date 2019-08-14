@@ -1,39 +1,91 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { withRouter, Switch, Route } from 'react-router';
 import Helmet from 'react-helmet';
 
-import routes from './routes';
+import NotifyDevGraphql from 'utils/NotifyDevGraphql';
 
-import Header from './components/Header';
-import Footer from './components/Footer';
-import Container from './components/Container';
-import Breadcrumbs from './components/Breadcrumbs';
-import ScrollToTop from './components/ScrollToTop';
+import routes from 'routes';
+
+import Header from 'components/Header';
+import Footer from 'components/Footer';
+import Container from 'components/Container';
+import Breadcrumbs from 'components/Breadcrumbs';
+import ScrollToTop from 'components/ScrollToTop';
+
+const FAVS = [
+    {
+        sizes: '16x16',
+        path: '/favicons/favicon-16x16.png',
+    },
+    {
+        sizes: '32x32',
+        path: '/favicons/favicon-32x32.png',
+    },
+    {
+        sizes: '96x96',
+        path: '/favicons/favicon-96x96.png',
+    },
+];
+
+const APPLE_TOUCH_ICON = [
+    {
+        path: '/favicons/apple-icon.png',
+    },
+    {
+        sizes: '57x57',
+        path: '/favicons/apple-icon-57x57.png',
+    },
+    {
+        sizes: '60x60',
+        path: '/favicons/apple-icon-60x60.png',
+    },
+    {
+        sizes: '72x72',
+        path: '/favicons/apple-icon-72x72.png',
+    },
+    {
+        sizes: '76x76',
+        path: '/favicons/apple-icon-76x76.png',
+    },
+    {
+        sizes: '114x114',
+        path: '/favicons/apple-icon-114x114.png',
+    },
+    {
+        sizes: '120x120',
+        path: '/favicons/apple-icon-120x120.png',
+    },
+    {
+        sizes: '144x144',
+        path: '/favicons/apple-icon-144x144.png',
+    },
+    {
+        sizes: '152x152',
+        path: '/favicons/apple-icon-152x152.png',
+    },
+    {
+        sizes: '180x180',
+        path: '/favicons/apple-icon-180x180.png',
+    },
+];
 
 const App = props => {
     const isHomePage = props.location.pathname === '/';
 
     return (
-        <Fragment>
+        <>
             <ScrollToTop />
             <Helmet
                 defaultTitle="Интернет магазин парфюмерии и косметики - низкие цены, большой каталог, фото и отзывы. Купить духи с доставкой по Москве и России - Laparfumerie.ru"
-                // titleTemplate="%s"
+                titleTemplate="%s | Интернет магазин парфюмерии и косметики – Laparfumerie.ru"
             >
                 <link rel="shortcut icon" href="/favicon.ico" />
-                <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png" />
-                <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png" />
-                <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png" />
-                <link rel="apple-touch-icon" href="/favicons/apple-icon.png" />
-                <link rel="apple-touch-icon" sizes="57x57" href="/favicons/apple-icon-57x57.png" />
-                <link rel="apple-touch-icon" sizes="60x60" href="/favicons/apple-icon-60x60.png" />
-                <link rel="apple-touch-icon" sizes="72x72" href="/favicons/apple-icon-72x72.png" />
-                <link rel="apple-touch-icon" sizes="76x76" href="/favicons/apple-icon-76x76.png" />
-                <link rel="apple-touch-icon" sizes="114x114" href="/favicons/apple-icon-114x114.png" />
-                <link rel="apple-touch-icon" sizes="120x120" href="/favicons/apple-icon-120x120.png" />
-                <link rel="apple-touch-icon" sizes="144x144" href="/favicons/apple-icon-144x144.png" />
-                <link rel="apple-touch-icon" sizes="152x152" href="/favicons/apple-icon-152x152.png" />
-                <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-icon-180x180.png" />
+                {FAVS.map(({ sizes, path }, index) => (
+                    <link key={index} rel="icon" type="image/png" sizes={sizes} href={path} />
+                ))}
+                {APPLE_TOUCH_ICON.map(({ sizes, path }, index) => (
+                    <link key={index} rel="apple-touch-icon" sizes={sizes} href={path} />
+                ))}
                 <link rel="manifest" href="/manifest.json" />
                 <meta name="msapplication-TileColor" content="#ffffff" />
                 <meta name="msapplication-TileImage" content="/favicons/ms-icon-144x144.png" />
@@ -55,7 +107,8 @@ const App = props => {
                 <Footer />
             </Container>
             <div className="scroll-to-top" data-behavior="scrollToTop" />
-        </Fragment>
+            <NotifyDevGraphql />
+        </>
     );
 };
 

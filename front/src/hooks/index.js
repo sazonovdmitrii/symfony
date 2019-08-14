@@ -100,8 +100,7 @@ export const useInterval = (callback, delay) => {
 export const useApp = () => {
     const [state, setState] = useContext(AppContext);
 
-    const init = () => {
-        const token = hardtack.get('token');
+    const init = token => {
         const client = createClient({ token });
 
         setState(prevState => ({
@@ -123,7 +122,7 @@ export const useApp = () => {
                 expires: date.toUTCString(),
             });
 
-            const client = await init();
+            const client = await init(token);
             await client.writeData({ data: { isLoggedIn: true } });
         }
     };

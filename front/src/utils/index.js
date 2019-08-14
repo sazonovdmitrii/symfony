@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Query } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import { Route } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import nanoid from 'nanoid';
@@ -26,30 +26,26 @@ export const createSessionKey = () => {
 };
 
 export const withQuery = ({ query, variables }) => Component => {
-    return (
-        <Query query={query} variables={variables}>
-            {({ loading, error, data }) => {
-                if (loading) return <Loader />;
-                if (error) {
-                    return (
-                        <Fragment>
-                            <NotFound />
-                            <ErrorMessage error={error} />
-                        </Fragment>
-                    );
-                }
-                const newData = Object.values(data).reduce((obj, item) => {
-                    return { ...obj, ...item };
-                }, {});
+    const { data, loading, error } = useQuery(query, { variables });
 
-                if (newData) {
-                    return Component(newData);
-                }
+    if (loading) return <Loader />;
+    if (error) {
+        return (
+            <Fragment>
+                <NotFound />
+                <ErrorMessage error={error} />
+            </Fragment>
+        );
+    }
+    const newData = Object.values(data).reduce((obj, item) => {
+        return { ...obj, ...item };
+    }, {});
 
-                return null;
-            }}
-        </Query>
-    );
+    if (newData) {
+        return Component(newData);
+    }
+
+    return null;
 };
 
 export const RouteStatus = props => (
@@ -78,7 +74,7 @@ export const seoHead = (type, props) => {
             <meta property="og:title" content={title} />
             <meta property="og:description" content={description} />
             <meta property="og:type" content={ogType} />
-            <meta property="og:url" content={`https://laparfumerie.ru${url}`} />
+            <meta property="og:url" content={`${SEO.url}${url}`} />
             <meta property="og:site_name" content={SEO.fullSiteName} />
             <meta property="og:locale" content={locale} />
         </Helmet>

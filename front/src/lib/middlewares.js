@@ -91,6 +91,9 @@ export default app => {
     // ... and then fall-back to <root>/public
     app.use(staticMiddleware(path.resolve(config.dist, '..', 'public'), false));
 
+    // public symfony
+    app.use(staticMiddleware(path.resolve(config.dist, '../..', 'public'), false));
+
     // Router
     app.use(router.allowedMethods()).use(router.routes());
 

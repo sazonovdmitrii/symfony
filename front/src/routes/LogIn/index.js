@@ -1,25 +1,18 @@
 import React, { useState } from 'react';
-import { Mutation, withApollo } from 'react-apollo';
+import { withApollo } from '@apollo/react-hoc';
 import gql from 'graphql-tag';
 import hardtack from 'hardtack';
 
 import LoginForm from 'components/LoginForm';
 import Button from 'components/Button';
 
-export default withApollo(props => {
-    const handleCompleted = ({ auth }) => {
-        if (auth && auth.hash) {
-            const date = new Date();
-            const currentYear = date.getFullYear();
+import { useApp } from 'hooks';
 
-            date.setFullYear(currentYear + 1);
-            hardtack.set('token', auth.hash, {
-                path: '/',
-                expires: date.toUTCString(),
-            });
-            props.client.writeData({ data: { isLoggedIn: true } });
-            props.history.push('/');
-        }
+export default withApollo(({ client, history }) => {
+    const { login } = useApp();
+    const handleCompleted = async ({ auth: { hash } }) => {
+        await login(hash);
+        history.push('/');
     };
 
     return (

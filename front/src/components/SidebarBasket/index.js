@@ -2,7 +2,7 @@ import React from 'react';
 
 import styles from './styles.css';
 
-export default ({ className, step, total, deliveryPrice = 0, count, actions }) => {
+export default ({ className, step, total, deliveryPrice = '0', count, actions }) => {
     const totalWithDelivery = parseInt(deliveryPrice, 10) + parseInt(total, 10);
 
     return (
@@ -13,7 +13,9 @@ export default ({ className, step, total, deliveryPrice = 0, count, actions }) =
                         {deliveryPrice ? (
                             <div className={styles.leftItem}>
                                 <div className={styles.leftItemLabel}>Стоимость доставки:</div>
-                                <div className={styles.price}>{deliveryPrice}&nbsp;руб.</div>
+                                <div className={styles.price}>
+                                    {deliveryPrice === '0' ? 'Бесплатно' : `${deliveryPrice} руб.`}
+                                </div>
                             </div>
                         ) : null}
                         <div className={styles.leftItem}>

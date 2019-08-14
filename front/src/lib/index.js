@@ -28,23 +28,13 @@ if (process.env.NODE_ENV !== 'production') {
         const hotClient = {
             host: config.host,
         };
-
-        // Is a custom WebSocket defined?
-        if (config.websocketPort) {
-            hotClient.port = config.websocketPort;
-        }
-
         // Set default options for koaWebpack
         const defaultOptions = {
             compiler: webpack(webpackConfig),
             devMiddleware: {
                 logLevel: 'silent',
                 publicPath: '/',
-                // publicPath: '/',
                 stats: false,
-                // writeToDisk(filePath) {
-                //     return /main/.test(filePath) || /loadable-stats/.test(filePath);
-                // },
                 writeToDisk: true,
             },
             hotClient,

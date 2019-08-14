@@ -10,6 +10,7 @@ const isServer = process.env.SERVER;
 const isBrowser = process.browser;
 const isProd = process.env.NODE_ENV === 'production';
 let graphQLClient = null;
+let userToken = '';
 
 const initialStore = {
     isLoggedIn: false,
@@ -104,8 +105,9 @@ const create = ({ token } = {}) => {
 export function createClient({ token = '' } = {}) {
     if (!isBrowser) return create({ token });
 
-    if (!graphQLClient) {
+    if (!graphQLClient || token !== userToken) {
         graphQLClient = create({ token });
+        userToken = token;
     }
 
     return graphQLClient;

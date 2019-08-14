@@ -8,7 +8,7 @@ import React from 'react';
 import { render, hydrate } from 'react-dom';
 import { Router } from 'react-router';
 import { hot } from 'react-hot-loader/root';
-import { ApolloProvider } from 'react-apollo';
+import { ApolloProvider } from '@apollo/react-components';
 import { createBrowserHistory } from 'history';
 import hardtack from 'hardtack';
 import { loadableReady } from '@loadable/component';
@@ -24,7 +24,6 @@ const history = createBrowserHistory();
 const sessionKey = hardtack.get('session_key');
 if (!sessionKey) createSessionKey();
 
-// get token from cookies 🍪
 const HotApp = hot(App);
 
 const RootApp = () => {

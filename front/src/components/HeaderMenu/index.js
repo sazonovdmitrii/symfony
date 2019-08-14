@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Query } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
@@ -106,28 +106,22 @@ HeaderMenu.propTypes = {
 };
 
 export default props => {
-    return (
-        <Query query={GET_HEADER_MENU}>
-            {({
-                loading,
-                error,
-                data: {
-                    top_menu: { data: items },
-                },
-            }) => {
-                if (loading) return null;
+    const {
+        loading,
+        error,
+        data: { top_menu },
+    } = useQuery(GET_HEADER_MENU);
 
-                return (
-                    <HeaderMenu
-                        {...props}
-                        items={[
-                            { text: 'Бренды', url: '/brands/', children: [] },
-                            ...items,
-                            { text: 'Акции', url: '/sales/', children: [] },
-                        ]}
-                    />
-                );
-            }}
-        </Query>
+    if (loading) return null;
+
+    return (
+        <HeaderMenu
+            {...props}
+            items={[
+                { text: 'Бренды', url: '/brands/', children: [] },
+                ...top_menu.data,
+                { text: 'Акции', url: '/sales/', children: [] },
+            ]}
+        />
     );
 };

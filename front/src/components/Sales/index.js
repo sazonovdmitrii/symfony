@@ -1,32 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Query } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 
 import { GET_SALES } from 'query';
 
 import SaleCard from 'components/SaleCard';
 
-const Sales = ({ limit }) => (
-    <div className="homesale">
-        <Query query={GET_SALES} variabler={{ limit }}>
-            {({ loading, error, data: { sale } }) => {
-                if (loading) return 'loading';
-                if (error) return 'erorr';
+const Sales = ({ limit }) => {
+    const {
+        loading,
+        error,
+        data: { sale },
+    } = useQuery(GET_SALES, { variables: { limit } });
+    if (loading) return 'loading';
+    if (error) return 'error';
 
-                return sale.data.map(item => (
-                    <div className="homesale__sale">
-                        <SaleCard key={item.id} {...item} />
-                    </div>
-                ));
-            }}
-        </Query>
-    </div>
-);
+    return (
+        <div className="homesale">
+            {sale.data.map(item => (
+                <div className="homesale__sale">
+                    <SaleCard key={item.id} {...item} />
+                </div>
+            ))}
+        </div>
+    );
+};
 
 Sales.defaultProps = {
     limit: null,
 };
 
-Sales.propTypes = {};
+Sales.propTypes = {
+    limit: PropTypes.string,
+};
 
 export default Sales;

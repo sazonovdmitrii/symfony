@@ -138,6 +138,7 @@ const UserForm = ({ data, type, onSubmit }) => {
                             name="disclaimer"
                             checked={disclaimer}
                             onChange={handleChange}
+                            required
                         />
                     </InputGroup>
                     <InputGroup>

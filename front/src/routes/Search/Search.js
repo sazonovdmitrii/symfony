@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import Products from 'components/Products';
@@ -45,7 +45,7 @@ const Search = ({ match, limit, count, query, rows }) => {
             <div className="catalogpage__content--full">
                 <h1 className="typography__catheader">Вы искали: {query}</h1>
                 {count ? (
-                    <Fragment>
+                    <>
                         <div className="catalogpage__foundcount">Мы нашли {count} товаров</div>
                         <div className="catalog__pager">
                             {pagination}
@@ -63,9 +63,9 @@ const Search = ({ match, limit, count, query, rows }) => {
                                 </div>
                             </form>
                         </div>
-                    </Fragment>
+                    </>
                 ) : (
-                    <Fragment>
+                    <>
                         {MySearchForm}
                         <div
                             style={{
@@ -91,10 +91,10 @@ const Search = ({ match, limit, count, query, rows }) => {
                                 Поиск не принес результатов.
                             </div>
                         </div>
-                    </Fragment>
+                    </>
                 )}
                 {count ? (
-                    <Fragment>
+                    <>
                         <Products limit={limit} />
                         <div className="catalog__sorting catalog__sorting_pos_b">
                             <div className="catalog__search-name">
@@ -105,7 +105,7 @@ const Search = ({ match, limit, count, query, rows }) => {
                             </div>
                             {MySearchForm}
                         </div>
-                    </Fragment>
+                    </>
                 ) : null}
                 {pagination}
             </div>

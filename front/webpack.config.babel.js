@@ -88,6 +88,7 @@ const getConfig = target => {
                                   ecma: 5,
                                   warnings: false,
                                   comparisons: false,
+                                  inline: 2,
                                   pure_funcs: ['console.log'],
                               },
                               mangle: {
@@ -153,10 +154,13 @@ const getConfig = target => {
                         {
                             test: /\.svg$/,
                             use: require.resolve('@svgr/webpack'),
+                            issuer: {
+                                test: /\.jsx?$/,
+                            },
                         },
                         isNode && {
                             test: /\.css$/,
-                            loader: 'css-loader',
+                            loader: require.resolve('css-loader'),
                             options: {
                                 modules: {
                                     localIdentName: '[folder]__[local]__[hash:base64:5]',
@@ -172,7 +176,6 @@ const getConfig = target => {
                                 modules: {
                                     localIdentName: '[folder]__[local]__[hash:base64:5]',
                                 },
-                                url: true,
                             }),
                         },
                         !isNode && {
@@ -180,8 +183,6 @@ const getConfig = target => {
                             loader: getStyleLoaders(
                                 {
                                     importLoaders: 2,
-                                    modules: false,
-                                    url: true,
                                 },
                                 'sass-loader'
                             ),
@@ -201,8 +202,7 @@ const getConfig = target => {
         },
         plugins: [
             new webpack.DefinePlugin({
-                'process.env.GRAPHQL': JSON.stringify(process.env.DOCKER_GRAPHQL || process.env.GRAPHQL),
-                'process.env.DB_HOST': JSON.stringify(process.env.DOCKER_DATABASE || process.env.DB_HOST),
+                'process.env.GRAPHQL': JSON.stringify(process.env.GRAPHQL),
                 'process.env.SERVER': isNode,
                 SERVER: isNode,
                 SEOHIDE: !isNode,
@@ -215,7 +215,7 @@ const getConfig = target => {
                       filename: cssFilename,
                   }),
             new LoadablePlugin({
-                writeToDisk: isNode,
+                writeToDisk: true,
             }),
             isProd
                 ? new CleanWebpackPlugin([PATHS[target]], {
@@ -223,7 +223,7 @@ const getConfig = target => {
                       verbose: true,
                   })
                 : new CaseSensitivePathsPlugin(),
-            isAnalyze && !isNode && new BundleAnalyzerPlugin(),
+            isAnalyze && new BundleAnalyzerPlugin(),
             // new webpack.HashedModuleIdsPlugin({
             //     hashFunction: 'md4',
             //     hashDigest: 'base64',
@@ -253,4 +253,4 @@ const getConfig = target => {
     };
 };
 
-export default [getConfig('node'), getConfig('web')];
+export default (isAnalyze ? getConfig('web') : [getConfig('node'), getConfig('web')]);

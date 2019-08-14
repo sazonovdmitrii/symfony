@@ -1,7 +1,7 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 
 export default ({ items = [] }) => (
-    <Fragment>
+    <>
         <p className="footer__head">Популярные бренды</p>
         {items.map(brand => (
             <div className="footer__colum">
@@ -10,5 +10,5 @@ export default ({ items = [] }) => (
                 </a>
             </div>
         ))}
-    </Fragment>
+    </>
 );

@@ -10,14 +10,10 @@ const Component = loadable(() => import('./Catalog'), {
     fallback: Loader,
 });
 
-export default props => {
-    const { match, limit } = props;
-
-    let isPage;
+export default ({ match }) => {
     const slug = Object.values(match.params)
         .reduce((array, item = '') => {
             if (item.match(/page-\d{1,}/)) {
-                isPage = item;
                 return array;
             }
 

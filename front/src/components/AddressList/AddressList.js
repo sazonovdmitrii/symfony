@@ -1,34 +1,15 @@
-import React, { Fragment, useState, useEffect, useRef } from 'react';
-import { Mutation, withApollo } from 'react-apollo';
+import React, { useState, useEffect, useRef } from 'react';
+import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import { Edit, X } from 'react-feather';
+import { Edit as EditIcon, X as RemoveIcon } from 'react-feather';
+
+import { GET_ADDRESSES } from 'query';
 
 import ListItem from 'components/ListItem';
 import Button from 'components/Button';
 import AddressForm from 'components/AddressForm';
 
 import styles from './styles.css';
-
-const GET_ADDRESSES = gql`
-    {
-        addresses {
-            data {
-                id
-                name
-                person
-                zip
-                region_id
-                city
-                street
-                house
-                corp
-                level
-                flat
-                code
-            }
-        }
-    }
-`;
 
 const REMOVE_ADDRESS_MUTATION = gql`
     mutation removeAddress($input: RemoveAddressInput!) {
@@ -60,33 +41,33 @@ const TEXT = {
     zip: 'индекс:',
 };
 
-const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {}, client }) => {
+const AddressList = ({ items, value, onChange, onSubmit = () => {} }) => {
     const formEl = useRef(null);
-    const [items, setItems] = useState(itemsProp);
     const [showForm, setShowForm] = useState({});
-    const handleRemoveAddress = ({ removeAddress: { data } }) => {
-        setItems(data);
-    };
+    const [handleRemoveAddress] = useMutation(REMOVE_ADDRESS_MUTATION, {
+        update(
+            cache,
+            {
+                data: { removeAddress },
+            }
+        ) {
+            cache.writeQuery({
+                query: GET_ADDRESSES,
+                data: {
+                    addresses: {
+                        data: removeAddress.data,
+                        __typename: 'Addresses',
+                    },
+                },
+            });
+        },
+    });
     const handleSubmitAddress = data => {
         // if edit take new addresses from data.data
         // esle add new address from data to items
-        // todo make better
-        client.writeQuery({
-            query: GET_ADDRESSES,
-            data: {
-                addresses: {
-                    data: data.data ? data.data : [...items, data],
-                    __typename: 'Addresses',
-                },
-            },
-        });
         setShowForm({});
         onSubmit(data.data ? data.data : data);
     };
-
-    useEffect(() => {
-        setItems(itemsProp);
-    }, [itemsProp.length]);
 
     useEffect(() => {
         if (formEl.current) {
@@ -118,7 +99,7 @@ const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {}, c
     }
 
     return (
-        <Fragment>
+        <>
             {items && items.length ? (
                 items.map(item => (
                     <ListItem
@@ -130,7 +111,7 @@ const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {}, c
                             item.flat ? `, ${TEXT.flat} ${item.flat}` : ''
                         }`}
                         actions={
-                            <Fragment>
+                            <>
                                 <Button
                                     aria-label="Редактировать"
                                     kind="primary"
@@ -144,34 +125,27 @@ const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {}, c
                                         });
                                     }}
                                 >
-                                    <Edit size="15" className={styles.icon} />
+                                    <EditIcon size="15" className={styles.icon} />
                                 </Button>
-                                <Mutation
-                                    mutation={REMOVE_ADDRESS_MUTATION}
-                                    onCompleted={handleRemoveAddress}
-                                >
-                                    {(remove, { error, data, loading }) => {
-                                        console.log(error, data, loading);
+                                <Button
+                                    aria-label="Удалить"
+                                    kind="primary"
+                                    outlined
+                                    onClick={event => {
+                                        event.stopPropagation();
 
-                                        return (
-                                            <Button
-                                                aria-label="Удалить"
-                                                kind="primary"
-                                                outlined
-                                                onClick={event => {
-                                                    event.stopPropagation();
-
-                                                    remove({
-                                                        variables: { input: { id: item.id } },
-                                                    });
-                                                }}
-                                            >
-                                                <X size="15" className={styles.icon} />
-                                            </Button>
-                                        );
+                                        handleRemoveAddress({
+                                            variables: {
+                                                input: {
+                                                    id: item.id,
+                                                },
+                                            },
+                                        });
                                     }}
-                                </Mutation>
-                            </Fragment>
+                                >
+                                    <RemoveIcon size="15" className={styles.icon} />
+                                </Button>
+                            </>
                         }
                         active={value === item.id}
                         onClick={() => onChange(item)}
@@ -191,8 +165,8 @@ const AddressList = ({ items: itemsProp, value, onChange, onSubmit = () => {}, c
                     Добавить адрес
                 </Button>
             </div>
-        </Fragment>
+        </>
     );
 };
 
-export default withApollo(AddressList);
+export default AddressList;

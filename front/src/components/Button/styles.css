@@ -1,5 +1,8 @@
 .button {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     padding: 6px 12px;
     border: 1px solid transparent;
     background: none;
@@ -13,7 +16,6 @@
     border-radius: 4px;
     transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out, border-color 0.15s ease-in-out;
     cursor: pointer;
-    text-align: center;
     text-decoration: none !important;
 }
 
@@ -26,6 +28,11 @@
         background-color: var(--color-primary);
         border-color: var(--color-primary);
     }
+
+    &:disabled {
+        color: var(--color-primary);
+        background-color: transparent;
+    }
 }
 
 .outlined-secondary {
@@ -36,6 +43,11 @@
         color: var(--color-white);
         background-color: var(--color-secondary);
         border-color: var(--color-secondary);
+    }
+
+    &:disabled {
+        color: var(--color-secondary);
+        background-color: transparent;
     }
 }
 

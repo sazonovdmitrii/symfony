@@ -1,5 +1,3 @@
-import React, { Fragment } from 'react';
-
 export default {
     url: `https://laparfumerie.ru`,
     domain: 'laparfumerie.ru',
@@ -19,6 +17,7 @@ export default {
     },
     default: {
         title: '',
+        // description: `Парфюмерия и Косметика с доставкой по Москве. ${this.work_time} ${this.text.phone()}`,
     },
     home: {
         description: 'Продаем элитную парфюмерию и косметику для женщин и мужчин с доставкой',
@@ -33,12 +32,8 @@ export default {
     },
     brands() {
         return {
-            title: `Все бренды парфюмерии и косметики | Интернет магазин парфюмерии и косметики – ${
-                this.siteName
-            }`,
-            description: `Парфюмерия и Косметика с доставкой по Москве. ${
-                this.work_time
-            } ${this.text.phone()}`,
+            title: 'Все бренды парфюмерии и косметики',
+            description: this.default.description,
             keywords:
                 'парфюмерные бренды, бренды духов, интернет магазин парфюмерии, laparfumerie, лапарфюмерия',
         };
@@ -55,9 +50,7 @@ export default {
     sitemap() {
         return {
             title: `Карта сайта | ${this.title}`,
-            description: `Парфюмерия и Косметика с доставкой по Москве. ${
-                this.work_time
-            } ${this.text.phone()}`,
+            description: this.default.description,
             keywords: 'карта сайта, laparfumerie, лапарфюмерия, интернет магазин духов и парфюмерии',
         };
     },
@@ -122,7 +115,9 @@ export default {
     },
     sale({ name }) {
         return {
-            title: `${name} - акции парфюмерии и косметики | Интернет магазин парфюмерии и косметики - низкие цены, большой каталог, фото и отзывы. Купить духи с доставкой по Москве и России - Laparfumerie.ru`,
+            title: `${name} - акции парфюмерии и косметики | Интернет магазин парфюмерии и косметики - низкие цены, большой каталог, фото и отзывы. Купить духи с доставкой по Москве и России - ${
+                this.siteName
+            }`,
             description: `${name} акции парфюмерии и косметики. Продаем парфюмерию с доставкой по Москве. ${
                 this.work_time
             } ${this.text.phone()}`,

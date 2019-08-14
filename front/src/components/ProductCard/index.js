@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
@@ -32,9 +32,9 @@ const ProductCard = ({
     const myPrice = () => {
         if (lowerPrice) {
             return (
-                <Fragment>
+                <>
                     от <span>{lowerPrice}</span> руб.
-                </Fragment>
+                </>
             );
         }
 
@@ -57,7 +57,7 @@ const ProductCard = ({
                     )}
                     <div className="catalog__item_img">
                         {secondary_image && primary_image ? (
-                            <Fragment>
+                            <>
                                 <img
                                     src={'https://placehold.it/213x239/000' || primary_image}
                                     className="catalog__item_img-im--first"
@@ -68,7 +68,7 @@ const ProductCard = ({
                                     className="catalog__item_img-im--second"
                                     alt=""
                                 />
-                            </Fragment>
+                            </>
                         ) : (
                             <img
                                 src={'https://placehold.it/213x239/000' || primary_image}
@@ -82,7 +82,7 @@ const ProductCard = ({
                 <p className="catalog__item_price">{myPrice()}</p>
                 <div className="catalog__item_prd">
                     {items.edges.length ? (
-                        <Fragment>
+                        <>
                             {items.edges.map(({ node: item }) => {
                                 if (!item.price) return null;
 
@@ -101,7 +101,7 @@ const ProductCard = ({
                                     <small>Ещё {items.edges.length - 9} предложений в товаре</small>
                                 </p>
                             )}
-                        </Fragment>
+                        </>
                     ) : null}
                     <Button className={styles.button} href={url} kind="primary">
                         {price ? 'КУПИТЬ' : 'ОБЗОР'}

@@ -5,7 +5,8 @@ import path from 'path';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import Helmet from 'react-helmet';
-import { ApolloProvider, getDataFromTree } from 'react-apollo';
+import { getDataFromTree } from '@apollo/react-ssr';
+import { ApolloProvider } from '@apollo/react-components';
 import { StaticRouter } from 'react-router';
 import { ChunkExtractor, ChunkExtractorManager } from '@loadable/server';
 import jwt from 'jsonwebtoken';
@@ -53,14 +54,14 @@ export default async ctx => {
     } catch (error) {
         // Prevent GraphQL client errors from crashing SSR.
         console.error('Error while running `getDataFromTree`', error, location);
-        const errorRender = renderToString(
-            <ErrorPage helmet={Helmet.renderStatic()} bundle={webExtractor} />
-        );
+        // const errorRender = renderToString(
+        //     <ErrorPage helmet={Helmet.renderStatic()} bundle={webExtractor} />
+        // );
 
-        ctx.status = 500;
-        ctx.body = `<!DOCTYPE html>${errorRender}`;
+        // ctx.status = 500;
+        // ctx.body = `<!DOCTYPE html>${errorRender}`;
 
-        return;
+        // return;
     }
 
     if ([301, 302].includes(routerContext.statusCode)) {
