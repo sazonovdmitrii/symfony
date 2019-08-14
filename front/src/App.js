@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { withRouter, Switch, Route } from 'react-router';
 import Helmet from 'react-helmet';
 
@@ -73,7 +73,7 @@ const App = props => {
     const isHomePage = props.location.pathname === '/';
 
     return (
-        <Fragment>
+        <>
             <ScrollToTop />
             <Helmet
                 defaultTitle="Интернет магазин парфюмерии и косметики - низкие цены, большой каталог, фото и отзывы. Купить духи с доставкой по Москве и России - Laparfumerie.ru"
@@ -108,7 +108,7 @@ const App = props => {
             </Container>
             <div className="scroll-to-top" data-behavior="scrollToTop" />
             <NotifyDevGraphql />
-        </Fragment>
+        </>
     );
 };
 

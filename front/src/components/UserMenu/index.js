@@ -102,7 +102,7 @@ const UserMenu = () => {
             )}
             <li className={styles.item}>
                 {loading || error ? null : (
-                    <Fragment>
+                    <>
                         <Link className={styles.link} to="/basket">
                             <div className={styles.icon}>
                                 <Badge badgeContent={basket.products.length} kind="primary">
@@ -112,7 +112,7 @@ const UserMenu = () => {
                             <span className={styles.label}>Корзина</span>
                         </Link>
                         <BasketShort products={basket.products} className={styles.dropdown} />
-                    </Fragment>
+                    </>
                 )}
             </li>
         </ul>

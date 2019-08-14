@@ -1,5 +1,3 @@
-import React, { Fragment } from 'react';
-
 export default {
     url: `https://laparfumerie.ru`,
     domain: 'laparfumerie.ru',
