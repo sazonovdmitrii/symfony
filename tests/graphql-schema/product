@@ -1,18 +1,31 @@
 {
-  product(slug: "mexx-gel-dlya-dusha-xx-by-mexx-nice.htm"){
+  product(slug: "paco-rabanne-tualetnaya-voda-1-million.htm"){
     id,
     name,
     items(limit: 40, offset:0) {
       edges {
         node {
           id
-          name          
+          name
+          price
         }
       }
     }
     tags{
       name
       value
+    }
+    other_fragrance{
+      id
+      name
+    }
+    other_brand{
+      id
+      name
+    }
+    similars {
+      id
+      name
     }
   }
 }

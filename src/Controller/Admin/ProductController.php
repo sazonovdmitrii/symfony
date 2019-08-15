@@ -67,7 +67,6 @@ class ProductController extends BaseAdminController
             $this->executeDynamicMethod('update<EntityName>Entity', array($entity, $editForm));
 
             $this->dispatch(EasyAdminEvents::POST_UPDATE, array('entity' => $entity));
-            $tags = $this->tagService->parseRequest($this->request->request->all());
             if($tags = $this->tagService->parseRequest($this->request->request->all())) {
                 $this->tagService
                     ->setTags($tags)

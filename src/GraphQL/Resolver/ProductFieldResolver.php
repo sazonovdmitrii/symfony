@@ -35,6 +35,12 @@ class ProductFieldResolver implements ResolverInterface
         $this->configService = $configService;
     }
 
+    /**
+     * @param ResolveInfo $info
+     * @param $value
+     * @param Argument $args
+     * @return mixed
+     */
     public function __invoke(ResolveInfo $info, $value, Argument $args)
     {
         $method = $info->fieldName;
@@ -58,11 +64,19 @@ class ProductFieldResolver implements ResolverInterface
         return [];
     }
 
+    /**
+     * @param Product $product
+     * @return null|string
+     */
     public function name(Product $product)
     {
         return $product->getName();
     }
 
+    /**
+     * @param Product $product
+     * @return mixed|string
+     */
     public function url(Product $product)
     {
         if($productUrl = $this->em
@@ -73,11 +87,19 @@ class ProductFieldResolver implements ResolverInterface
         return '';
     }
 
+    /**
+     * @param Product $product
+     * @return int|null
+     */
     public function id(Product $product)
     {
         return $product->getId();
     }
 
+    /**
+     * @param Product $product
+     * @return mixed
+     */
     public function tags(Product $product)
     {
         return $this->tagService
@@ -86,6 +108,11 @@ class ProductFieldResolver implements ResolverInterface
             ->getFilters();
     }
 
+    /**
+     * @param Product $product
+     * @param Argument $args
+     * @return Connection
+     */
     public function items(Product $product, Argument $args) :Connection
     {
         $items = $product->getProductItems()->toArray();
@@ -95,6 +122,10 @@ class ProductFieldResolver implements ResolverInterface
         return $paginator->auto($args, count($items));
     }
 
+    /**
+     * @param Product $product
+     * @return mixed
+     */
     public function other_fragrance(Product $product)
     {
         $aromat = $this->tagService
@@ -111,7 +142,11 @@ class ProductFieldResolver implements ResolverInterface
         return $catalog->getProducts()->slice(0, 10);
     }
 
-    public function other_brand(Product $produsct)
+    /**
+     * @param Product $product
+     * @return mixed
+     */
+    public function other_brand(Product $product)
     {
         $brand = $this->tagService
             ->setEntityType(Product::class)
@@ -125,6 +160,18 @@ class ProductFieldResolver implements ResolverInterface
             ->getOne();
 
         return $catalog->getProducts()->slice(0, 10);
+    }
+
+    /**
+     * @param Product $product
+     * @return mixed
+     */
+    public function similars(Product $product)
+    {
+        return $this->tagService
+            ->setEntity($product)
+            ->setEntityType(Product::class)
+            ->similars();
     }
 
     /**

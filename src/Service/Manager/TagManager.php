@@ -9,6 +9,8 @@ use App\Service\DoctrineService;
 use Doctrine\ORM\EntityManager;
 use Redis;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Service\ConfigService;
+use App\Entity\Product;
 
 class TagManager extends AbstractController
 {
@@ -16,16 +18,29 @@ class TagManager extends AbstractController
 
     private $doctrineService;
 
+    /**
+     * TagManager constructor.
+     *
+     * @param Redis $redis
+     * @param EntityManager $em
+     * @param DoctrineService $doctrineService
+     * @param ConfigService $configService
+     */
     public function __construct(
         Redis $redis,
         EntityManager $em,
-        DoctrineService $doctrineService
+        DoctrineService $doctrineService,
+        ConfigService $configService
     ) {
         $this->em              = $em;
         $this->redis           = $redis;
         $this->doctrineService = $doctrineService;
+        $this->configService = $configService;
     }
 
+    /**
+     * @return array|mixed|object
+     */
     public function getFilters()
     {
         $method   = 'get' . $this->getEntityType() . 'Filters';
@@ -42,6 +57,9 @@ class TagManager extends AbstractController
         return $cacheItem;
     }
 
+    /**
+     * @return array
+     */
     public function getCatalogFilters()
     {
         $allTags = $this->em
@@ -84,6 +102,9 @@ class TagManager extends AbstractController
         return $tags;
     }
 
+    /**
+     * @return array
+     */
     public function getProductFilters()
     {
         $productTags = [];
@@ -107,6 +128,9 @@ class TagManager extends AbstractController
         return $tags;
     }
 
+    /**
+     * @return array
+     */
     public function all()
     {
         $result = [];
@@ -122,15 +146,21 @@ class TagManager extends AbstractController
         return $result;
     }
 
+    /**
+     * @return mixed
+     */
     public function getOne()
     {
         if ($this->getEntity()) {
-            $method = 'getOne' . $this->getEntityType();
+            $method = 'getOneFor' . $this->getEntityType();
             return $this->$method();
         }
     }
 
-    public function getOneProduct()
+    /**
+     * @return mixed
+     */
+    public function getOneForProduct()
     {
         return $this->getEntity()->getProducttagitem()->filter(function (ProductTagItem $productTagItem) {
             return $productTagItem->getEntityId()->getId() == $this->getTagId();
@@ -138,10 +168,96 @@ class TagManager extends AbstractController
         )->first();
     }
 
-    public function getOneCatalog()
+    /**
+     * @return mixed
+     */
+    public function getOneForCatalog()
     {
         return $this->em
             ->getRepository(Catalog::class)
             ->findByTagId($this->getTagId());
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMultiple()
+    {
+        if ($this->getEntity()) {
+            $method = 'getMultipleFor' . $this->getEntityType();
+            return $this->$method();
+        }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMultipleForProduct()
+    {
+        return $this->getEntity()->getProducttagitem()->filter(function (ProductTagItem $productTagItem) {
+            return in_array($productTagItem->getEntityId()->getId(), $this->getTagsIds());
+        });
+    }
+
+    /**
+     * @return mixed
+     */
+    public function similars()
+    {
+        $extraTagsIds = $this->_getExtraTagsIds();
+        $requiredTagsIds = $this->_getRequiredTagsIds();
+
+        $tagsIds = array_merge($extraTagsIds, $requiredTagsIds);
+
+        $tagsItems = $this->setEntityType(Product::class)
+            ->setEntity($this->getEntity())
+            ->setTagsIds($tagsIds)
+            ->getMultiple();
+
+        $extraTagsItemsIds = $requiredTagsItemsIds = [];
+
+        foreach($tagsItems as $tagsItem) {
+            if(in_array($tagsItem->getEntityId()->getId(), $requiredTagsIds)) {
+                $requiredTagsItemsIds[] = $tagsItem->getId();
+            } else {
+                $extraTagsItemsIds[] = $tagsItem->getId();
+            }
+        }
+
+        return $this->setTagsIds($requiredTagsItemsIds)
+            ->setExtraTagsIds($extraTagsItemsIds)
+            ->getProducts();
+    }
+
+    /**
+     * @return array
+     */
+    private function _getExtraTagsIds ()
+    {
+        return explode(
+            ',', $this->configService->get('extra_tags_similar_products')
+        );
+    }
+
+    /**
+     * @return array
+     */
+    private function _getRequiredTagsIds ()
+    {
+        return explode(
+            ',', $this->configService->get('required_tags_similar_products')
+        );
+    }
+
+    /**
+     * @return array|\object[]
+     */
+    public function getProducts()
+    {
+        $productsIds = $this->em->getRepository('App:ProductTagItem')
+            ->getProducts($this->getTagsIds(), $this->getExtraTagsIds());
+
+        return $this->em->getRepository('App:Product')
+            ->findBy(['id' => $productsIds]);
     }
 }

@@ -20,8 +20,13 @@ class AdminTagService extends TagService
     {
         $result = [];
         foreach($request as $key => $value) {
-            if (strpos($key, 'tag_') !== false && is_array($value) && count($value) && $value[0]) {
-                $result[str_replace('tag_', '', $key)] = implode(',', $value);
+            if(strpos($key, 'tag_') !== false) {
+                $tagKey = str_replace('tag_', '', $key);
+                if (is_array($value) && count($value) && $value[0]) {
+                    $result[$tagKey] = implode(',', $value);
+                } elseif ($value) {
+                    $result[$tagKey] = $value;
+                }
             }
         }
         return $result;

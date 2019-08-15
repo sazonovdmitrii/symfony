@@ -21,10 +21,13 @@ Product:
         description: "Product Filter"
       other_fragrance:
         type: "[ProductMini]"
-        description: "Product Mini"
+        description: "Other Fragrance Products"
       other_brand:
         type: "[ProductMini]"
-        description: "Product Mini"
+        description: "Other Brand Products"
+      similars:
+        type: "[ProductMini]"
+        description: "Similar Products"
 ProductFilters:
   type: object
   config:
