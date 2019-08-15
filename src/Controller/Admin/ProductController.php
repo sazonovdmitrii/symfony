@@ -47,7 +47,9 @@ class ProductController extends BaseAdminController
 
         $editForm->handleRequest($this->request);
         $productTags = [];
+        $allProductsTags = [];
         foreach($entity->getProducttagitem() as $tagItem) {
+            $allProductsTags[] = $tagItem->getId();
             $tagId = $tagItem->getEntityId()->getId();
             if(!isset($productTags[$tagId])) {
                 $productTags[$tagId] = [$tagItem->getId()];
@@ -58,7 +60,6 @@ class ProductController extends BaseAdminController
         foreach($productTags as $tagId => $tagValues) {
             $productTags[$tagId] = implode(',', $tagValues);
         }
-
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->dispatch(EasyAdminEvents::PRE_UPDATE, array('entity' => $entity));
 
@@ -66,9 +67,10 @@ class ProductController extends BaseAdminController
             $this->executeDynamicMethod('update<EntityName>Entity', array($entity, $editForm));
 
             $this->dispatch(EasyAdminEvents::POST_UPDATE, array('entity' => $entity));
+            $tags = $this->tagService->parseRequest($this->request->request->all());
             if($tags = $this->tagService->parseRequest($this->request->request->all())) {
                 $this->tagService
-                    ->setTags($productTags)
+                    ->setTags($tags)
                     ->setEntityType(Product::class)
                     ->setEntity($entity)
                     ->update();
@@ -77,12 +79,13 @@ class ProductController extends BaseAdminController
         }
 
         $this->dispatch(EasyAdminEvents::POST_EDIT);
+        $entity->setTagsArray($productTags);
+        $entity->setAllTagsArray($allProductsTags);
         $parameters = array(
             'form' => $editForm->createView(),
             'entity_fields' => $fields,
             'entity' => $entity,
-            'delete_form' => $deleteForm->createView(),
-            'productTags' => $productTags
+            'delete_form' => $deleteForm->createView()
         );
 
         return $this->executeDynamicMethod('render<EntityName>Template', array('edit', $this->_template, $parameters));

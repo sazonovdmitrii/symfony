@@ -68,6 +68,9 @@ class Product
      */
     private $producttagitem;
 
+    private $tagsArray;
+    private $allTagsArray;
+
     public function __construct()
     {
         $this->catalog = new ArrayCollection();
@@ -287,5 +290,25 @@ class Product
         }
 
         return $this;
+    }
+
+    public function setTagsArray(array $tags)
+    {
+        $this->tagsArray = $tags;
+    }
+
+    public function getTagsArray()
+    {
+        return $this->tagsArray;
+    }
+
+    public function setAllTagsArray(array $tags)
+    {
+        $this->allTagsArray = $tags;
+    }
+
+    public function getAllTagsArray()
+    {
+        return $this->allTagsArray;
     }
 }
