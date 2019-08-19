@@ -12,7 +12,6 @@
 
 .checkbox {
     display: inline-block;
-    background-color: #fff;
     /* border: 2px solid rgba(0, 0, 0, 0.54); */
     border: 2px solid #999;
     border-radius: 4px;
