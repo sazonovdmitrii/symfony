@@ -6,6 +6,8 @@ import gql from 'graphql-tag';
 import { Trash2 } from 'react-feather';
 
 import { useApp } from 'hooks';
+import { GET_SHORT_BASKET, GET_DELIVERY, GET_PICKUPS } from 'query';
+import { UPDATE_PRODUCT_MUTATION, REMOVE_PRODUCT_MUTATION, ORDER_MUTATION } from 'mutations';
 
 import { Dialog, DialogTitle, DialogContent } from 'components/Dialog';
 import Input from 'components/Input';
@@ -39,89 +41,6 @@ const ERORRS = {
 
 const isNumber = value => parseInt(value, 10) === parseInt(value, 10);
 
-const UPDATE_PRODUCT_MUTATION = gql`
-    mutation updateProduct($input: UpdateBasketInput!) {
-        updateBasket(input: $input) {
-            products {
-                item_id
-                qty
-                name
-                product_name
-                price
-            }
-        }
-    }
-`;
-
-const REMOVE_PRODUCT_MUTATION = gql`
-    mutation removeProduct($input: AddBasketInput!) {
-        removeBasket(input: $input) {
-            products {
-                item_id
-                qty
-                name
-                product_name
-                price
-            }
-        }
-    }
-`;
-
-const ORDER_MUTATION = gql`
-    mutation createOrder($input: OrderInput) {
-        order(input: $input) {
-            id
-        }
-    }
-`;
-
-const GET_PICKUPS = gql`
-    query pickups($city_id: Int) {
-        pickups(city_id: $city_id) {
-            data {
-                id
-                direction_title
-                address
-                price
-                latitude
-                longitude
-                phones
-                schedule
-                delivery_days
-                delivery_days_source
-                min_order_sum
-                retail
-                pvz_id
-                visible
-                comment
-                payments_methods {
-                    id
-                }
-            }
-        }
-    }
-`;
-
-const GET_DELIVERY = gql`
-    query delivery($city_id: Int) {
-        couriers(city_id: $city_id) {
-            data {
-                id
-                direction_title
-                price
-                delivery_days
-                delivery_days_source
-                min_order_sum
-                visible
-                comment
-                payments_methods {
-                    id
-                }
-            }
-        }
-    }
-`;
-
 const theme = {
     title: styles.title,
     header: styles.header,
@@ -147,8 +66,8 @@ const Basket = ({
         deliveryType: 'courier',
         city: {},
         payment: {},
-        delivery: {},
-        pickup: {},
+        delivery: null,
+        pickup: null,
         comment: '',
         address: addresses && addresses.data.length ? addresses.data[0] : null,
     });
@@ -178,9 +97,41 @@ const Basket = ({
     //* MUTATIONS
     const [handleChangeQty] = useMutation(UPDATE_PRODUCT_MUTATION, {
         onCompleted: handleChangeProducts,
+        update(
+            cache,
+            {
+                data: { updateBasket },
+            }
+        ) {
+            cache.writeQuery({
+                query: GET_SHORT_BASKET,
+                data: {
+                    basket: {
+                        products: updateBasket.products,
+                        __typename: 'Basket',
+                    },
+                },
+            });
+        },
     });
     const [handleRemoveProduct] = useMutation(REMOVE_PRODUCT_MUTATION, {
         onCompleted: handleChangeProducts,
+        update(
+            cache,
+            {
+                data: { removeBasket },
+            }
+        ) {
+            cache.writeQuery({
+                query: GET_SHORT_BASKET,
+                data: {
+                    basket: {
+                        products: removeBasket.products,
+                        __typename: 'Basket',
+                    },
+                },
+            });
+        },
     });
 
     const [createOrder] = useMutation(ORDER_MUTATION, {
@@ -202,7 +153,7 @@ const Basket = ({
         { called: calledDeliveries, loading: loadingDeliveries, data: { couriers, pickups } = {} },
     ] = useLazyQuery(isCourier ? GET_DELIVERY : GET_PICKUPS);
     const deliveries = couriers || pickups;
-    const { payments_methods: newPaymentsMethods = [] } = currentDelivery;
+    const { payments_methods: newPaymentsMethods = [] } = currentDelivery || {};
     const allIdsPaymentMethods = newPaymentsMethods.map(({ id }) => id);
     const paymentsMethods = paymentsMethodsProps.filter(({ id }) => allIdsPaymentMethods.indexOf(id) !== -1);
     //* QUERY delivery
@@ -352,6 +303,7 @@ const Basket = ({
                             brand_name,
                             discount,
                             price,
+                            url,
                         }) => (
                             <ProductTable
                                 key={id}
@@ -362,6 +314,7 @@ const Basket = ({
                                 title={productName}
                                 description={name}
                                 price={price}
+                                url={url}
                                 footerActions={
                                     <>
                                         x&nbsp;
@@ -456,7 +409,6 @@ const Basket = ({
                                 );
                             })}
                         </div>
-
                         {!calledDeliveries ? null : loadingDeliveries ? (
                             <Loader />
                         ) : (
@@ -467,7 +419,9 @@ const Basket = ({
                                     </div>
 
                                     <div>
-                                        {collapse[values.deliveryType] && deliveries.data.length > 1 ? (
+                                        {collapse[values.deliveryType] &&
+                                        deliveries.data.length > 1 &&
+                                        currentDelivery ? (
                                             <div>
                                                 <ListItem
                                                     title={currentDelivery.direction_title}
@@ -519,7 +473,6 @@ const Basket = ({
                                                 >
                                                     Показать еще ({deliveries.data.length})
                                                 </Button>
-                                                >>>>>>> wip
                                             </div>
                                         ) : (
                                             deliveries.data.map(item => {
@@ -567,7 +520,7 @@ const Basket = ({
                                                                     : `${price} ${CURRENCY}`}
                                                             </b>
                                                         }
-                                                        active={currentDelivery.id === id}
+                                                        active={currentDelivery && currentDelivery.id === id}
                                                         onClick={() => {
                                                             handleClickListItem({
                                                                 type: isCourier ? 'delivery' : 'pickup',
@@ -601,29 +554,32 @@ const Basket = ({
                                         />
                                     </div>
                                 )}
-                                {currentDelivery.id && paymentsMethods && paymentsMethods.length && (
-                                    <div className={styles.block}>
-                                        <div className={styles.blockTitle}>Способ оплаты</div>
-                                        {paymentsMethods.map(item => {
-                                            const { id, name } = item;
+                                {currentDelivery &&
+                                    currentDelivery.id &&
+                                    paymentsMethods &&
+                                    paymentsMethods.length && (
+                                        <div className={styles.block}>
+                                            <div className={styles.blockTitle}>Способ оплаты</div>
+                                            {paymentsMethods.map(item => {
+                                                const { id, name } = item;
 
-                                            return (
-                                                <ListItem
-                                                    key={id}
-                                                    title={name}
-                                                    active={values.payment.id === id}
-                                                    onClick={() => {
-                                                        handleClickListItem({
-                                                            type: 'payment',
-                                                            data: item,
-                                                        });
-                                                    }}
-                                                    pointer
-                                                />
-                                            );
-                                        })}
-                                    </div>
-                                )}
+                                                return (
+                                                    <ListItem
+                                                        key={id}
+                                                        title={name}
+                                                        active={values.payment.id === id}
+                                                        onClick={() => {
+                                                            handleClickListItem({
+                                                                type: 'payment',
+                                                                data: item,
+                                                            });
+                                                        }}
+                                                        pointer
+                                                    />
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                             </>
                         )}
                         <div className={styles.block}>
@@ -665,7 +621,7 @@ const Basket = ({
                     className={styles.sidebar}
                     step={step}
                     count={step === 0 && products.length}
-                    deliveryPrice={step !== 0 && currentDelivery.price}
+                    deliveryPrice={step !== 0 && currentDelivery && currentDelivery.price}
                     actions={
                         step === 1 ? (
                             <Button

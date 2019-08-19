@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { Route } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
@@ -31,10 +31,10 @@ export const withQuery = ({ query, variables }) => Component => {
     if (loading) return <Loader />;
     if (error) {
         return (
-            <Fragment>
+            <>
                 <NotFound />
                 <ErrorMessage error={error} />
-            </Fragment>
+            </>
         );
     }
     const newData = Object.values(data).reduce((obj, item) => {
@@ -62,7 +62,7 @@ export const RouteStatus = props => (
     />
 );
 
-export const seoHead = (type, props) => {
+export const seoHead = (type, props = {}) => {
     const { url } = props;
     const { title, description, keywords, locale = 'ru_RU', ogType = 'website' } = SEO[type](props);
 

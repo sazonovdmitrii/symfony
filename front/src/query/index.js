@@ -1,10 +1,29 @@
 import gql from 'graphql-tag';
 
-import { Address } from './fragments';
+import { MenuItem, Products, Addresses, Address } from 'fragments';
 
 export const IS_LOGGED_IN = gql`
     query IsUserLoggedIn {
         isLoggedIn @client(always: false)
+    }
+`;
+
+export const GET_HEADER_MENU = gql`
+    {
+        top_menu {
+            data {
+                text
+                url
+                children {
+                    text
+                    url
+                    children {
+                        text
+                        url
+                    }
+                }
+            }
+        }
     }
 `;
 
@@ -85,39 +104,16 @@ export const GET_PRODUCTS = gql`
 export const GET_ADDRESSES = gql`
     {
         addresses {
-            data {
-                id
-                name
-                person
-                zip
-                region_id
-                city
-                street
-                house
-                corp
-                level
-                flat
-                code
-            }
+            ...Addresses
         }
     }
+    ${Addresses}
 `;
 
 export const GET_ADDRESS = gql`
     query getAddress($id: Int) {
         address(id: $id) {
-            id
-            name
-            person
-            zip
-            region_id
-            city
-            street
-            house
-            corp
-            level
-            flat
-            code
+            ...Address
         }
         regions {
             data {
@@ -126,6 +122,7 @@ export const GET_ADDRESS = gql`
             }
         }
     }
+    ${Address}
 `;
 
 export const GET_SHORT_BASKET = gql`
@@ -137,6 +134,7 @@ export const GET_SHORT_BASKET = gql`
                 name
                 product_name
                 price
+                url
             }
         }
     }
@@ -185,6 +183,82 @@ export const GET_ORDERS = gql`
                         name
                         price
                     }
+                }
+            }
+        }
+    }
+`;
+
+export const GET_BASKET = gql`
+    query {
+        isLoggedIn @client(always: false)
+        basket {
+            ...Products
+        }
+        payments_methods {
+            data {
+                id
+                name
+            }
+        }
+        addresses {
+            ...Addresses
+        }
+        cities {
+            data {
+                id
+                title
+                visible
+                longitude
+                latitude
+            }
+        }
+    }
+    ${Products}
+    ${Addresses}
+`;
+
+export const GET_DELIVERY = gql`
+    query delivery($city_id: Int) {
+        couriers(city_id: $city_id) {
+            data {
+                id
+                direction_title
+                price
+                delivery_days
+                delivery_days_source
+                min_order_sum
+                visible
+                comment
+                payments_methods {
+                    id
+                }
+            }
+        }
+    }
+`;
+
+export const GET_PICKUPS = gql`
+    query pickups($city_id: Int) {
+        pickups(city_id: $city_id) {
+            data {
+                id
+                direction_title
+                address
+                price
+                latitude
+                longitude
+                phones
+                schedule
+                delivery_days
+                delivery_days_source
+                min_order_sum
+                retail
+                pvz_id
+                visible
+                comment
+                payments_methods {
+                    id
                 }
             }
         }
