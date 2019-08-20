@@ -1,0 +1,14 @@
+CatalogThumb:
+  type: object
+  config:
+    description: "Catalog Thumb"
+    fields:
+      id:
+        type: "Int!"
+        description: "Catalog Id."
+      slug:
+        type: "String"
+        description: "Slug"
+      image:
+        type: "String"
+        description: "Catalog Image"

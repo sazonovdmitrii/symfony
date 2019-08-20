@@ -36,6 +36,7 @@ class ProductTagItemRepository extends ServiceEntityRepository
 
     public function getProducts($tagsIds, $extraTagsIds)
     {
+        //*TODO* first_tag and second_tag to right configuration order
         $statement = $this->_getConnection()->prepare('
             SELECT product_id FROM product_producttagitem WHERE producttagitem_id = :first_tag AND product_id IN (
                 SELECT product_id FROM product_producttagitem WHERE producttagitem_id = :second_tag
