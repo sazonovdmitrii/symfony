@@ -246,11 +246,11 @@ const Basket = ({
 
         return !valid.length;
     };
-    const handleLogInCompleted = async ({ auth: { hash } }) => {
-        await login(hash);
+    const handleLogInCompleted = ({ auth: { hash } }) => {
+        login(hash);
     };
-    const handleRegisterCompleted = async ({ register: { hash } }) => {
-        await login(hash);
+    const handleRegisterCompleted = ({ register: { hash } }) => {
+        login(hash);
     };
     const handleChangeAddress = data => {
         setValues(prevState => ({ ...prevState, address: data }));

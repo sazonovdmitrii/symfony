@@ -32,9 +32,9 @@ const UserMenu = () => {
     const handleCloseModal = () => {
         setOpenModal(false);
     };
-    const handleCompleted = async ({ auth }) => {
+    const handleCompleted = ({ auth }) => {
         if (auth && auth.hash) {
-            await login(auth.hash);
+            login(auth.hash);
             handleCloseModal();
         } else {
             // todo error

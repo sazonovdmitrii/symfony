@@ -111,7 +111,7 @@ export const useApp = () => {
         return client;
     };
 
-    const login = async token => {
+    const login = token => {
         if (token) {
             const date = new Date();
             const currentYear = date.getFullYear();
@@ -122,16 +122,17 @@ export const useApp = () => {
                 expires: date.toUTCString(),
             });
 
-            const client = await init(token);
-            await client.writeData({ data: { isLoggedIn: true } });
+            const client = init(token);
+            client.writeData({ data: { isLoggedIn: true } });
         }
     };
 
     const logout = async () => {
-        await hardtack.remove('token', { path: '/' });
-
+        // TODO
+        hardtack.remove('token', { path: '/' });
+        init();
         await state.client.resetStore();
-        await init();
+        state.client.writeData({ data: { isLoggedIn: false } });
     };
 
     return {
