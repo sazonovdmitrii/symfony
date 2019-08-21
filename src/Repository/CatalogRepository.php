@@ -33,6 +33,16 @@ class CatalogRepository extends ServiceEntityRepository
         return $catalog;
     }
 
+    public function getAllByParentTag($tagId)
+    {
+        return $this->createQueryBuilder('c')
+            ->innerJoin('c.productTagItems', 'pti')
+            ->where('pti.entity_id = :parent_id')
+            ->setParameter('parent_id', $tagId)
+            ->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return Catalog[] Returns an array of Catalog objects
     //  */

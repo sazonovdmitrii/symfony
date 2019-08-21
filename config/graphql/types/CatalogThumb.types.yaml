@@ -3,12 +3,27 @@ CatalogThumb:
   config:
     description: "Catalog Thumb"
     fields:
+      data:
+        type: "[CatalogThumbItem]"
+
+CatalogThumbItem:
+  type: object
+  config:
+    description: "Catalog Thumb Item"
+    resolveField: '@=resolver("App\\GraphQL\\Resolver\\CatalogThumbItemFieldResolver", [info, value, args])'
+    fields:
       id:
         type: "Int!"
         description: "Catalog Id."
-      slug:
+      name:
         type: "String"
-        description: "Slug"
+        description: "Catalog Name"
+      brand_url:
+        type: "String"
+        description: "Brands Slug"
+      fragrance_url:
+        type: "String"
+        description: "Fragrance Slug"
       image:
         type: "String"
         description: "Catalog Image"

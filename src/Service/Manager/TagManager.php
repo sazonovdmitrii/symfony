@@ -260,4 +260,13 @@ class TagManager extends AbstractController
         return $this->em->getRepository('App:Product')
             ->findBy(['id' => $productsIds]);
     }
+
+    /**
+     * @return array|\object[]
+     */
+    public function getCatalogs()
+    {
+        return $this->em->getRepository('App:Catalog')
+            ->getAllByParentTag($this->getParentTagId());
+    }
 }

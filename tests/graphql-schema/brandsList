@@ -1,0 +1,9 @@
+{
+  brands_list {
+    data {
+      id
+      name
+      brand_url
+    }
+  }
+}
