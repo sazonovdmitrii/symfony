@@ -32,6 +32,7 @@ class MigrateCommand extends ContainerAwareCommand
         $this->_defaultDoctrine = $doctrine->getManager();
 
         $this->output = $output;
+        $this->sales();
         $this->tags();
         $this->tags_to_products();
         $this->users();
@@ -43,6 +44,64 @@ class MigrateCommand extends ContainerAwareCommand
         $this->catalog_brands_aromas();
         $this->products();
         $this->product_urls();
+    }
+
+
+    protected function sales()
+    {
+        $this->output->writeln(['Migrating Sales...']);
+
+        $doctrine = $this->_defaultDoctrine->getConnection();
+
+        $doctrine = $this->_defaultDoctrine->getConnection();
+        $doctrine->query('DELETE FROM sale');
+
+        $sales = $this->_lpDoctrine->getConnection()->prepare(
+            "SELECT * FROM sales"
+        );
+        $sales->execute();
+
+        $allSales = $sales->fetchAll();
+
+        $counter = 0;
+        foreach($allSales as $allSale) {
+            $counter++;
+//            $url = str_replace('/ru/', '', $lpUrl['url']);
+            if($allSale['date_start'] == '0000-00-00') {
+                $allSale['date_start'] = '2017-01-01';
+            }
+            if($allSale['date_end'] == '0000-00-00') {
+                $allSale['date_end'] = '2017-01-01';
+            }
+            $doctrine->exec(
+                "
+                    INSERT INTO sale(
+                        id, 
+                        start, 
+                        finish,                          
+                        discount,
+                        enabled,
+                        featured,
+                        type,
+                        prior,
+                        created
+                    ) VALUES(
+                        " . $allSale['id'] . ", 
+                        '" . $allSale['date_start'] . "', 
+                        '" . $allSale['date_end'] . "',                        
+                        '" . $allSale['discount'] . "',
+                        '" . $allSale['enable'] . "',
+                        '" . $allSale['show_on_main'] . "',
+                        '" . $allSale['type'] . "',
+                        '" . $allSale['prior'] . "',
+                        '" . $allSale['created'] . "'
+                    )
+                "
+            );
+            $this->output->writeln([$counter . '/' . count($allSales)]);
+        }
+
+        $this->output->writeln(['Sales migration have done!']);
     }
 
     protected function catalog_brands_aromas()

@@ -163,6 +163,7 @@ easy_admin:
             class: App\Entity\Sale
             form:
                 fields:
+                    - { type: 'tab' , label: 'General' }
                     - start
                     - finish
                     - category
@@ -172,6 +173,8 @@ easy_admin:
                     - type
                     - prior
                     - { property: 'imagePath', type: 'App\Form\Type\MultipleImage', type_options: { multiple: true, block_name: 'custom_image' } }
+                    - { type: 'tab' , label: 'Products' }
+                    - products
         City:
             class: App\Entity\City
         Direction:

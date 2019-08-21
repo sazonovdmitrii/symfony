@@ -71,6 +71,11 @@ class Product
     private $tagsArray;
     private $allTagsArray;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Sale", mappedBy="products")
+     */
+    private $sales;
+
     public function __construct()
     {
         $this->catalog = new ArrayCollection();
@@ -79,6 +84,7 @@ class Product
         $this->productItems = new ArrayCollection();
         $this->productTags = new ArrayCollection();
         $this->producttagitem = new ArrayCollection();
+        $this->sales = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -310,5 +316,33 @@ class Product
     public function getAllTagsArray()
     {
         return $this->allTagsArray;
+    }
+
+    /**
+     * @return Collection|Sale[]
+     */
+    public function getSales(): Collection
+    {
+        return $this->sales;
+    }
+
+    public function addSale(Sale $sale): self
+    {
+        if (!$this->sales->contains($sale)) {
+            $this->sales[] = $sale;
+            $sale->addProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSale(Sale $sale): self
+    {
+        if ($this->sales->contains($sale)) {
+            $this->sales->removeElement($sale);
+            $sale->removeProduct($this);
+        }
+
+        return $this;
     }
 }
