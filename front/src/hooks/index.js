@@ -127,12 +127,11 @@ export const useApp = () => {
         }
     };
 
-    const logout = async () => {
-        // TODO
+    const logout = () => {
         hardtack.remove('token', { path: '/' });
-        init();
-        await state.client.resetStore();
-        state.client.writeData({ data: { isLoggedIn: false } });
+
+        const client = init();
+        client.writeData({ data: { isLoggedIn: false } });
     };
 
     return {

@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter, Switch, Route } from 'react-router';
 import Helmet from 'react-helmet';
 
-import NotifyDevGraphql from 'utils/NotifyDevGraphql';
+// import NotifyDevGraphql from 'utils/NotifyDevGraphql';
 
 import routes from 'routes';
 
@@ -107,7 +107,7 @@ const App = props => {
                 <Footer />
             </Container>
             <div className="scroll-to-top" data-behavior="scrollToTop" />
-            <NotifyDevGraphql />
+            {/*<NotifyDevGraphql />*/}
         </>
     );
 };

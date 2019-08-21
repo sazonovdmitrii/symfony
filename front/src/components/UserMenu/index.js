@@ -26,8 +26,8 @@ const UserMenu = () => {
         data: { basket },
     } = useQuery(GET_SHORT_BASKET, { ssr: false });
 
-    const handleLogOut = async () => {
-        await logout();
+    const handleLogOut = () => {
+        logout();
     };
     const handleCloseModal = () => {
         setOpenModal(false);
