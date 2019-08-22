@@ -24,7 +24,7 @@ const history = createBrowserHistory();
 const HotApp = hot(App);
 
 const RootApp = () => {
-    const { client, history, createSession } = useApp();
+    const { client, createSession } = useApp();
     createSession();
 
     return (

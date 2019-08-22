@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
+import { useApp } from 'hooks';
 import { ADD_TO_BASKET } from 'mutations';
 import { GET_SHORT_BASKET } from 'query';
 
@@ -15,7 +16,6 @@ import Comment from 'components/Comment';
 import RichText from 'components/RichText';
 import Select from 'components/Select';
 import ProductCarousel from 'components/ProductCarousel';
-import Snackbar from 'components/Snackbar';
 import ArticlesPreview from 'components/ArticlesPreview';
 
 import ProductItems from './ProductItems';
@@ -42,6 +42,7 @@ const Product = ({
     tags,
     history,
 }) => {
+    const { createNotification } = useApp();
     const [tabIndex, setTabIndex] = useState(0);
     const [error, setError] = useState(null);
     const [selectedProduct, setSelectedProduct] = useState(items.edges[0].node);
@@ -58,7 +59,7 @@ const Product = ({
             }
         },
         onError(error) {
-            setError(error.message);
+            createNotification({ type: 'error', message: error.message });
         },
         // TODO
         update(
@@ -93,7 +94,6 @@ const Product = ({
     return (
         <>
             {seoHead('product', { name, items: items.edges })}
-            {error && <Snackbar theme="error" text={error} active={!!error} onClose={() => setError(null)} />}
             <div className="product" itemScope itemType="http://schema.org/Product">
                 <meta itemProp="name" content={name} />
                 <span

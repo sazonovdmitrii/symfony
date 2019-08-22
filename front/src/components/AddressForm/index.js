@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
+import { useApp } from 'hooks';
 import { GET_ADDRESS, GET_ADDRESSES } from 'query';
 import { UPDATE_ADDRESS_MUTATION, CREATE_ADDRESS_MUTATION } from 'mutations';
 
@@ -22,6 +23,7 @@ const GET_REGIONS = gql`
 `;
 
 export default props => {
+    const { createNotification } = useApp();
     const { id, onSubmit } = props;
 
     const [save, { data, error: errorMutation }] = useMutation(
@@ -69,15 +71,11 @@ export default props => {
         ssr: false,
     });
 
+    useEffect(() => {
+        createNotification({ type: 'error', message: errorMutation.message });
+    }, [errorMutation]);
+
     if (loading) return <Loader />;
 
-    return (
-        <AddressForm
-            {...props}
-            regions={regions.data}
-            values={id ? newAddress : null}
-            error={errorMutation}
-            onSubmit={save}
-        />
-    );
+    return <AddressForm {...props} regions={regions.data} values={id ? newAddress : null} onSubmit={save} />;
 };

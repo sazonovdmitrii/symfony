@@ -5,12 +5,14 @@ import Helmet from 'react-helmet';
 // import NotifyDevGraphql from 'utils/NotifyDevGraphql';
 
 import routes from 'routes';
+import { useApp } from 'hooks';
 
 import Header from 'components/Header';
 import Footer from 'components/Footer';
 import Container from 'components/Container';
 import Breadcrumbs from 'components/Breadcrumbs';
 import ScrollToTop from 'components/ScrollToTop';
+import Snackbar, { SnackbarOverlay } from 'components/Snackbar';
 
 const FAVS = [
     {
@@ -71,6 +73,7 @@ const APPLE_TOUCH_ICON = [
 
 const App = props => {
     const isHomePage = props.location.pathname === '/';
+    const { notifications, removeNotification } = useApp();
 
     return (
         <>
@@ -108,6 +111,20 @@ const App = props => {
             </Container>
             <div className="scroll-to-top" data-behavior="scrollToTop" />
             {/*<NotifyDevGraphql />*/}
+            {notifications.length ? (
+                <SnackbarOverlay>
+                    {notifications.map(item => (
+                        <Snackbar
+                            key={item.id}
+                            text={item.message}
+                            active={!!item.message}
+                            theme={item.type}
+                            onClose={() => removeNotification(item.id)}
+                            overlay={false}
+                        />
+                    ))}
+                </SnackbarOverlay>
+            ) : null}
         </>
     );
 };

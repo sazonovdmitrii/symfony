@@ -1,14 +1,22 @@
 .overlay {
     position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
     z-index: 1400;
 
     @media (--viewport-tablet) {
         right: auto;
         left: 24px;
         bottom: 24px;
+    }
+}
+
+.item {
+    position: relative;
+
+    &:not(:last-child) {
+        margin-bottom: 15px;
     }
 }
 
@@ -25,9 +33,9 @@
     line-height: 1.5;
     transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
     box-sizing: border-box;
+    border-radius: 4px;
 
     @media (--viewport-tablet) {
-        border-radius: 4px;
         min-width: 288px;
         max-width: 568px;
     }

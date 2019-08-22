@@ -5,16 +5,10 @@ import Input from 'components/Input';
 import InputGroup from 'components/InputGroup';
 import Button from 'components/Button';
 import ButtonGroup from 'components/ButtonGroup';
-import Snackbar from 'components/Snackbar';
 
-const LoginForm = ({ onSubmit, error }) => {
+const LoginForm = ({ onSubmit }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [notify, setNotify] = useState(error);
-
-    useEffect(() => {
-        if (error) setNotify(error);
-    }, [error]);
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -29,13 +23,8 @@ const LoginForm = ({ onSubmit, error }) => {
         });
     };
 
-    const handleClose = () => {
-        setNotify(null);
-    };
-
     return (
         <>
-            {notify && <Snackbar text={notify} active={!!notify} theme="error" onClose={handleClose} />}
             <form onSubmit={handleSubmit}>
                 <InputGroup>
                     <Input
