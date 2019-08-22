@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 import ora from 'ora';
 
@@ -12,4 +13,5 @@ export default {
     host: process.env.HOST || '0.0.0.0',
     port: (process.env.PORT && parseInt(process.env.PORT)) || 3000,
     spinner: ora(),
+    cert: fs.readFileSync(path.join('../config/jwt/public.pem')),
 };
