@@ -2,36 +2,44 @@ import React, { useState, useEffect } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
-import { GET_BASKET } from 'query';
+import { GET_BASKET, GET_SHORT_BASKET } from 'query';
+import { REMOVE_PRODUCT_MUTATION } from 'mutations';
 import Button from 'components/Button';
 
 const CURRENCY = 'Руб.';
 
-const REMOVE_PRODUCT_MUTATION = gql`
-    mutation removeProduct($input: AddBasketInput!) {
-        removeBasket(input: $input) {
-            products {
-                item_id
-                qty
-                name
-                product_name
-            }
-        }
-    }
-`;
-
-const BasketShort = ({ products: productsProps, className, delivery }) => {
-    const [products, setProducts] = useState(productsProps);
+const BasketShort = ({ products, className, delivery }) => {
     const [handleRemove] = useMutation(REMOVE_PRODUCT_MUTATION, {
-        onCompleted({ removeBasket: { products: newProducts } }) {
-            setProducts(newProducts);
+        update(
+            cache,
+            {
+                data: { removeBasket },
+            }
+        ) {
+            const { basket, ...props } = cache.readQuery({ query: GET_BASKET });
+
+            cache.writeQuery({
+                query: GET_SHORT_BASKET,
+                data: {
+                    basket: {
+                        products: removeBasket.products,
+                        __typename: 'Basket',
+                    },
+                },
+            });
+            cache.writeQuery({
+                query: GET_BASKET,
+                data: {
+                    ...props,
+                    basket: {
+                        products: removeBasket.products,
+                        __typename: 'Basket',
+                    },
+                },
+            });
         },
     });
     const totalSum = products.reduce((sum, { price, qty }) => sum + price * qty, 0);
-
-    useEffect(() => {
-        setProducts(productsProps);
-    }, [productsProps, productsProps.length]);
 
     return (
         <div className={`basket-short ${className}`}>

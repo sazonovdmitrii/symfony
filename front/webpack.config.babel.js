@@ -203,6 +203,7 @@ const getConfig = target => {
         plugins: [
             new webpack.DefinePlugin({
                 'process.env.GRAPHQL': JSON.stringify(process.env.GRAPHQL),
+                'process.env.IMAGES_PATH': JSON.stringify(process.env.IMAGES_PATH),
                 'process.env.SERVER': isNode,
                 SERVER: isNode,
                 SEOHIDE: !isNode,

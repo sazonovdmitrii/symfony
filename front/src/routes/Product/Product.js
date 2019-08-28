@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
+import { ADD_TO_BASKET } from 'mutations';
 import { GET_SHORT_BASKET } from 'query';
 
 import { seoHead } from 'utils';
@@ -25,20 +26,6 @@ import cashIcon from './payments/cash.jpg';
 import codIcon from './payments/cod.jpg';
 import visaIcon from './payments/visa.jpg';
 import yandexMoneyIcon from './payments/yandex.jpg';
-
-const ADD_TO_BASKET = gql`
-    mutation AddBasket($input: AddBasketInput!) {
-        addBasket(input: $input) {
-            products {
-                item_id
-                qty
-                price
-                name
-                product_name
-            }
-        }
-    }
-`;
 
 const Product = ({
     name,
@@ -80,8 +67,6 @@ const Product = ({
                 data: { addBasket },
             }
         ) {
-            // const test = cache.readQuery({ query: GET_SHORT_BASKET });
-
             cache.writeQuery({
                 query: GET_SHORT_BASKET,
                 data: {
@@ -138,9 +123,10 @@ const Product = ({
                     <div className="product__brand">
                         <img
                             src="/catalog/2013/08/23/26289_237976.jpg.small.jpg"
-                            data-handle="pseudolinks"
-                            data-path="/duhi-agent-provocateur/"
                             className="product__brand-img"
+                            onClick={() => {
+                                history.push('/duhi-agent-provocateur/');
+                            }}
                             alt={brand_name}
                         />
                         <span

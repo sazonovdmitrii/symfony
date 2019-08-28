@@ -11,14 +11,14 @@
     transition: color 200ms cubic-bezier(0, 0, 0.2, 1) 0ms, transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
     pointer-events: none;
     transform-origin: top left;
-    color: rgba(0, 0, 0, 0.54);
+    color: rgba(var(--color-font), 0.54);
     padding: 0;
     font-size: var(--font-size-base);
     line-height: 1;
     box-sizing: border-box;
 
     &.filled {
-        background: var(--color-white);
+        background: var(--color-background);
         padding: 0 5px;
         transform: translate(14px, -6px) scale(0.75);
     }
@@ -38,7 +38,7 @@
     font-size: var(--font-size-base);
     color: currentColor;
     display: block;
-    background: var(--color-white);
+    background: var(--color-background);
     /* padding: 18.5px 14px; */
     padding: 15px 14px;
     width: 100%;

@@ -32,9 +32,9 @@ export default () => {
             <section className="homepage__slider">
                 {loading || error || !banner ? null : (
                     <Banners interval={5000} autoPlay>
-                        {banner.data.map((item, index) => (
-                            <Link key={item.id} to={item.url}>
-                                <img key={item.id} src={item.path} alt="" />
+                        {banner.data.map(({ link, id, path }, index) => (
+                            <Link key={id} to={link}>
+                                <img key={id} src={`${process.env.IMAGES_PATH}banners/${path}`} alt="" />
                             </Link>
                         ))}
                     </Banners>

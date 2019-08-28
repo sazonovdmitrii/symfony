@@ -17,7 +17,6 @@
 
     --container-width: 1140px;
 
-    --color-font: #212529;
     --color-black: #000;
     --color-white: #fff;
     --color-blue: #4475c1;
@@ -27,12 +26,12 @@
     --color-darkgrey: #333;
     --color-yellow: #f2d409;
     --color-red: #db0119;
-
     /* main colors */
+    --color-font: #212529;
     --color-background: var(--color-white);
     --color-border: var(--color-grey);
 
-    --color-primary: var(--color-red);
+    --color-primary: #b10;
     --color-secondary: #e5e5e5;
 
     --color-success: var(--color-green);

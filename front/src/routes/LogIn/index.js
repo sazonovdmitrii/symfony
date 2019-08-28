@@ -10,8 +10,8 @@ import { useApp } from 'hooks';
 
 export default withApollo(({ client, history }) => {
     const { login } = useApp();
-    const handleCompleted = async ({ auth: { hash } }) => {
-        await login(hash);
+    const handleCompleted = ({ auth: { hash } }) => {
+        login(hash);
         history.push('/');
     };
 

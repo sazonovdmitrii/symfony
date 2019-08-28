@@ -26,15 +26,15 @@ const UserMenu = () => {
         data: { basket },
     } = useQuery(GET_SHORT_BASKET, { ssr: false });
 
-    const handleLogOut = async () => {
-        await logout();
+    const handleLogOut = () => {
+        logout();
     };
     const handleCloseModal = () => {
         setOpenModal(false);
     };
-    const handleCompleted = async ({ auth }) => {
+    const handleCompleted = ({ auth }) => {
         if (auth && auth.hash) {
-            await login(auth.hash);
+            login(auth.hash);
             handleCloseModal();
         } else {
             // todo error

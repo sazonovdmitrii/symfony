@@ -14,6 +14,7 @@ body {
     line-height: 1.5;
     /* font-size: 15px; */
     color: var(--color-font);
+    background: var(--color-background);
 }
 
 img {

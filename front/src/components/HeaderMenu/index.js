@@ -5,26 +5,9 @@ import gql from 'graphql-tag';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
-import SearchForm from 'components/SearchForm';
+import { GET_HEADER_MENU } from 'query';
 
-const GET_HEADER_MENU = gql`
-    {
-        top_menu {
-            data {
-                text
-                url
-                children {
-                    text
-                    url
-                    children {
-                        text
-                        url
-                    }
-                }
-            }
-        }
-    }
-`;
+import SearchForm from 'components/SearchForm';
 
 const HeaderMenu = ({ items, className }) => {
     const [state, setState] = useState({ active: null });
@@ -44,10 +27,16 @@ const HeaderMenu = ({ items, className }) => {
                 <li
                     key={url}
                     className={`mainmenu__item--sub ${state.active === index ? 'opensubmenu' : ''}`}
-                    onMouseEnter={() => handleMouseEnter(index)}
-                    onMouseLeave={handleMouseLeave}
+                    onMouseEnter={
+                        children.length
+                            ? () => {
+                                  handleMouseEnter(index);
+                              }
+                            : null
+                    }
+                    onMouseLeave={children.length && handleMouseLeave}
                 >
-                    <Link className="mainmenu__link" to={url}>
+                    <Link className={`mainmenu__link${index === items.length - 1 ? '--red' : ''}`} to={url}>
                         {text}
                     </Link>
                     {children.length

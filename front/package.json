@@ -5,6 +5,7 @@
     "license": "MIT",
     "private": true,
     "scripts": {
+        "post-deploy": "yarn build && pm2 reload all",
         "build": "NODE_ENV=production yarn build:webpack && yarn build:lib",
         "build-storybook": "build-storybook",
         "build:analyze": "ANALYZE=true NODE_ENV=production webpack",
@@ -12,7 +13,7 @@
         "build:webpack": "webpack",
         "lint": "eslint ./src/components",
         "start": "NODE_ENV=production SERVER=true node serverBabel/index.js",
-        "start:dev": "SERVER=true nodemon --exec babel-node src/lib/index.js -w ./src/lib",
+        "start:dev": "rm -rf ./dist/node/*.hot-update.* && rm -rf ./dist/public/static/*.hot-update.* && SERVER=true nodemon --exec babel-node src/lib/index.js -w ./src/lib",
         "storybook": "start-storybook -p 6006",
         "stylelint": "stylelint ./src/**/*.css",
         "env": "sync-dotenv"
@@ -96,7 +97,7 @@
         "promise-polyfill": "^8.1.3",
         "prop-types": "^15.7.2",
         "react": "^16.9.0",
-        "react-apollo": "^2.5.8",
+        "react-apollo": "^3.0.0",
         "react-content-loader": "^4.2.2",
         "react-dom": "^16.9.0",
         "react-feather": "^2.0.3",

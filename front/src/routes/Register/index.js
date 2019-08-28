@@ -6,8 +6,8 @@ import UserForm from 'components/UserForm';
 
 export default ({ history }) => {
     const { login } = useApp();
-    const handleCompleted = async ({ register: { hash } }) => {
-        await login(hash);
+    const handleCompleted = ({ register: { hash } }) => {
+        login(hash);
         history.push('/');
     };
 

@@ -4,33 +4,13 @@ import gql from 'graphql-tag';
 import { Edit as EditIcon, X as RemoveIcon } from 'react-feather';
 
 import { GET_ADDRESSES } from 'query';
+import { REMOVE_ADDRESS_MUTATION } from 'mutations';
 
 import ListItem from 'components/ListItem';
 import Button from 'components/Button';
 import AddressForm from 'components/AddressForm';
 
 import styles from './styles.css';
-
-const REMOVE_ADDRESS_MUTATION = gql`
-    mutation removeAddress($input: RemoveAddressInput!) {
-        removeAddress(input: $input) {
-            data {
-                id
-                name
-                person
-                zip
-                region_id
-                city
-                street
-                house
-                corp
-                level
-                flat
-                code
-            }
-        }
-    }
-`;
 
 const TEXT = {
     city: 'г.',
@@ -43,7 +23,7 @@ const TEXT = {
 
 const AddressList = ({ items, value, onChange, onSubmit = () => {} }) => {
     const formEl = useRef(null);
-    const [showForm, setShowForm] = useState({});
+    const [showForm, setShowForm] = useState(null);
     const [handleRemoveAddress] = useMutation(REMOVE_ADDRESS_MUTATION, {
         update(
             cache,
@@ -65,7 +45,7 @@ const AddressList = ({ items, value, onChange, onSubmit = () => {} }) => {
     const handleSubmitAddress = data => {
         // if edit take new addresses from data.data
         // esle add new address from data to items
-        setShowForm({});
+        setShowForm(null);
         onSubmit(data.data ? data.data : data);
     };
 
@@ -73,20 +53,19 @@ const AddressList = ({ items, value, onChange, onSubmit = () => {} }) => {
         if (formEl.current) {
             formEl.current.scrollIntoView();
         }
-    }, [showForm.id, showForm.type]);
+    }, [showForm]);
 
-    if (showForm.id) {
+    if (showForm) {
         return (
             <div ref={formEl}>
                 <AddressForm
-                    type={showForm.type}
                     id={showForm.id}
                     actions={
                         <Button
                             kind="secondary"
                             bold
                             onClick={() => {
-                                setShowForm({});
+                                setShowForm(null);
                             }}
                         >
                             Назад
@@ -120,7 +99,6 @@ const AddressList = ({ items, value, onChange, onSubmit = () => {} }) => {
                                         event.stopPropagation();
 
                                         setShowForm({
-                                            type: 'edit',
                                             id: item.id,
                                         });
                                     }}
@@ -159,7 +137,7 @@ const AddressList = ({ items, value, onChange, onSubmit = () => {} }) => {
                 <Button
                     kind="primary"
                     onClick={() => {
-                        setShowForm({ type: 'new' });
+                        setShowForm({});
                     }}
                 >
                     Добавить адрес

@@ -3,7 +3,7 @@ export const clearConsole = () => {
 };
 
 export const getPath = (original, querystring) => {
-    if (/\.\w+$/.test(original)) {
+    if (/\.\w+(\?\w+)?$/.test(original)) {
         return null;
     }
     if (querystring.length) {

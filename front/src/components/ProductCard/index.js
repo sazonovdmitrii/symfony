@@ -87,7 +87,7 @@ const ProductCard = ({
                                 if (!item.price) return null;
 
                                 return (
-                                    <p key={item.name} className="catalog__item_prd_type">
+                                    <p key={item.id} className="catalog__item_prd_type">
                                         <span className="catalog__item_prd_type_name">{item.name}</span>
                                         <strong className="catalog__item_prd_type_price">
                                             {item.price}
