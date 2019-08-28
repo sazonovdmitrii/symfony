@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 
+import { useApp } from 'hooks';
+
 import LoginForm from './LoginForm';
 
 const LOGIN_MUTATION = gql`
@@ -14,15 +16,15 @@ const LOGIN_MUTATION = gql`
 `;
 
 export default ({ onCompleted }) => {
-    const [error, setError] = useState(null);
+    const { createNotification } = useApp();
 
     return (
         <Mutation
             mutation={LOGIN_MUTATION}
             onCompleted={onCompleted}
-            onError={error => setError(error.message)}
+            onError={error => createNotification({ type: 'error', message: error.message })}
         >
-            {(auth, { data }) => <LoginForm onSubmit={auth} {...data} error={error} />}
+            {(auth, { data }) => <LoginForm onSubmit={auth} {...data} />}
         </Mutation>
     );
 };

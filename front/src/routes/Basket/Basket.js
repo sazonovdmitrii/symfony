@@ -15,7 +15,6 @@ import Button from 'components/Button';
 import LoginForm from 'components/LoginForm';
 import { StepView, StepContainer } from 'components/Steps';
 import AddressList from 'components/AddressList/AddressList';
-import Snackbar from 'components/Snackbar';
 import Select from 'components/Select';
 import Loader from 'components/Loader';
 import ListItem from 'components/ListItem';
@@ -55,13 +54,12 @@ const Basket = ({
     addresses,
     isLoggedIn,
 }) => {
-    const { login } = useApp();
+    const { login, createNotification } = useApp();
     const [success, setSuccess] = useState(false);
     const [products, setProducts] = useState(productsProps);
     const [promocode, setPromocode] = useState(null);
     const [openModal, setOpenModal] = useState(false);
     const [step, setStep] = useState(0);
-    const [notification, setNotification] = useState(null);
     const [values, setValues] = useState({
         deliveryType: 'courier',
         city: {},
@@ -139,9 +137,9 @@ const Basket = ({
             if (id) setSuccess(id);
         },
         onError(data) {
-            setNotification({
+            createNotification({
                 type: 'error',
-                text: data.graphQLErrors[0].message,
+                message: data.graphQLErrors[0].message,
             });
         },
     });
@@ -160,7 +158,7 @@ const Basket = ({
 
     // useEffect(() => {
     //     if (totalSum < 500) {
-    //         setNotification({
+    //         createNotification({
     //             errorType: 'lowPrice',
     //             type: 'error',
     //             text:
@@ -183,11 +181,8 @@ const Basket = ({
     const handleCloseModal = () => {
         setOpenModal(false);
     };
-    const handleCloseNotification = () => {
-        setNotification(null);
-    };
     const handleChangeStep = index => {
-        if (notification && notification.errorType === 'lowPrice') return;
+        // if (notification && notification.errorType === 'lowPrice') return;
 
         setStep(index);
     };
@@ -238,9 +233,9 @@ const Basket = ({
         if (valid.length) {
             const name = [...valid].shift();
 
-            setNotification({
+            createNotification({
                 type: 'error',
-                text: ERORRS[name],
+                message: ERORRS[name],
             });
         }
 
@@ -284,14 +279,6 @@ const Basket = ({
 
     return (
         <div className={styles.root}>
-            {notification && (
-                <Snackbar
-                    text={notification.text}
-                    active={!!notification}
-                    theme={notification.type}
-                    onClose={handleCloseNotification}
-                />
-            )}
             <StepView active={step} onChange={handleChangeStep}>
                 <StepContainer title="Моя корзина" theme={theme}>
                     {products.map(

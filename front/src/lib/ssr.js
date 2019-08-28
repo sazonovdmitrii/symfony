@@ -1,7 +1,5 @@
 import 'cross-fetch/polyfill';
 
-import fs from 'fs';
-import path from 'path';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import Helmet from 'react-helmet';
@@ -9,27 +7,21 @@ import { getDataFromTree } from '@apollo/react-ssr';
 import { ApolloProvider } from '@apollo/react-components';
 import { StaticRouter } from 'react-router';
 import { ChunkExtractor, ChunkExtractorManager } from '@loadable/server';
-import jwt from 'jsonwebtoken';
 
 import Html from './Html';
-import ErrorPage from './500';
+// import ErrorPage from './500';
 import config from './config';
-
-const checkToken = token => {
-    const pathToCert = path.join('../config/jwt/public.pem');
-    const cert = fs.readFileSync(pathToCert);
-
-    try {
-        return jwt.verify(token, cert);
-    } catch (e) {
-        return;
-    }
-};
+import { checkToken } from './utils';
 
 export default async ctx => {
     const location = ctx.request.url;
     // get token from cookies 🍪
-    const token = checkToken(ctx.cookies.get('token'));
+    const token = checkToken({
+        token: ctx.cookies.get('token'),
+        onError() {
+            ctx.cookies.set('token', null);
+        },
+    });
     const client = config.client({ token });
 
     const nodeExtractor = new ChunkExtractor({ statsFile: config.nodeStats });

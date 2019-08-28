@@ -1,5 +1,6 @@
 import 'promise-polyfill/src/polyfill';
 import 'regenerator-runtime/runtime';
+import 'unfetch/polyfill';
 // for https://github.com/verlok/lazyload
 import 'intersection-observer';
 import 'custom-event-polyfill'; // for https://github.com/verlok/lazyload
