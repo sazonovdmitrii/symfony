@@ -59,7 +59,7 @@
         "clean-webpack-plugin": "1.0.1",
         "core-js": "^3.2.1",
         "cross-env": "^5.2.0",
-        "cross-fetch": "^3.0.4",
+        "cross-fetch": "^3.1.5",
         "css-loader": "3.2.0",
         "custom-event-polyfill": "^1.0.7",
         "destyle.css": "^1.0.9",
